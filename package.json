@@ -10,5 +10,18 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "test:e2e": "pnpm build && pnpm --filter unmask-extension test:e2e"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/praneeth132006/Unmask.git"
+  },
+  "homepage": "https://github.com/praneeth132006/Unmask#readme",
+  "bugs": {
+    "url": "https://github.com/praneeth132006/Unmask/issues"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
   }
 }

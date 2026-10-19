@@ -20,5 +20,15 @@
     "tsx": "^4.23.15",
     "typescript": "5.9.3",
     "vitest": "^5.0.5"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/praneeth132006/Unmask.git",
+    "directory": "backend"
+  },
+  "homepage": "https://github.com/praneeth132006/Unmask#readme",
+  "bugs": {
+    "url": "https://github.com/praneeth132006/Unmask/issues"
   }
 }

@@ -6,14 +6,15 @@
   "description": "See what a suspicious email is really hiding.",
   "scripts": {
     "dev": "wxt",
-    "build": "wxt build",
-    "zip": "wxt zip",
+    "build": "node scripts/third-party-licenses.mjs && wxt build",
+    "zip": "node scripts/third-party-licenses.mjs && wxt zip",
     "postinstall": "wxt prepare",
     "icons": "node scripts/gen-icons.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "node e2e/run.mjs"
+    "test:e2e": "node e2e/run.mjs",
+    "licenses": "node scripts/third-party-licenses.mjs"
   },
   "dependencies": {
     "postal-mime": "^4.0.11",
@@ -35,5 +36,15 @@
     "typescript": "5.9.3",
     "vitest": "^5.0.5",
     "wxt": "^0.21.4"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/praneeth132006/Unmask.git",
+    "directory": "extension"
+  },
+  "homepage": "https://github.com/praneeth132006/Unmask#readme",
+  "bugs": {
+    "url": "https://github.com/praneeth132006/Unmask/issues"
   }
 }

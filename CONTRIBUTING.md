@@ -2,6 +2,16 @@
 
 Thanks for helping. This page covers setting up, the project's conventions, and the most common changes: adding a check, a brand or a tracker.
 
+By participating you agree to the [code of conduct](CODE_OF_CONDUCT.md). Contributions are licensed under the project's [MIT licence](LICENSE): by opening a pull request you confirm you have the right to submit the code under it.
+
+## Ways to help
+
+- **Report a wrong verdict** with the *Wrong verdict* issue template. Missed phishing and false alarms are the most valuable reports.
+- **Fix a bug or add a check:** issues labelled [`good first issue`](https://github.com/praneeth132006/Unmask/labels/good%20first%20issue) are a good start.
+- **Add a brand or a tracking service.** These are one-line changes, see below.
+- **Improve the docs or translations.**
+- **Report security problems privately** ([SECURITY.md](SECURITY.md)).
+
 ## Setup
 
 Requirements: Node.js 20+ and pnpm.
@@ -19,7 +29,8 @@ Other scripts (run from the root):
 |---|---|
 | `pnpm build` | Production build into `build/unmask-chrome` |
 | `pnpm zip` | Zip for the Chrome Web Store |
-| `pnpm test` | All tests (extension + backend) |
+| `pnpm test` | All unit tests (extension + backend) |
+| `pnpm test:e2e` | Builds, then loads the real extension in Chromium against a Gmail test double (needs `pnpm --filter unmask-extension exec playwright install chromium` once) |
 | `pnpm typecheck` | TypeScript in both packages |
 | `pnpm backend` | Redirect-trace server on port 8787 |
 | `pnpm --filter unmask-extension icons` | Re-render icons from `docs/brand/*.svg` |
@@ -63,6 +74,8 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 ## Tests
 
 - Vitest with the `happy-dom` environment for the extension, Node for the backend.
+- `extension/e2e/run.mjs` loads the built extension in Chromium with Playwright. `mail.google.com` is routed to `e2e/fake-gmail.html`, so no Google account is used. It checks the session token, message detection, raw download, highlighting, and that reloading the extension leaves no uncaught errors.
+- Parsers that read untrusted input have timing tests. Keep regexes bounded: no `[^>]+` across a whole document.
 - Analyzer tests use real-looking `.eml` fixtures. Don't commit real personal email.
 - UI changes: check the panel in **both light and dark mode** before opening a PR.
 
@@ -70,8 +83,14 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 
 - [Conventional commits](https://www.conventionalcommits.org): `feat(links): …`, `fix(gmail): …`, `docs: …`, `test: …`.
 - One logical change per commit, with the *why* in the body.
-- Run `pnpm test && pnpm typecheck && pnpm build` before pushing.
+- Run `pnpm test && pnpm typecheck && pnpm test:e2e` before pushing. CI runs the same, plus CodeQL.
 - Update [CHANGELOG.md](CHANGELOG.md) under *Unreleased*.
+
+## Releasing (maintainers)
+
+1. Move *Unreleased* in CHANGELOG.md to a new version and set the same version in `extension/package.json`.
+2. Commit, then tag and push: `git tag v0.2.1 && git push origin v0.2.1`.
+3. The release workflow tests, builds `unmask-chrome-<version>.zip` (with licence notices) and publishes the GitHub Release.
 
 ## Reporting security issues
 

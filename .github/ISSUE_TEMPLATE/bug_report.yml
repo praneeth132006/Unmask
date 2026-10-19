@@ -1,0 +1,52 @@
+name: Bug report
+description: Something in Unmask doesn't work as it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Please don't paste real emails, addresses or links from your inbox.** For security problems, use [private reporting](https://github.com/praneeth132006/Unmask/security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open an email in Gmail
+        2. Click the Unmask icon
+        3. …
+  - type: textarea
+    id: details
+    attributes:
+      label: Technical details
+      description: If the panel showed "Could not analyze this email", open **Technical details → Copy details** and paste here. Errors from `chrome://extensions` → Unmask → **Errors** help too.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Unmask version
+      description: Shown on the Unmask card in chrome://extensions
+      placeholder: "0.2.1"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: "Chrome 141 on macOS 15"
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Where was the email?
+      options:
+        - Gmail (opened in the browser)
+        - .eml file
+        - Pasted source

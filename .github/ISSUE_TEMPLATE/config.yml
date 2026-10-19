@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/praneeth132006/Unmask/security/advisories/new
+    about: Please report security issues privately, not as public issues.
+  - name: User guide and troubleshooting
+    url: https://github.com/praneeth132006/Unmask/blob/main/docs/USER_GUIDE.md#10-troubleshooting
+    about: Most install and setup questions are answered here.
