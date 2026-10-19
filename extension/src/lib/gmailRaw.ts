@@ -1,7 +1,7 @@
 /**
  * Pure helpers for downloading an email's raw source from Gmail's own
- * "Show original" / "Download original" endpoints. Kept free of DOM globals
- * (a DOMParser is passed in) so they can be unit-tested.
+ * "Show original" / "Download original" endpoints. Pure string functions, so
+ * they work under Gmail's Trusted Types policy and can be unit-tested.
  */
 import type { GmailMessageRef } from './messages';
 
@@ -33,6 +33,11 @@ export function permIdToLegacy(permId: string | null): string | null {
  * GLOBALS array and in many internal URLs (?ik=0123456789).
  */
 export function findIkInHtml(html: string): string | null {
+  // Current Gmail: `var GM_ID_KEY = '0123456789';` and `"/mail/u/0",50,"0123456789"` in its boot data.
+  const gmIdKey = html.match(/GM_ID_KEY\s*=\s*['"]([0-9a-f]{8,12})['"]/i)?.[1];
+  if (gmIdKey) return gmIdKey;
+  const boot = html.match(/"\/mail\/u\/\d+",\d+,"([0-9a-f]{8,12})"/i)?.[1];
+  if (boot) return boot;
   const fromUrl = html.match(/[?&;]ik=([0-9a-f]{8,12})\b/i)?.[1];
   if (fromUrl) return fromUrl;
   const globals = html.match(/GLOBALS\s*=\s*\[([\s\S]{0,4000}?)\]\s*;/)?.[1];
@@ -82,20 +87,44 @@ export interface OriginalPage {
   downloadUrl: string | null;
 }
 
-/** Extracts the raw message (and the download link) from Gmail's "Show original" HTML page. */
-export function parseOriginalPage(html: string, pageUrl: string, parser: DOMParser): OriginalPage {
-  const doc = parser.parseFromString(html, 'text/html');
-  const link = Array.from(doc.querySelectorAll('a[href]')).find((a) => /disp=comp|view=att/.test(a.getAttribute('href') ?? ''));
+/** Decodes the HTML entities Gmail uses when it prints the raw message inside a <pre>. */
+export function decodeEntities(s: string): string {
+  return s.replace(/&(#x[0-9a-f]+|#\d+|lt|gt|amp|quot|apos|#39|nbsp);/gi, (m, e: string) => {
+    const k = e.toLowerCase();
+    if (k.startsWith('#x')) return String.fromCodePoint(parseInt(k.slice(2), 16));
+    if (k.startsWith('#')) return String.fromCodePoint(parseInt(k.slice(1), 10));
+    return ({ lt: '<', gt: '>', amp: '&', quot: '"', apos: "'", nbsp: '\u00a0' } as Record<string, string>)[k] ?? m;
+  });
+}
+
+/**
+ * Extracts the raw message (and the download link) from Gmail's "Show original"
+ * HTML. Uses string parsing, not DOMParser: Gmail enforces Trusted Types, and
+ * DOMParser.parseFromString throws "requires 'TrustedHTML' assignment" there,
+ * including in extension content scripts.
+ */
+export function parseOriginalPage(html: string, pageUrl: string): OriginalPage {
   let downloadUrl: string | null = null;
-  if (link) {
-    try {
-      downloadUrl = new URL(link.getAttribute('href')!, pageUrl).href;
-    } catch {
-      downloadUrl = null;
+  for (const m of html.matchAll(/<a\b[^>]*\bhref\s*=\s*("([^"]*)"|'([^']*)')/gi)) {
+    const href = decodeEntities(m[2] ?? m[3] ?? '');
+    if (/disp=comp|view=att/.test(href)) {
+      try {
+        downloadUrl = new URL(href, pageUrl).href;
+      } catch {
+        downloadUrl = null;
+      }
+      break;
     }
   }
-  const pres = [doc.getElementById('raw_message_text'), ...Array.from(doc.querySelectorAll('pre'))].filter((p): p is HTMLElement => !!p);
-  const raw = pres.map((p) => p.textContent ?? '').sort((a, b) => b.length - a.length).find(looksLikeRawEmail) ?? null;
+  const pres: string[] = [];
+  const byId = html.match(/<pre\b[^>]*\bid\s*=\s*["']?raw_message_text["']?[^>]*>([\s\S]*?)<\/pre>/i)?.[1];
+  if (byId !== undefined) pres.push(byId);
+  for (const m of html.matchAll(/<pre\b[^>]*>([\s\S]*?)<\/pre>/gi)) pres.push(m[1] ?? '');
+  const raw =
+    pres
+      .map((p) => decodeEntities(p.replace(/<[^>]+>/g, '')))
+      .sort((a, b) => b.length - a.length)
+      .find(looksLikeRawEmail) ?? null;
   return { raw, downloadUrl };
 }
 

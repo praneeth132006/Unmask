@@ -31,7 +31,8 @@ const SUSPICIOUS_TLDS = new Set([
   'quest', 'sbs', 'cfd', 'icu', 'buzz', 'monster', 'bond', 'lol', 'shop', 'live', 'online', 'site', 'website', 'info', 'pw', 'cc',
 ]);
 
-const DOWNLOAD_EXT = /\.(exe|scr|msi|bat|cmd|js|vbs|hta|ps1|jar|apk|iso|img|zip|rar|7z|lnk|one|docm|xlsm|html?|svg)(\?|#|$)/i;
+// Not .html/.svg: ordinary web pages end in .html, so they are not "downloads".
+const DOWNLOAD_EXT = /\.(exe|scr|msi|bat|cmd|js|vbs|hta|ps1|jar|apk|iso|img|zip|rar|7z|lnk|one|docm|xlsm)(\?|#|$)/i;
 
 function matchesHost(host: string, list: string[]): boolean {
   return list.some((h) => host === h || host.endsWith(`.${h}`));
@@ -118,8 +119,8 @@ const FLAG_SPECS: Record<string, FlagSpec> = {
   'ip-host': { severity: 'high', points: 20, title: 'Link points straight at an IP address' },
   'shortener': { severity: 'medium', points: 10, title: 'Link uses a URL shortener that hides the destination' },
   'abused-host': { severity: 'medium', points: 10, title: 'Link is hosted on a free hosting / forms service often used for phishing' },
-  'open-redirect': { severity: 'medium', points: 8, title: 'Link bounces through a redirect on another site' },
-  'download': { severity: 'medium', points: 10, title: 'Link downloads a risky file type' },
+  'open-redirect': { severity: 'low', points: 4, title: 'Link bounces through a redirect on an unrelated site' },
+  'download': { severity: 'medium', points: 8, title: 'Link downloads a risky file type' },
   'tracker-mismatch': { severity: 'low', points: 3, title: 'Link goes through a mail tracking service, so the final site is unknown' },
   'suspicious-tld': { severity: 'low', points: 6, title: 'Link uses a domain ending that is popular with scammers' },
   'many-subdomains': { severity: 'low', points: 5, title: 'Link has an unusually long chain of subdomains' },
@@ -131,7 +132,8 @@ function flag(id: keyof typeof FLAG_SPECS, label: string): LinkFlag {
   return { id, severity: FLAG_SPECS[id]!.severity, label };
 }
 
-export function inspectLink(raw: RawLink): LinkInfo {
+/** `senderDomain` lets the sender's own click-tracking redirects pass without a warning. */
+export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
   const flags: LinkFlag[] = [];
   const scheme = (raw.href.match(/^([a-z][a-z0-9+.-]*):/i)?.[1] ?? '').toLowerCase();
 
@@ -146,7 +148,9 @@ export function inspectLink(raw: RawLink): LinkInfo {
   const info = hostInfo(host);
   const domain = info.domain;
 
-  if (via.some((v) => v.startsWith('redirect parameter'))) flags.push(flag('open-redirect', via.join(' → ')));
+  const originalHost = safeUrl(raw.href)?.hostname.toLowerCase() ?? '';
+  const ownRedirect = senderDomain !== '' && sameOrg(originalHost, senderDomain);
+  if (via.some((v) => v.startsWith('redirect parameter')) && !ownRedirect) flags.push(flag('open-redirect', via.join(' → ')));
   if (u && (u.username || u.password)) flags.push(flag('userinfo', `real host is ${host}`));
   if (info.isIp) flags.push(flag('ip-host', host));
   if (info.isPunycode) flags.push(flag('punycode', `${host} displays as ${info.unicodeHost}`));
@@ -167,7 +171,6 @@ export function inspectLink(raw: RawLink): LinkInfo {
 
   const shown = domainInText(raw.text);
   if (shown && host && !sameOrg(shown, host)) {
-    const originalHost = safeUrl(raw.href)?.hostname.toLowerCase() ?? '';
     const viaTracker = matchesHost(originalHost, TRACKERS) || matchesHost(host, TRACKERS);
     if (viaTracker || SHORTENERS.has(domain)) flags.push(flag('tracker-mismatch', `shows ${shown}, goes via ${host}`));
     else flags.push(flag('text-mismatch', `shows ${shown}, really goes to ${host}`));
@@ -178,13 +181,13 @@ export function inspectLink(raw: RawLink): LinkInfo {
 }
 
 /** Inspects every link and aggregates flags into one finding per flag type. */
-export function analyzeLinks(rawLinks: RawLink[]): { links: LinkInfo[]; findings: Finding[] } {
+export function analyzeLinks(rawLinks: RawLink[], senderDomain = ''): { links: LinkInfo[]; findings: Finding[] } {
   const unique = new Map<string, RawLink>();
   for (const l of rawLinks) {
     const key = `${l.href}\u0000${l.text}`;
     if (!unique.has(key)) unique.set(key, l);
   }
-  const links = [...unique.values()].map(inspectLink);
+  const links = [...unique.values()].map((l) => inspectLink(l, senderDomain));
 
   const byFlag = new Map<string, LinkFlag[]>();
   for (const link of links) for (const f of link.flags) byFlag.set(f.id, [...(byFlag.get(f.id) ?? []), f]);

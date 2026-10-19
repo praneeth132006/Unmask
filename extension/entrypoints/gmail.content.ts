@@ -141,7 +141,7 @@ async function fetchRaw(message: GmailMessageRef): Promise<FetchRawResponse> {
         return r.body;
       }
       if (r.status === 200 && /html/i.test(r.contentType)) {
-        const page = parseOriginalPage(r.body, r.finalUrl, new DOMParser());
+        const page = parseOriginalPage(r.body, r.finalUrl);
         // Prefer the download link (never truncated) over the on-page <pre>.
         if (page.downloadUrl && !tried.has(page.downloadUrl)) {
           const fromLink = await tryUrl(`${label} → download link`, page.downloadUrl);

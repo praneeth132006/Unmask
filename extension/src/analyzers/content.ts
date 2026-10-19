@@ -164,12 +164,13 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
 
     if (hidden.length) {
       const total = hidden.reduce((n, h) => n + h.text.length, 0);
-      const big = total > 150;
+      // Newsletters hide preview lines and mobile-only blocks; only large amounts are a filter-evasion signal.
+      const big = total > 600;
       findings.push({
         id: 'hidden-text',
         category: 'content',
-        severity: big ? 'medium' : 'info',
-        points: big ? 10 : 2,
+        severity: big ? 'medium' : total > 200 ? 'low' : 'info',
+        points: big ? 8 : total > 200 ? 3 : 0,
         title: `${hidden.length} hidden text block${hidden.length > 1 ? 's' : ''} (${total} characters)`,
         detail: big
           ? 'Large amounts of invisible text are used to trick spam filters. Newsletters sometimes hide a short preview line, which is harmless.'
@@ -191,7 +192,7 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
   const haystack = `${email.subject} ${visibleText}`;
   const urgency = matches(haystack, URGENCY);
   if (urgency.length) {
-    findings.push({ id: 'urgency', category: 'content', severity: 'medium', points: urgency.length > 1 ? 15 : 10, title: 'Uses pressure and urgency', detail: `Phrases like ${urgency.slice(0, 3).map((u) => `"${u}"`).join(', ')} are designed to make you act before thinking.` });
+    findings.push({ id: 'urgency', category: 'content', severity: urgency.length > 1 ? 'medium' : 'low', points: urgency.length > 1 ? 12 : 5, title: 'Uses pressure and urgency', detail: `Phrases like ${urgency.slice(0, 3).map((u) => `"${u}"`).join(', ')} are designed to make you act before thinking.` });
   }
   const creds = matches(haystack, CREDENTIALS);
   if (creds.length) {

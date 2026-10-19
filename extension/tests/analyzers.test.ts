@@ -121,3 +121,27 @@ describe('attachments', () => {
     expect(attachments[0]?.flags.map((f) => f.id)).toEqual(expect.arrayContaining(['bidi', 'executable']));
   });
 });
+
+describe('false-positive tuning (from real inbox testing)', () => {
+  it("does not flag the sender's own click-tracking redirect", () => {
+    const own = inspectLink({ href: 'https://click.acme.com/r?url=https%3A%2F%2Fshop.example.org%2Fsale', text: 'Shop now', source: 'html' }, 'news.acme.com');
+    expect(own.flags.map((f) => f.id)).not.toContain('open-redirect');
+    const foreign = inspectLink({ href: 'https://click.acme.com/r?url=https%3A%2F%2Fshop.example.org%2Fsale', text: 'Shop now', source: 'html' }, 'other.net');
+    expect(foreign.flags.map((f) => f.id)).toContain('open-redirect');
+  });
+
+  it('treats .html pages as pages, not downloads', () => {
+    expect(inspectLink({ href: 'https://example.com/help/page.html', text: 'Help', source: 'html' }, '').flags).toEqual([]);
+    expect(inspectLink({ href: 'https://example.com/files/x.zip', text: 'Get', source: 'html' }, '').flags.map((f) => f.id)).toEqual(['download']);
+  });
+
+  it('weights a single urgency phrase lightly', async () => {
+    const one = analyzeContent(await parseEmail('From: a@b.com\nSubject: Update\n\nPlease review this immediately.'));
+    expect(one.findings.find((f) => f.id === 'urgency')).toMatchObject({ severity: 'low', points: 5 });
+  });
+
+  it('does not score a short hidden preheader', async () => {
+    const r = analyzeContent(await parseEmail('From: a@b.com\nContent-Type: text/html\n\n<div style="display:none">Your weekly digest is here</div><p>Hi</p>'));
+    expect(r.findings.find((f) => f.id === 'hidden-text')?.points).toBe(0);
+  });
+});

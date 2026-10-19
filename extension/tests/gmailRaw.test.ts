@@ -1,4 +1,4 @@
-import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, permIdToLegacy } from '../src/lib/gmailRaw';
+import { candidateUrls, decodeEntities, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, permIdToLegacy } from '../src/lib/gmailRaw';
 import { parseEmail } from '../src/core/parse';
 import { fixture } from './helpers';
 
@@ -19,6 +19,10 @@ describe('findIkInHtml', () => {
   it('reads GLOBALS[9]', () => {
     const g = 'var GLOBALS=[null,null,12345,"/mail/u/0","en","US",null,"x",0,"9f8e7d6c5b",1,"other"];';
     expect(findIkInHtml(g)).toBe('9f8e7d6c5b');
+  });
+  it("reads current Gmail's GM_ID_KEY and boot data", () => {
+    expect(findIkInHtml("var GM_INITIAL_PADDING_PREF = 'n';var GM_ID_KEY = 'ab12cd34ef';var GM_INBOX_TYPE")).toBe('ab12cd34ef');
+    expect(findIkInHtml('["x","AAAA","/mail/u/0",50,"0f1e2d3c4b","me@example.com"]')).toBe('0f1e2d3c4b');
   });
   it('returns null when absent', () => {
     expect(findIkInHtml('<html></html>')).toBeNull();
@@ -58,14 +62,14 @@ describe('parseOriginalPage', () => {
     <pre class="raw_message_text" id="raw_message_text">${escaped}</pre></body></html>`;
 
   it('extracts the raw message and download link', async () => {
-    const r = parseOriginalPage(page, 'https://mail.google.com/mail/u/0/?view=om&permmsgid=x', new DOMParser());
+    const r = parseOriginalPage(page, 'https://mail.google.com/mail/u/0/?view=om&permmsgid=x');
     expect(r.downloadUrl).toBe('https://mail.google.com/mail/u/0/?ui=2&ik=a1b2c3d4e5&view=att&th=18b7&attid=0&disp=comp&safe=1&zw');
     expect(r.raw).toBe(raw);
     expect((await parseEmail(r.raw!)).from?.address).toBe('billing@paypa1-support.xyz');
   });
 
   it('returns null raw for an unrelated page', () => {
-    expect(parseOriginalPage('<html><body><pre>not an email</pre></body></html>', 'https://mail.google.com/', new DOMParser()).raw).toBeNull();
+    expect(parseOriginalPage('<html><body><pre>not an email</pre></body></html>', 'https://mail.google.com/').raw).toBeNull();
   });
 });
 
@@ -74,5 +78,20 @@ describe('describeResponse', () => {
     expect(describeResponse(302, 'https://accounts.google.com/ServiceLogin?x=1', 'text/html; charset=utf-8', '<title>Sign in</title>')).toBe(
       'HTTP 302 from accounts.google.com/ServiceLogin (text/html, 22 bytes, title "Sign in")',
     );
+  });
+});
+
+describe('decodeEntities', () => {
+  it('decodes named and numeric entities', () => {
+    expect(decodeEntities('&lt;a@b.com&gt; &amp; &quot;x&quot; &#39;y&#39; &#x41;&#66;')).toBe('<a@b.com> & "x" \'y\' AB');
+  });
+});
+
+describe('parseOriginalPage under Trusted Types', () => {
+  it('never touches DOMParser', () => {
+    const spy = vi.spyOn(DOMParser.prototype, 'parseFromString');
+    parseOriginalPage('<pre id="raw_message_text">From: a@b.com\nTo: c@d.com\nSubject: x\nDate: now\n\nhi</pre>', 'https://mail.google.com/');
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 });

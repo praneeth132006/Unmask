@@ -17,7 +17,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array): P
   const { auth, findings: authFindings } = analyzeAuth(email);
   const senderFindings = analyzeSender(email);
   const content = analyzeContent(email);
-  const { links, findings: linkFindings } = analyzeLinks(content.links);
+  const { links, findings: linkFindings } = analyzeLinks(content.links, email.from?.domain ?? '');
   const { attachments, findings: attachmentFindings } = await analyzeAttachments(email.attachments);
 
   const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings]);
