@@ -4,6 +4,18 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Added
+- **One-click redirect tracing inside Unmask**: no server needed. It follows HTTP, meta-refresh and JavaScript redirects in the background without cookies, blocks local-network targets, and asks for its optional permission once.
+- **VirusTotal "Scan it now"** for links VirusTotal has never seen.
+- **Hover a URL in the Plain text view** to outline that link in the Gmail email.
+- **Copy all headers** and **Copy delivery path** buttons.
+- **Theme switch** (System / Light / Dark) in the header and in Settings → Appearance.
+- **Website** at praneeth132006.github.io/Unmask and a **GitHub Wiki**, both generated from the docs; README quick start.
+
+### Changed
+- New palette: charcoal and greys with lime/olive accents, red reserved for warnings; green logo.
+- Tabs wrap onto two rows so all seven are always visible.
+
 ## [0.2.1] - 2026-10-19
 
 ### Fixed
