@@ -8,7 +8,6 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 
 - **Highlighting.** When you hover a finding, Unmask adds a temporary outline to the email in your Gmail tab and removes it when you move away. Nothing is sent anywhere.
 - **Tracker detection.** Tracking pixels are found by reading the email's HTML locally. Unmask never loads them.
-
 - **Email content.** When you open an email in Gmail, Unmask downloads that email's raw source from Gmail (using your existing Gmail session in the same tab) and analyses it inside the extension. The email's headers, body and attachments are never sent to the Unmask developers or to any Unmask server.
 - **Settings and API keys** you enter are stored in your browser's extension storage (`chrome.storage.local`) and never leave your device except as described below.
 
@@ -16,12 +15,12 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 
 | Data | Sent to | When |
 |---|---|---|
-| The sender's domain name (e.g. `example.com`) | rdap.org and the domain's registry | Automatically when an email is analysed, unless you turn off "Check domain age automatically" in settings, or when you click "Check via RDAP" |
+| The sender's domain name (e.g. `example.com`) | rdap.org and the domain's registry | Automatically when an email is analysed, unless you turn off "Check how old the sender's domain is" in Settings, or when you click **Check domain age** |
 | One link's URL | The redirect-trace backend URL you configured | Only when you click **Trace redirects** on that link |
 | Your API key, to check it works | VirusTotal or urlscan.io | When you click **Save & test** while setting up a key |
 | One link's URL | urlscan.io, using your API key | Only when you click **Sandbox scan** on that link |
 | One link's URL | VirusTotal, using your API key | Only when you click **VirusTotal** on that link |
-| An attachment's SHA-256 hash | VirusTotal, using your API key | Only when you click **Check hash on VirusTotal** |
+| An attachment's SHA-256 hash | VirusTotal, using your API key | Only when you click **Check on VirusTotal** |
 | An attachment file | VirusTotal, using your API key | Only when you click **Upload file…** and then confirm a warning. Files uploaded to VirusTotal may be shared with its customers. |
 
 These third-party services have their own privacy policies:
