@@ -63,9 +63,20 @@ See [docs/CHECKS.md](docs/CHECKS.md) for every check and how many points it adds
 
 ## Install
 
-Unmask isn't on the Chrome Web Store yet, so you load it yourself. It takes about two minutes.
+Unmask isn't on the Chrome Web Store yet, so you load it yourself. It takes about two minutes and works in Google Chrome, Edge and Brave.
 
-**You need:** Google Chrome (or Edge or Brave), [Node.js](https://nodejs.org) 20 or newer, and [pnpm](https://pnpm.io/installation).
+### Option 1: No-code install (recommended)
+
+1. Go to the [latest release](https://github.com/praneeth132006/Unmask/releases/latest) and download **`unmask-chrome-0.2.0.zip`** (under *Assets*).
+2. Unzip it. You get a folder named `unmask-chrome-0.2.0`. Keep it somewhere permanent, such as your Documents folder: Chrome loads Unmask from it.
+3. Open `chrome://extensions` and turn on **Developer mode** (top-right switch).
+4. Click **Load unpacked** and select the unzipped **`unmask-chrome-0.2.0`** folder.
+5. Click the puzzle-piece icon in Chrome's toolbar and **pin Unmask**.
+6. **Reload Gmail**, open an email, and click the Unmask icon.
+
+### Option 2: Build from source
+
+**You need:** [Node.js](https://nodejs.org) 20 or newer and [pnpm](https://pnpm.io/installation).
 
 ```bash
 git clone https://github.com/praneeth132006/Unmask.git
@@ -74,12 +85,7 @@ pnpm install
 pnpm build
 ```
 
-Then:
-
-1. Open `chrome://extensions` and turn on **Developer mode** (top-right switch).
-2. Click **Load unpacked** and select the **`build/unmask-chrome`** folder inside the project.
-3. Click the puzzle-piece icon in Chrome's toolbar and **pin Unmask**.
-4. **Reload Gmail**, open an email, and click the Unmask icon.
+Then follow steps 3–6 above, selecting the **`build/unmask-chrome`** folder inside the project.
 
 The [user guide](docs/USER_GUIDE.md) walks through each step, explains every part of the report, and covers troubleshooting.
 

@@ -18,9 +18,20 @@ This guide is for everyone, no technical background needed. It covers installing
 
 ## 1. Install
 
-Unmask isn't on the Chrome Web Store yet, so it's installed as a "developer" extension. You only do this once.
+Unmask isn't on the Chrome Web Store yet, so it's installed as a "developer" extension. You only do this once. Pick **Option 1** unless you want to build Unmask yourself.
 
-### 1a. Build it
+### 1a. Option 1: No-code install (recommended)
+
+No programming tools needed.
+
+1. Open the [latest Unmask release](https://github.com/praneeth132006/Unmask/releases/latest).
+2. Under **Assets**, click **`unmask-chrome-0.2.0.zip`** to download it.
+3. Unzip it: double-click the file on a Mac, or right-click → **Extract All** on Windows. You get a folder named **`unmask-chrome-0.2.0`**.
+4. Move that folder somewhere permanent, such as your Documents folder. Chrome loads Unmask from it, so don't delete it.
+
+Now [load it into Chrome](#1c-load-it-into-chrome).
+
+### 1b. Option 2: Build from source
 
 You need [Node.js](https://nodejs.org) (version 20 or newer) and [pnpm](https://pnpm.io/installation). In a terminal:
 
@@ -33,25 +44,30 @@ pnpm build
 
 This creates the folder **`build/unmask-chrome`**. That folder *is* the extension.
 
-### 1b. Load it into Chrome
+### 1c. Load it into Chrome
 
 1. In Chrome's address bar, type `chrome://extensions` and press Enter.
    *(This is Chrome's own settings page, not the Chrome Web Store.)*
 2. Turn on **Developer mode** with the switch in the **top-right corner**.
 3. Three buttons appear on the left. Click **Load unpacked**.
-4. Go to the project folder, open **`build`**, click **`unmask-chrome`** once, and click **Select**.
+4. Select the extension folder and click **Select**:
+   - Option 1: the unzipped **`unmask-chrome-0.2.0`** folder.
+   - Option 2: open the project folder, open **`build`**, and click **`unmask-chrome`** once.
 5. Unmask appears in your list of extensions.
 6. Click the **puzzle-piece icon** in Chrome's toolbar and click the **pin** next to Unmask so its icon is always visible.
 
 > Edge and Brave work the same way: use `edge://extensions` or `brave://extensions`.
 
-### 1c. Reload Gmail
+### 1d. Reload Gmail
 
 If Gmail was already open, **reload the Gmail tab** (press ⌘R or Ctrl+R). Unmask can only connect to Gmail pages opened after it was installed.
 
 ### Updating
 
-After pulling new code and running `pnpm build` again, go to `chrome://extensions`, click the **↻ reload** button on the Unmask card, then reload Gmail.
+- **Option 1:** download the newer zip from the [latest release](https://github.com/praneeth132006/Unmask/releases/latest) and unzip it. Replace everything inside your existing Unmask folder with the new files (keep the same folder, so Chrome keeps your settings and API keys), then click the **↻ reload** button on the Unmask card in `chrome://extensions`.
+- **Option 2:** after pulling new code and running `pnpm build` again, click the **↻ reload** button on the Unmask card.
+
+Then reload Gmail.
 
 ---
 
