@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { HighlightTarget } from '../lib/highlight';
-import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, StateChanged } from '../lib/messages';
+import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, ReportPhishingResponse, StateChanged } from '../lib/messages';
 
 export type GmailStatus = 'not-gmail' | 'no-script' | 'ready';
 
@@ -91,9 +91,22 @@ export function useGmail() {
     [tabId],
   );
 
+  const reportPhishing = useCallback(
+    async (message: GmailMessageRef): Promise<ReportPhishingResponse> => {
+      if (tabId === null) return { ok: false, error: 'No Gmail tab is active.' };
+      try {
+        await browser.tabs.update(tabId, { active: true });
+        return ((await browser.tabs.sendMessage(tabId, { type: 'unmask:report-phishing', message } satisfies PanelRequest)) as ReportPhishingResponse | undefined) ?? { ok: false, error: 'Gmail did not answer.' };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : String(e) };
+      }
+    },
+    [tabId],
+  );
+
   const reloadTab = useCallback(async () => {
     if (tabId !== null) await browser.tabs.reload(tabId);
   }, [tabId]);
 
-  return { status, state, fetchRaw, refresh, reloadTab, highlight };
+  return { status, state, fetchRaw, refresh, reloadTab, highlight, reportPhishing };
 }

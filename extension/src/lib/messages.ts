@@ -19,7 +19,11 @@ export type PanelRequest =
   | { type: 'unmask:get-state' }
   | { type: 'unmask:fetch-raw'; message: GmailMessageRef }
   /** Outline the part of the open email a finding refers to; target null clears it. */
-  | { type: 'unmask:highlight'; message: GmailMessageRef; target: import('./highlight').HighlightTarget | null };
+  | { type: 'unmask:highlight'; message: GmailMessageRef; target: import('./highlight').HighlightTarget | null }
+  /** Open Gmail's own "Report phishing" for this message; Gmail then asks the user to confirm. */
+  | { type: 'unmask:report-phishing'; message: GmailMessageRef };
+
+export type ReportPhishingResponse = { ok: true } | { ok: false; error: string };
 
 export type FetchRawResponse =
   | { ok: true; raw: string; via: string }

@@ -2,6 +2,7 @@ import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
 import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse, GmailMessageRef, GmailState } from '../src/lib/messages';
 import { alive, startBridge, type BridgeRuntime } from '../src/lib/gmailBridge';
+import { reportPhishingInGmail } from '../src/lib/gmailActions';
 import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, type Attempt } from '../src/lib/gmailRaw';
 
 /**
@@ -19,6 +20,7 @@ export default defineContentScript({
       win: window,
       readState,
       fetchRaw,
+      reportPhishing: (ref) => reportPhishingInGmail(document, ref),
       onInvalidated: (cb) => ctx.onInvalidated(cb),
     });
   },

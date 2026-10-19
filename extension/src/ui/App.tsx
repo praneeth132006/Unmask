@@ -21,6 +21,7 @@ import { BodyTab } from './components/BodyTab';
 import { HeadersTab } from './components/HeadersTab';
 import { PrivacyTab } from './components/PrivacyTab';
 import { SettingsPanel } from './components/SettingsPanel';
+import { ReportCard } from './components/ReportCard';
 import { Button, CopyButton, Spinner, type Async } from './components/ui';
 import { Icon } from './components/Icon';
 
@@ -55,7 +56,9 @@ export function App() {
   const [pasting, setPasting] = useState(false);
   const [dragging, setDragging] = useState(false);
   const runId = useRef(0);
-  const cache = useRef(new Map<string, Report>());
+  const cache = useRef(new Map<string, { report: Report; raw: string | ArrayBuffer }>());
+  /** Source of the email on screen, for the .eml download. */
+  const [raw, setRaw] = useState<string | ArrayBuffer | null>(null);
   /** Where the user was on the Summary, so "Back" returns to the same finding. */
   const returnTo = useRef<{ scrollY: number; findingId: string | null }>({ scrollY: 0, findingId: null });
 
@@ -138,17 +141,21 @@ export function App() {
       setFocus(null);
       const cached = cacheKey ? cache.current.get(cacheKey) : undefined;
       if (cached) {
-        setReport(cached);
+        setReport(cached.report);
+        setRaw(cached.raw);
       } else {
         setLoading(true);
         setReport(null);
+        setRaw(null);
       }
       try {
         // Emails opened from files may be samples from anywhere: compare them with the history, but never learn from them.
         const history = settings.senderHistory ? await loadHistory() : undefined;
-        const r = cached ?? (await analyzeRawEmail(await load(), { history, decodeImage: decodeImageInBrowser }));
+        const source = cached?.raw ?? (await load());
+        const r = cached?.report ?? (await analyzeRawEmail(source, { history, decodeImage: decodeImageInBrowser }));
         if (run !== runId.current) return;
-        if (cacheKey) cache.current.set(cacheKey, r);
+        if (cacheKey) cache.current.set(cacheKey, { report: r, raw: source });
+        setRaw(source);
         if (settings.senderHistory && src.kind === 'gmail' && !cached) void rememberSender(r);
         setReport(r);
         if (settings.autoDomainAge) void checkDomainAge(r, run);
@@ -484,6 +491,14 @@ export function App() {
                       onHoverFinding={onHoverFinding}
                       onOpenFinding={onOpenFinding}
                       onOpenTab={(t) => openTab(t)}
+                    />
+                  )}
+                  {tab === 'overview' && (
+                    <ReportCard
+                      report={report}
+                      raw={raw}
+                      gmailAccount={currentMessage ? (gmail.state?.accountIndex ?? '0') : null}
+                      onReportInGmail={currentMessage ? () => gmail.reportPhishing(currentMessage) : undefined}
                     />
                   )}
                   {tab === 'sender' && <SenderTab report={report} domainAge={domainAge} intel={intel} onCheckIntel={() => void checkIntel(report, runId.current)} onCheckAge={() => void checkDomainAge(report, runId.current)} onHoverSender={(on) => highlight(on ? { kind: 'sender' } : null)} />}

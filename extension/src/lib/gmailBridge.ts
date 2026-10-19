@@ -9,7 +9,7 @@
  * shows up as an uncaught error on chrome://extensions. Every API access here
  * goes through `alive()` / `safely()`, and invalidation removes all listeners.
  */
-import type { FetchRawResponse, GmailState, PanelRequest, StateChanged } from './messages';
+import type { FetchRawResponse, GmailState, PanelRequest, ReportPhishingResponse, StateChanged } from './messages';
 import { applyHighlight, clearHighlights } from './highlight';
 
 /** The subset of the extension runtime the bridge uses, injectable for tests. */
@@ -28,6 +28,8 @@ export interface BridgeDeps {
   win: Window;
   readState: () => GmailState;
   fetchRaw: (message: GmailState['messages'][number]) => Promise<FetchRawResponse>;
+  /** Opens the mail app's own "report phishing" flow for a message. */
+  reportPhishing?: (message: GmailState['messages'][number]) => Promise<ReportPhishingResponse>;
   /** Called by WXT when it detects invalidation; the bridge also detects it itself. */
   onInvalidated?: (cb: () => void) => void;
   debounceMs?: number;
@@ -112,6 +114,17 @@ export function startBridge(deps: BridgeDeps): { stop: () => void; notify: () =>
     if (req?.type === 'unmask:highlight') {
       respond(sendResponse, { found: applyHighlight(doc, req.message, req.target) });
       return;
+    }
+    if (req?.type === 'unmask:report-phishing') {
+      if (!deps.reportPhishing) {
+        respond(sendResponse, { ok: false, error: 'Not supported here.' } satisfies ReportPhishingResponse);
+        return;
+      }
+      deps.reportPhishing(req.message).then(
+        (r) => respond(sendResponse, r),
+        (err: unknown) => respond(sendResponse, { ok: false, error: err instanceof Error ? err.message : String(err) } satisfies ReportPhishingResponse),
+      );
+      return true; // async response
     }
     if (req?.type === 'unmask:fetch-raw') {
       fetchRaw(req.message).then(
