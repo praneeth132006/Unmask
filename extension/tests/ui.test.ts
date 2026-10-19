@@ -43,3 +43,29 @@ describe('parseReceived', () => {
     expect(hops[1]?.by).toBe('inbox.example.com');
   });
 });
+
+describe('safe view hardening', () => {
+  const att = (mimeType: string) => [{ filename: 'x', mimeType, size: 3, disposition: 'inline', contentId: '<x@y>', related: true, content: new Uint8Array([1, 2, 3]) }];
+
+  it('drops <link> prefetch hints, metas from the email, ping attributes and noscript', () => {
+    const out = buildSafeSrcDoc('<head><link rel="dns-prefetch" href="//t.evil.top"><link rel="stylesheet" href="https://x/a.css"><meta http-equiv="refresh" content="0;url=https://evil.top"></head><body><a href="https://x" ping="https://t.evil.top/p">x</a><noscript><img src="https://t/p"></noscript></body>', { reveal: false, remoteImages: false, attachments: [] });
+    expect(out).not.toContain('rel="dns-prefetch"');
+    expect(out).not.toContain('stylesheet');
+    expect(out).not.toContain('url=https://evil.top');
+    expect(out).not.toContain('ping=');
+    expect(out).not.toContain('<noscript');
+    expect(out).toContain('x-dns-prefetch-control');
+  });
+
+  it('only inlines cid: parts that are images', () => {
+    const html = '<img src="cid:x@y">';
+    expect(buildSafeSrcDoc(html, { reveal: false, remoteImages: false, attachments: att('image/png') })).toContain('data:image/png');
+    expect(buildSafeSrcDoc(html, { reveal: false, remoteImages: false, attachments: att('text/html') })).not.toContain('data:text/html');
+  });
+
+  it('counts remote images in linear time on crafted input', () => {
+    const t = performance.now();
+    expect(countRemoteImages('<img '.repeat(40_000))).toBe(0);
+    expect(performance.now() - t).toBeLessThan(1500);
+  });
+});

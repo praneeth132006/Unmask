@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import type { Report } from '../../core/types';
-import { buildSafeSrcDoc, countRemoteImages } from '../safeHtml';
+import { buildSafeSrcDoc } from '../safeHtml';
 import { Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
@@ -25,7 +25,7 @@ export function BodyTab({ report, initialReveal }: { report: Report; initialReve
   const [reveal, setReveal] = useState(initialReveal ?? hidden.length > 0);
   const [remoteImages, setRemoteImages] = useState(false);
 
-  const remoteCount = useMemo(() => (email.html ? countRemoteImages(email.html) : 0), [email.html]);
+  const remoteCount = report.trackers.remoteImages;
   const srcDoc = useMemo(() => {
     const base = reveal ? (annotatedHtml ?? email.html) : email.html;
     return base ? buildSafeSrcDoc(base, { reveal, remoteImages, attachments: email.attachments }) : '';

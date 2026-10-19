@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import { cors } from 'hono/cors';
 import { traceUrl } from './trace.js';
 
@@ -19,6 +19,18 @@ function rateLimited(ip: string): boolean {
   return entry.count > MAX_PER_WINDOW;
 }
 
+/**
+ * The caller's IP for rate limiting. X-Forwarded-For can be set by anyone, so it
+ * is only trusted behind a proxy that overwrites it: Vercel (x-vercel-forwarded-for
+ * / x-real-ip are set by the platform) or when UNMASK_TRUST_PROXY=1.
+ */
+function clientIp(c: Context): string {
+  if (process.env.VERCEL) return c.req.header('x-vercel-forwarded-for') ?? c.req.header('x-real-ip') ?? 'vercel';
+  if (process.env.UNMASK_TRUST_PROXY === '1') return c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ?? 'proxy';
+  const incoming = (c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined)?.incoming;
+  return incoming?.socket?.remoteAddress ?? 'local';
+}
+
 export const app = new Hono();
 
 // The extension calls from a chrome-extension:// origin. No cookies are involved, so * is fine.
@@ -32,7 +44,7 @@ app.get('/api/trace', async (c) => {
   if (!url) return c.json({ error: 'Missing ?url=' }, 400);
   if (url.length > 4096) return c.json({ error: 'URL too long' }, 400);
 
-  const ip = c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ?? c.req.header('x-real-ip') ?? 'local';
+  const ip = clientIp(c);
   if (rateLimited(ip)) return c.json({ error: 'Too many requests, slow down.' }, 429);
 
   // Nothing is logged or stored: the result goes straight back to the caller.

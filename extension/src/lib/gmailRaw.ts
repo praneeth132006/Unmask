@@ -104,12 +104,17 @@ export function decodeEntities(s: string): string {
  * including in extension content scripts.
  */
 export function parseOriginalPage(html: string, pageUrl: string): OriginalPage {
+  const lower = html.toLowerCase();
   let downloadUrl: string | null = null;
-  for (const m of html.matchAll(/<a\b[^>]*\bhref\s*=\s*("([^"]*)"|'([^']*)')/gi)) {
-    const href = decodeEntities(m[2] ?? m[3] ?? '');
-    if (/disp=comp|view=att/.test(href)) {
+  // Linear tag scanning (no open-ended regexes over the whole page, which can be quadratic).
+  for (let i = lower.indexOf('<a'); i >= 0; i = lower.indexOf('<a', i + 2)) {
+    const end = lower.indexOf('>', i);
+    const tag = html.slice(i, Math.min(end < 0 ? html.length : end + 1, i + 4096));
+    const href = tag.match(/\bhref\s*=\s*(?:"([^"]{0,4000})"|'([^']{0,4000})')/i);
+    const value = decodeEntities(href?.[1] ?? href?.[2] ?? '');
+    if (/disp=comp|view=att/.test(value)) {
       try {
-        downloadUrl = new URL(href, pageUrl).href;
+        downloadUrl = new URL(value, pageUrl).href;
       } catch {
         downloadUrl = null;
       }
@@ -117,15 +122,34 @@ export function parseOriginalPage(html: string, pageUrl: string): OriginalPage {
     }
   }
   const pres: string[] = [];
-  const byId = html.match(/<pre\b[^>]*\bid\s*=\s*["']?raw_message_text["']?[^>]*>([\s\S]*?)<\/pre>/i)?.[1];
-  if (byId !== undefined) pres.push(byId);
-  for (const m of html.matchAll(/<pre\b[^>]*>([\s\S]*?)<\/pre>/gi)) pres.push(m[1] ?? '');
+  for (let i = lower.indexOf('<pre'); i >= 0; ) {
+    const open = lower.indexOf('>', i);
+    if (open < 0) break;
+    const close = lower.indexOf('</pre>', open);
+    const body = html.slice(open + 1, close < 0 ? html.length : close);
+    if (/\bid\s*=\s*["']?raw_message_text/i.test(html.slice(i, open))) pres.unshift(body);
+    else pres.push(body);
+    if (close < 0) break;
+    i = lower.indexOf('<pre', close);
+  }
   const raw =
     pres
-      .map((p) => decodeEntities(p.replace(/<[^>]+>/g, '')))
+      .map((p) => decodeEntities(stripTags(p)))
       .sort((a, b) => b.length - a.length)
       .find(looksLikeRawEmail) ?? null;
   return { raw, downloadUrl };
+}
+
+/** Removes tags in one pass (linear, unlike /<[^>]+>/g on unterminated input). */
+function stripTags(s: string): string {
+  let out = '';
+  let inTag = false;
+  for (const ch of s) {
+    if (ch === '<') inTag = true;
+    else if (ch === '>' && inTag) inTag = false;
+    else if (!inTag) out += ch;
+  }
+  return out;
 }
 
 export function describeResponse(status: number, finalUrl: string, contentType: string, body: string): string {

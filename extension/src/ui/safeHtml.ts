@@ -24,11 +24,13 @@ function toDataUrl(att: ParsedAttachment): string {
 export function buildSafeSrcDoc(html: string, opts: SafeHtmlOptions): string {
   const doc = new DOMParser().parseFromString(html, 'text/html');
 
-  doc.querySelectorAll('script, iframe, frame, frameset, object, embed, applet, base, link[rel="import"], meta[http-equiv]').forEach((n) => n.remove());
+  // <link> covers dns-prefetch/preconnect/prefetch, which CSP doesn't fully stop and which would tell
+  // the sender's servers you opened the email. <meta> covers refresh and any CSP the email brings.
+  doc.querySelectorAll('script, noscript, iframe, frame, frameset, object, embed, applet, base, link, meta, portal').forEach((n) => n.remove());
 
   doc.querySelectorAll('*').forEach((el) => {
     for (const attr of Array.from(el.attributes)) {
-      if (attr.name.startsWith('on') || /^\s*(javascript|vbscript):/i.test(attr.value)) el.removeAttribute(attr.name);
+      if (attr.name.startsWith('on') || attr.name === 'ping' || /^\s*(javascript|vbscript):/i.test(attr.value)) el.removeAttribute(attr.name);
     }
   });
 
@@ -46,7 +48,8 @@ export function buildSafeSrcDoc(html: string, opts: SafeHtmlOptions): string {
   const byCid = new Map(opts.attachments.filter((a) => a.contentId).map((a) => [a.contentId!.replace(/^<|>$/g, ''), a]));
   doc.querySelectorAll('img[src^="cid:" i]').forEach((img) => {
     const att = byCid.get(img.getAttribute('src')!.slice(4));
-    if (att && att.size < 5_000_000) img.setAttribute('src', toDataUrl(att));
+    // Only real images: a cid: part claiming text/html must not become a data: document.
+    if (att && att.size < 5_000_000 && /^image\/(png|jpe?g|gif|webp|bmp|x-icon|vnd\.microsoft\.icon)$/i.test(att.mimeType)) img.setAttribute('src', toDataUrl(att));
   });
 
   const imgSrc = opts.remoteImages ? 'data: https: http:' : 'data:';
@@ -71,7 +74,10 @@ export function buildSafeSrcDoc(html: string, opts: SafeHtmlOptions): string {
   const meta = doc.createElement('meta');
   meta.setAttribute('http-equiv', 'Content-Security-Policy');
   meta.setAttribute('content', csp);
-  head.prepend(meta);
+  const noPrefetch = doc.createElement('meta');
+  noPrefetch.setAttribute('http-equiv', 'x-dns-prefetch-control');
+  noPrefetch.setAttribute('content', 'off');
+  head.prepend(meta, noPrefetch);
   const styleEl = doc.createElement('style');
   styleEl.textContent = style;
   head.append(styleEl);
@@ -79,7 +85,11 @@ export function buildSafeSrcDoc(html: string, opts: SafeHtmlOptions): string {
   return `<!doctype html>${doc.documentElement.outerHTML}`;
 }
 
-/** Count of remote images, so the UI can say what "load images" would fetch. */
+/**
+ * Count of remote images, so the UI can say what "load images" would fetch.
+ * Uses the DOM: a regex like /<img[^>]+src/ takes quadratic time on crafted HTML (ReDoS).
+ */
 export function countRemoteImages(html: string): number {
-  return (html.match(/<img[^>]+src\s*=\s*["']?https?:/gi) ?? []).length;
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return Array.from(doc.querySelectorAll('img[src]')).filter((img) => /^\s*https?:/i.test(img.getAttribute('src') ?? '')).length;
 }

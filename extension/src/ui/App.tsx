@@ -21,6 +21,8 @@ import { Icon } from './components/Icon';
 
 type Source = { kind: 'gmail'; key: string } | { kind: 'file'; name: string };
 
+const MAX_EMAIL_BYTES = 40 * 1024 * 1024;
+
 const TAB_LABEL: Record<TabId, string> = {
   overview: 'Summary',
   sender: 'Sender',
@@ -194,7 +196,11 @@ export function App() {
   };
 
   const openFile = (file: File) => {
-    void analyze(() => file.arrayBuffer(), { kind: 'file', name: file.name });
+    void analyze(async () => {
+      // Very large inputs would freeze the panel; real emails are far smaller (Gmail's limit is 25 MB of attachments).
+      if (file.size > MAX_EMAIL_BYTES) throw new Error(`This file is ${(file.size / 1024 / 1024).toFixed(0)} MB. Unmask analyzes emails up to ${MAX_EMAIL_BYTES / 1024 / 1024} MB.`);
+      return file.arrayBuffer();
+    }, { kind: 'file', name: file.name });
   };
 
   const backToGmail = () => {
@@ -296,7 +302,10 @@ export function App() {
             onCancel={() => setPasting(false)}
             onSubmit={(raw) => {
               setPasting(false);
-              void analyze(async () => raw, { kind: 'file', name: 'Pasted source' });
+              void analyze(async () => {
+                if (raw.length > MAX_EMAIL_BYTES) throw new Error(`The pasted text is too large. Unmask analyzes emails up to ${MAX_EMAIL_BYTES / 1024 / 1024} MB.`);
+                return raw;
+              }, { kind: 'file', name: 'Pasted source' });
             }}
           />
         ) : (

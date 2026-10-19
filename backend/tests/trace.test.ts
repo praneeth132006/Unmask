@@ -85,3 +85,18 @@ describe('http api', () => {
     expect(((await res.json()) as { error: string }).error).toMatch(/private|reserved/);
   });
 });
+
+describe('ReDoS resistance', () => {
+  it('scans pages full of unterminated tags in linear time', () => {
+    const evil = '<meta '.repeat(60_000) + 'location'.repeat(20_000);
+    const t = performance.now();
+    expect(findClientRedirect(evil)).toBeNull();
+    expect(performance.now() - t).toBeLessThan(300);
+  });
+
+  it('still finds meta refresh in either attribute order', () => {
+    expect(findClientRedirect('<meta http-equiv="refresh" content="0; url=https://a.top/x">')?.target).toBe('https://a.top/x');
+    expect(findClientRedirect("<META CONTENT='3;URL=https://b.top/y' HTTP-EQUIV='Refresh'>")?.target).toBe('https://b.top/y');
+    expect(findClientRedirect('<script>window.location.href = "https://c.top/z"</script>')).toEqual({ target: 'https://c.top/z', via: 'javascript' });
+  });
+});

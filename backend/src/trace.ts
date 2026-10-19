@@ -33,15 +33,39 @@ const HEADERS = {
 const safeAgent = new Agent({ connect: { lookup: safeLookup, timeout: 5_000 }, headersTimeout: 8_000, bodyTimeout: 8_000 });
 const testAgent = new Agent({ connect: { timeout: 5_000 } });
 
-/** Finds a client-side redirect in the first part of an HTML page. */
+/**
+ * Opening tags named `name`, each cut at its closing '>' and at most 2 KB long.
+ * Linear in the input: open-ended regexes like /<meta[^>]+…/ take quadratic time
+ * on crafted pages full of unterminated tags (ReDoS).
+ */
+export function tagsNamed(html: string, name: string, max = 200): string[] {
+  const lower = html.toLowerCase();
+  const needle = `<${name}`;
+  const out: string[] = [];
+  for (let i = lower.indexOf(needle); i >= 0 && out.length < max; i = lower.indexOf(needle, i + needle.length)) {
+    const end = lower.indexOf('>', i);
+    out.push(html.slice(i, Math.min(end < 0 ? html.length : end + 1, i + 2048)));
+  }
+  return out;
+}
+
+/** Finds a client-side redirect in the first part of an HTML page, in linear time. */
 export function findClientRedirect(html: string): { target: string; via: 'meta-refresh' | 'javascript' } | null {
-  const meta =
-    html.match(/<meta[^>]+http-equiv\s*=\s*["']?refresh["']?[^>]*content\s*=\s*["']\s*\d*\s*;?\s*url\s*=\s*['"]?([^"'>\s]+)/i) ??
-    html.match(/<meta[^>]+content\s*=\s*["']\s*\d*\s*;?\s*url\s*=\s*['"]?([^"'>\s]+)[^>]*http-equiv\s*=\s*["']?refresh/i);
-  if (meta?.[1]) return { target: decodeEntities(meta[1]), via: 'meta-refresh' };
-  const js = html.match(/(?:window\.|document\.|top\.|self\.)?location(?:\.href)?\s*=\s*["'`]([^"'`]+)["'`]|location\.(?:replace|assign)\(\s*["'`]([^"'`]+)["'`]\s*\)/i);
-  const target = js?.[1] ?? js?.[2];
-  if (target && /^(https?:)?\/\//i.test(target)) return { target: decodeEntities(target), via: 'javascript' };
+  for (const tag of tagsNamed(html, 'meta')) {
+    if (!/http-equiv\s*=\s*["']?refresh/i.test(tag)) continue;
+    const url = tag.match(/content\s*=\s*["']?\s*\d*\s*[;,]?\s*url\s*=\s*['"]?([^"'>\s]{1,2048})/i)?.[1];
+    if (url) return { target: decodeEntities(url), via: 'meta-refresh' };
+  }
+  const lower = html.toLowerCase();
+  let seen = 0;
+  for (let i = lower.indexOf('location'); i >= 0 && seen < 200; i = lower.indexOf('location', i + 8), seen++) {
+    const window = html.slice(i, i + 2100);
+    const m =
+      window.match(/^location(?:\.href)?\s*=\s*["'`]([^"'`]{1,2048})["'`]/i) ??
+      window.match(/^location\.(?:replace|assign)\(\s*["'`]([^"'`]{1,2048})["'`]\s*\)/i);
+    const target = m?.[1];
+    if (target && /^(https?:)?\/\//i.test(target)) return { target: decodeEntities(target), via: 'javascript' };
+  }
   return null;
 }
 

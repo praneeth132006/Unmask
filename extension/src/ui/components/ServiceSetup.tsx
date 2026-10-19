@@ -26,7 +26,7 @@ export const SERVICES: Record<Service, ServiceInfo> = {
     name: 'VirusTotal',
     what: 'Checks files and links against 70+ antivirus engines. Free, and Unmask only sends a file’s fingerprint unless you choose to upload it.',
     field: 'vtApiKey',
-    placeholder: 'Paste your 64-character VirusTotal key',
+    placeholder: 'Paste your VirusTotal key',
     steps: [
       <>{ext('https://www.virustotal.com/gui/join-us', 'Create a free VirusTotal account')} (or sign in).</>,
       <>Open {ext('https://www.virustotal.com/gui/my-apikey', 'your API key page')}. It is also under your profile picture → <em>API key</em>.</>,
@@ -38,7 +38,7 @@ export const SERVICES: Record<Service, ServiceInfo> = {
     name: 'urlscan.io',
     what: 'Opens a link in urlscan.io’s own sandbox browser (never yours) and shows a screenshot of where it really lands.',
     field: 'urlscanApiKey',
-    placeholder: 'Paste your urlscan.io key (36 characters)',
+    placeholder: 'Paste your urlscan.io key',
     steps: [
       <>{ext('https://urlscan.io/user/signup', 'Create a free urlscan.io account')} (or sign in).</>,
       <>Open {ext('https://urlscan.io/user/profile/', 'Settings & API')} and click <em>New API key</em>.</>,
