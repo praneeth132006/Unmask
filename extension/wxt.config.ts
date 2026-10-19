@@ -6,6 +6,8 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   vite: () => ({
     plugins: [tailwindcss()],
+    // tldts bundles the full public-suffix list; a large single chunk is fine for an extension page.
+    build: { chunkSizeWarningLimit: 1500 },
   }),
   manifest: {
     name: 'Unmask — Phishing Email Inspector',
