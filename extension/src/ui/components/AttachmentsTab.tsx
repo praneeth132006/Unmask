@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import type { AttachmentInfo, Finding, Report } from '../../core/types';
+import { useMemo, useState } from 'react';
+import type { AttachmentInfo, Finding, LinkInfo, ParsedAttachment, Report } from '../../core/types';
+import { buildSafeSrcDoc } from '../safeHtml';
 import type { Settings } from '../../lib/settings';
 import { lookupFileHash, uploadFile, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { Button, Card, CopyButton, ErrorText, Mono, Pill, Spinner, formatBytes, type Async } from './ui';
@@ -19,8 +20,70 @@ function VtSummary({ result }: { result: VtResult }) {
   );
 }
 
+const KIND_LABEL = { pdf: 'Links in this PDF', office: 'Links in this document', html: 'Links and form targets in this file', archive: 'Files in this archive' } as const;
+
+/** What Unmask found inside the file, without opening it. */
+function Contents({ att, links }: { att: AttachmentInfo; links: LinkInfo[] }) {
+  const c = att.contents;
+  if (!c) return null;
+  if (c.kind === 'archive') {
+    if (!c.files.length) return null;
+    return (
+      <details className="mt-2.5 rounded-lg bg-[var(--surface-2)] px-2.5 py-2 text-xs" open={c.files.length <= 8}>
+        <summary className="cursor-pointer select-none font-medium text-[var(--text)]">
+          {KIND_LABEL.archive} ({c.files.length})
+        </summary>
+        <ul className="mt-1.5 space-y-0.5">
+          {c.files.map((file, i) => (
+            <li key={i} className="flex justify-between gap-2">
+              <Mono>{file.name}</Mono>
+              <span className="shrink-0 text-[11px] text-[var(--text-3)]">
+                {file.encrypted ? 'encrypted · ' : ''}
+                {formatBytes(file.size)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </details>
+    );
+  }
+  return (
+    <div className="mt-2.5 rounded-lg bg-[var(--surface-2)] px-2.5 py-2 text-xs">
+      <div className="font-medium text-[var(--text)]">
+        {links.length ? `${KIND_LABEL[c.kind]} (${links.length})` : c.kind === 'html' ? 'No outside links or form targets found' : 'No links found inside'}
+      </div>
+      {c.macros && <div className="mt-1 text-[var(--bad)]">Has macros. Never click “Enable content”.</div>}
+      {links.length > 0 && (
+        <ul className="mt-1.5 space-y-1">
+          {links.slice(0, 12).map((l, i) => (
+            <li key={i} className="flex items-start gap-1.5">
+              {l.flags[0] && <Pill severity={l.flags[0].severity}>{l.flags[0].severity}</Pill>}
+              <Mono>{l.resolved}</Mono>
+            </li>
+          ))}
+          {links.length > 12 && <li className="text-[11px] text-[var(--text-3)]">+{links.length - 12} more on the Links tab</li>}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** The HTML attachment rendered like the Body tab: sandboxed, no scripts, no network, links disabled. */
+function HtmlPreview({ file, all }: { file: ParsedAttachment; all: ParsedAttachment[] }) {
+  const srcDoc = useMemo(() => buildSafeSrcDoc(new TextDecoder().decode(file.content.subarray(0, 4_000_000)), { reveal: false, remoteImages: false, attachments: all }), [file, all]);
+  return (
+    <div className="mt-2.5">
+      <iframe title={`Safe preview of ${file.filename}`} sandbox="" referrerPolicy="no-referrer" srcDoc={srcDoc} className="h-[360px] w-full resize-y rounded-lg border border-[var(--border)] bg-white" />
+      <p className="mt-1 text-[11px] text-[var(--text-3)]">Scripts, forms and links are switched off, and nothing loads from the internet.</p>
+    </div>
+  );
+}
+
 function AttachmentCard({
   att,
+  file,
+  all,
+  links,
   bytes,
   settings,
   onSettingsChange,
@@ -29,6 +92,9 @@ function AttachmentCard({
   onHover,
 }: {
   att: AttachmentInfo;
+  file: ParsedAttachment;
+  all: ParsedAttachment[];
+  links: LinkInfo[];
   bytes: Uint8Array;
   settings: Settings;
   onSettingsChange: (s: Settings) => void;
@@ -39,6 +105,7 @@ function AttachmentCard({
   const [vt, setVt] = useState<Async<VtResult>>({ status: 'idle' });
   const [confirmUpload, setConfirmUpload] = useState(false);
   const [setup, setSetup] = useState(false);
+  const [preview, setPreview] = useState(false);
   const risky = att.flags.some((f) => f.severity === 'critical' || f.severity === 'high');
 
   const report = (value: VtResult) => {
@@ -98,7 +165,15 @@ function AttachmentCard({
         </ul>
       )}
 
+      <Contents att={att} links={links} />
+      {preview && <HtmlPreview file={file} all={all} />}
+
       <div className="mt-3 flex flex-wrap gap-1.5">
+        {att.contents?.kind === 'html' && (
+          <Button onClick={() => setPreview((p) => !p)}>
+            <Icon name="eye" className="h-3.5 w-3.5" /> {preview ? 'Hide preview' : 'Safe preview'}
+          </Button>
+        )}
         <Button onClick={() => void lookup()} disabled={vt.status === 'loading'} title="Sends only the file's fingerprint (hash), never the file">
           {vt.status === 'loading' ? <Spinner /> : <Icon name="shield" className="h-3.5 w-3.5" />} Check on VirusTotal
         </Button>
@@ -169,14 +244,18 @@ export function AttachmentsTab({
   onHoverAttachment?: (att: AttachmentInfo | null) => void;
 }) {
   if (!report.attachments.length) return <p className="text-sm text-[var(--text-2)]">This email has no attachments.</p>;
-  const files = report.attachments.map((att, i) => ({ att, bytes: report.email.attachments[i]!.content })).sort((a, b) => Number(a.att.inline) - Number(b.att.inline));
+  const all = report.email.attachments;
+  const files = report.attachments.map((att, i) => ({ att, file: all[i]!, bytes: all[i]!.content })).sort((a, b) => Number(a.att.inline) - Number(b.att.inline));
   return (
     <div className="space-y-2.5">
-      <p className="text-xs text-[var(--text-2)]">Don’t open attachments you weren’t expecting. Checking on VirusTotal sends only the file’s fingerprint, never its contents.</p>
-      {files.map(({ att, bytes }) => (
+      <p className="text-xs text-[var(--text-2)]">Don’t open attachments you weren’t expecting. Unmask reads inside PDFs, Office files, archives and HTML files without opening them. Checking on VirusTotal sends only the file’s fingerprint.</p>
+      {files.map(({ att, file, bytes }) => (
         <AttachmentCard
           key={att.sha256 + att.filename}
           att={att}
+          file={file}
+          all={all}
+          links={report.links.filter((l) => l.source === 'attachment' && l.origin === att.filename)}
           bytes={bytes}
           settings={settings}
           onSettingsChange={onSettingsChange}

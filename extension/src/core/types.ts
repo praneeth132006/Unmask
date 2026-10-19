@@ -90,9 +90,14 @@ export interface LinkInfo {
   /** Registrable domain (eTLD+1) of the resolved URL. */
   domain: string;
   scheme: string;
-  source: 'html' | 'text';
+  source: LinkSource;
+  /** Where a link outside the body came from, e.g. "invoice.pdf" or "QR code in scan.png". */
+  origin?: string;
   flags: LinkFlag[];
 }
+
+/** html/text: the email body. attachment: inside a PDF, Office file or HTML file. qr: decoded from a QR code. */
+export type LinkSource = 'html' | 'text' | 'attachment' | 'qr';
 
 export interface LinkFlag {
   id: string;
@@ -108,6 +113,17 @@ export interface AttachmentInfo {
   extension: string;
   inline: boolean;
   flags: LinkFlag[];
+  /** What Unmask found inside the file, for the types it can read. */
+  contents?: AttachmentContents;
+}
+
+export interface AttachmentContents {
+  kind: 'pdf' | 'office' | 'archive' | 'html';
+  /** Links found inside the file. */
+  links: string[];
+  /** Files inside an archive. */
+  files: { name: string; size: number; encrypted: boolean }[];
+  macros: boolean;
 }
 
 export interface HiddenSnippet {

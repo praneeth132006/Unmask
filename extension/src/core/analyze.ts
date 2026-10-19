@@ -25,9 +25,9 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const { auth, findings: authFindings } = analyzeAuth(email);
   const senderFindings = analyzeSender(email);
   const content = analyzeContent(email);
-  const { links, findings: linkFindings } = analyzeLinks(content.links, email.from?.domain ?? '');
-  const { attachments, findings: attachmentFindings } = await analyzeAttachments(email.attachments);
-  const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links);
+  const { attachments, findings: attachmentFindings, links: fileLinks } = await analyzeAttachments(email.attachments);
+  const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks], email.from?.domain ?? '');
+  const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
   const pastFindings = opts.history ? historyFindings(email, opts.history) : [];
 

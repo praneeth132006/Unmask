@@ -136,8 +136,20 @@ function LinkCard({
       onMouseEnter={() => onHover?.(link)}
       onMouseLeave={() => onHover?.(null)}
     >
-      <Label>Shows</Label>
-      <div className="mt-0.5 break-words text-[13px] font-medium">{link.text || <span className="italic text-[var(--text-3)]">(no text: image or empty link)</span>}</div>
+      {link.origin ? (
+        <>
+          <Label>Found in</Label>
+          <div className="mt-0.5 break-words text-[13px] font-medium">
+            {link.source === 'qr' ? <Icon name="qr" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" /> : <Icon name="file" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" />}
+            {link.origin}
+          </div>
+        </>
+      ) : (
+        <>
+          <Label>Shows</Label>
+          <div className="mt-0.5 break-words text-[13px] font-medium">{link.text || <span className="italic text-[var(--text-3)]">(no text: image or empty link)</span>}</div>
+        </>
+      )}
 
       <div className="mt-2.5 flex items-center justify-between">
         <Label>Really goes to</Label>

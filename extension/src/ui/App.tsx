@@ -165,7 +165,9 @@ export function App() {
   useEffect(() => () => highlight(null), [highlight, tab, report?.email.messageId]);
 
   const onHoverFinding = (f: Finding | null) => highlight(f && report ? toHighlight(f.target, report) : null);
-  const onHoverLink = (l: LinkInfo | null) => highlight(l ? { kind: 'links', hrefs: [l.href] } : null);
+  // Links found inside a file or QR code have no element in the body: outline the attachment instead.
+  const onHoverLink = (l: LinkInfo | null) =>
+    highlight(!l ? null : l.origin ? { kind: 'attachments', names: [l.origin.replace(/^QR code in /, '')] } : { kind: 'links', hrefs: [l.href] });
   /** A URL from the plain-text part: outline every HTML link with the same address or the same real destination. */
   const onHoverUrl = (url: string | null) => {
     if (!url || !report) return highlight(null);

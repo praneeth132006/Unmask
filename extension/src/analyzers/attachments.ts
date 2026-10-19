@@ -1,4 +1,6 @@
 import type { AttachmentInfo, Finding, LinkFlag, ParsedAttachment, Severity } from '../core/types';
+import type { RawLink } from './content';
+import { inspectContents } from './documents';
 
 const EXECUTABLE = new Set(['exe', 'scr', 'com', 'pif', 'bat', 'cmd', 'js', 'jse', 'vbs', 'vbe', 'wsf', 'wsh', 'hta', 'ps1', 'psm1', 'msi', 'msp', 'jar', 'lnk', 'cpl', 'reg', 'appx', 'msix', 'apk', 'dll', 'app', 'command', 'scf', 'url', 'inf', 'xll', 'chm']);
 const DISK_IMAGE = new Set(['iso', 'img', 'vhd', 'vhdx', 'dmg']);
@@ -77,13 +79,6 @@ export async function inspectAttachment(a: ParsedAttachment): Promise<Attachment
     flags.push(f('encrypted-archive', 'high', 'Password-protected archive: hides its contents from virus scanners'));
   }
 
-  if (ext === 'pdf' || a.mimeType === 'application/pdf') {
-    const body = latin1(a.content);
-    const active = ['/JavaScript', '/JS ', '/Launch', '/EmbeddedFile', '/OpenAction'].filter((k) => body.includes(k));
-    if (active.includes('/JavaScript') || active.includes('/Launch') || active.includes('/EmbeddedFile')) {
-      flags.push(f('pdf-active', 'high', `PDF contains active content (${active.join(', ')})`));
-    }
-  }
 
   if (HTML_LIKE.has(ext) || a.mimeType.includes('html') || a.mimeType.includes('svg')) {
     const body = latin1(a.content).toLowerCase();
@@ -95,6 +90,13 @@ export async function inspectAttachment(a: ParsedAttachment): Promise<Attachment
     }
   }
 
+  // Inline images are body decoration; everything else gets looked inside.
+  const deep = inline ? null : await inspectContents(a.content, ext, a.mimeType);
+  if (deep) for (const fl of deep.flags) if (!flags.some((x) => x.id === fl.id)) flags.push(fl);
+  if (deep?.contents.kind === 'archive' && deep.contents.files.some((x) => x.encrypted) && !flags.some((x) => x.id === 'encrypted-archive')) {
+    flags.push(f('encrypted-archive', 'high', 'Password-protected archive: hides its contents from virus scanners'));
+  }
+
   return {
     filename: a.filename,
     mimeType: a.mimeType,
@@ -103,13 +105,16 @@ export async function inspectAttachment(a: ParsedAttachment): Promise<Attachment
     extension: ext,
     inline,
     flags,
+    contents: deep?.contents,
   };
 }
 
 const POINTS: Record<Severity, number> = { good: 0, info: 0, low: 4, medium: 10, high: 22, critical: 35 };
 
-export async function analyzeAttachments(list: ParsedAttachment[]): Promise<{ attachments: AttachmentInfo[]; findings: Finding[] }> {
+export async function analyzeAttachments(list: ParsedAttachment[]): Promise<{ attachments: AttachmentInfo[]; findings: Finding[]; links: RawLink[] }> {
   const attachments = await Promise.all(list.map(inspectAttachment));
+  // Links inside files go through the same checks as links in the body.
+  const links: RawLink[] = attachments.flatMap((att) => (att.contents?.links ?? []).map((href) => ({ href, text: '', source: 'attachment' as const, origin: att.filename })));
   const findings: Finding[] = [];
   for (const att of attachments) {
     if (!att.flags.length) continue;
@@ -126,5 +131,5 @@ export async function analyzeAttachments(list: ParsedAttachment[]): Promise<{ at
       detail: att.flags.map((fl) => fl.label).join('; '),
     });
   }
-  return { attachments, findings };
+  return { attachments, findings, links };
 }

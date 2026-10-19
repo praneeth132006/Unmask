@@ -139,7 +139,7 @@ export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
 
   if (scheme === 'javascript' || scheme === 'data' || scheme === 'vbscript') {
     flags.push(flag('dangerous-scheme', `${scheme}: link`));
-    return { href: raw.href, text: raw.text, resolved: raw.href, unwrappedVia: [], host: '', domain: '', scheme, source: raw.source, flags };
+    return { href: raw.href, text: raw.text, resolved: raw.href, unwrappedVia: [], host: '', domain: '', scheme, source: raw.source, origin: raw.origin, flags };
   }
 
   const { url: resolved, via } = unwrapUrl(raw.href);
@@ -177,7 +177,7 @@ export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
   }
 
   flags.sort((a, b) => SEVERITY_ORDER.indexOf(b.severity) - SEVERITY_ORDER.indexOf(a.severity));
-  return { href: raw.href, text: raw.text, resolved, unwrappedVia: via, host, domain, scheme, source: raw.source, flags };
+  return { href: raw.href, text: raw.text, resolved, unwrappedVia: via, host, domain, scheme, source: raw.source, origin: raw.origin, flags };
 }
 
 /** Inspects every link and aggregates flags into one finding per flag type. */

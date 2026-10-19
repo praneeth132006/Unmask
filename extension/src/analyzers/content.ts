@@ -1,9 +1,10 @@
-import type { Finding, HiddenSnippet, ParsedEmail } from '../core/types';
+import type { Finding, HiddenSnippet, LinkSource, ParsedEmail } from '../core/types';
 
 export interface RawLink {
   href: string;
   text: string;
-  source: 'html' | 'text';
+  source: LinkSource;
+  origin?: string;
 }
 
 export interface ContentResult {
