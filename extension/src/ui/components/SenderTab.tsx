@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { AuthResult, Report } from '../../core/types';
 import type { DomainAge } from '../../integrations/rdap';
+import type { DomainIntel } from '../../integrations/domainIntel';
 import { registrableDomain } from '../../lib/domain';
 import { Button, Card, ErrorText, Mono, Pill, SectionTitle, Spinner, type Async } from './ui';
 
@@ -34,11 +35,15 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 export function SenderTab({
   report,
   domainAge,
+  intel,
+  onCheckIntel,
   onCheckAge,
   onHoverSender,
 }: {
   report: Report;
   domainAge: Async<DomainAge> | undefined;
+  intel?: Async<DomainIntel>;
+  onCheckIntel?: () => void;
   onCheckAge: () => void;
   /** Outline the sender in the Gmail message while hovered. */
   onHoverSender?: (on: boolean) => void;
@@ -88,6 +93,52 @@ export function SenderTab({
             </Button>
           )}
         </Row>
+        <Row label="First TLS cert">
+          {intel?.status === 'loading' && (
+            <span className="inline-flex items-center gap-1.5 text-[var(--text-3)]">
+              <Spinner /> Checking certificate logs…
+            </span>
+          )}
+          {intel?.status === 'done' && intel.value.cert && (
+            intel.value.cert.firstSeen ? (
+              <span className={intel.value.cert.ageDays! < 30 ? 'font-medium text-[var(--bad)]' : ''}>
+                {intel.value.cert.ageDays! < 365 ? `${intel.value.cert.ageDays} days ago` : `${(intel.value.cert.ageDays! / 365).toFixed(1)} years ago`}{' '}
+                <span className="font-normal text-[var(--text-3)]">({intel.value.cert.firstSeen.slice(0, 10)})</span>
+              </span>
+            ) : (
+              <span className="text-[var(--text-3)]">No certificate ever issued</span>
+            )
+          )}
+          {intel?.status === 'done' && !intel.value.cert && (
+            intel.value.mail ? (
+              <span className="text-[var(--text-3)]">
+                Certificate logs didn’t answer.{' '}
+                {onCheckIntel && (
+                  <button type="button" className="font-medium text-[var(--accent)] underline" onClick={onCheckIntel}>
+                    Try again
+                  </button>
+                )}
+              </span>
+            ) : (
+              <span className="text-[var(--text-3)]">Not checked for well-known providers</span>
+            )
+          )}
+          {intel?.status === 'error' && <ErrorText>{intel.error}</ErrorText>}
+          {(!intel || intel.status === 'idle') && fromOrg && onCheckIntel && (
+            <Button className="!py-0.5" onClick={onCheckIntel}>
+              Check domain records
+            </Button>
+          )}
+        </Row>
+        {intel?.status === 'done' && intel.value.mail && (
+          <Row label="Mail records">
+            <span className="flex flex-wrap gap-1">
+              <Pill severity={intel.value.mail.mx.length ? 'good' : 'medium'}>MX {intel.value.mail.mx.length ? '✓' : 'missing'}</Pill>
+              <Pill severity={intel.value.mail.spf ? 'good' : 'low'}>SPF {intel.value.mail.spf ? '✓' : 'missing'}</Pill>
+              <Pill severity={intel.value.mail.dmarc ? 'good' : 'low'}>DMARC {intel.value.mail.dmarc ? '✓' : 'missing'}</Pill>
+            </span>
+          </Row>
+        )}
       </Card>
 
       {senderFindings.length > 0 && (

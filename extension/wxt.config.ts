@@ -29,6 +29,9 @@ export default defineConfig({
       'https://*.googleusercontent.com/*',
       'https://www.virustotal.com/*',
       'https://urlscan.io/*',
+      // Domain intelligence: certificate history and mail DNS records (only domain names are sent).
+      'https://crt.sh/*',
+      'https://dns.google/*',
       ...(process.env.UNMASK_E2E ? ['*://*.unmask-e2e.test/*'] : []),
     ],
     action: {

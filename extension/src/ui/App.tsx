@@ -2,7 +2,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEve
 import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
 import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/types';
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
-import { registrableDomain } from '../lib/domain';
+import { certFindings, lookupCerts, lookupMailRecords, mailRecordFindings, type DomainIntel } from '../integrations/domainIntel';
+import { SEVERITY_RANK } from '../core/score';
+import { registrableDomain, sameOrg } from '../lib/domain';
 import { loadHistory, rememberSender } from '../lib/historyStore';
 import { decodeImageInBrowser } from '../lib/imageDecode';
 import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
@@ -48,6 +50,7 @@ export function App() {
   const [tab, setTab] = useState<TabId>('overview');
   const [focus, setFocus] = useState<Focus | null>(null);
   const [domainAge, setDomainAge] = useState<Async<DomainAge>>({ status: 'idle' });
+  const [intel, setIntel] = useState<Async<DomainIntel>>({ status: 'idle' });
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [pasting, setPasting] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -92,12 +95,45 @@ export function App() {
     [addFindings],
   );
 
+  /** Certificate history and mail records for the sender's domain and the riskiest link domains. */
+  const checkIntel = useCallback(
+    async (r: Report, run: number) => {
+      const sender = r.email.from ? registrableDomain(r.email.from.domain) : '';
+      const senderKnown = !sender || FREE_MAIL_DOMAINS.has(sender) || Boolean(brandOwningDomain(sender));
+      const worst = (l: LinkInfo) => Math.max(0, ...l.flags.map((f) => SEVERITY_RANK[f.severity]));
+      const linkDomains = [...new Set(
+        [...r.links]
+          .filter((l) => l.domain && /^https?:/i.test(l.resolved) && !sameOrg(l.domain, sender) && !brandOwningDomain(l.domain))
+          .sort((a, b) => worst(b) - worst(a))
+          .map((l) => l.domain),
+      )].slice(0, 3);
+      if (senderKnown && !linkDomains.length) return;
+      setIntel({ status: 'loading' });
+      const value: DomainIntel = {};
+      const found: Finding[] = [];
+      const jobs: Promise<void>[] = [];
+      if (!senderKnown) {
+        jobs.push(lookupCerts(sender).then((c) => { value.cert = c; found.push(...certFindings(c, 'sender')); }));
+        jobs.push(lookupMailRecords(sender).then((m) => { value.mail = m; found.push(...mailRecordFindings(m)); }));
+      }
+      for (const d of linkDomains) jobs.push(lookupCerts(d).then((c) => void found.push(...certFindings(c, 'link'))));
+      const results = await Promise.allSettled(jobs);
+      if (run !== runId.current) return;
+      const failed = results.filter((x): x is PromiseRejectedResult => x.status === 'rejected');
+      if (failed.length === results.length) setIntel({ status: 'error', error: failed[0]!.reason instanceof Error ? failed[0]!.reason.message : String(failed[0]!.reason) });
+      else setIntel({ status: 'done', value });
+      addFindings(run, found);
+    },
+    [addFindings],
+  );
+
   const analyze = useCallback(
     async (load: () => Promise<string | ArrayBuffer>, src: Source, cacheKey?: string) => {
       const run = ++runId.current;
       setSource(src);
       setError(null);
       setDomainAge({ status: 'idle' });
+      setIntel({ status: 'idle' });
       setTab('overview');
       setFocus(null);
       const cached = cacheKey ? cache.current.get(cacheKey) : undefined;
@@ -116,6 +152,7 @@ export function App() {
         if (settings.senderHistory && src.kind === 'gmail' && !cached) void rememberSender(r);
         setReport(r);
         if (settings.autoDomainAge) void checkDomainAge(r, run);
+        if (settings.domainIntel) void checkIntel(r, run);
       } catch (e) {
         if (run === runId.current) {
           setError({ message: e instanceof Error ? e.message : String(e), details: e instanceof GmailFetchError ? e.details : [] });
@@ -124,7 +161,7 @@ export function App() {
         if (run === runId.current) setLoading(false);
       }
     },
-    [settings.autoDomainAge, settings.senderHistory, checkDomainAge],
+    [settings.autoDomainAge, settings.senderHistory, settings.domainIntel, checkDomainAge, checkIntel],
   );
 
   // Follow the email that is open in Gmail.
@@ -449,7 +486,7 @@ export function App() {
                       onOpenTab={(t) => openTab(t)}
                     />
                   )}
-                  {tab === 'sender' && <SenderTab report={report} domainAge={domainAge} onCheckAge={() => void checkDomainAge(report, runId.current)} onHoverSender={(on) => highlight(on ? { kind: 'sender' } : null)} />}
+                  {tab === 'sender' && <SenderTab report={report} domainAge={domainAge} intel={intel} onCheckIntel={() => void checkIntel(report, runId.current)} onCheckAge={() => void checkDomainAge(report, runId.current)} onHoverSender={(on) => highlight(on ? { kind: 'sender' } : null)} />}
                   {tab === 'links' && (
                     <LinksTab
                       report={report}

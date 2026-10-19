@@ -179,6 +179,9 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         <Toggle checked={settings.autoDomainAge} onChange={(v) => void update({ autoDomainAge: v })} title="Check how old the sender’s domain is">
           New domains are a strong phishing sign. Sends only the domain name (for example example.com) to rdap.org, the public domain registry lookup.
         </Toggle>
+        <Toggle checked={settings.domainIntel} onChange={(v) => void update({ domainIntel: v })} title="Check certificate history and mail records">
+          Spots brand-new TLS certificates and domains with no mail server. Sends only domain names to crt.sh (Certificate Transparency) and dns.google (public DNS).
+        </Toggle>
       </Card>
 
       <SectionTitle

@@ -17,6 +17,8 @@ export interface Settings {
   traceMode: 'builtin' | 'server';
   /** Remember who emails you (on this device only) for "first contact" warnings. */
   senderHistory: boolean;
+  /** Look up certificate history (crt.sh) and mail DNS records (dns.google) for the sender and link domains. */
+  domainIntel: boolean;
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -30,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   traceMode: 'builtin',
   senderHistory: true,
+  domainIntel: true,
 };
 
 const THEME_CACHE = 'unmask:theme';
