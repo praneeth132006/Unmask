@@ -22,21 +22,33 @@ export default defineContentScript({
   main() {
     let lastSignature = '';
 
+    let observer: MutationObserver | undefined;
     const notify = () => {
+      // After the extension is reloaded or updated, this old copy of the script is orphaned: stop quietly.
+      if (!browser.runtime?.id) {
+        observer?.disconnect();
+        window.removeEventListener('hashchange', notify);
+        return;
+      }
       const state = readState();
       const signature = JSON.stringify(state);
       if (signature === lastSignature) return;
       lastSignature = signature;
       const msg: StateChanged = { type: 'unmask:state-changed', state };
       // The side panel may not be open; that's fine.
-      browser.runtime.sendMessage(msg).catch(() => {});
+      try {
+        browser.runtime.sendMessage(msg).catch(() => {});
+      } catch {
+        observer?.disconnect();
+      }
     };
 
     let timer: ReturnType<typeof setTimeout> | undefined;
-    new MutationObserver(() => {
+    observer = new MutationObserver(() => {
       clearTimeout(timer);
       timer = setTimeout(notify, 400);
-    }).observe(document.body, { childList: true, subtree: true });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
     window.addEventListener('hashchange', notify);
     notify();
 

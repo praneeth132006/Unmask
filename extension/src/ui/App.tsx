@@ -103,8 +103,11 @@ export function App() {
     const key = selectedKey && keys.includes(selectedKey) ? selectedKey : (keys[keys.length - 1] ?? null);
     if (!key) {
       if (source?.kind === 'gmail') {
+        runId.current++; // drop any analysis still in flight for the email that was closed
         setSource(null);
         setReport(null);
+        setError(null);
+        setLoading(false);
       }
       return;
     }
