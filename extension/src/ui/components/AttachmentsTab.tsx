@@ -178,8 +178,8 @@ function AttachmentCard({
           {vt.status === 'loading' ? <Spinner /> : <Icon name="shield" className="h-3.5 w-3.5" />} Check on VirusTotal
         </Button>
         {(notFound || vt.status === 'error') && settings.vtApiKey && (
-          <Button variant="ghost" onClick={() => setConfirmUpload(true)}>
-            Upload file…
+          <Button onClick={() => setConfirmUpload(true)}>
+            <Icon name="upload" className="h-3.5 w-3.5" /> Send file to VirusTotal
           </Button>
         )}
       </div>
@@ -201,11 +201,14 @@ function AttachmentCard({
 
       {confirmUpload && (
         <div className="mt-2.5 rounded-lg border border-[var(--warn)] bg-[var(--warn-soft)] p-2.5 text-xs text-[var(--text)]">
-          <p className="font-semibold">Upload {att.filename} to VirusTotal?</p>
-          <p className="mt-1 text-[var(--text-2)]">Files uploaded to VirusTotal can be downloaded by its paying customers. Do not upload anything confidential such as invoices, contracts or personal documents.</p>
+          <p className="font-semibold">Send {att.filename} to VirusTotal?</p>
+          <p className="mt-1 text-[var(--text-2)]">Unmask sends it straight from this email, so you don’t need to download it. 70+ antivirus engines then scan it.</p>
+          <p className="mt-1 text-[var(--text-2)]">
+            <strong className="text-[var(--text)]">Only for files you don’t mind sharing:</strong> VirusTotal keeps uploaded files and shares them with security companies. Don’t send invoices, tax forms, contracts or ID documents that contain personal details.
+          </p>
           <div className="mt-2 flex gap-1.5">
             <Button variant="danger" onClick={() => void upload()}>
-              Upload anyway
+              Send to VirusTotal
             </Button>
             <Button variant="ghost" onClick={() => setConfirmUpload(false)}>
               Cancel

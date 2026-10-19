@@ -81,3 +81,23 @@ describe('virustotal scan now', () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe('VirusTotal upload', () => {
+  it('sends the attachment bytes straight from the email and returns the scan', async () => {
+    const { uploadFile } = await import('../src/integrations/virustotal');
+    const sent: { url: string; body: unknown }[] = [];
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      sent.push({ url: String(input), body: init?.body });
+      if (String(input).endsWith('/files')) return new Response(JSON.stringify({ data: { id: 'an-1' } }), { status: 200 });
+      return new Response(JSON.stringify({ data: { attributes: { status: 'completed', stats: { malicious: 5, suspicious: 0, harmless: 0, undetected: 60 } } } }), { status: 200 });
+    });
+    const bytes = new TextEncoder().encode('%PDF-1.7 test');
+    const r = await uploadFile('key', bytes, 'challan.pdf', 'abc', undefined, 1);
+    fetchMock.mockRestore();
+    expect(sent[0]!.url).toBe('https://www.virustotal.com/api/v3/files');
+    const file = (sent[0]!.body as FormData).get('file') as File;
+    expect(file.name).toBe('challan.pdf');
+    expect(new Uint8Array(await file.arrayBuffer())).toEqual(bytes);
+    expect(r).toMatchObject({ found: true, stats: { malicious: 5 }, permalink: 'https://www.virustotal.com/gui/file/abc' });
+  });
+});

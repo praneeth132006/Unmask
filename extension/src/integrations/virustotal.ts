@@ -103,6 +103,7 @@ export async function uploadFile(
   filename: string,
   sha256: string,
   onProgress?: (message: string) => void,
+  pollMs = 15_000,
 ): Promise<VtResult> {
   let uploadUrl = `${API}/files`;
   if (bytes.byteLength > 32 * 1024 * 1024) {
@@ -111,8 +112,9 @@ export async function uploadFile(
     uploadUrl = ((await r.json()) as { data: string }).data;
   }
   const form = new FormData();
-  form.append('file', new Blob([bytes as BlobPart]), filename);
-  onProgress?.('Uploading…');
+  // The bytes come straight from the email Unmask already read: nothing is saved to disk first.
+  form.append('file', new File([bytes as BlobPart], filename, { type: 'application/octet-stream' }));
+  onProgress?.(`Sending ${filename} to VirusTotal…`);
   const res = await fetch(uploadUrl, { method: 'POST', headers: headers(apiKey), body: form });
   if (!res.ok) throw await vtError(res);
   const analysisId = ((await res.json()) as { data?: { id?: string } }).data?.id;
@@ -120,8 +122,8 @@ export async function uploadFile(
 
   // Free keys allow 4 requests/minute, so poll gently.
   for (let attempt = 0; attempt < 16; attempt++) {
-    onProgress?.(`Scanning… (${attempt * 15}s)`);
-    await sleep(15_000);
+    onProgress?.(`Sent. 70+ security vendors are scanning it, usually 1–2 minutes… (${Math.round((attempt * pollMs) / 1000)}s)`);
+    await sleep(pollMs);
     const r = await fetch(`${API}/analyses/${analysisId}`, { headers: headers(apiKey) });
     if (r.status === 429) continue;
     if (!r.ok) throw await vtError(r);
