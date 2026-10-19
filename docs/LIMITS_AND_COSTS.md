@@ -10,7 +10,8 @@ _Prices and limits checked on 19 October 2026 against each provider's official p
 | **Domain age** (rdap.org) | Free, no account | No published quota; 1 lookup per email you open | Rarely, a registry may refuse a lookup; Unmask shows "RDAP returned HTTP 429" and carries on |
 | **VirusTotal** (files and links) | Free account | **4 lookups per minute, 500 per day** (about 15,500 per month) | "VirusTotal rate limit reached"; try again in a minute, or after 00:00 UTC for the daily limit. No charge. |
 | **urlscan.io** (sandbox scans) | Free account | **5,000 public, 1,000 unlisted and 50 private scans per day**, 10,000 result lookups per day | "urlscan.io rate limit reached"; try again later. No charge. |
-| **Redirect-trace server** (optional, self-hosted) | Free on your computer; free on Vercel Hobby | Vercel Hobby: 1M requests and 4 hours of active CPU per month | Hobby projects stop at the cap. They can't buy more, so there's no surprise bill. |
+| **Redirect tracing** (built in) | Free | Unlimited (it runs in your browser) | — |
+| **Your own trace server** (optional) | Free on your computer; free on Vercel Hobby | Vercel Hobby: 1M requests and 4 hours of active CPU per month | Hobby projects stop at the cap. They can't buy more, so there's no surprise bill. |
 
 ## How much will I actually use?
 
@@ -56,9 +57,9 @@ Official source: [urlscan.io pricing](https://urlscan.io/pricing/).
 
 rdap.org is a free public service that forwards each lookup to the official registry for that domain ending (for example Verisign for `.com`). There is no account and no published quota. Unmask makes **one lookup per email**, only for the sender's domain, and you can turn it off in **Settings → Privacy**.
 
-## Redirect-trace server
+## Redirect tracing
 
-Optional and for technical users ([BACKEND.md](BACKEND.md)).
+Built into Unmask and free: it runs in your browser and costs nothing. The self-hosted server is only for people who'd rather the link's website saw a server's IP address instead of theirs ([BACKEND.md](BACKEND.md)).
 
 - **On your own computer** (`pnpm backend`): free, no limits beyond your machine.
 - **On Vercel Hobby:** free for personal, non-commercial use, including 1M function invocations, 4 hours of active CPU and 360 GB-hours of memory per month. Each trace is one invocation lasting a few seconds at most. Hobby accounts **can't buy extra usage**, so you're never billed; the project stops when it hits the cap.

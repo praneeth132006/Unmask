@@ -10,15 +10,17 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/praneeth132006/Unmask/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/praneeth132006/Unmask?label=download&color=6366F1"></a>
+  <a href="https://github.com/praneeth132006/Unmask/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/praneeth132006/Unmask?label=download&color=61892F"></a>
   <a href="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml/badge.svg"></a>
-  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/github/license/praneeth132006/Unmask?color=0c8f61"></a>
-  <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-5b4cf0"></a>
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/github/license/praneeth132006/Unmask?color=474B4F"></a>
+  <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-86C232"></a>
 </p>
 
 <p align="center">
-  <a href="docs/USER_GUIDE.md">User guide</a> ·
+  <a href="https://praneeth132006.github.io/Unmask/"><b>Website</b></a> ·
+  <a href="https://praneeth132006.github.io/Unmask/guide.html"><b>User guide</b></a> ·
+  <a href="https://github.com/praneeth132006/Unmask/wiki">Wiki</a> ·
   <a href="docs/CHECKS.md">What it checks</a> ·
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
@@ -29,6 +31,14 @@
 </p>
 
 ---
+
+## Quick start
+
+> **1. Download** [`unmask-chrome-<version>.zip`](https://github.com/praneeth132006/Unmask/releases/latest) from the latest release (under *Assets*) and unzip it.<br>
+> **2. Load it:** open `chrome://extensions`, switch on **Developer mode** (top right), click **Load unpacked**, and pick the unzipped folder (the one with `manifest.json` in it).<br>
+> **3. Use it:** reload Gmail, open any email, and click the Unmask icon.
+>
+> 📖 **[Read the user guide](https://praneeth132006.github.io/Unmask/guide.html)**: every screen explained, step-by-step key setup, troubleshooting. Also in the [wiki](https://github.com/praneeth132006/Unmask/wiki) and [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
 
 <p align="center">
   <img src="docs/images/overview-light.png" width="260" alt="Unmask summary in light mode, showing a High risk verdict">
@@ -48,7 +58,7 @@ Open an email in Gmail and click the Unmask icon. A side panel shows:
 - **Attachment checks**, including files pretending to be something else (`Invoice.pdf.html`) and a VirusTotal lookup.
 - **Hidden text and tracking pixels** the sender didn't want you to see.
 
-**Hover any red flag and Unmask outlines that exact part of the email in Gmail.** Click it to jump to the details, then use **Back to summary** to return.
+**Hover any red flag, link, or URL in the plain text and Unmask outlines that exact part of the email in Gmail.** Click a red flag to jump to the details, then use **Back to summary** to return. Switch between light, dark and system themes from the header.
 
 <p align="center">
   <img src="docs/images/highlight-link.png" width="420" alt="Hovering a finding outlines the matching link in the Gmail message">
@@ -109,12 +119,14 @@ Unmask works with no setup at all. These free services add extra checks you run 
 |---|---|---|---|
 | **VirusTotal** | Checks attachments (by fingerprint) and links against 70+ antivirus engines | 4 lookups/min, 500/day | Click **Check on VirusTotal** on any file or link and follow the 3 steps in the panel |
 | **urlscan.io** | Opens a link in urlscan's sandbox browser and shows a screenshot of where it lands | 1,000 unlisted + 50 private scans/day | Click **Sandbox scan** on any link and follow the steps |
-| **Redirect tracing** | Follows a link's redirects from your own server | Free on your computer | For technical users: run `pnpm backend`, see [docs/BACKEND.md](docs/BACKEND.md) |
+| **Redirect tracing** | Follows a link's redirects without opening it | Free, unlimited | Built in: click **Trace redirects** and allow once. A self-hosted server is optional ([docs/BACKEND.md](docs/BACKEND.md)) |
 
 **Free keys can never be charged.** Going over a limit just pauses that check until the quota resets. Paid plans exist only for heavy or commercial use: see **[Free limits and costs](docs/LIMITS_AND_COSTS.md)** for every number and price.
 
 <p align="center">
-  <img src="docs/images/setup-virustotal.png" width="300" alt="Step-by-step VirusTotal setup shown inside the panel">
+  <img src="docs/images/setup-virustotal.png" width="260" alt="Step-by-step VirusTotal setup shown inside the panel">
+  &nbsp;
+  <img src="docs/images/trace-dark.png" width="260" alt="One-click redirect tracing inside Unmask">
 </p>
 
 ## Privacy

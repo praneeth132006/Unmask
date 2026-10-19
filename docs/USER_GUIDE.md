@@ -8,7 +8,7 @@ This guide is for everyone, no technical background needed. It covers installing
 - [4. Hover to see it in the email](#4-hover-to-see-it-in-the-email)
 - [5. Setting up VirusTotal](#5-setting-up-virustotal)
 - [6. Setting up urlscan.io](#6-setting-up-urlscanio)
-- [7. Redirect tracing (advanced)](#7-redirect-tracing-advanced)
+- [7. Tracing redirects](#7-tracing-redirects)
 - [8. Emails from Outlook and other apps](#8-emails-from-outlook-and-other-apps)
 - [9. Settings](#9-settings)
 - [10. Troubleshooting](#10-troubleshooting)
@@ -223,16 +223,23 @@ A scan takes 10 to 30 seconds. Scans are **unlisted** by default: hidden from ur
 
 ---
 
-## 7. Redirect tracing (advanced)
+## 7. Tracing redirects
 
-**Trace redirects** follows a link's chain of redirects (for example `bit.ly → tracker → final page`) from a small server **you run**, so your browser never opens the link. It's meant for technical users. Most people should use **Sandbox scan** instead, which shows the final page too.
+<img src="images/trace-dark.png" width="280" align="right" alt="Trace redirects explainer card">
 
-To use it:
+Links in emails often bounce through several addresses (`bit.ly → tracker → final page`). **Trace redirects** shows every step and where the link really ends, without opening it.
 
-1. In the Unmask project folder, run `pnpm backend` and leave it running.
-2. In Unmask, click **Trace redirects** on a link (or open **Settings → Advanced**), then click **Use local server**.
+1. In the **Links** tab, click **Trace redirects** on any link.
+2. The first time, Unmask explains what will happen. Click **Allow and trace**, then **Allow** in Chrome's prompt. You only do this once.
+3. The redirect chain appears in the card: each address, its status code, and how it redirected (HTTP, a `<meta refresh>` or JavaScript).
 
-You can also deploy the server to Vercel so it's always available. See [BACKEND.md](BACKEND.md).
+**What happens behind the scenes:** Unmask's background worker requests the link **without cookies or logins**, never opens it in a tab, and never runs its code. It reads only the first part of each page to spot meta or JavaScript redirects. Links pointing at your own network (your router, `localhost`, `192.168.x.x`) are refused.
+
+**Privacy note:** the link's website sees your IP address, just as if you'd visited it. If you'd rather it didn't, use **Sandbox scan** (urlscan.io visits it for you), or set up your own trace server under **Settings → Advanced → Redirect tracing → My own server** (see [BACKEND.md](BACKEND.md)).
+
+**Why does Chrome ask for permission?** Tracing needs to contact any website the link might lead to. The permission is optional and requested only when you first use it, so installing Unmask doesn't ask for it. You can remove it any time from `chrome://extensions` → Unmask → **Details** → **Site access**.
+
+<br clear="right">
 
 ---
 
@@ -257,12 +264,13 @@ To open Unmask's panel outside Gmail, click its toolbar icon on any page.
 
 <img src="images/settings-light.png" width="280" align="right" alt="Settings">
 
-Open Settings with the **gear icon**.
+Open Settings with the **gear icon**. The **?** icon next to it opens this guide.
 
 - **Extra checks:** each service shows **Connected** or **Not set up**, with buttons to set up, change or remove its key.
 - **urlscan.io scan visibility:** unlisted (recommended, 1,000 free per day), private (50 free per day; best for links with personal tokens) or public.
 - **Privacy → Check how old the sender's domain is:** on by default. It sends only the domain name (for example `example.com`) to rdap.org, the public registry lookup.
-- **Advanced → Redirect tracing:** the address of your trace server.
+- **Appearance:** System (follows your computer), Light or Dark. The sun/moon button in the header switches it too.
+- **Advanced → Redirect tracing:** *Inside Unmask* (default) or *My own server*, with the server's address.
 
 <br clear="right">
 

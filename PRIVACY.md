@@ -16,7 +16,8 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 | Data | Sent to | When |
 |---|---|---|
 | The sender's domain name (e.g. `example.com`) | rdap.org and the domain's registry | Automatically when an email is analysed, unless you turn off "Check how old the sender's domain is" in Settings, or when you click **Check domain age** |
-| One link's URL | The redirect-trace backend URL you configured | Only when you click **Trace redirects** on that link |
+| A request to the link itself (no cookies, never opened in a tab) | The link's website, and each site it redirects to | Only when you click **Trace redirects** (built-in tracing). The sites see your IP address, as with any visit |
+| One link's URL | Your own trace server | Only if you chose **My own server** in Settings and click **Trace redirects** |
 | Your API key, to check it works | VirusTotal or urlscan.io | When you click **Save & test** while setting up a key |
 | One link's URL | urlscan.io, using your API key | Only when you click **Sandbox scan** on that link |
 | One link's URL | VirusTotal, using your API key | Only when you click **VirusTotal** on that link |
@@ -37,6 +38,7 @@ If you run or deploy the open-source backend in this repository, it receives one
 - `https://www.virustotal.com/*`, `https://urlscan.io/*`: to call those services when you click their buttons.
 - `storage`: to save your settings.
 - `tabs`: to know whether the active tab is Gmail.
+- `webRequest` and the **optional** permission to access all sites: used only by **Trace redirects**, to see each redirect step of Unmask's own background request. Chrome asks for it the first time you trace a link; Unmask never reads or changes your browsing.
 - `sidePanel`: to show the Unmask panel.
 
 ## No tracking
