@@ -66,6 +66,14 @@
   <img src="docs/images/inbox-badges.png" width="430" alt="Risky and Check badges next to suspicious senders in the Gmail inbox list">
 </p>
 
+**It checks emails before you open them.** Click **👁 Peek** on any inbox row: Unmask checks the email and shows a text-only preview, without opening it, so its trackers never learn you looked. Explanations come in plain words, and a shareable protection list puts your own bank and boss first.
+
+<p align="center">
+  <img src="docs/images/inbox-peek.png" width="560" alt="Peek: High risk verdict, plain reasons and a text-only preview, without opening the email">
+  &nbsp;
+  <img src="docs/images/panel-simple.png" width="250" alt="Simple mode: This email looks like a scam, with reasons in everyday words and what to do">
+</p>
+
 **It catches replies going to the scammer** and QR codes hidden in PDFs, and it looks inside attachments without opening them.
 
 <p align="center">
@@ -111,6 +119,9 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 | | |
 |---|---|
 | **Sender checks** | SPF, DKIM and DMARC; display names that hide another address; look-alike domains such as `paypa1.com` or `pаypal.com` (Cyrillic а) for 50+ brands; brand names sent from free webmail; Reply-To and bounce addresses elsewhere; brand-new domains. |
+| **Peek before opening** | Checks an inbox email without opening it; text-only preview, no trackers. Optional automatic checks of unread mail. |
+| **Plain words** | Every verdict in one everyday sentence with what to do; simple mode for non-technical users. |
+| **Protection list** | Your bank, your boss and trusted senders: impostors get critical warnings. Export/import to protect a whole family or team. |
 | **Sender history** | First-contact warnings, "your PayPal emails usually come from paypal.com", and a contact's name used from another address. Kept only on your device. |
 | **Payment fraud (BEC)** | Changed bank details, payment and wire requests, gift-card asks, and "are you available? keep this confidential" openers. |
 | **QR codes** | Decodes QR codes in images and PDFs and checks where they really go. |

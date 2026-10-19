@@ -5,6 +5,9 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **Peek:** a button on every Gmail inbox row checks the email without opening it. You see the verdict, plain reasons and a text-only preview; images and trackers never load. *Read it safely in Unmask* opens the full report, still unopened. Optional automatic checks of unread emails.
+- **Plain words and simple mode:** an "In plain words" card (one sentence, everyday reasons, what to do) on every report and in the Gmail banner; simple mode hides the technical details until asked.
+- **Your protection list:** companies you use, people who might be impersonated and trusted senders, with critical warnings for anything imitating them. One-click *Trust this sender* / *Protect name*. Export and import as a file to set it up for a family or team.
 - **Warnings inside Gmail:** a red or amber banner above risky emails, risk badges next to risky senders in the inbox list, *"Wait, this link goes to …"* before risky links, and a warning when Reply would go to a different address. Works without opening the panel.
 - **Sender history** kept only on your device: first-contact warnings, "your PayPal emails usually come from paypal.com", and a contact's name used from a different address.
 - **QR-code phishing:** QR codes in images and PDFs are decoded and their links checked.

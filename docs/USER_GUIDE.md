@@ -12,6 +12,9 @@ This guide is for everyone, no technical background needed. It covers installing
 - [8. Emails from Outlook and other apps](#8-emails-from-outlook-and-other-apps)
 - [8a. Warnings inside your inbox](#8a-warnings-inside-your-inbox)
 - [8b. Reporting an email](#8b-reporting-an-email)
+- [8c. Peek: check an email without opening it](#8c-peek-check-an-email-without-opening-it)
+- [8d. Plain words and simple mode](#8d-plain-words-and-simple-mode)
+- [8e. Your protection list (and sharing it with family or a team)](#8e-your-protection-list-and-sharing-it-with-family-or-a-team)
 - [9. Settings](#9-settings)
 - [10. Troubleshooting](#10-troubleshooting)
 - [11. FAQ](#11-faq)
@@ -290,6 +293,70 @@ At the bottom of the Summary, **Report or export** offers:
 - **PDF report**, **JSON** and **Original (.eml)** for your IT or security team.
 
 Unmask never sends a report itself; you always review and send it.
+
+---
+
+## 8c. Peek: check an email without opening it
+
+**Why:** when you open an email, Gmail shows its pictures. Marketing and scam emails hide tiny invisible pictures ("tracking pixels") among them. Loading one tells the sender *that* you opened it and *when*, which confirms your address is real. Gmail fetches pictures through its own proxy, so the sender doesn't get your IP address, but it still learns you opened the email.
+
+**What Peek does:** every row in your inbox list gets a small **👁 Peek** button.
+
+<img src="images/inbox-peek.png" width="560" alt="Peek card over the Gmail inbox: High risk, This email looks like a scam, reasons, text preview, Read it safely in Unmask">
+
+1. Click **Peek** on any email in the list. The email does **not** open.
+2. Unmask downloads that email's original source from Gmail (the same file Gmail's *Download message* gives you) and checks it on your computer.
+3. A card shows the verdict, the reasons in plain words and a **text-only preview**: the words of the email, with no pictures and nothing from the internet. Since nothing was loaded, the sender's trackers never fire.
+4. Choose:
+   - **Read it safely in Unmask**: the side panel opens with the full report. The **Body** tab shows the email with pictures blocked and links disabled. It's still not opened in Gmail.
+   - **Close** and delete or report the email from the list without ever opening it.
+   - If it's fine, open it in Gmail as usual.
+
+The row's badge updates with the full result, so you won't need to Peek again.
+
+**Check new emails automatically (optional).** Turn on **Settings → Protection inside Gmail → Check new emails before I open them**. Unmask then Peeks at up to 15 unread emails in the list you're looking at, one at a time, and badges the risky ones. It's off by default because it downloads each of those emails from Gmail.
+
+**Good to know**
+- In a conversation with several messages, Peek checks the first message.
+- Peek works in Gmail. Outlook on the web doesn't let pages download a message's source, so there you get the inbox badges only.
+- Unmask's tests use a stand-in for Gmail, so we can't promise how Gmail treats the download. If Gmail marks the email as read, that only changes the bold styling in your own inbox; it isn't sent to the sender.
+
+---
+
+## 8d. Plain words and simple mode
+
+Every report starts with an **In plain words** card: one sentence ("This email looks like a scam."), up to three reasons in everyday language ("It pretends to be PayPal, but PayPal didn't send it.") and **What to do**. The warning banner inside Gmail uses the same sentence.
+
+<img src="images/panel-simple.png" width="280" align="right" alt="Simple mode: only the plain-words card and the report buttons">
+
+For parents or colleagues who don't want the technical side, turn on **Settings → Protection inside Gmail → Simple mode**. The panel then shows only the plain-words card and the report buttons. The tabs and red flags are one click away under **Show the technical details**.
+
+<br clear="right">
+
+---
+
+## 8e. Your protection list (and sharing it with family or a team)
+
+Scammers usually pretend to be *your* bank, *your* boss or *your* family. Tell Unmask who those are and anything imitating them gets the strongest warning (Critical).
+
+<img src="images/settings-protection-list.png" width="300" align="right" alt="Your protection list in Settings: companies, people, trusted senders, export and import">
+
+Open **Settings → Your protection list**:
+
+- **Companies you use:** a name and its real domains, for example *Canara Bank* → `canarabank.com`. Unmask then flags emails that name it in the sender or subject but come from elsewhere, sender domains imitating it (`canarabnak.com`), and links to look-alikes (`canarabank-kyc.top`).
+- **People who might be impersonated:** a name and every real address they use, for example *Rahul Sharma* → `rahul@acme-corp.com`. An email calling itself "Rahul Sharma" from any other address gets a red warning. This is the classic "boss asks for gift cards" scam.
+- **Trusted senders:** addresses (`mom@gmail.com`) or whole domains (`acme-corp.com`). Verified emails from them are marked trusted and never get a "first contact" warning. An email that *uses* a trusted address but fails verification is flagged as a fake.
+
+**Quicker:** on any genuine email, open the **Sender** tab and click **Trust this sender** or **Protect "name"**.
+
+**Set it up once for everyone:**
+1. On your computer, fill in the list, then click **Export list**. You get `unmask-protection.json`.
+2. Send the file to family members or teammates (email, WhatsApp, a shared drive).
+3. On their computer: **Settings → Your protection list → Import list** and pick the file.
+
+Importing only adds to their list; it never deletes what they already have. The file contains only names, domains and addresses you typed, nothing from anyone's emails.
+
+<br clear="right">
 
 ---
 

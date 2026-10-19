@@ -10,6 +10,7 @@ Every check, what it means, and how much it adds to the risk score. The numbers 
 - [Attachments](#attachments)
 - [Body content](#body-content)
 - [Sender history](#sender-history)
+- [Your protection list](#your-protection-list)
 - [Payment fraud (BEC)](#payment-fraud-bec)
 - [QR codes](#qr-codes)
 - [Fake brand logos](#fake-brand-logos)
@@ -218,6 +219,28 @@ First-contact warnings start once Unmask knows 10 senders, so a new install does
 
 ---
 
+## Your protection list
+
+Source: [`analyzers/protection.ts`](../extension/src/analyzers/protection.ts). Only runs for entries you add in Settings.
+
+| Check | Severity | Points |
+|---|---|---|
+| Uses the name of a protected person from an address not on their list | Critical | 40 |
+| Sender domain imitates a protected company (look-alike, typo, brand inside the domain) | Critical | 40 |
+| A link goes to a look-alike of a protected company | Critical | 40 |
+| Names a protected company in the sender name or subject but comes from another domain | Critical | 35 |
+| Uses a trusted address, but fails authentication | High | 25 |
+| Trusted sender, verified by DMARC or a DKIM signature from their domain | Good | −10, and no first-contact warning |
+| Trusted sender, but the email has no authentication results to verify | Note | 0 |
+
+---
+
+## Plain words
+
+Source: [`core/plain.ts`](../extension/src/core/plain.ts). The plain-words card and banner sentence are built only from the findings above: the verdict picks the headline ("This email looks like a scam." / "Be careful with this email." / "Nothing looks wrong with this email."), and the most serious findings, one per problem, become up to three everyday reasons. They add no points of their own.
+
+---
+
 ## Payment fraud (BEC)
 
 Source: [`analyzers/bec.ts`](../extension/src/analyzers/bec.ts). Business email compromise needs no link or file, only a convincing request.
@@ -299,5 +322,6 @@ Source: [`lib/gmailProtect.ts`](../extension/src/lib/gmailProtect.ts), [`lib/pro
 - **Inbox badges** next to risky senders: from the verdict of a conversation you already opened, or a quick check of the sender line (display-name tricks, look-alike domains, brand claims, sender history).
 - **"Wait, this link goes to …"** before a link opens when the link has a High/Critical flag, has a Medium flag in a suspicious email, or leaves the sender's domain in a high-risk email.
 - **Reply warning** when Reply would send your answer to an address on another domain.
+- **Peek** (Gmail): a button on each inbox row downloads that email's source and runs every check above without opening it, showing a text-only preview. Optionally, up to 15 unread rows per list are checked automatically.
 
 In **Outlook on the web** Unmask reads the email from the page, because Outlook doesn't give pages the original source. Header checks (SPF, DKIM, DMARC, delivery path) need … → View → View message source pasted into the panel.
