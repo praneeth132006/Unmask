@@ -27,4 +27,4 @@ jobs:
       - name: Install Chromium for end-to-end tests
         run: pnpm --filter unmask-extension exec playwright install --with-deps chromium
       - name: End-to-end tests (built extension in Chromium)
-        run: pnpm --filter unmask-extension test:e2e
+        run: pnpm test:e2e

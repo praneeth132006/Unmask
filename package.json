@@ -9,7 +9,7 @@
     "backend": "pnpm --filter unmask-backend dev",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "test:e2e": "pnpm build && pnpm --filter unmask-extension test:e2e"
+    "test:e2e": "pnpm --filter unmask-extension build:e2e && pnpm --filter unmask-extension test:e2e"
   },
   "license": "MIT",
   "repository": {

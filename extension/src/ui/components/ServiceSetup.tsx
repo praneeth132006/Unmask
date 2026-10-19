@@ -51,8 +51,8 @@ export const SERVICES: Record<Service, ServiceInfo> = {
     test: testUrlscanKey,
   },
   backend: {
-    name: 'Redirect tracing',
-    what: 'Follows a link’s chain of redirects from a small server you run, so your browser never opens the link. For technical users.',
+    name: 'Your own trace server',
+    what: 'Optional. A small server you run makes the trace requests instead of your browser, so the link’s website sees the server’s IP address, not yours.',
     limits: 'Free when run on your own computer.',
     field: 'backendUrl',
     placeholder: 'http://localhost:8787',

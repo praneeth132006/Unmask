@@ -39,3 +39,10 @@ export interface StateChanged {
   type: 'unmask:state-changed';
   state: GmailState;
 }
+
+/** Side panel → background: trace a link's redirects with the built-in tracer. */
+export interface TraceRequest {
+  type: 'unmask:trace';
+  url: string;
+}
+export type TraceResponse = { ok: true; result: import('../integrations/trace').TraceResult } | { ok: false; error: string };

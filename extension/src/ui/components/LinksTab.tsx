@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Finding, LinkInfo, Report } from '../../core/types';
 import type { Settings } from '../../lib/settings';
-import { traceRedirects, type TraceResult } from '../../integrations/trace';
+import { hasTracePermission, requestTracePermission, traceBuiltinFromPanel, traceRedirects, type TraceResult } from '../../integrations/trace';
 import { scanUrl, urlscanFindings, type UrlscanResult } from '../../integrations/urlscan';
 import { lookupUrl, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { Button, Card, CopyButton, ErrorText, Label, Mono, Pill, Spinner, type Async } from './ui';
@@ -54,6 +54,7 @@ function LinkCard({
 }) {
   const [state, setState] = useState<LinkState>({});
   const [setup, setSetup] = useState<Action | null>(null);
+  const [askTrace, setAskTrace] = useState(false);
   const set = (patch: LinkState) => setState((s) => ({ ...s, ...patch }));
   const target = link.resolved;
   const worst = link.flags[0]?.severity;
@@ -64,19 +65,38 @@ function LinkCard({
 
   const report = (findings: Finding[]) => onFindings(findings.map((f) => ({ ...f, target: { kind: 'links', indexes: [index] } as const })));
 
+  const doTrace = async (s: Settings) => {
+    set({ trace: { status: 'loading' } });
+    try {
+      const value = s.traceMode === 'server' ? await traceRedirects(s.backendUrl, target) : await traceBuiltinFromPanel(target);
+      set({ trace: { status: 'done', value } });
+    } catch (e) {
+      set({ trace: { status: 'error', error: errMsg(e) } });
+    }
+  };
+
+  /** Called straight from the click so Chrome can show its permission prompt. */
+  const allowAndTrace = async () => {
+    const granted = await requestTracePermission();
+    setAskTrace(false);
+    if (granted) void doTrace(settings);
+    else set({ trace: { status: 'error', error: 'Permission not granted. Tracing needs it to contact the link’s website in the background. You can still use Sandbox scan.' } });
+  };
+
   const run = async (action: Action, s: Settings = settings) => {
+    if (action === 'trace' && s.traceMode !== 'server') {
+      setSetup(null);
+      if (await hasTracePermission()) void doTrace(s);
+      else setAskTrace(true);
+      return;
+    }
     if (!s[NEEDS[action].field]) {
       setSetup(action);
       return;
     }
     setSetup(null);
     if (action === 'trace') {
-      set({ trace: { status: 'loading' } });
-      try {
-        set({ trace: { status: 'done', value: await traceRedirects(s.backendUrl, target) } });
-      } catch (e) {
-        set({ trace: { status: 'error', error: errMsg(e) } });
-      }
+      void doTrace(s);
     } else if (action === 'urlscan') {
       set({ urlscan: { status: 'loading', message: 'Submitting…' } });
       try {
@@ -143,8 +163,27 @@ function LinkCard({
           <Button onClick={() => void run('vt')} disabled={state.vt?.status === 'loading'} title="Look up this URL on VirusTotal">
             {state.vt?.status === 'loading' ? <Spinner /> : <Icon name="shield" className="h-3.5 w-3.5" />} VirusTotal
           </Button>
-          <Button variant="ghost" onClick={() => void run('trace')} disabled={state.trace?.status === 'loading'} title="Follow redirects from your Unmask server">
-            {state.trace?.status === 'loading' && <Spinner />} Trace redirects
+          <Button onClick={() => void run('trace')} disabled={state.trace?.status === 'loading'} title="Follow the link's redirects without opening it">
+            {state.trace?.status === 'loading' ? <Spinner /> : <Icon name="chevron" className="h-3.5 w-3.5" />} Trace redirects
+          </Button>
+        </div>
+      )}
+
+      {askTrace && (
+        <div className="mt-3 rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3 text-xs">
+          <div className="flex items-start justify-between gap-2">
+            <div className="text-[13px] font-semibold text-[var(--text)]">Trace redirects inside Unmask</div>
+            <button type="button" onClick={() => setAskTrace(false)} className="rounded p-0.5 text-[var(--text-3)] hover:text-[var(--text)]" aria-label="Close">
+              <Icon name="close" className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[var(--text-2)]">
+            <li>Unmask follows the link in the background: nothing opens in a tab, no page code runs, and no cookies or logins are sent.</li>
+            <li>The link’s website will see your IP address, as with any visit. For full anonymity use <strong>Sandbox scan</strong>.</li>
+            <li>Chrome will ask once for permission to contact websites in the background.</li>
+          </ul>
+          <Button variant="primary" className="mt-2.5" onClick={() => void allowAndTrace()}>
+            Allow and trace
           </Button>
         </div>
       )}
@@ -161,7 +200,6 @@ function LinkCard({
               void run(setup, s);
             }}
           />
-          {setup === 'trace' && <p className="mt-1.5 text-[11px] text-[var(--text-3)]">No server? <strong>Sandbox scan</strong> also shows where a link ends up, with no setup beyond a free key.</p>}
         </div>
       )}
 

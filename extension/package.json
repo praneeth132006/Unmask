@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "test:e2e": "node e2e/run.mjs",
-    "licenses": "node scripts/third-party-licenses.mjs"
+    "licenses": "node scripts/third-party-licenses.mjs",
+    "build:e2e": "UNMASK_E2E=1 wxt build"
   },
   "dependencies": {
     "postal-mime": "^4.0.11",

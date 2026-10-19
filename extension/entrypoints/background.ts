@@ -1,6 +1,7 @@
 import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
-import type { BackgroundFetchRequest, BackgroundFetchResponse } from '../src/lib/messages';
+import type { BackgroundFetchRequest, BackgroundFetchResponse, TraceRequest, TraceResponse } from '../src/lib/messages';
+import { traceQueued } from '../src/lib/builtinTrace';
 
 /** Only Gmail and Google's own content hosts may be fetched on the content script's behalf. */
 function isAllowedGmailUrl(url: string): boolean {
@@ -17,6 +18,26 @@ export default defineBackground(() => {
   browser.sidePanel
     ?.setPanelBehavior({ openPanelOnActionClick: true })
     .catch((err: unknown) => console.error('[unmask] sidePanel behavior', err));
+
+  // Built-in redirect tracing, requested by the side panel.
+  browser.runtime.onMessage.addListener((req: TraceRequest, sender, sendResponse) => {
+    if (req?.type !== 'unmask:trace') return;
+    const panelOrigin = new URL(browser.runtime.getURL('/')).origin;
+    if (sender.id !== browser.runtime.id || !sender.url?.startsWith(panelOrigin)) {
+      sendResponse({ ok: false, error: 'request not allowed' } satisfies TraceResponse);
+      return;
+    }
+    const wr = (browser as unknown as { webRequest?: { onBeforeRequest: never; onBeforeRedirect: never } }).webRequest;
+    if (!wr) {
+      sendResponse({ ok: false, error: 'Chrome did not give Unmask permission to trace links.' } satisfies TraceResponse);
+      return;
+    }
+    traceQueued({ fetch: (...a) => fetch(...a), onBeforeRequest: wr.onBeforeRequest, onBeforeRedirect: wr.onBeforeRedirect, origin: panelOrigin }, req.url).then(
+      (result) => sendResponse({ ok: true, result } satisfies TraceResponse),
+      (err: unknown) => sendResponse({ ok: false, error: err instanceof Error ? err.message : String(err) } satisfies TraceResponse),
+    );
+    return true; // async response
+  });
 
   browser.runtime.onMessage.addListener((req: BackgroundFetchRequest, sender, sendResponse) => {
     if (req?.type !== 'unmask:bg-fetch') return;

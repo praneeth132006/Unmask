@@ -1,3 +1,4 @@
+import { browser } from 'wxt/browser';
 export interface TraceHop {
   url: string;
   status: number;
@@ -22,4 +23,24 @@ export async function traceRedirects(backendUrl: string, url: string): Promise<T
   const body = (await res.json().catch(() => null)) as (TraceResult & { error?: string }) | null;
   if (!res.ok || !body) throw new Error(body?.error ?? `Trace backend returned HTTP ${res.status}`);
   return body;
+}
+
+export const TRACE_ORIGINS = ['<all_urls>'];
+
+/** Whether the user already granted the optional permission the built-in tracer needs. */
+export async function hasTracePermission(): Promise<boolean> {
+  return browser.permissions.contains({ origins: TRACE_ORIGINS });
+}
+
+/** Must be called from a click handler: Chrome only shows the prompt for a user gesture. */
+export async function requestTracePermission(): Promise<boolean> {
+  return browser.permissions.request({ origins: TRACE_ORIGINS });
+}
+
+/** Follows redirects inside Unmask (background worker, no cookies, no page code). */
+export async function traceBuiltinFromPanel(url: string): Promise<TraceResult> {
+  const res = (await browser.runtime.sendMessage({ type: 'unmask:trace', url })) as import('../lib/messages').TraceResponse | undefined;
+  if (!res) throw new Error('Unmask’s background worker did not answer. Try again.');
+  if (!res.ok) throw new Error(res.error);
+  return res.result;
 }

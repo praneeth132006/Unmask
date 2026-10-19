@@ -156,7 +156,29 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
       </SectionTitle>
       {advanced && (
         <Card>
-          <ServiceRow service="backend" settings={settings} onChange={onSaved} />
+          <div className="text-[13px] font-semibold">Redirect tracing</div>
+          <p className="mt-0.5 text-[11px] text-[var(--text-3)]">How the <em>Trace redirects</em> button follows a link.</p>
+          <div className="mt-2 space-y-1.5">
+            {(
+              [
+                ['builtin', 'Inside Unmask (recommended)', 'One click, no setup. Runs in the background without cookies; the website sees your IP address.'],
+                ['server', 'My own server', 'Your self-hosted Unmask server makes the requests instead (pnpm backend or Vercel).'],
+              ] as const
+            ).map(([value, label, hint]) => (
+              <label key={value} className="flex cursor-pointer items-start gap-2 text-xs">
+                <input type="radio" name="traceMode" className="mt-0.5 accent-[var(--accent)]" checked={settings.traceMode === value} onChange={() => void update({ traceMode: value })} />
+                <span>
+                  <span className="font-medium text-[var(--text)]">{label}</span>
+                  <span className="block text-[11px] text-[var(--text-3)]">{hint}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          {settings.traceMode === 'server' && (
+            <div className="mt-3 border-t border-[var(--border)] pt-3">
+              <ServiceRow service="backend" settings={settings} onChange={onSaved} />
+            </div>
+          )}
         </Card>
       )}
 
