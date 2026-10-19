@@ -56,12 +56,29 @@ export function plainReason(f: Finding, report: Report): string | null {
   return null;
 }
 
+/** Findings that describe the same problem; only the most serious one is said. */
+const SAME_PROBLEM: Record<string, string> = {
+  'protected-link-lookalike': 'fake-site',
+  'link-lookalike': 'fake-site',
+  'link-brand-in-domain': 'fake-site',
+  'protected-contact': 'impostor-person',
+  'contact-impersonation': 'impostor-person',
+  'bec-payment': 'money',
+  'bec-pattern': 'money',
+  'credential-request': 'login',
+  'html-form': 'login',
+};
+
 export function plainSummary(report: Report): PlainSummary {
   const reasons: string[] = [];
+  const said = new Set<string>();
   for (const f of report.findings) {
     if (f.points <= 0) continue;
     const r = plainReason(f, report);
-    if (r && !reasons.includes(r)) reasons.push(r);
+    const group = SAME_PROBLEM[f.id] ?? r;
+    if (!r || !group || said.has(group) || reasons.includes(r)) continue;
+    said.add(group);
+    reasons.push(r);
     if (reasons.length >= 3) break;
   }
   const trusted = report.findings.some((f) => f.id === 'trusted-sender');

@@ -92,3 +92,13 @@ describe('plain-language summary', () => {
     expect(r.previewText).toContain('Hello there');
   });
 });
+
+describe('plain summary wording', () => {
+  it('says each problem once', async () => {
+    const list = sanitizeProtection({ brands: [{ name: 'PayPal', domains: ['paypal.com'] }] });
+    const r = await analyzeRawEmail(fixture('phishing-paypal.eml'), { protection: list });
+    const p = plainSummary(r);
+    const fakeSite = p.reasons.filter((x) => /fake (copy|website)/.test(x));
+    expect(fakeSite).toHaveLength(1);
+  });
+});

@@ -20,7 +20,7 @@ const PALETTE = {
 const BASE_CSS = `
 :host { all: initial; }
 * { box-sizing: border-box; font-family: 'Google Sans', Roboto, system-ui, sans-serif; }
-button { cursor: pointer; font: inherit; }
+button { cursor: pointer; font-family: 'Google Sans', Roboto, system-ui, sans-serif; }
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(doc: Document, tag: K, props: { className?: string; text?: string; title?: string } = {}, ...children: Node[]): HTMLElementTagNameMap[K] {
