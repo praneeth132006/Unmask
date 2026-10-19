@@ -34,7 +34,7 @@ export function SectionTitle({ children, right }: { children: ReactNode; right?:
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]',
+  primary: 'bg-[var(--accent)] text-[var(--on-accent)] hover:bg-[var(--accent-hover)]',
   secondary: 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)]',
   ghost: 'text-[var(--text-2)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]',
   danger: 'bg-[var(--bad)] text-white hover:opacity-90',

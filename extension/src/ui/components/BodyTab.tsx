@@ -10,7 +10,7 @@ function Toggle({ checked, onChange, children, title }: { checked: boolean; onCh
   return (
     <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-[var(--text-2)]" title={title}>
       <span className={`relative h-4 w-7 rounded-full transition-colors ${checked ? 'bg-[var(--accent)]' : 'bg-[var(--border-strong)]'}`}>
-        <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow transition-all ${checked ? 'left-3.5' : 'left-0.5'}`} />
+        <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-[var(--surface)] shadow transition-all ${checked ? 'left-3.5' : 'left-0.5'}`} />
       </span>
       <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       {children}

@@ -114,7 +114,7 @@ export function ServiceSetup({
       <ol className="mt-2.5 space-y-1.5">
         {info.steps.map((step, i) => (
           <li key={i} className="flex gap-2 text-xs text-[var(--text-2)]">
-            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">{i + 1}</span>
+            <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-[var(--on-accent)]">{i + 1}</span>
             <span className="pt-px">{step}</span>
           </li>
         ))}

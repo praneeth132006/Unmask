@@ -11,7 +11,13 @@ export interface Settings {
   backendUrl: string;
   /** Look up how old the sender's domain is (sends only the domain name to rdap.org). */
   autoDomainAge: boolean;
+  /** Panel colour theme; "system" follows the operating system. */
+  theme: Theme;
+  /** How "Trace redirects" works: inside Unmask, or through a self-hosted server. */
+  traceMode: 'builtin' | 'server';
 }
+
+export type Theme = 'system' | 'light' | 'dark';
 
 export const DEFAULT_SETTINGS: Settings = {
   vtApiKey: '',
@@ -19,7 +25,34 @@ export const DEFAULT_SETTINGS: Settings = {
   urlscanVisibility: 'unlisted',
   backendUrl: '',
   autoDomainAge: true,
+  theme: 'system',
+  traceMode: 'builtin',
 };
+
+const THEME_CACHE = 'unmask:theme';
+
+/**
+ * Applies the theme to <html>. Also mirrored in localStorage so the panel can
+ * paint in the right theme before the async extension storage has loaded.
+ */
+export function applyTheme(theme: Theme): void {
+  if (theme === 'system') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', theme);
+  try {
+    localStorage.setItem(THEME_CACHE, theme);
+  } catch {
+    // storage unavailable: the theme still applies for this session
+  }
+}
+
+export function applyCachedTheme(): void {
+  try {
+    const t = localStorage.getItem(THEME_CACHE);
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch {
+    // ignore
+  }
+}
 
 const KEY = 'unmask:settings';
 

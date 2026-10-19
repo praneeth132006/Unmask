@@ -83,6 +83,33 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         </p>
       </Card>
 
+      <SectionTitle>Appearance</SectionTitle>
+      <Card>
+        <div className="flex rounded-lg bg-[var(--surface-2)] p-0.5" role="radiogroup" aria-label="Theme">
+          {(
+            [
+              ['system', 'System', 'monitor'],
+              ['light', 'Light', 'sun'],
+              ['dark', 'Dark', 'moon'],
+            ] as const
+          ).map(([value, label, icon]) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={settings.theme === value}
+              onClick={() => void update({ theme: value })}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors ${
+                settings.theme === value ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow)]' : 'text-[var(--text-2)] hover:text-[var(--text)]'
+              }`}
+            >
+              <Icon name={icon} className="h-3.5 w-3.5" /> {label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1.5 text-[11px] text-[var(--text-3)]">System follows your computer’s light or dark setting. Also switchable from the header.</p>
+      </Card>
+
       <SectionTitle>Extra checks</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">
         <ServiceRow service="virustotal" settings={settings} onChange={onSaved} />
@@ -135,7 +162,7 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
 
       <p className="mt-5 text-center text-[11px] text-[var(--text-3)]">
         Keys never leave this browser except to the service they belong to.{' '}
-        <a className="underline" href="https://github.com/praneeth132006/Unmask/blob/main/docs/USER_GUIDE.md" target="_blank" rel="noreferrer">
+        <a className="underline" href="https://praneeth132006.github.io/Unmask/guide.html" target="_blank" rel="noreferrer">
           User guide
         </a>
       </p>

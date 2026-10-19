@@ -1,57 +1,91 @@
 @import 'tailwindcss';
 
-/* Design tokens: one palette, redefined for dark mode. Components use var(--…). */
+/*
+ * Design tokens. Components only use var(--…), never raw colours.
+ * Palette: charcoal #222629, greys #474B4F / #6B6E70, lime #86C232, olive #61892F,
+ * with red reserved for warnings.
+ *
+ * Theme: <html data-theme="light|dark"> forces a theme; without it the system
+ * setting decides (Settings → Appearance → System).
+ */
 :root {
   color-scheme: light;
-  --bg: #f5f6fa;
+  --bg: #f3f4f1;
   --surface: #ffffff;
-  --surface-2: #f0f2f8;
-  --border: #e2e5ee;
-  --border-strong: #cfd4e2;
-  --text: #11152a;
-  --text-2: #4a5270;
-  --text-3: #8a91aa;
-  --accent: #5b4cf0;
-  --accent-hover: #4b3be0;
-  --accent-soft: #f2f0ff;
-  --accent-border: #dcd6ff;
-  --good: #0c8f61;
-  --good-soft: #e8f8f1;
-  --warn: #b86e00;
-  --warn-soft: #fff6e5;
-  --bad: #d92d20;
+  --surface-2: #eceee9;
+  --border: #dfe2dc;
+  --border-strong: #c6cac3;
+  --text: #222629;
+  --text-2: #474b4f;
+  --text-3: #6b6e70;
+  --accent: #4f7425;
+  --accent-hover: #61892f;
+  --on-accent: #ffffff;
+  --accent-soft: #eef5e4;
+  --accent-border: #cde2b1;
+  --good: #3f7a1f;
+  --good-soft: #eaf4df;
+  --warn: #a85f00;
+  --warn-soft: #fdf3e2;
+  --bad: #d42a2a;
   --bad-soft: #fdeceb;
-  --info: #5c6584;
-  --info-soft: #eef0f6;
-  --highlight: #fde68a;
-  --shadow: 0 1px 2px rgb(17 21 42 / 0.05), 0 1px 3px rgb(17 21 42 / 0.04);
+  --info: #5d6266;
+  --info-soft: #eceee9;
+  --shadow: 0 1px 2px rgb(34 38 41 / 0.06);
+}
+
+/* Dark: the palette from the reference, used as-is for surfaces and accent. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #1c1f22;
+  --surface: #222629;
+  --surface-2: #2c3034;
+  --border: #363b3f;
+  --border-strong: #474b4f;
+  --text: #eef0ea;
+  --text-2: #b3b7b4;
+  --text-3: #8a8e90;
+  --accent: #86c232;
+  --accent-hover: #9bd14c;
+  --on-accent: #16190f;
+  --accent-soft: #2a3420;
+  --accent-border: #4a6a26;
+  --good: #86c232;
+  --good-soft: #263020;
+  --warn: #f2b33d;
+  --warn-soft: #3a3020;
+  --bad: #ff5a5a;
+  --bad-soft: #3b2224;
+  --info: #9da1a3;
+  --info-soft: #2c3034;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #0b0d14;
-    --surface: #131622;
-    --surface-2: #1b1f2e;
-    --border: #252a3b;
-    --border-strong: #333a50;
-    --text: #eceef6;
-    --text-2: #a4abc3;
-    --text-3: #6d7593;
-    --accent: #8b7eff;
-    --accent-hover: #9d92ff;
-    --accent-soft: #1b1a37;
-    --accent-border: #312d63;
-    --good: #3ad29a;
-    --good-soft: #0f2a21;
-    --warn: #f5b942;
-    --warn-soft: #2d2410;
-    --bad: #ff6b60;
-    --bad-soft: #351716;
-    --info: #9aa2bd;
-    --info-soft: #1d2131;
-    --highlight: #6b5310;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+    --bg: #1c1f22;
+    --surface: #222629;
+    --surface-2: #2c3034;
+    --border: #363b3f;
+    --border-strong: #474b4f;
+    --text: #eef0ea;
+    --text-2: #b3b7b4;
+    --text-3: #8a8e90;
+    --accent: #86c232;
+    --accent-hover: #9bd14c;
+    --on-accent: #16190f;
+    --accent-soft: #2a3420;
+    --accent-border: #4a6a26;
+    --good: #86c232;
+    --good-soft: #263020;
+    --warn: #f2b33d;
+    --warn-soft: #3a3020;
+    --bad: #ff5a5a;
+    --bad-soft: #3b2224;
+    --info: #9da1a3;
+    --info-soft: #2c3034;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.35);
   }
 }
 

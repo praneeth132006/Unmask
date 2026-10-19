@@ -3,7 +3,7 @@ import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
 import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/types';
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
 import { registrableDomain } from '../lib/domain';
-import { DEFAULT_SETTINGS, loadSettings, type Settings } from '../lib/settings';
+import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
 import type { HighlightTarget } from '../lib/highlight';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
 import { GmailFetchError, messageKey, useGmail } from './useGmail';
@@ -22,6 +22,7 @@ import { Icon } from './components/Icon';
 type Source = { kind: 'gmail'; key: string } | { kind: 'file'; name: string };
 
 const MAX_EMAIL_BYTES = 40 * 1024 * 1024;
+const GUIDE_URL = 'https://praneeth132006.github.io/Unmask/guide.html';
 
 const TAB_LABEL: Record<TabId, string> = {
   overview: 'Summary',
@@ -55,6 +56,14 @@ export function App() {
   useEffect(() => {
     void loadSettings().then(setSettings);
   }, []);
+  useEffect(() => applyTheme(settings.theme), [settings.theme]);
+
+  const cycleTheme = () => {
+    const order: Theme[] = ['system', 'light', 'dark'];
+    const next = { ...settings, theme: order[(order.indexOf(settings.theme) + 1) % order.length]! };
+    setSettings(next);
+    void saveSettings(next);
+  };
 
   /** Merge findings from online checks, ignoring results that arrive after the user moved on. */
   const addFindings = useCallback((run: number, findings: Finding[]) => {
@@ -266,6 +275,18 @@ export function App() {
             <Button variant="ghost" className="!p-1.5" title="Paste raw email source" onClick={() => setPasting(true)}>
               <Icon name="paste" />
             </Button>
+            <Button variant="ghost" className="!p-1.5" title={`Theme: ${settings.theme} (click to change)`} onClick={cycleTheme}>
+              <Icon name={settings.theme === 'light' ? 'sun' : settings.theme === 'dark' ? 'moon' : 'monitor'} />
+            </Button>
+            <a
+              className="rounded-lg p-1.5 text-[var(--text-2)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
+              href={GUIDE_URL}
+              target="_blank"
+              rel="noreferrer"
+              title="User guide"
+            >
+              <Icon name="help" />
+            </a>
             <Button variant="ghost" className="!p-1.5" title="Settings" onClick={() => setShowSettings(true)}>
               <Icon name="gear" />
             </Button>
