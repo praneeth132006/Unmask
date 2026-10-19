@@ -6,6 +6,7 @@ import { analyzeSender } from '../analyzers/sender';
 import { analyzeContent } from '../analyzers/content';
 import { analyzeLinks } from '../analyzers/links';
 import { analyzeAttachments } from '../analyzers/attachments';
+import { analyzeTrackers } from '../analyzers/trackers';
 
 /**
  * Full local analysis of a raw email. Makes no network requests: everything
@@ -19,8 +20,9 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array): P
   const content = analyzeContent(email);
   const { links, findings: linkFindings } = analyzeLinks(content.links, email.from?.domain ?? '');
   const { attachments, findings: attachmentFindings } = await analyzeAttachments(email.attachments);
+  const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links);
 
-  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings]);
+  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings]);
   const { score, verdict } = scoreFindings(findings);
 
   return {
@@ -29,6 +31,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array): P
     links,
     attachments,
     hidden: content.hidden,
+    trackers,
     annotatedHtml: content.annotatedHtml,
     findings,
     score,

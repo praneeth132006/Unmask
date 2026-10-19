@@ -1,6 +1,18 @@
 export type Severity = 'good' | 'info' | 'low' | 'medium' | 'high' | 'critical';
 
-export type Category = 'auth' | 'sender' | 'content' | 'links' | 'attachments';
+export type Category = 'auth' | 'sender' | 'content' | 'links' | 'attachments' | 'privacy';
+
+export type TabId = 'overview' | 'sender' | 'links' | 'attachments' | 'body' | 'headers' | 'privacy';
+
+/** What part of the email a finding is about, so the UI can point at it. */
+export type FindingTarget =
+  | { kind: 'links'; indexes: number[] }
+  | { kind: 'attachment'; sha256: string }
+  | { kind: 'sender' }
+  | { kind: 'header'; key: string }
+  | { kind: 'hidden' }
+  | { kind: 'body' }
+  | { kind: 'tab'; tab: TabId };
 
 /** A single observation about the email. Points feed the risk score; reasons are shown to the user. */
 export interface Finding {
@@ -11,6 +23,7 @@ export interface Finding {
   points: number;
   title: string;
   detail?: string;
+  target?: FindingTarget;
 }
 
 export interface Mailbox {
@@ -99,6 +112,21 @@ export interface HiddenSnippet {
   text: string;
 }
 
+export interface TrackerPixel {
+  src: string;
+  host: string;
+  /** Known tracking service, e.g. "Mailchimp", or null if unknown. */
+  service: string | null;
+  reason: string;
+}
+
+export interface TrackerReport {
+  pixels: TrackerPixel[];
+  trackedLinkCount: number;
+  services: string[];
+  remoteImages: number;
+}
+
 export type Verdict = 'clear' | 'suspicious' | 'high';
 
 export interface Report {
@@ -107,6 +135,7 @@ export interface Report {
   links: LinkInfo[];
   attachments: AttachmentInfo[];
   hidden: HiddenSnippet[];
+  trackers: TrackerReport;
   /** Body HTML with hidden elements tagged (data-unmask-hidden) for the "reveal" view. */
   annotatedHtml: string | null;
   findings: Finding[];

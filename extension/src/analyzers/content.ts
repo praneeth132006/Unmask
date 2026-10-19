@@ -153,15 +153,6 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
       findings.push({ id: 'html-script', category: 'content', severity: 'medium', points: 10, title: 'The email contains JavaScript', detail: 'Email clients block it, but its presence suggests a hand-crafted malicious message.' });
     }
 
-    const pixels = Array.from(doc.querySelectorAll('img[src^="http"]')).filter((img) => {
-      const w = img.getAttribute('width');
-      const h = img.getAttribute('height');
-      return (w === '1' || w === '0') && (h === '1' || h === '0');
-    });
-    if (pixels.length) {
-      findings.push({ id: 'tracking-pixel', category: 'content', severity: 'info', points: 0, title: 'Contains a tracking pixel', detail: 'Opening the email with images on tells the sender you read it. Unmask blocks remote images in its safe view.' });
-    }
-
     if (hidden.length) {
       const total = hidden.reduce((n, h) => n + h.text.length, 0);
       // Newsletters hide preview lines and mobile-only blocks; only large amounts are a filter-evasion signal.

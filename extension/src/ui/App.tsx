@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react';
 import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
-import type { Finding, Report } from '../core/types';
+import type { Finding, Report, TabId } from '../core/types';
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
 import { registrableDomain } from '../lib/domain';
 import { DEFAULT_SETTINGS, loadSettings, type Settings } from '../lib/settings';
@@ -12,11 +12,11 @@ import { LinksTab } from './components/LinksTab';
 import { AttachmentsTab } from './components/AttachmentsTab';
 import { BodyTab } from './components/BodyTab';
 import { HeadersTab } from './components/HeadersTab';
+import { PrivacyTab } from './components/PrivacyTab';
 import { SettingsPanel } from './components/SettingsPanel';
 import { Button, CopyButton, Spinner, type Async } from './components/ui';
 import { Icon } from './components/Icon';
 
-type TabId = 'overview' | 'sender' | 'links' | 'attachments' | 'body' | 'headers';
 
 type Source = { kind: 'gmail'; key: string } | { kind: 'file'; name: string };
 
@@ -148,6 +148,7 @@ export function App() {
         { id: 'links', label: 'Links', count: report.links.length },
         { id: 'attachments', label: 'Files', count: report.attachments.length },
         { id: 'body', label: 'Body' },
+        { id: 'privacy', label: 'Privacy', count: report.trackers.pixels.length + report.trackers.trackedLinkCount },
         { id: 'headers', label: 'Headers' },
       ]
     : [];
@@ -304,6 +305,7 @@ export function App() {
                   {tab === 'attachments' && <AttachmentsTab report={report} settings={settings} onSettingsChange={setSettings} onFindings={onFindings} />}
                   {tab === 'body' && <BodyTab report={report} />}
                   {tab === 'headers' && <HeadersTab report={report} />}
+                  {tab === 'privacy' && <PrivacyTab report={report} />}
                 </div>
               </>
             )}

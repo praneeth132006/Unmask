@@ -55,7 +55,7 @@ describe('content', () => {
     const r = analyzeContent(await parseEmail(fixture('phishing-paypal.eml')));
     expect(r.hidden.map((h) => h.reason)).toEqual(['display:none', 'text colour matches the background']);
     expect(r.annotatedHtml).toContain('data-unmask-hidden');
-    expect(ids(r.findings)).toEqual(expect.arrayContaining(['hidden-text', 'urgency', 'credential-request', 'tracking-pixel']));
+    expect(ids(r.findings)).toEqual(expect.arrayContaining(['hidden-text', 'urgency', 'credential-request']));
     expect(r.links.some((l) => l.text === 'https://www.paypal.com/signin')).toBe(true);
   });
 
