@@ -76,6 +76,18 @@ await tab.waitForTimeout(1500);
 
 check((await tab.getAttribute('html', 'data-unmask-ik')) === 'a1b2c3d4e5', 'MAIN-world script publishes the session token');
 
+// In-Gmail protection runs without the side panel: banner above the risky email, check before its link.
+await tab.waitForSelector('[data-unmask-banner]', { timeout: 8000 }).catch(() => {});
+const bannerText = await tab.locator('[data-unmask-banner] .b').textContent().catch(() => '');
+check(/High risk/.test(bannerText ?? ''), `warning banner shown inside Gmail ("${(bannerText ?? '').replace(/\s+/g, ' ').slice(0, 60)}")`);
+const pagesBefore = ctx.pages().length;
+await tab.click('.a3s a');
+const dialogText = await tab.locator('[data-unmask-dialog] .d').textContent({ timeout: 3000 }).catch(() => '');
+check(/paypa1-secure\.top/.test(dialogText ?? ''), 'clicking the risky link shows "Wait, this link goes to paypa1-secure.top"');
+check(ctx.pages().length === pagesBefore, 'the link did not open');
+await tab.locator('[data-unmask-dialog] button', { hasText: 'Go back' }).click();
+check((await tab.locator('[data-unmask-dialog]').count()) === 0, '"Go back" closes the warning');
+
 // Ask the content script for state and the raw message, like the side panel does.
 const panel = await ctx.newPage();
 await panel.goto(`chrome-extension://${extId}/sidepanel.html`);

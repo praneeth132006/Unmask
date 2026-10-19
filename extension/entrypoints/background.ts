@@ -1,6 +1,6 @@
 import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
-import type { BackgroundFetchRequest, BackgroundFetchResponse, TraceRequest, TraceResponse } from '../src/lib/messages';
+import type { BackgroundFetchRequest, BackgroundFetchResponse, OpenPanelRequest, TraceRequest, TraceResponse } from '../src/lib/messages';
 import { traceQueued } from '../src/lib/builtinTrace';
 
 /** Only Gmail and Google's own content hosts may be fetched on the content script's behalf. */
@@ -18,6 +18,14 @@ export default defineBackground(() => {
   browser.sidePanel
     ?.setPanelBehavior({ openPanelOnActionClick: true })
     .catch((err: unknown) => console.error('[unmask] sidePanel behavior', err));
+
+  // "See why" on a Gmail banner. Allowed because it comes from a user click in the page.
+  browser.runtime.onMessage.addListener((req: OpenPanelRequest, sender) => {
+    if (req?.type !== 'unmask:open-panel' || sender.id !== browser.runtime.id || !sender.tab?.id) return;
+    const b = browser as unknown as { sidePanel?: { open(o: { tabId: number }): Promise<void> }; sidebarAction?: { open(): Promise<void> } };
+    const opening = b.sidePanel ? b.sidePanel.open({ tabId: sender.tab.id }) : b.sidebarAction?.open();
+    opening?.catch((err: unknown) => console.warn('[unmask] could not open the panel', err));
+  });
 
   // Built-in redirect tracing, requested by the side panel.
   browser.runtime.onMessage.addListener((req: TraceRequest, sender, sendResponse) => {

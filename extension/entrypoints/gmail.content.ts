@@ -1,14 +1,24 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
-import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse, GmailMessageRef, GmailState } from '../src/lib/messages';
+import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse, GmailMessageRef, GmailState, OpenPanelRequest } from '../src/lib/messages';
+import { analyzeRawEmail } from '../src/core/analyze';
+import { decodeImageInBrowser } from '../src/lib/imageDecode';
+import { loadHistory, rememberSender } from '../src/lib/historyStore';
+import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY, type Settings } from '../src/lib/settings';
+import { startProtection, messageKey } from '../src/lib/gmailProtect';
+import type { StoredVerdict } from '../src/lib/protect';
 import { alive, startBridge, type BridgeRuntime } from '../src/lib/gmailBridge';
 import { reportPhishingInGmail } from '../src/lib/gmailActions';
 import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, type Attempt } from '../src/lib/gmailRaw';
 
+const VERDICTS_KEY = 'unmask:verdicts';
+
 /**
- * Runs inside Gmail. Its only jobs are to notice which emails are open and to
- * download their raw source from Gmail's own "Show original" endpoints, so no
- * OAuth or Gmail API access is needed. All analysis happens in the side panel.
+ * Runs inside Gmail. It notices which emails are open and downloads their raw
+ * source from Gmail's own "Show original" endpoints, so no OAuth or Gmail API
+ * access is needed. It also runs the same local analysis as the side panel to
+ * warn inside Gmail: a banner on risky emails, inbox badges, and a check
+ * before risky links and replies. Nothing leaves the browser.
  */
 export default defineContentScript({
   matches: ['https://mail.google.com/*'],
@@ -19,12 +29,63 @@ export default defineContentScript({
       doc: document,
       win: window,
       readState,
-      fetchRaw,
+      fetchRaw: cachedFetchRaw,
       reportPhishing: (ref) => reportPhishingInGmail(document, ref),
       onInvalidated: (cb) => ctx.onInvalidated(cb),
     });
+
+    let settings: Settings = DEFAULT_SETTINGS;
+    const onStorage = (changes: Record<string, { newValue?: unknown }>, area: string) => {
+      if (area === 'local' && changes[SETTINGS_KEY]) {
+        settings = { ...DEFAULT_SETTINGS, ...(changes[SETTINGS_KEY].newValue as Partial<Settings>) };
+        void protection.scan();
+      }
+    };
+    const protection = startProtection({
+      doc: document,
+      win: window,
+      readState,
+      fetchRaw: cachedFetchRaw,
+      analyze: (raw, history) => analyzeRawEmail(raw, { history, decodeImage: decodeImageInBrowser }),
+      settings: () => settings,
+      loadHistory,
+      rememberSender,
+      loadVerdicts: async () => ((await browser.storage.local.get(VERDICTS_KEY))[VERDICTS_KEY] as Record<string, StoredVerdict> | undefined) ?? {},
+      saveVerdicts: (v) => browser.storage.local.set({ [VERDICTS_KEY]: v }),
+      openPanel: () => void browser.runtime.sendMessage({ type: 'unmask:open-panel' } satisfies OpenPanelRequest).catch(() => {}),
+    });
+    void loadSettings().then((s) => {
+      settings = s;
+      void protection.scan();
+    });
+    browser.storage.onChanged.addListener(onStorage);
+    ctx.onInvalidated(() => {
+      protection.stop();
+      try {
+        browser.storage.onChanged.removeListener(onStorage);
+      } catch {
+        // the extension context is already gone
+      }
+    });
   },
 });
+
+/** Raw sources already downloaded, so the in-Gmail check and the side panel share one fetch. */
+const rawCache = new Map<string, Promise<FetchRawResponse>>();
+function cachedFetchRaw(message: GmailMessageRef): Promise<FetchRawResponse> {
+  const key = messageKey(message);
+  const hit = key ? rawCache.get(key) : undefined;
+  if (hit) return hit;
+  const p = fetchRaw(message).then((r) => {
+    if (!r.ok) rawCache.delete(key); // let the panel's "Try again" really retry
+    return r;
+  });
+  if (key) {
+    rawCache.set(key, p);
+    if (rawCache.size > 40) rawCache.delete(rawCache.keys().next().value!);
+  }
+  return p;
+}
 
 function accountIndex(): string {
   return location.pathname.match(/\/mail\/u\/(\d+)/)?.[1] ?? '0';

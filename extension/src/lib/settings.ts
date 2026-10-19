@@ -19,6 +19,12 @@ export interface Settings {
   senderHistory: boolean;
   /** Look up certificate history (crt.sh) and mail DNS records (dns.google) for the sender and link domains. */
   domainIntel: boolean;
+  /** Red or amber banner above risky emails inside Gmail. */
+  gmailBanner: boolean;
+  /** Risk badge next to risky senders in the Gmail inbox list. */
+  inboxBadges: boolean;
+  /** "Wait, this goes to …" before risky links, and a warning when Reply goes elsewhere. */
+  clickProtection: boolean;
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -33,6 +39,9 @@ export const DEFAULT_SETTINGS: Settings = {
   traceMode: 'builtin',
   senderHistory: true,
   domainIntel: true,
+  gmailBanner: true,
+  inboxBadges: true,
+  clickProtection: true,
 };
 
 const THEME_CACHE = 'unmask:theme';
@@ -60,7 +69,8 @@ export function applyCachedTheme(): void {
   }
 }
 
-const KEY = 'unmask:settings';
+export const SETTINGS_KEY = 'unmask:settings';
+const KEY = SETTINGS_KEY;
 
 export async function loadSettings(): Promise<Settings> {
   const stored = await browser.storage.local.get(KEY);

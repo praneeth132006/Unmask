@@ -50,3 +50,8 @@ export interface TraceRequest {
   url: string;
 }
 export type TraceResponse = { ok: true; result: import('../integrations/trace').TraceResult } | { ok: false; error: string };
+
+/** Content script → background: open the side panel for this tab (from a click in Gmail). */
+export interface OpenPanelRequest {
+  type: 'unmask:open-panel';
+}

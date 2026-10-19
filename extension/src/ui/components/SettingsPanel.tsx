@@ -146,6 +146,19 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         <p className="mt-1.5 text-[11px] text-[var(--text-3)]">System follows your computer’s light or dark setting. Also switchable from the header.</p>
       </Card>
 
+      <SectionTitle>Protection inside Gmail</SectionTitle>
+      <Card className="divide-y divide-[var(--border)]">
+        <Toggle checked={settings.gmailBanner} onChange={(v) => void update({ gmailBanner: v })} title="Warning banner on risky emails">
+          A red or amber banner above the email with the main reasons, without opening this panel.
+        </Toggle>
+        <Toggle checked={settings.inboxBadges} onChange={(v) => void update({ inboxBadges: v })} title="Risk badges in the inbox list">
+          Marks risky senders in the email list before you open anything.
+        </Toggle>
+        <Toggle checked={settings.clickProtection} onChange={(v) => void update({ clickProtection: v })} title="Check before risky links and replies">
+          Shows “Wait, this goes to …” before a risky link opens, and warns when Reply would go to a different address.
+        </Toggle>
+      </Card>
+
       <SectionTitle>Extra checks</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">
         <ServiceRow service="virustotal" settings={settings} onChange={onSaved} />
