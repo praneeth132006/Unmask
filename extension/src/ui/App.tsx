@@ -462,7 +462,7 @@ export function App() {
               </div>
             )}
 
-            {!report && !loading && !error && <EmptyState status={gmail.status} onReload={gmail.reloadTab} />}
+            {!report && !loading && !error && <EmptyState status={gmail.status} app={gmail.app} onReload={gmail.reloadTab} />}
 
             {report && !loading && (
               <>
@@ -497,8 +497,8 @@ export function App() {
                     <ReportCard
                       report={report}
                       raw={raw}
-                      gmailAccount={currentMessage ? (gmail.state?.accountIndex ?? '0') : null}
-                      onReportInGmail={currentMessage ? () => gmail.reportPhishing(currentMessage) : undefined}
+                      gmailAccount={currentMessage && gmail.app === 'gmail' ? (gmail.state?.accountIndex ?? '0') : null}
+                      onReportInGmail={currentMessage && gmail.app === 'gmail' ? () => gmail.reportPhishing(currentMessage) : undefined}
                     />
                   )}
                   {tab === 'sender' && <SenderTab report={report} domainAge={domainAge} intel={intel} onCheckIntel={() => void checkIntel(report, runId.current)} onCheckAge={() => void checkDomainAge(report, runId.current)} onHoverSender={(on) => highlight(on ? { kind: 'sender' } : null)} />}
@@ -541,33 +541,37 @@ export function App() {
   );
 }
 
-function EmptyState({ status, onReload }: { status: ReturnType<typeof useGmail>['status']; onReload: () => void }) {
+function EmptyState({ status, app, onReload }: { status: ReturnType<typeof useGmail>['status']; app: ReturnType<typeof useGmail>['app']; onReload: () => void }) {
+  const name = app === 'outlook' ? 'Outlook' : 'Gmail';
   return (
     <div className="px-2 py-10 text-center">
       <img src="/icon/128.png" alt="" className="mx-auto mb-4 h-16 w-16 drop-shadow-sm" />
       {status === 'ready' && (
         <>
           <p className="text-[15px] font-semibold">Open an email to inspect it</p>
-          <p className="mt-1 text-xs text-[var(--text-2)]">Unmask checks the sender, links, attachments and hidden text of the email you open in Gmail.</p>
+          <p className="mt-1 text-xs text-[var(--text-2)]">Unmask checks the sender, links, attachments and hidden text of the email you open in {name}.</p>
+          {app === 'outlook' && (
+            <p className="mt-2 text-[11px] text-[var(--text-3)]">In Outlook on the web Unmask reads the email from the page, so header checks (SPF, DKIM, DMARC) need … → View → View message source pasted in with the clipboard button.</p>
+          )}
         </>
       )}
       {status === 'no-script' && (
         <>
-          <p className="text-[15px] font-semibold">Reload Gmail to connect Unmask</p>
-          <p className="mt-1 text-xs text-[var(--text-2)]">Gmail was already open when Unmask was installed or updated.</p>
+          <p className="text-[15px] font-semibold">Reload {name} to connect Unmask</p>
+          <p className="mt-1 text-xs text-[var(--text-2)]">{name} was already open when Unmask was installed or updated.</p>
           <Button variant="primary" className="mt-3" onClick={onReload}>
-            <Icon name="refresh" className="h-3.5 w-3.5" /> Reload Gmail
+            <Icon name="refresh" className="h-3.5 w-3.5" /> Reload {name}
           </Button>
         </>
       )}
       {status === 'not-gmail' && (
         <>
-          <p className="text-[15px] font-semibold">Open Gmail to get started</p>
+          <p className="text-[15px] font-semibold">Open Gmail or Outlook to get started</p>
           <p className="mt-1 text-xs text-[var(--text-2)]">Then open any email. Unmask will analyze it automatically.</p>
         </>
       )}
       <div className="mx-auto mt-6 max-w-[290px] rounded-xl border border-dashed border-[var(--border-strong)] p-3 text-xs text-[var(--text-2)]">
-        Using Outlook or another app? Save the email as an <strong className="text-[var(--text)]">.eml</strong> file and drop it here, or paste its raw source with the clipboard button above.
+        Using the Outlook desktop app or another client? Save the email as an <strong className="text-[var(--text)]">.eml</strong> file and drop it here, or paste its raw source with the clipboard button above.
       </div>
     </div>
   );

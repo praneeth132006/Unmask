@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { HighlightTarget } from '../lib/highlight';
+import { isOutlookUrl } from '../lib/outlookDom';
 import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, ReportPhishingResponse, StateChanged } from '../lib/messages';
 
 export type GmailStatus = 'not-gmail' | 'no-script' | 'ready';
+/** Which web mail app the active tab is. */
+export type MailApp = 'gmail' | 'outlook';
 
 /** Error carrying Gmail's per-URL diagnostics so the panel can show them. */
 export class GmailFetchError extends Error {
@@ -24,18 +27,21 @@ export function useGmail() {
   const [tabId, setTabId] = useState<number | null>(null);
   const [status, setStatus] = useState<GmailStatus>('not-gmail');
   const [state, setState] = useState<GmailState | null>(null);
+  const [app, setApp] = useState<MailApp>('gmail');
   const tabIdRef = useRef<number | null>(null);
   tabIdRef.current = tabId;
 
   const refresh = useCallback(async () => {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    if (!tab?.id || !tab.url?.startsWith('https://mail.google.com/')) {
+    const outlook = isOutlookUrl(tab?.url);
+    if (!tab?.id || (!tab.url?.startsWith('https://mail.google.com/') && !outlook)) {
       setTabId(tab?.id ?? null);
       setStatus('not-gmail');
       setState(null);
       return;
     }
     setTabId(tab.id);
+    setApp(outlook ? 'outlook' : 'gmail');
     try {
       const s = (await browser.tabs.sendMessage(tab.id, { type: 'unmask:get-state' } satisfies PanelRequest)) as GmailState | undefined;
       setState(s ?? null);
@@ -108,5 +114,5 @@ export function useGmail() {
     if (tabId !== null) await browser.tabs.reload(tabId);
   }, [tabId]);
 
-  return { status, state, fetchRaw, refresh, reloadTab, highlight, reportPhishing };
+  return { status, state, app, fetchRaw, refresh, reloadTab, highlight, reportPhishing };
 }

@@ -22,7 +22,50 @@ export interface ProtectSettings {
   senderHistory: boolean;
 }
 
+/** Where a mail web app keeps its messages. Gmail is the default; Outlook on the web has its own. */
+export interface MailSite {
+  /** Container of one open message. */
+  findRoot(doc: Document, key: string): Element | null;
+  /** The message container an element (link, button) sits in. */
+  rootOf(el: Element): Element | null;
+  keyOfRoot(root: Element): string;
+  /** The rendered email body inside a message container. */
+  bodyOf(root: Element): Element | null;
+  /** Selector matching any rendered email body, for link clicks. */
+  bodySelector: string;
+  /** The open conversation's id, to remember its verdict for the inbox list. */
+  threadId(doc: Document): string | null;
+  /** Inbox list rows, when the site has them. */
+  inboxRows?(doc: Document): { row: Element; sender: Element; address: string; name: string; thread: string }[];
+}
+
+export const GMAIL_SITE: MailSite = {
+  findRoot: (doc, key) => findMessageRoot(doc, { permId: key.startsWith('msg-') ? key : null, legacyId: key.startsWith('msg-') ? null : key, fromName: '', fromEmail: '', subject: '' }),
+  rootOf: (el) => el.closest('[data-message-id], [data-legacy-message-id]'),
+  keyOfRoot: (root) => {
+    const perm = root.getAttribute('data-message-id')?.replace(/^#/, '');
+    return perm && perm.startsWith('msg-') ? perm : (root.getAttribute('data-legacy-message-id') ?? '');
+  },
+  bodyOf: (root) => root.querySelector('.a3s, [data-message-body]'),
+  bodySelector: '.a3s, [data-message-body]',
+  threadId: (doc) => doc.querySelector('h2[data-thread-perm-id]')?.getAttribute('data-thread-perm-id')?.replace(/^#/, '') ?? null,
+  inboxRows: (doc) =>
+    Array.from(doc.querySelectorAll('tr.zA')).flatMap((row) => {
+      const sender = row.querySelector('[email]');
+      if (!sender) return [];
+      return [{
+        row,
+        sender,
+        address: sender.getAttribute('email') ?? '',
+        name: sender.getAttribute('name') ?? sender.textContent?.trim() ?? '',
+        thread: row.querySelector('[data-thread-id]')?.getAttribute('data-thread-id')?.replace(/^#/, '') ?? '',
+      }];
+    }),
+};
+
 export interface ProtectDeps {
+  /** Defaults to Gmail. */
+  site?: MailSite;
   doc: Document;
   win: Window;
   readState: () => GmailState;
@@ -44,19 +87,6 @@ export function messageKey(m: GmailMessageRef): string {
   return m.permId ?? m.legacyId ?? '';
 }
 
-function threadId(doc: Document): string | null {
-  return doc.querySelector('h2[data-thread-perm-id]')?.getAttribute('data-thread-perm-id')?.replace(/^#/, '') ?? null;
-}
-
-function messageRootOf(el: Element): Element | null {
-  return el.closest('[data-message-id], [data-legacy-message-id]');
-}
-
-function keyOfRoot(root: Element): string {
-  const perm = root.getAttribute('data-message-id')?.replace(/^#/, '');
-  return perm && perm.startsWith('msg-') ? perm : (root.getAttribute('data-legacy-message-id') ?? '');
-}
-
 const REPLY_LABEL = /^(reply|reply all|reply to all)$/i;
 
 function replyButton(target: Element): Element | null {
@@ -68,6 +98,7 @@ function replyButton(target: Element): Element | null {
 
 export function startProtection(deps: ProtectDeps): { stop: () => void; scan: () => Promise<void>; reports: Map<string, Report> } {
   const { doc, win } = deps;
+  const site = deps.site ?? GMAIL_SITE;
   const reports = new Map<string, Report>();
   const pending = new Set<string>();
   const dismissed = new Set<string>();
@@ -80,7 +111,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
 
   function drawBanner(key: string, report: Report) {
     const s = deps.settings();
-    const root = findMessageRoot(doc, { permId: key.startsWith('msg-') ? key : null, legacyId: key.startsWith('msg-') ? null : key, fromName: '', fromEmail: '', subject: '' });
+    const root = site.findRoot(doc, key);
     if (!root) return;
     const existing = root.querySelector(`[${BANNER_ATTR}]`);
     if (!s.gmailBanner || report.verdict === 'clear' || dismissed.has(key)) {
@@ -88,7 +119,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       return;
     }
     if (existing) return;
-    const body = root.querySelector('.a3s, [data-message-body]');
+    const body = site.bodyOf(root);
     if (!body?.parentElement) return;
     const banner = createBanner(doc, { verdict: report.verdict, score: report.score, reasons: topReasons(report.findings), onOpenPanel: deps.openPanel, onDismiss: () => dismissed.add(key) });
     body.parentElement.insertBefore(banner, body);
@@ -107,7 +138,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       reports.set(key, report);
       drawBanner(key, report);
       if (s.senderHistory) await deps.rememberSender(report).catch(() => {});
-      const thread = threadId(doc);
+      const thread = site.threadId(doc);
       if (thread) {
         const v = await getVerdicts();
         const prev = v[thread];
@@ -126,21 +157,16 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
 
   async function badgeRows() {
     const s = deps.settings();
-    const rows = Array.from(doc.querySelectorAll('tr.zA'));
+    const rows = site.inboxRows?.(doc) ?? [];
     if (!s.inboxBadges) {
       doc.querySelectorAll(`[${BADGE_ATTR}]`).forEach((b) => b.remove());
-      rows.forEach((r) => r.removeAttribute(ROW_ATTR));
+      doc.querySelectorAll(`[${ROW_ATTR}]`).forEach((r) => r.removeAttribute(ROW_ATTR));
       return;
     }
     if (!rows.length) return;
     const v = await getVerdicts();
     if (s.senderHistory && !history) history = await deps.loadHistory().catch(() => undefined);
-    for (const row of rows) {
-      const sender = row.querySelector('[email]');
-      if (!sender) continue;
-      const address = sender.getAttribute('email') ?? '';
-      const name = sender.getAttribute('name') ?? sender.textContent?.trim() ?? '';
-      const thread = row.querySelector('[data-thread-id]')?.getAttribute('data-thread-id')?.replace(/^#/, '') ?? '';
+    for (const { row, sender, address, name, thread } of rows) {
       const stored = thread ? v[thread] : undefined;
       const result = stored ?? quickVerdict(name, address, history);
       const signature = `${address}|${thread}|${result.verdict}`;
@@ -183,9 +209,9 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     const reply = replyButton(target);
     if (reply) {
       if (reply.hasAttribute(BYPASS_ATTR)) return reply.removeAttribute(BYPASS_ATTR);
-      const root = messageRootOf(reply);
+      const root = site.rootOf(reply);
       // The Reply bar under a thread belongs to its last message.
-      const key = root ? keyOfRoot(root) : [...reports.keys()].pop();
+      const key = root ? site.keyOfRoot(root) : [...reports.keys()].pop();
       const report = key ? reports.get(key) : undefined;
       const w = report && replyWarning(report);
       if (!w) return;
@@ -205,9 +231,9 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     }
 
     const a = target.closest('a[href]');
-    if (!a || !a.closest('.a3s, [data-message-body]')) return;
-    const root = messageRootOf(a);
-    const report = root ? reports.get(keyOfRoot(root)) : undefined;
+    if (!a || !a.closest(site.bodySelector)) return;
+    const root = site.rootOf(a);
+    const report = root ? reports.get(site.keyOfRoot(root)) : undefined;
     if (!report) return;
     const href = a.getAttribute('href') ?? '';
     const w = linkWarning(report, href, a.getAttribute('data-saferedirecturl'));
