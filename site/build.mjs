@@ -17,12 +17,16 @@ const PAGES = [
   { md: 'docs/CHECKS.md', out: 'checks.html', title: 'What Unmask checks', nav: 'Checks' },
   { md: 'docs/LIMITS_AND_COSTS.md', out: 'limits.html', title: 'Free limits and costs', nav: 'Limits' },
   { md: 'PRIVACY.md', out: 'privacy.html', title: 'Privacy policy', nav: 'Privacy' },
+  { md: 'CHANGELOG.md', out: 'changelog.html', title: 'Changelog', nav: 'Changelog' },
+  { md: 'docs/PUBLISHING.md', out: 'publishing.html', title: 'Publishing to the browser stores', nav: 'Publishing' },
 ];
 const LINK_MAP = {
   'USER_GUIDE.md': 'guide.html',
   'CHECKS.md': 'checks.html',
   'LIMITS_AND_COSTS.md': 'limits.html',
   'PRIVACY.md': 'privacy.html',
+  'CHANGELOG.md': 'changelog.html',
+  'PUBLISHING.md': 'publishing.html',
 };
 
 /** GitHub-style heading ids so the docs' own anchor links (#1-install) keep working. */
@@ -43,7 +47,7 @@ function rewriteLink(href) {
   if (path.startsWith('images/')) return path;
   // Anything else (BACKEND.md, ../SECURITY.md, source files) opens on GitHub.
   const clean = path.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
-  const inDocs = !path.startsWith('../') && !['PRIVACY.md', 'SECURITY.md', 'CONTRIBUTING.md', 'LICENSE', 'CHANGELOG.md'].includes(clean);
+  const inDocs = !path.startsWith('../') && !['PRIVACY.md', 'SECURITY.md', 'CONTRIBUTING.md', 'LICENSE', 'CHANGELOG.md', 'README.md'].includes(clean);
   const repoPath = path.startsWith('../') ? clean : inDocs && !clean.startsWith('docs/') ? `docs/${clean}` : clean;
   return `${REPO}/blob/main/${repoPath}${hash ? `#${hash}` : ''}`;
 }
@@ -79,7 +83,7 @@ function layout({ title, body, current, description }) {
     ['index.html', 'Home'],
     ...PAGES.map((p) => [p.out, p.nav]),
   ]
-    .map(([href, label]) => `<a href="${href}"${href === current ? ' aria-current="page"' : ''}${label === 'Privacy' || label === 'Limits' ? ' class="hide-sm"' : ''}>${label}</a>`)
+    .map(([href, label]) => `<a href="${href}"${href === current ? ' aria-current="page"' : ''}${label === 'Privacy' || label === 'Limits' || label === 'Publishing' ? ' class="hide-sm"' : ''}>${label}</a>`)
     .join('');
   return `<!doctype html>
 <html lang="en">

@@ -16,6 +16,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Outlook on the web** support.
 - **Firefox and Edge** builds, a store listing guide and a *Publish to stores* workflow.
 - Website 404 page.
+- **Screenshots of every new feature** in the README and on the website, made from the real extension by `pnpm --filter unmask-extension screenshots`, plus store-ready 1280×800 images and a promo tile in `docs/store/`.
+- **Changelog** and **publishing guide** pages on the website; [docs/PUBLISHING.md](docs/PUBLISHING.md) walks through the Chrome, Firefox and Edge stores step by step.
 - **One-click redirect tracing inside Unmask**: no server needed. It follows HTTP, meta-refresh and JavaScript redirects in the background without cookies, blocks local-network targets, and asks for its optional permission once.
 - **VirusTotal "Scan it now"** for links VirusTotal has never seen.
 - **Hover a URL in the Plain text view** to outline that link in the Gmail email.
@@ -24,6 +26,11 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Website** at praneeth132006.github.io/Unmask and a **GitHub Wiki**, both generated from the docs; README quick start.
 
 ### Fixed
+- Hovering a file pointed at the wrong attachment in Gmail when names were similar or repeated; it now outlines exactly one tile, matched by name, shortened name or position.
+- **Send file to VirusTotal** says clearly that the file goes straight from the email (no download needed) and which files not to share.
+- A QR code pointing to the same address as a link in the same PDF was hidden on the Links tab.
+- A ZIP whose contents were listed still said "contents could not be checked".
+- Redirect tracing could miss the first redirects on a busy computer.
 - Headers tab: the copy buttons no longer touch the delivery path, and each is one clear button.
 - Chrome refused to load a content script containing U+FFFF; the build now fails if that ever happens again.
 

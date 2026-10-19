@@ -1,31 +1,48 @@
 <section class="wrap hero">
   <div>
     <h1>See what a suspicious email is <em>really</em> hiding.</h1>
-    <p class="lead">Unmask is a free Chrome extension that checks the email you open in Gmail: the real sender, where every link really goes, hidden text, trackers and risky attachments. It explains everything in plain language.</p>
+    <p class="lead">Unmask is a free browser extension for Gmail and Outlook. It stops you before you click a phishing link, warns you right inside your inbox, and explains in plain language who really sent the email, where its links and QR codes go, and what its attachments hide.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="https://github.com/praneeth132006/Unmask/releases/latest">⬇ Download for Chrome</a>
+      <a class="btn btn-primary" href="https://github.com/praneeth132006/Unmask/releases/latest">⬇ Download</a>
       <a class="btn btn-ghost" href="guide.html">Read the guide</a>
     </div>
-    <p class="note">Free and open source (MIT) · Works in Chrome, Edge and Brave · Your email never leaves your browser</p>
+    <p class="note">Free and open source (MIT) · Chrome, Edge, Brave and Firefox · Gmail and Outlook on the web · Your email never leaves your browser</p>
   </div>
-  <img class="shot" src="images/overview-dark.png" alt="Unmask showing a High risk verdict for a fake PayPal email" width="400" height="860">
+  <img class="shot" src="images/panel-summary.png" alt="Unmask showing a High risk verdict for a fake PayPal email" width="400" height="860">
+</section>
+
+<section class="wrap" id="stops-the-click">
+  <h2>It stops the click</h2>
+  <p class="sub">The email shows <code>https://www.paypal.com/signin</code>. The link really goes to <code>paypa1-secure.top</code>. Unmask catches it before the page opens and tells you why.</p>
+  <img class="shot showcase" src="images/gmail-link-warning.png" alt="Wait, this link goes to paypa1-secure.top, with the reasons and Go back or Open anyway" width="900" height="600">
+</section>
+
+<section class="wrap" id="inbox">
+  <h2>Warnings right inside your inbox</h2>
+  <p class="sub">No need to open anything. Unmask checks each email as you open it and marks risky senders in the list.</p>
+  <div class="wide">
+    <figure><img class="shot" src="images/gmail-banner.png" alt="A red High risk banner above a fake PayPal email" width="900" height="600" loading="lazy"><figcaption>A banner with the main reasons, above the email</figcaption></figure>
+    <figure><img class="shot" src="images/inbox-badges.png" alt="Risky and Check badges in the inbox list" width="900" height="420" loading="lazy"><figcaption>Badges next to risky senders in the inbox</figcaption></figure>
+    <figure><img class="shot" src="images/gmail-reply-warning.png" alt="Your reply will go somewhere else" width="900" height="600" loading="lazy"><figcaption>A warning when Reply would go to the scammer</figcaption></figure>
+    <figure><img class="shot" src="images/panel-qr.png" alt="A QR code inside a PDF that leads to a PayPal look-alike" width="376" height="216" loading="lazy"><figcaption>QR codes inside images and PDFs, decoded and checked</figcaption></figure>
+  </div>
 </section>
 
 <section class="wrap" id="install">
   <h2>Install in two minutes</h2>
-  <p class="sub">Unmask isn't on the Chrome Web Store yet, so you load it yourself. No programming needed.</p>
+  <p class="sub">Unmask isn't in the browser stores yet, so you load it yourself. No programming needed.</p>
   <div class="steps">
     <div class="card">
       <h3>Download</h3>
-      <p>From the <a href="https://github.com/praneeth132006/Unmask/releases/latest">latest release</a>, download <code>unmask-chrome-&lt;version&gt;.zip</code> under <em>Assets</em> and unzip it. Keep the folder somewhere permanent.</p>
+      <p>From the <a href="https://github.com/praneeth132006/Unmask/releases/latest">latest release</a>, download the zip for your browser under <em>Assets</em> (<code>unmask-chrome</code>, <code>unmask-edge</code> or <code>unmask-firefox</code>) and unzip it. Keep the folder somewhere permanent.</p>
     </div>
     <div class="card">
       <h3>Load it</h3>
-      <p>Open <code>chrome://extensions</code>, switch on <strong>Developer mode</strong>, click <strong>Load unpacked</strong> and choose the unzipped folder (the one containing <code>manifest.json</code>).</p>
+      <p>Open <code>chrome://extensions</code>, switch on <strong>Developer mode</strong>, click <strong>Load unpacked</strong> and choose the unzipped folder (the one containing <code>manifest.json</code>). Firefox: <code>about:debugging</code> → <strong>Load Temporary Add-on</strong>.</p>
     </div>
     <div class="card">
       <h3>Check an email</h3>
-      <p>Pin Unmask, reload Gmail, open any email and click the Unmask icon. The report appears in a side panel.</p>
+      <p>Reload Gmail or Outlook and open any email. Risky ones get a warning straight away; click the Unmask icon for the full report.</p>
     </div>
   </div>
   <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">Stuck? <a href="guide.html#if-loading-fails">Common install errors and fixes</a>.</p>
@@ -33,7 +50,7 @@
 
 <section class="wrap" id="features">
   <h2>Everything a phishing email tries to hide</h2>
-  <p class="sub">Every check runs inside your browser. Online checks are optional and only run when you click them.</p>
+  <p class="sub">Every check runs inside your browser. The few online lookups send only a domain name or a file fingerprint, and each can be turned off.</p>
   <div class="grid">
     <div class="card feature"><div class="tag">Sender</div><h3>Who really sent it</h3><p>SPF, DKIM and DMARC, display names hiding another address, and look-alike domains like <code>paypa1.com</code> for 50+ brands.</p></div>
     <div class="card feature"><div class="tag">Links</div><h3>Where links really go</h3><p>Text that shows one site but links to another, redirect wrappers removed, and one-click redirect tracing.</p></div>
@@ -41,6 +58,12 @@
     <div class="card feature"><div class="tag">Files</div><h3>Risky attachments</h3><p>Executables, fake PDFs (<code>Invoice.pdf.html</code>), macro documents, encrypted ZIPs, plus a VirusTotal check.</p></div>
     <div class="card feature"><div class="tag">Body</div><h3>Hidden text, safely shown</h3><p>Invisible text used to fool spam filters, forms asking for passwords, and pressure phrases, in a safe view with scripts off.</p></div>
     <div class="card feature"><div class="tag">Privacy</div><h3>Trackers</h3><p>Tracking pixels and click-tracked links from about 40 services, with images blocked so senders can't tell you opened it.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>First-contact warnings</h3><p>"You've never received mail from paypa1-support.xyz. Your PayPal emails usually come from paypal.com." Remembered only on your device.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>QR-code phishing</h3><p>QR codes in images and PDFs are decoded and their real destination checked, before you point your phone at them.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Payment fraud</h3><p>Changed bank details, payment and gift-card requests, and a contact's name used from a different address.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Inside attachments</h3><p>Links hidden in PDFs, macros in Office files, the file list of ZIPs, and a safe preview of HTML attachments.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Fake logos and new domains</h3><p>An email showing PayPal's logo that PayPal didn't send, brand-new TLS certificates and domains without mail records.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Report in one click</h3><p>Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus a PDF or JSON report for your IT team.</p></div>
   </div>
 </section>
 
@@ -59,7 +82,11 @@
     <figure><img class="shot" src="images/links-dark.png" alt="Links tab" width="400" height="860" loading="lazy"><figcaption>Every link's real destination</figcaption></figure>
     <figure><img class="shot" src="images/body-light.png" alt="Body tab with hidden text revealed" width="400" height="860" loading="lazy"><figcaption>Hidden text revealed</figcaption></figure>
     <figure><img class="shot" src="images/setup-virustotal.png" alt="VirusTotal setup steps" width="400" height="860" loading="lazy"><figcaption>Optional checks, set up in place</figcaption></figure>
+    <figure><img class="shot" src="images/panel-files.png" alt="Files tab with links inside a PDF and a program hidden in a ZIP" width="400" height="860" loading="lazy"><figcaption>Looks inside PDFs, Office files and ZIPs</figcaption></figure>
+    <figure><img class="shot" src="images/panel-report.png" alt="Report or export options" width="400" height="860" loading="lazy"><figcaption>Report it, or export a PDF or JSON report</figcaption></figure>
+    <figure><img class="shot" src="images/settings-protection.png" alt="Settings for protection inside Gmail" width="400" height="860" loading="lazy"><figcaption>Every check has its own switch</figcaption></figure>
   </div>
+  <p style="margin-top:24px">What changed recently? See the <a href="changelog.html">changelog</a>.</p>
 </section>
 
 <section class="wrap" id="privacy">

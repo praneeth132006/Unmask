@@ -1,5 +1,7 @@
 # Store listings
 
+For the click-by-click walkthrough, start with [PUBLISHING.md](PUBLISHING.md). This page holds the text to paste.
+
 Everything needed to publish Unmask to the Chrome Web Store, Firefox Add-ons (AMO) and Microsoft Edge Add-ons. Creating the developer accounts and pressing **Submit** the first time has to be done by the maintainer; after that, the **Publish to stores** workflow uploads new versions.
 
 ## 1. Build the packages
@@ -38,7 +40,7 @@ See what a suspicious email is really hiding: real sender, real links, QR codes,
 **Privacy policy URL:** https://praneeth132006.github.io/Unmask/privacy.html
 **Homepage / support URL:** https://github.com/praneeth132006/Unmask
 
-**Screenshots** (1280×800 or 640×400; Chrome needs at least one): crop from `docs/images/overview-light.png`, `links-dark.png`, `sender-light.png`, `body-light.png`, `privacy-light.png`. **Promo tile** (440×280): `docs/brand/logo-512.png` on the brand background.
+**Screenshots** (1280×800): `docs/store/1-stops-the-click.png` … `5-qr-codes.png`. **Promo tile** (440×280): `docs/store/promo-440x280.png`. Regenerate them with `node extension/scripts/screenshots.mjs` after `pnpm --filter unmask-extension build:e2e`.
 
 ## 3. Single purpose (Chrome)
 
