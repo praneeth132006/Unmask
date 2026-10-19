@@ -51,6 +51,7 @@ Unmask analyzes the email the user is reading in Gmail or Outlook on the web and
 | `storage` | Saves settings, optional API keys, the on-device sender history and recent verdicts. Never synced or uploaded. |
 | `tabs` | Finds the active Gmail or Outlook tab so the side panel can show the open email, and opens report pages in a new tab. |
 | `sidePanel` | Shows the report next to the inbox (Chrome, Edge). Firefox uses its sidebar. |
+| `offscreen` | A hidden extension page that parses the open email's HTML when the mail page blocks parsing in the content script. Local only. |
 | `webRequest` | Only for the optional *Trace redirects* button: watches the redirects of the one link the user asked to trace. |
 | `https://mail.google.com/*` | Reads the open email's original source from Gmail's own "Show original" page and shows warnings inside Gmail. |
 | `https://*.googleusercontent.com/*` | Gmail's "Download original" can redirect here. |

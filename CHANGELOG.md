@@ -5,12 +5,27 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **Warnings inside Gmail:** a red or amber banner above risky emails, risk badges next to risky senders in the inbox list, *"Wait, this link goes to …"* before risky links, and a warning when Reply would go to a different address. Works without opening the panel.
+- **Sender history** kept only on your device: first-contact warnings, "your PayPal emails usually come from paypal.com", and a contact's name used from a different address.
+- **QR-code phishing:** QR codes in images and PDFs are decoded and their links checked.
+- **Payment fraud (BEC):** changed bank details, payment and gift-card requests, secrecy openers.
+- **Looking inside attachments:** links in PDFs, Office macros and remote templates, ZIP file lists, and a safe preview of HTML attachments.
+- **Fake brand logos**, by asset host, alt text or image fingerprint.
+- **Domain intelligence:** first TLS certificate from Certificate Transparency (crt.sh) and MX/SPF/DMARC records (dns.google).
+- **Report or export:** Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus PDF, JSON and .eml downloads.
+- **Outlook on the web** support.
+- **Firefox and Edge** builds, a store listing guide and a *Publish to stores* workflow.
+- Website 404 page.
 - **One-click redirect tracing inside Unmask**: no server needed. It follows HTTP, meta-refresh and JavaScript redirects in the background without cookies, blocks local-network targets, and asks for its optional permission once.
 - **VirusTotal "Scan it now"** for links VirusTotal has never seen.
 - **Hover a URL in the Plain text view** to outline that link in the Gmail email.
 - **Copy all headers** and **Copy delivery path** buttons.
 - **Theme switch** (System / Light / Dark) in the header and in Settings → Appearance.
 - **Website** at praneeth132006.github.io/Unmask and a **GitHub Wiki**, both generated from the docs; README quick start.
+
+### Fixed
+- Headers tab: the copy buttons no longer touch the delivery path, and each is one clear button.
+- Chrome refused to load a content script containing U+FFFF; the build now fails if that ever happens again.
 
 ### Changed
 - New palette: charcoal and greys with lime/olive accents, red reserved for warnings; green logo.

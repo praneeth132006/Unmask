@@ -50,13 +50,17 @@
 
 ## What it does
 
-Open an email in Gmail and click the Unmask icon. A side panel shows:
+Unmask works in **Gmail** and **Outlook on the web**, in **Chrome, Edge, Brave and Firefox**. As soon as you open an email it warns you inside your inbox: a red or amber banner above risky emails, a badge next to risky senders in the list, *"Wait, this goes to paypa1-secure.top"* before a dangerous link opens, and a warning when Reply would go to a different address.
+
+Click the Unmask icon for the full report. The side panel shows:
 
 - **A risk score from 0 to 100** with a verdict: *High risk*, *Suspicious* or *No red flags found*.
 - **Every red flag in plain language**, for example *"The name says service@paypal.com, but the email was really sent from billing@paypa1-support.xyz."*
 - **Where each link really goes**, with redirect wrappers removed, and buttons to see the final page in a sandbox.
 - **Attachment checks**, including files pretending to be something else (`Invoice.pdf.html`) and a VirusTotal lookup.
 - **Hidden text and tracking pixels** the sender didn't want you to see.
+- **"You've never received mail from paypa1-support.xyz. Your PayPal emails usually come from paypal.com."** Unmask remembers, only on your device, who normally emails you.
+- **Report it in one click** to Gmail, APWG, Netcraft, Google Safe Browsing or PhishTank, or export a PDF or JSON report for your IT team.
 
 **Hover any red flag, link, or URL in the plain text and Unmask outlines that exact part of the email in Gmail.** Click a red flag to jump to the details, then use **Back to summary** to return. Switch between light, dark and system themes from the header.
 
@@ -66,15 +70,20 @@ Open an email in Gmail and click the Unmask icon. A side panel shows:
   <img src="docs/images/highlight-text.png" width="420" alt="Hovering a pressure-language finding marks the phrases in the email">
 </p>
 
-Not using Gmail? Save the email as an `.eml` file and drop it on the panel, or paste its raw source.
+Using another mail app? Save the email as an `.eml` file and drop it on the panel, or paste its raw source.
 
 ## Highlights
 
 | | |
 |---|---|
 | **Sender checks** | SPF, DKIM and DMARC; display names that hide another address; look-alike domains such as `paypa1.com` or `pаypal.com` (Cyrillic а) for 50+ brands; brand names sent from free webmail; Reply-To and bounce addresses elsewhere; brand-new domains. |
+| **Sender history** | First-contact warnings, "your PayPal emails usually come from paypal.com", and a contact's name used from another address. Kept only on your device. |
+| **Payment fraud (BEC)** | Changed bank details, payment and wire requests, gift-card asks, and "are you available? keep this confidential" openers. |
+| **QR codes** | Decodes QR codes in images and PDFs and checks where they really go. |
+| **Fake logos** | An email showing PayPal's logo that PayPal didn't send, by asset host, alt text or image fingerprint. |
+| **Domain intelligence** | Brand-new TLS certificates (Certificate Transparency) and domains without mail records (DNS), from free public sources. |
 | **Link checks** | Text that shows one site but links to another; Google, Microsoft Safe Links and Proofpoint wrappers removed; IP addresses, punycode, `user@host` tricks, shorteners, free hosting, risky endings like `.top`. |
-| **Attachment checks** | Executables, disk images, HTML/SVG attachments, macro documents, double extensions, right-to-left filename tricks, password-protected ZIPs, PDFs with JavaScript. |
+| **Attachment checks** | Executables, disk images, HTML/SVG attachments, macro documents, double extensions, right-to-left filename tricks, password-protected ZIPs. Looks inside: links hidden in PDFs, macros and remote templates in Office files, the file list of ZIPs, and a safe preview of HTML attachments. |
 | **Body checks** | Invisible text used to fool spam filters, forms and password fields inside the email, pressure and urgency phrases. A safe view with scripts off, links disabled and remote images blocked. |
 | **Privacy** | Tracking pixels and click-tracked links from ~40 services (Mailchimp, HubSpot, Mailtrack, Superhuman, …). |
 | **Optional online checks** | VirusTotal for files and links, urlscan.io for a sandbox screenshot of where a link lands, and a self-hosted server that traces redirect chains. Each one is set up from inside the panel. |

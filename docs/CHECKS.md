@@ -9,8 +9,13 @@ Every check, what it means, and how much it adds to the risk score. The numbers 
 - [Links](#links)
 - [Attachments](#attachments)
 - [Body content](#body-content)
+- [Sender history](#sender-history)
+- [Payment fraud (BEC)](#payment-fraud-bec)
+- [QR codes](#qr-codes)
+- [Fake brand logos](#fake-brand-logos)
 - [Privacy and tracking](#privacy-and-tracking)
 - [Online checks](#online-checks)
+- [Warnings inside Gmail and Outlook](#warnings-inside-gmail-and-outlook)
 
 ---
 
@@ -152,7 +157,23 @@ Every attachment is hashed (SHA-256) on your computer. Source: [`analyzers/attac
 | PDF with JavaScript, launch actions or embedded files | High | |
 | Obfuscated JavaScript in an HTML attachment | High | `atob(`, `eval(`, `fromCharCode` |
 | Name and content type don't match | Medium | `report.pdf` that is really `text/html` |
-| Archive | Low | `.zip .rar .7z` (contents not checked) |
+| Archive | Low | `.zip .rar .7z` |
+
+**Looking inside** ([`analyzers/documents.ts`](../extension/src/analyzers/documents.ts)). Files are parsed as bytes; nothing is opened or run. Links found inside go through every [link check](#links) and appear on the Links tab marked with the file they came from.
+
+| File | Check | Severity |
+|---|---|---|
+| PDF | Tries to launch a program | Critical |
+| PDF | JavaScript · embedded files · a form that submits to a website · `javascript:`/`file:` links | High |
+| PDF | 1–2 page PDF built around links (a classic way to slip phishing links past filters) | Medium |
+| Word / Excel / PowerPoint | Loads a template or object from the internet (template injection) | Critical |
+| Word / Excel / PowerPoint, legacy `.doc/.xls` | Macros (`vbaProject.bin`, `_VBA_PROJECT`) · DDE fields | High |
+| Word / Excel / PowerPoint | Embedded OLE objects | Medium |
+| RTF | Embedded object (`\object`, used by Office exploits) | High |
+| ZIP | A program inside (`.exe .js .lnk .hta …`) | Critical |
+| ZIP | Risky files inside (`.html .iso .one .docm …`) | High |
+| ZIP | Archive inside an archive · zip bomb | Medium |
+| HTML | Form targets and links are listed; **Safe preview** renders it sandboxed with scripts, forms, links and network off | |
 
 The attachment's worst flag sets its points (Critical 35, High 22, Medium 10, Low 4), plus 4 for each extra flag, at most 45 per file.
 
@@ -181,6 +202,66 @@ Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts).
 
 ---
 
+## Sender history
+
+Source: [`analyzers/history.ts`](../extension/src/analyzers/history.ts). Unmask remembers, in this browser only, which addresses have emailed you, how often and since when. High-risk emails and emails opened from files are never learned. You can turn this off or forget everything in Settings → Privacy.
+
+| Check | Severity | Points |
+|---|---|---|
+| "Your PayPal emails usually come from paypal.com": the email claims a brand (display name or look-alike domain) that normally emails you from another domain | High | 25 |
+| Uses the display name of a contact you've had 2+ emails from, from a different address and domain | High | 25, or 30 from webmail |
+| "You've never received mail from example.xyz": first email from both this address and its domain | Low (Medium with another sender problem) | 5 (10) |
+| First email from this address, but you know the domain | Note | 0 |
+| You've had 3+ emails from this sender | Good | −5 |
+
+First-contact warnings start once Unmask knows 10 senders, so a new install doesn't flag everyone.
+
+---
+
+## Payment fraud (BEC)
+
+Source: [`analyzers/bec.ts`](../extension/src/analyzers/bec.ts). Business email compromise needs no link or file, only a convincing request.
+
+| Check | Severity | Points |
+|---|---|---|
+| Says bank or payment details have changed | High | 25 |
+| Asks you to buy gift cards or send card codes | High | 22 |
+| A money request plus replies going elsewhere, a webmail sender, or a secrecy opener | High | 15 |
+| Asks for a payment, wire or transfer; mentions IBAN, SWIFT, routing numbers | Medium | 10 |
+| "Are you available?", "keep this confidential", "I'm in a meeting" | Medium with a money request (10), otherwise Low (3) | |
+
+---
+
+## QR codes
+
+Source: [`analyzers/qr.ts`](../extension/src/analyzers/qr.ts). QR codes are decoded on your computer from image attachments, inline and embedded (`data:`) images, and images inside PDFs. Remote images are not downloaded.
+
+| Check | Severity | Points |
+|---|---|---|
+| Contains a QR code that opens a website | Medium | 10 |
+| Contains a QR code with other content (Wi-Fi, phone, text) | Note | 0 |
+
+Each decoded link is also put through every [link check](#links), so a QR code pointing at a look-alike domain gets that finding too.
+
+---
+
+## Fake brand logos
+
+Source: [`analyzers/logos.ts`](../extension/src/analyzers/logos.ts). Flags an email that shows a brand's logo but wasn't sent from that brand's domain. Signals, none of which download anything:
+
+- the image is loaded from the brand's own asset host (for example `paypalobjects.com`)
+- its alt text, title or file name names the brand
+- an embedded image's perceptual fingerprint (dHash) matches the brand's logo; fingerprints for 42 brands are generated from [simple-icons](https://simpleicons.org) by `pnpm --filter unmask-extension logos`
+
+Logos that link to the brand itself (social icons, app-store badges) are ignored.
+
+| Check | Severity | Points |
+|---|---|---|
+| Brand logo, and the email also claims to be the brand, or the pixels match, or two signals agree | High | 20 |
+| One signal only | Medium | 8 |
+
+---
+
 ## Privacy and tracking
 
 Source: [`analyzers/trackers.ts`](../extension/src/analyzers/trackers.ts). These are **privacy notes worth 0 points**: tracking is normal for newsletters and isn't phishing.
@@ -193,7 +274,7 @@ Source: [`analyzers/trackers.ts`](../extension/src/analyzers/trackers.ts). These
 
 ## Online checks
 
-These run only when you click them, except domain age, which you can turn off in Settings.
+These run only when you click them, except domain age and domain intelligence, which run automatically and can be turned off in Settings.
 
 | Check | Sends | Finding |
 |---|---|---|
@@ -203,3 +284,20 @@ These run only when you click them, except domain age, which you can turn off in
 | **VirusTotal: link** | The link | 3+ engines: Critical 40 · 1–2: High 20 |
 | **urlscan.io sandbox scan** | The link | urlscan says malicious: Critical 40, plus the final page, a screenshot and any brand it impersonates |
 | **Redirect trace** (your server) | The link | The redirect chain (informational) |
+| **First TLS certificate** (crt.sh) | The sender's domain and up to 3 link domains | First certificate in the last 7 days: High 20 · last 30 days: Medium 10 · a link domain that never had one: Low 4 |
+| **Mail records** (dns.google) | The sender's domain | No mail server and no website: Medium 12 · no MX: Medium 8 · missing SPF/DMARC: Low 2 each |
+
+Well-known brands and webmail providers are skipped for the automatic lookups.
+
+---
+
+## Warnings inside Gmail and Outlook
+
+Source: [`lib/gmailProtect.ts`](../extension/src/lib/gmailProtect.ts), [`lib/protect.ts`](../extension/src/lib/protect.ts). Each can be turned off in Settings → Protection inside Gmail.
+
+- **Banner** above emails rated Suspicious or High risk, with the top three reasons.
+- **Inbox badges** next to risky senders: from the verdict of a conversation you already opened, or a quick check of the sender line (display-name tricks, look-alike domains, brand claims, sender history).
+- **"Wait, this link goes to …"** before a link opens when the link has a High/Critical flag, has a Medium flag in a suspicious email, or leaves the sender's domain in a high-risk email.
+- **Reply warning** when Reply would send your answer to an address on another domain.
+
+In **Outlook on the web** Unmask reads the email from the page, because Outlook doesn't give pages the original source. Header checks (SPF, DKIM, DMARC, delivery path) need … → View → View message source pasted into the panel.

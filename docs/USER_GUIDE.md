@@ -10,6 +10,8 @@ This guide is for everyone, no technical background needed. It covers installing
 - [6. Setting up urlscan.io](#6-setting-up-urlscanio)
 - [7. Tracing redirects](#7-tracing-redirects)
 - [8. Emails from Outlook and other apps](#8-emails-from-outlook-and-other-apps)
+- [8a. Warnings inside your inbox](#8a-warnings-inside-your-inbox)
+- [8b. Reporting an email](#8b-reporting-an-email)
 - [9. Settings](#9-settings)
 - [10. Troubleshooting](#10-troubleshooting)
 - [11. FAQ](#11-faq)
@@ -94,6 +96,8 @@ Then reload Gmail.
 3. Unmask reads the email and shows its report within a second or two.
 
 When you open a different email, the panel follows automatically. In a conversation with several messages, a menu at the top lets you pick which message to inspect.
+
+You don't have to open the panel to be protected: risky emails also get a warning banner inside Gmail (see [Warnings inside your inbox](#8a-warnings-inside-your-inbox)).
 
 ---
 
@@ -245,7 +249,9 @@ Links in emails often bounce through several addresses (`bit.ly → tracker → 
 
 ## 8. Emails from Outlook and other apps
 
-Unmask can analyze any email, not just Gmail:
+**Outlook on the web** (outlook.live.com, outlook.office.com) works like Gmail: open an email and click the Unmask icon. Outlook doesn't let pages read an email's original source, so Unmask reads what Outlook shows. Links, text, QR codes, logos and sender checks all work; for the header checks (SPF, DKIM, DMARC, delivery path) paste the source as described below.
+
+Unmask can also analyze any saved email:
 
 - **Drop a file:** save the email as an `.eml` file and drag it onto the Unmask panel, or click the **upload icon** at the top.
   - *Gmail:* open the email → ⋮ → **Download message**
@@ -256,7 +262,34 @@ Unmask can analyze any email, not just Gmail:
   - *Gmail:* ⋮ → **Show original** → **Copy to clipboard**
   - *Outlook:* … → **View** → **View message source**
 
-To open Unmask's panel outside Gmail, click its toolbar icon on any page.
+To open Unmask's panel outside Gmail, click its toolbar icon on any page. In **Firefox** the panel opens in the sidebar.
+
+---
+
+## 8a. Warnings inside your inbox
+
+Unmask checks each email as you open it, even when its panel is closed:
+
+- **Banner:** a red (high risk) or amber (suspicious) banner above the email lists the main reasons. **See why** opens the full report; **Dismiss** hides it for that email.
+- **Inbox badges:** risky senders get a small **⚠ Risky** or **Check** badge in the email list. Hover it for the reasons.
+- **Before a risky link opens** you'll see *"Wait, this link goes to paypa1-secure.top"*. **Go back** is the safe choice; **Open anyway** opens it in a new tab.
+- **Before replying** to an email whose replies are set to go to a different address, Unmask shows where your answer would really go.
+- **First contact:** Unmask remembers, only on your device, who normally emails you. It tells you when a sender has never emailed you before, or when "PayPal" writes from a domain your PayPal emails never came from. It starts doing this after it has seen 10 senders.
+
+Each of these can be switched off in Settings.
+
+---
+
+## 8b. Reporting an email
+
+At the bottom of the Summary, **Report or export** offers:
+
+- **Report phishing in Gmail:** opens Gmail's own *Report phishing*; confirm it in Gmail's dialog. This trains Gmail's filters.
+- **Send to APWG** or **Netcraft:** downloads the email as an `.eml` file and opens a pre-filled email to their reporting address. Attach the downloaded file and send.
+- **Report the riskiest link** to Google Safe Browsing (address filled in), PhishTank or Netcraft (address copied; paste it in).
+- **PDF report**, **JSON** and **Original (.eml)** for your IT or security team.
+
+Unmask never sends a report itself; you always review and send it.
 
 ---
 
@@ -268,7 +301,10 @@ Open Settings with the **gear icon**. The **?** icon next to it opens this guide
 
 - **Extra checks:** each service shows **Connected** or **Not set up**, with buttons to set up, change or remove its key.
 - **urlscan.io scan visibility:** unlisted (recommended, 1,000 free per day), private (50 free per day; best for links with personal tokens) or public.
+- **Protection inside Gmail:** the warning banner, inbox badges, and the link and reply checks, each with its own switch.
+- **Privacy → Remember who emails me:** powers first-contact warnings. Shows how many senders are remembered, with **Forget all**.
 - **Privacy → Check how old the sender's domain is:** on by default. It sends only the domain name (for example `example.com`) to rdap.org, the public registry lookup.
+- **Privacy → Check certificate history and mail records:** on by default. Sends only domain names to crt.sh and dns.google to spot brand-new certificates and domains without mail records.
 - **Appearance:** System (follows your computer), Light or Dark. The sun/moon button in the header switches it too.
 - **Advanced → Redirect tracing:** *Inside Unmask* (default) or *My own server*, with the server's address.
 
