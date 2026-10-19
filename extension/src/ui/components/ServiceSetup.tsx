@@ -9,6 +9,8 @@ export type Service = 'virustotal' | 'urlscan' | 'backend';
 interface ServiceInfo {
   name: string;
   what: string;
+  /** Free quota, shown so nobody worries about being charged. */
+  limits: string;
   field: 'vtApiKey' | 'urlscanApiKey' | 'backendUrl';
   placeholder: string;
   steps: ReactNode[];
@@ -25,6 +27,7 @@ export const SERVICES: Record<Service, ServiceInfo> = {
   virustotal: {
     name: 'VirusTotal',
     what: 'Checks files and links against 70+ antivirus engines. Free, and Unmask only sends a file’s fingerprint unless you choose to upload it.',
+    limits: 'Free: 4 lookups per minute, 500 per day. A free key is never charged; past the limit, lookups just pause until it resets. Personal use only.',
     field: 'vtApiKey',
     placeholder: 'Paste your VirusTotal key',
     steps: [
@@ -37,6 +40,7 @@ export const SERVICES: Record<Service, ServiceInfo> = {
   urlscan: {
     name: 'urlscan.io',
     what: 'Opens a link in urlscan.io’s own sandbox browser (never yours) and shows a screenshot of where it really lands.',
+    limits: 'Free: 1,000 unlisted and 50 private scans per day. A free key is never charged; past the limit, scans just pause until the next day.',
     field: 'urlscanApiKey',
     placeholder: 'Paste your urlscan.io key',
     steps: [
@@ -49,6 +53,7 @@ export const SERVICES: Record<Service, ServiceInfo> = {
   backend: {
     name: 'Redirect tracing',
     what: 'Follows a link’s chain of redirects from a small server you run, so your browser never opens the link. For technical users.',
+    limits: 'Free when run on your own computer.',
     field: 'backendUrl',
     placeholder: 'http://localhost:8787',
     steps: [
@@ -142,7 +147,13 @@ export function ServiceSetup({
           <Icon name={state.result.ok ? 'check' : 'alert'} className="h-3.5 w-3.5" /> {state.result.message}
         </p>
       )}
-      <p className="mt-2 text-[11px] text-[var(--text-3)]">Stored only in this browser. You can change or remove it any time in Settings.</p>
+      <p className="mt-2 text-[11px] text-[var(--text-3)]">
+        {info.limits}{' '}
+        <a className="underline" href="https://github.com/praneeth132006/Unmask/blob/main/docs/LIMITS_AND_COSTS.md" target="_blank" rel="noreferrer">
+          Limits &amp; costs
+        </a>
+      </p>
+      <p className="mt-1 text-[11px] text-[var(--text-3)]">Stored only in this browser. You can change or remove it any time in Settings.</p>
     </div>
   );
 }

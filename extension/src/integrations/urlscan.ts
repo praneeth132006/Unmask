@@ -36,7 +36,7 @@ export async function scanUrl(
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { message?: string; description?: string };
     if (res.status === 401) throw new Error('urlscan.io rejected the API key.');
-    if (res.status === 429) throw new Error('urlscan.io rate limit reached. Try again in a minute.');
+    if (res.status === 429) throw new Error('urlscan.io limit reached. The free plan allows 1,000 unlisted and 50 private scans per day. Nothing is charged; try again later or switch visibility in Settings.');
     throw new Error(body.description ?? body.message ?? `urlscan.io returned HTTP ${res.status}`);
   }
   const { uuid } = (await res.json()) as { uuid: string };

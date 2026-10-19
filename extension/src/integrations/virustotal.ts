@@ -24,7 +24,7 @@ function headers(apiKey: string): HeadersInit {
 
 async function vtError(res: Response): Promise<Error> {
   if (res.status === 401 || res.status === 403) return new Error('VirusTotal rejected the API key.');
-  if (res.status === 429) return new Error('VirusTotal rate limit reached (free keys allow 4 lookups per minute). Try again shortly.');
+  if (res.status === 429) return new Error('VirusTotal limit reached. Free keys allow 4 lookups per minute and 500 per day (resets at 00:00 UTC). Nothing is charged; try again shortly.');
   return new Error(`VirusTotal returned HTTP ${res.status}`);
 }
 

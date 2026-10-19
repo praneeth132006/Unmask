@@ -182,7 +182,7 @@ Unmask checks the key works before saving it. You'll see **"Connected to VirusTo
 
 > **What is an "API key"?** A password that lets an app use your VirusTotal account. It's not your account password. Unmask stores it only in your browser.
 
-**Limits:** free keys allow 4 lookups per minute and 500 per day. That's plenty for checking emails.
+**Limits and cost:** free keys allow 4 lookups per minute and 500 per day, and **can never be charged**: going over just pauses lookups until the limit resets. The free API is for personal use; using Unmask for your company's security work needs a VirusTotal Premium licence. See [Free limits and costs](LIMITS_AND_COSTS.md).
 
 **Uploading files:** if VirusTotal has never seen a file, Unmask offers **Upload file…**. Uploaded files can be downloaded by VirusTotal's paying customers, so **never upload anything confidential** such as invoices, contracts, payslips or ID documents. Unmask asks you to confirm first.
 
@@ -200,6 +200,8 @@ Click **Sandbox scan** on any link and follow the steps in the panel:
 2. Click **Settings & API**, then **New API key**.
 3. Copy the key, which looks like `1a2b3c4d-…` (36 characters with dashes).
 4. Paste it into Unmask and click **Save & test**.
+
+**Free limits:** 1,000 unlisted, 50 private and 5,000 public scans per day, at no cost. Going over just pauses scans until the next day. See [Free limits and costs](LIMITS_AND_COSTS.md).
 
 A scan takes 10 to 30 seconds. Scans are **unlisted** by default: hidden from urlscan's public feed, but visible to its security partners. You can change this in Settings.
 
@@ -242,7 +244,7 @@ To open Unmask's panel outside Gmail, click its toolbar icon on any page.
 Open Settings with the **gear icon**.
 
 - **Extra checks:** each service shows **Connected** or **Not set up**, with buttons to set up, change or remove its key.
-- **urlscan.io scan visibility:** unlisted (recommended), private (paid urlscan plans) or public.
+- **urlscan.io scan visibility:** unlisted (recommended, 1,000 free per day), private (50 free per day; best for links with personal tokens) or public.
 - **Privacy → Check how old the sender's domain is:** on by default. It sends only the domain name (for example `example.com`) to rdap.org, the public registry lookup.
 - **Advanced → Redirect tracing:** the address of your trace server.
 
@@ -295,5 +297,5 @@ Not necessarily. Some legitimate senders do things phishers also do, such as usi
 **Why do newsletters show trackers?**
 Most marketing emails include tracking pixels so senders know who opened them. That's a privacy matter, not phishing, so trackers don't raise the risk score.
 
-**Is it free?**
-Yes, Unmask is open source under the MIT license. VirusTotal and urlscan.io have free plans.
+**Is it free? Can it ever cost me money?**
+Unmask is free and open source (MIT). VirusTotal and urlscan.io have free plans, and **free keys can't be billed**: if you exceed a limit, the service just refuses requests until it resets. Paid plans exist only for heavy or commercial use. Full details: [Free limits and costs](LIMITS_AND_COSTS.md).

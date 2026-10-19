@@ -98,9 +98,9 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
               value={settings.urlscanVisibility}
               onChange={(e) => void update({ urlscanVisibility: e.target.value as Settings['urlscanVisibility'] })}
             >
-              <option value="unlisted">Unlisted (recommended)</option>
-              <option value="private">Private (paid urlscan plans only)</option>
-              <option value="public">Public</option>
+              <option value="unlisted">Unlisted: 1,000 free per day (recommended)</option>
+              <option value="private">Private: only you can see it, 50 free per day</option>
+              <option value="public">Public: anyone can find it, 5,000 free per day</option>
             </select>
             <p className="mt-1.5 text-[11px] text-[var(--text-3)]">Unlisted scans are hidden from urlscan’s public feed but visible to its security partners.</p>
           </Card>
