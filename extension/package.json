@@ -12,7 +12,8 @@
     "icons": "node scripts/gen-icons.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "node e2e/run.mjs"
   },
   "dependencies": {
     "postal-mime": "^4.0.11",
@@ -29,6 +30,7 @@
     "@types/react-dom": "^19.3.0",
     "@wxt-dev/module-react": "^1.2.2",
     "happy-dom": "^21.0.3",
+    "playwright": "1.62.1",
     "tailwindcss": "^4.3.3",
     "typescript": "5.9.3",
     "vitest": "^5.0.5",

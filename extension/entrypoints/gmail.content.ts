@@ -1,15 +1,7 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
-import type {
-  BackgroundFetchRequest,
-  BackgroundFetchResponse,
-  FetchRawResponse,
-  GmailMessageRef,
-  GmailState,
-  PanelRequest,
-  StateChanged,
-} from '../src/lib/messages';
-import { applyHighlight } from '../src/lib/highlight';
+import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse, GmailMessageRef, GmailState } from '../src/lib/messages';
+import { alive, startBridge, type BridgeRuntime } from '../src/lib/gmailBridge';
 import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, type Attempt } from '../src/lib/gmailRaw';
 
 /**
@@ -20,54 +12,14 @@ import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parse
 export default defineContentScript({
   matches: ['https://mail.google.com/*'],
   runAt: 'document_idle',
-  main() {
-    let lastSignature = '';
-
-    let observer: MutationObserver | undefined;
-    const notify = () => {
-      // After the extension is reloaded or updated, this old copy of the script is orphaned: stop quietly.
-      if (!browser.runtime?.id) {
-        observer?.disconnect();
-        window.removeEventListener('hashchange', notify);
-        return;
-      }
-      const state = readState();
-      const signature = JSON.stringify(state);
-      if (signature === lastSignature) return;
-      lastSignature = signature;
-      const msg: StateChanged = { type: 'unmask:state-changed', state };
-      // The side panel may not be open; that's fine.
-      try {
-        browser.runtime.sendMessage(msg).catch(() => {});
-      } catch {
-        observer?.disconnect();
-      }
-    };
-
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    observer = new MutationObserver(() => {
-      clearTimeout(timer);
-      timer = setTimeout(notify, 400);
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener('hashchange', notify);
-    notify();
-
-    browser.runtime.onMessage.addListener((req: PanelRequest, _sender, sendResponse) => {
-      if (req?.type === 'unmask:get-state') {
-        sendResponse(readState());
-        return;
-      }
-      if (req?.type === 'unmask:highlight') {
-        sendResponse({ found: applyHighlight(document, req.message, req.target) });
-        return;
-      }
-      if (req?.type === 'unmask:fetch-raw') {
-        fetchRaw(req.message).then(sendResponse, (err: unknown) =>
-          sendResponse({ ok: false, error: err instanceof Error ? err.message : String(err) } satisfies FetchRawResponse),
-        );
-        return true; // async response
-      }
+  main(ctx) {
+    startBridge({
+      runtime: () => browser.runtime as unknown as BridgeRuntime,
+      doc: document,
+      win: window,
+      readState,
+      fetchRaw,
+      onInvalidated: (cb) => ctx.onInvalidated(cb),
     });
   },
 });
@@ -136,6 +88,7 @@ async function fetchText(url: string): Promise<Fetched> {
     const res = await fetch(url, { credentials: 'include', redirect: 'follow' });
     return { status: res.status, finalUrl: res.url || url, contentType: res.headers.get('content-type') ?? '', body: await res.text(), via: 'page' };
   } catch (pageErr) {
+    if (!alive(() => browser.runtime as unknown as BridgeRuntime)) throw new Error('Unmask was reloaded. Reload this Gmail tab.');
     const res = (await browser.runtime.sendMessage({ type: 'unmask:bg-fetch', url } satisfies BackgroundFetchRequest)) as BackgroundFetchResponse | undefined;
     if (!res) throw new Error(`page fetch failed (${(pageErr as Error).message}) and the background worker did not answer`);
     if (!res.ok) throw new Error(`page fetch failed (${(pageErr as Error).message}); background fetch failed (${res.error})`);

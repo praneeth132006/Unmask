@@ -8,6 +8,7 @@
     "zip": "pnpm --filter unmask-extension zip",
     "backend": "pnpm --filter unmask-backend dev",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "test:e2e": "pnpm build && pnpm --filter unmask-extension test:e2e"
   }
 }
