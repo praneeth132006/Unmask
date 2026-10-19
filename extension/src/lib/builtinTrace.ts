@@ -147,3 +147,24 @@ export function traceQueued(env: TraceEnv, url: string): Promise<TraceResult> {
   queue = run.catch(() => {});
   return run;
 }
+
+/**
+ * Registers the real webRequest listeners once, when the background starts,
+ * and hands events to whichever trace is running. Adding listeners per trace
+ * raced the first request: Chrome registers them asynchronously, so on a busy
+ * machine the first redirects of a trace could be missed.
+ */
+export function webRequestHub(onBeforeRequest: WebRequestEvent, onBeforeRedirect: WebRequestEvent): Pick<TraceEnv, 'onBeforeRequest' | 'onBeforeRedirect'> {
+  const local = () => {
+    const subs = new Set<(d: WebRequestDetails) => void>();
+    return {
+      dispatch: (d: WebRequestDetails) => subs.forEach((cb) => cb(d)),
+      event: { addListener: (cb: (d: WebRequestDetails) => void) => void subs.add(cb), removeListener: (cb: (d: WebRequestDetails) => void) => void subs.delete(cb) } satisfies WebRequestEvent,
+    };
+  };
+  const req = local();
+  const redir = local();
+  onBeforeRequest.addListener(req.dispatch, { urls: ['<all_urls>'] });
+  onBeforeRedirect.addListener(redir.dispatch, { urls: ['<all_urls>'] });
+  return { onBeforeRequest: req.event, onBeforeRedirect: redir.event };
+}

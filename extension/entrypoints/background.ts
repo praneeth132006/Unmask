@@ -2,7 +2,7 @@ import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
 import type { AnalyzeRequest, AnalyzeResponse, BackgroundFetchRequest, BackgroundFetchResponse, OpenPanelRequest, TraceRequest, TraceResponse } from '../src/lib/messages';
 import { isOutlookUrl } from '../src/lib/outlookDom';
-import { traceQueued } from '../src/lib/builtinTrace';
+import { traceQueued, webRequestHub } from '../src/lib/builtinTrace';
 
 /** Only Gmail and Google's own content hosts may be fetched on the content script's behalf. */
 function isAllowedGmailUrl(url: string): boolean {
@@ -43,6 +43,10 @@ async function analyzeElsewhere(req: AnalyzeRequest): Promise<AnalyzeResponse> {
 }
 
 export default defineBackground(() => {
+  // Registered at startup so no trace starts before its listeners are live.
+  const wrApi = (browser as unknown as { webRequest?: { onBeforeRequest: never; onBeforeRedirect: never } }).webRequest;
+  const hub = wrApi ? webRequestHub(wrApi.onBeforeRequest, wrApi.onBeforeRedirect) : null;
+
   // Clicking the toolbar icon opens the side panel instead of a popup.
   browser.sidePanel
     ?.setPanelBehavior({ openPanelOnActionClick: true })
@@ -79,12 +83,11 @@ export default defineBackground(() => {
       sendResponse({ ok: false, error: 'request not allowed' } satisfies TraceResponse);
       return;
     }
-    const wr = (browser as unknown as { webRequest?: { onBeforeRequest: never; onBeforeRedirect: never } }).webRequest;
-    if (!wr) {
+    if (!hub) {
       sendResponse({ ok: false, error: 'Chrome did not give Unmask permission to trace links.' } satisfies TraceResponse);
       return;
     }
-    traceQueued({ fetch: (...a) => fetch(...a), onBeforeRequest: wr.onBeforeRequest, onBeforeRedirect: wr.onBeforeRedirect, origin: panelOrigin }, req.url).then(
+    traceQueued({ fetch: (...a) => fetch(...a), ...hub, origin: panelOrigin }, req.url).then(
       (result) => sendResponse({ ok: true, result } satisfies TraceResponse),
       (err: unknown) => sendResponse({ ok: false, error: err instanceof Error ? err.message : String(err) } satisfies TraceResponse),
     );
