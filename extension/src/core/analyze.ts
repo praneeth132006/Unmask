@@ -9,10 +9,13 @@ import { analyzeAttachments } from '../analyzers/attachments';
 import { analyzeTrackers } from '../analyzers/trackers';
 import { analyzeBec } from '../analyzers/bec';
 import { historyFindings, type SenderHistory } from '../analyzers/history';
+import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzers/qr';
 
 export interface AnalyzeOptions {
   /** Who normally emails this user, for "first contact" and impersonation checks. */
   history?: SenderHistory;
+  /** Decodes images for QR-code scanning. Without it, only PDF images that need no decoder are scanned. */
+  decodeImage?: ImageDecoder;
 }
 
 /**
@@ -26,12 +29,13 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const senderFindings = analyzeSender(email);
   const content = analyzeContent(email);
   const { attachments, findings: attachmentFindings, links: fileLinks } = await analyzeAttachments(email.attachments);
-  const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks], email.from?.domain ?? '');
+  const qrCodes = await findQrCodes(email, opts.decodeImage);
+  const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks, ...qrLinks(qrCodes)], email.from?.domain ?? '');
   const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
   const pastFindings = opts.history ? historyFindings(email, opts.history) : [];
 
-  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings]);
+  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes)]);
   const { score, verdict } = scoreFindings(findings);
 
   return {
@@ -41,6 +45,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
     attachments,
     hidden: content.hidden,
     trackers,
+    qrCodes,
     annotatedHtml: content.annotatedHtml,
     findings,
     score,

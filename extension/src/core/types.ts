@@ -148,6 +148,12 @@ export interface TrackerReport {
 
 export type Verdict = 'clear' | 'suspicious' | 'high';
 
+export interface QrCode {
+  /** Where the code was found, e.g. "scan-me.png" or "image in invoice.pdf". */
+  origin: string;
+  text: string;
+}
+
 export interface Report {
   email: ParsedEmail;
   auth: AuthSummary;
@@ -155,6 +161,8 @@ export interface Report {
   attachments: AttachmentInfo[];
   hidden: HiddenSnippet[];
   trackers: TrackerReport;
+  /** QR codes decoded from the email's images and PDFs. */
+  qrCodes: QrCode[];
   /** Body HTML with hidden elements tagged (data-unmask-hidden) for the "reveal" view. */
   annotatedHtml: string | null;
   findings: Finding[];

@@ -4,6 +4,7 @@ import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/t
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
 import { registrableDomain } from '../lib/domain';
 import { loadHistory, rememberSender } from '../lib/historyStore';
+import { decodeImageInBrowser } from '../lib/imageDecode';
 import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
 import type { HighlightTarget } from '../lib/highlight';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
@@ -109,7 +110,7 @@ export function App() {
       try {
         // Emails opened from files may be samples from anywhere: compare them with the history, but never learn from them.
         const history = settings.senderHistory ? await loadHistory() : undefined;
-        const r = cached ?? (await analyzeRawEmail(await load(), { history }));
+        const r = cached ?? (await analyzeRawEmail(await load(), { history, decodeImage: decodeImageInBrowser }));
         if (run !== runId.current) return;
         if (cacheKey) cache.current.set(cacheKey, r);
         if (settings.senderHistory && src.kind === 'gmail' && !cached) void rememberSender(r);
