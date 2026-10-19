@@ -35,10 +35,13 @@ export function SenderTab({
   report,
   domainAge,
   onCheckAge,
+  onHoverSender,
 }: {
   report: Report;
   domainAge: Async<DomainAge> | undefined;
   onCheckAge: () => void;
+  /** Outline the sender in the Gmail message while hovered. */
+  onHoverSender?: (on: boolean) => void;
 }) {
   const { email, auth } = report;
   const from = email.from;

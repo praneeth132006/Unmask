@@ -122,6 +122,7 @@ export async function analyzeAttachments(list: ParsedAttachment[]): Promise<{ at
       severity: worst,
       points: Math.min(POINTS[worst] + (att.flags.length - 1) * 4, 45),
       title: `Risky attachment: ${att.filename}`,
+      target: { kind: 'attachment', sha256: att.sha256 },
       detail: att.flags.map((fl) => fl.label).join('; '),
     });
   }

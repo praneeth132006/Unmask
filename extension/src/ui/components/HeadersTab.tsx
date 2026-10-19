@@ -26,8 +26,8 @@ export function parseReceived(values: string[]): ReceivedHop[] {
     .reverse();
 }
 
-export function HeadersTab({ report }: { report: Report }) {
-  const [filter, setFilter] = useState('');
+export function HeadersTab({ report, initialFilter }: { report: Report; initialFilter?: string }) {
+  const [filter, setFilter] = useState(initialFilter ?? '');
   const headers = report.email.headers;
   const hops = useMemo(() => parseReceived(headers.filter((h) => h.key === 'received').map((h) => h.value)), [headers]);
   const shown = headers.filter((h) => !filter || h.key.includes(filter.toLowerCase()) || h.value.toLowerCase().includes(filter.toLowerCase()));

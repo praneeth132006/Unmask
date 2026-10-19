@@ -62,6 +62,8 @@ function LinkCard({
   // Bold the real host so it stands out from long paths and query strings.
   const hostAt = link.host ? target.toLowerCase().indexOf(link.host) : -1;
 
+  const report = (findings: Finding[]) => onFindings(findings.map((f) => ({ ...f, target: { kind: 'links', indexes: [index] } as const })));
+
   const run = async (action: Action, s: Settings = settings) => {
     if (!s[NEEDS[action].field]) {
       setSetup(action);
@@ -80,7 +82,7 @@ function LinkCard({
       try {
         const value = await scanUrl(s.urlscanApiKey, target, s.urlscanVisibility, (message) => set({ urlscan: { status: 'loading', message } }));
         set({ urlscan: { status: 'done', value } });
-        onFindings(urlscanFindings(`urlscan-${index}`, value));
+        report(urlscanFindings(`urlscan-${index}`, value));
       } catch (e) {
         set({ urlscan: { status: 'error', error: errMsg(e) } });
       }
@@ -89,7 +91,7 @@ function LinkCard({
       try {
         const value = await lookupUrl(s.vtApiKey, target);
         set({ vt: { status: 'done', value } });
-        onFindings(vtFindings(`vt-url-${index}`, link.host || 'this link', value, 'links').filter((f) => f.points > 0));
+        report(vtFindings(`vt-url-${index}`, link.host || 'this link', value, 'links').filter((f) => f.points > 0));
       } catch (e) {
         set({ vt: { status: 'error', error: errMsg(e) } });
       }

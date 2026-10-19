@@ -190,7 +190,13 @@ export function analyzeLinks(rawLinks: RawLink[], senderDomain = ''): { links: L
   const links = [...unique.values()].map((l) => inspectLink(l, senderDomain));
 
   const byFlag = new Map<string, LinkFlag[]>();
-  for (const link of links) for (const f of link.flags) byFlag.set(f.id, [...(byFlag.get(f.id) ?? []), f]);
+  const indexesByFlag = new Map<string, number[]>();
+  links.forEach((link, i) => {
+    for (const f of link.flags) {
+      byFlag.set(f.id, [...(byFlag.get(f.id) ?? []), f]);
+      indexesByFlag.set(f.id, [...new Set([...(indexesByFlag.get(f.id) ?? []), i])]);
+    }
+  });
 
   const findings: Finding[] = [];
   for (const [id, flags] of byFlag) {
@@ -205,6 +211,7 @@ export function analyzeLinks(rawLinks: RawLink[], senderDomain = ''): { links: L
       severity: spec.severity,
       points,
       title: flags.length > 1 ? `${spec.title} (${flags.length} links)` : spec.title,
+      target: { kind: 'links', indexes: indexesByFlag.get(id) ?? [] },
       detail: examples.slice(0, 3).join('; ') + (examples.length > 3 ? `; +${examples.length - 3} more` : ''),
     });
   }

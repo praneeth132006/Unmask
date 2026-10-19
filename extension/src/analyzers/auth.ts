@@ -165,5 +165,6 @@ export function analyzeAuth(email: ParsedEmail): { auth: AuthSummary; findings: 
     });
   }
 
-  return { auth, findings };
+  const target = { kind: 'header', key: 'authentication-results' } as const;
+  return { auth, findings: findings.map((f) => ({ target, ...f })) };
 }

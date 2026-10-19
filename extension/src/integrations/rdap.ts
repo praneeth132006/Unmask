@@ -42,15 +42,16 @@ export function domainAgeFindings(age: DomainAge, role: 'sender' | 'link'): Find
   const who = role === 'sender' ? 'Sender domain' : 'Link domain';
   const id = `age-${role}-${age.domain}`;
   const category = role === 'sender' ? 'sender' : 'links';
+  const target = { kind: 'sender' } as const;
   if (age.notFound) {
-    return [{ id, category, severity: 'medium', points: 10, title: `${who} ${age.domain} has no registration record`, detail: 'The public registry has no entry for it: it may be unregistered, just deleted, or on a registry that does not publish RDAP data.' }];
+    return [{ id, category, target, severity: 'medium', points: 10, title: `${who} ${age.domain} has no registration record`, detail: 'The public registry has no entry for it: it may be unregistered, just deleted, or on a registry that does not publish RDAP data.' }];
   }
   if (age.ageDays === null) return [];
   if (age.ageDays < 30) {
-    return [{ id, category, severity: 'high', points: 25, title: `${who} ${age.domain} was registered ${age.ageDays} day${age.ageDays === 1 ? '' : 's'} ago`, detail: 'Phishing domains are usually brand new. Established companies send from domains that are years old.' }];
+    return [{ id, category, target, severity: 'high', points: 25, title: `${who} ${age.domain} was registered ${age.ageDays} day${age.ageDays === 1 ? '' : 's'} ago`, detail: 'Phishing domains are usually brand new. Established companies send from domains that are years old.' }];
   }
   if (age.ageDays < 180) {
-    return [{ id, category, severity: 'medium', points: 10, title: `${who} ${age.domain} is only ${Math.round(age.ageDays / 30)} months old`, detail: age.created ? `Registered ${age.created.slice(0, 10)}.` : undefined }];
+    return [{ id, category, target, severity: 'medium', points: 10, title: `${who} ${age.domain} is only ${Math.round(age.ageDays / 30)} months old`, detail: age.created ? `Registered ${age.created.slice(0, 10)}.` : undefined }];
   }
-  return [{ id, category, severity: 'info', points: 0, title: `${who} ${age.domain} has existed for ${(age.ageDays / 365).toFixed(1)} years`, detail: age.created ? `Registered ${age.created.slice(0, 10)}${age.registrar ? ` via ${age.registrar}` : ''}.` : undefined }];
+  return [{ id, category, target, severity: 'info', points: 0, title: `${who} ${age.domain} has existed for ${(age.ageDays / 365).toFixed(1)} years`, detail: age.created ? `Registered ${age.created.slice(0, 10)}${age.registrar ? ` via ${age.registrar}` : ''}.` : undefined }];
 }

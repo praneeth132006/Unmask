@@ -43,7 +43,7 @@ function AttachmentCard({
 
   const report = (value: VtResult) => {
     setVt({ status: 'done', value });
-    onFindings(vtFindings(`vt-file-${att.sha256.slice(0, 12)}`, att.filename, value, 'attachments'));
+    onFindings(vtFindings(`vt-file-${att.sha256.slice(0, 12)}`, att.filename, value, 'attachments').map((f) => ({ ...f, target: { kind: 'attachment', sha256: att.sha256 } as const })));
   };
   const lookup = async (s: Settings = settings) => {
     if (!s.vtApiKey) {

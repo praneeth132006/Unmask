@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
+import type { HighlightTarget } from '../lib/highlight';
 import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, StateChanged } from '../lib/messages';
 
 export type GmailStatus = 'not-gmail' | 'no-script' | 'ready';
@@ -81,9 +82,18 @@ export function useGmail() {
     [tabId],
   );
 
+  /** Best effort: outline something in the open Gmail message. Silently ignored if Gmail isn't there. */
+  const highlight = useCallback(
+    (message: GmailMessageRef, target: HighlightTarget | null) => {
+      if (tabId === null) return;
+      browser.tabs.sendMessage(tabId, { type: 'unmask:highlight', message, target } satisfies PanelRequest).catch(() => {});
+    },
+    [tabId],
+  );
+
   const reloadTab = useCallback(async () => {
     if (tabId !== null) await browser.tabs.reload(tabId);
   }, [tabId]);
 
-  return { status, state, fetchRaw, refresh, reloadTab };
+  return { status, state, fetchRaw, refresh, reloadTab, highlight };
 }

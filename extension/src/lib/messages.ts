@@ -17,7 +17,9 @@ export interface GmailState {
 
 export type PanelRequest =
   | { type: 'unmask:get-state' }
-  | { type: 'unmask:fetch-raw'; message: GmailMessageRef };
+  | { type: 'unmask:fetch-raw'; message: GmailMessageRef }
+  /** Outline the part of the open email a finding refers to; target null clears it. */
+  | { type: 'unmask:highlight'; message: GmailMessageRef; target: import('./highlight').HighlightTarget | null };
 
 export type FetchRawResponse =
   | { ok: true; raw: string; via: string }

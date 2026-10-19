@@ -81,6 +81,7 @@ export function analyzeSender(email: ParsedEmail): Finding[] {
       severity: freemail ? 'high' : 'medium',
       points: freemail ? 20 : 12,
       title: 'Replies go to a different address',
+      target: { kind: 'header', key: 'reply-to' },
       detail: `If you hit Reply, your answer goes to ${reply.address} instead of ${from.address}.`,
     });
   }
@@ -94,9 +95,11 @@ export function analyzeSender(email: ParsedEmail): Finding[] {
       severity: 'low',
       points: 3,
       title: 'Bounce address is on a different domain',
+      target: { kind: 'header', key: 'return-path' },
       detail: `Return-Path is ${email.returnPath}. Normal for newsletters sent through mailing services.`,
     });
   }
 
-  return findings;
+  // Everything else is about the From line.
+  return findings.map((f) => ({ target: { kind: 'sender' } as const, ...f }));
 }

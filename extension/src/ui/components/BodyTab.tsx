@@ -5,11 +5,11 @@ import { Card, SectionTitle } from './ui';
 
 type View = 'safe' | 'text';
 
-export function BodyTab({ report }: { report: Report }) {
+export function BodyTab({ report, initialReveal }: { report: Report; initialReveal?: boolean }) {
   const { email, hidden, annotatedHtml } = report;
   const hasHtml = Boolean(email.html);
   const [view, setView] = useState<View>(hasHtml ? 'safe' : 'text');
-  const [reveal, setReveal] = useState(hidden.length > 0);
+  const [reveal, setReveal] = useState(initialReveal ?? hidden.length > 0);
   const [remoteImages, setRemoteImages] = useState(false);
 
   const remoteCount = useMemo(() => (email.html ? countRemoteImages(email.html) : 0), [email.html]);

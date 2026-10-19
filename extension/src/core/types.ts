@@ -12,6 +12,8 @@ export type FindingTarget =
   | { kind: 'header'; key: string }
   | { kind: 'hidden' }
   | { kind: 'body' }
+  /** Phrases to find and mark in the email text. */
+  | { kind: 'text'; phrases: string[] }
   | { kind: 'tab'; tab: TabId };
 
 /** A single observation about the email. Points feed the risk score; reasons are shown to the user. */

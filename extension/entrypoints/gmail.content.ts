@@ -9,6 +9,7 @@ import type {
   PanelRequest,
   StateChanged,
 } from '../src/lib/messages';
+import { applyHighlight } from '../src/lib/highlight';
 import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, type Attempt } from '../src/lib/gmailRaw';
 
 /**
@@ -55,6 +56,10 @@ export default defineContentScript({
     browser.runtime.onMessage.addListener((req: PanelRequest, _sender, sendResponse) => {
       if (req?.type === 'unmask:get-state') {
         sendResponse(readState());
+        return;
+      }
+      if (req?.type === 'unmask:highlight') {
+        sendResponse({ found: applyHighlight(document, req.message, req.target) });
         return;
       }
       if (req?.type === 'unmask:fetch-raw') {

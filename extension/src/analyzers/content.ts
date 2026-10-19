@@ -145,12 +145,13 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
         severity: password ? 'critical' : 'high',
         points: password ? 35 : 20,
         title: password ? 'The email contains a password field' : 'The email contains a form',
+        target: { kind: 'body' },
         detail: `Form submits to ${forms[0]!.getAttribute('action') || 'an unknown address'}. Legitimate services never ask you to type credentials into an email.`,
       });
     }
 
     if (doc.querySelector('script')) {
-      findings.push({ id: 'html-script', category: 'content', severity: 'medium', points: 10, title: 'The email contains JavaScript', detail: 'Email clients block it, but its presence suggests a hand-crafted malicious message.' });
+      findings.push({ id: 'html-script', category: 'content', target: { kind: 'body' }, severity: 'medium', points: 10, title: 'The email contains JavaScript', detail: 'Email clients block it, but its presence suggests a hand-crafted malicious message.' });
     }
 
     if (hidden.length) {
@@ -160,6 +161,7 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
       findings.push({
         id: 'hidden-text',
         category: 'content',
+        target: { kind: 'hidden' },
         severity: big ? 'medium' : total > 200 ? 'low' : 'info',
         points: big ? 8 : total > 200 ? 3 : 0,
         title: `${hidden.length} hidden text block${hidden.length > 1 ? 's' : ''} (${total} characters)`,
@@ -183,15 +185,15 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
   const haystack = `${email.subject} ${visibleText}`;
   const urgency = matches(haystack, URGENCY);
   if (urgency.length) {
-    findings.push({ id: 'urgency', category: 'content', severity: urgency.length > 1 ? 'medium' : 'low', points: urgency.length > 1 ? 12 : 5, title: 'Uses pressure and urgency', detail: `Phrases like ${urgency.slice(0, 3).map((u) => `"${u}"`).join(', ')} are designed to make you act before thinking.` });
+    findings.push({ id: 'urgency', category: 'content', severity: urgency.length > 1 ? 'medium' : 'low', points: urgency.length > 1 ? 12 : 5, title: 'Uses pressure and urgency', target: { kind: 'text', phrases: urgency }, detail: `Phrases like ${urgency.slice(0, 3).map((u) => `"${u}"`).join(', ')} are designed to make you act before thinking.` });
   }
   const creds = matches(haystack, CREDENTIALS);
   if (creds.length) {
-    findings.push({ id: 'credential-request', category: 'content', severity: 'medium', points: 15, title: 'Asks you to verify or re-enter account details', detail: `Found ${creds.slice(0, 3).map((u) => `"${u}"`).join(', ')}.` });
+    findings.push({ id: 'credential-request', category: 'content', severity: 'medium', points: 15, title: 'Asks you to verify or re-enter account details', target: { kind: 'text', phrases: creds }, detail: `Found ${creds.slice(0, 3).map((u) => `"${u}"`).join(', ')}.` });
   }
   const money = matches(haystack, MONEY);
   if (money.length) {
-    findings.push({ id: 'money-lure', category: 'content', severity: 'low', points: 8, title: 'Mentions money, prizes or payments', detail: `Found ${money.slice(0, 3).map((u) => `"${u}"`).join(', ')}.` });
+    findings.push({ id: 'money-lure', category: 'content', severity: 'low', points: 8, title: 'Mentions money, prizes or payments', target: { kind: 'text', phrases: money }, detail: `Found ${money.slice(0, 3).map((u) => `"${u}"`).join(', ')}.` });
   }
 
   return { findings, hidden, annotatedHtml, links, visibleText };
