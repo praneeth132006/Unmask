@@ -1,8 +1,7 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
 import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse, GmailMessageRef, GmailState, OpenPanelRequest } from '../src/lib/messages';
-import { analyzeRawEmail } from '../src/core/analyze';
-import { decodeImageInBrowser } from '../src/lib/imageDecode';
+import { analyzeInPage } from '../src/lib/remoteAnalyze';
 import { loadHistory, rememberSender } from '../src/lib/historyStore';
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY, type Settings } from '../src/lib/settings';
 import { startProtection, messageKey } from '../src/lib/gmailProtect';
@@ -46,7 +45,7 @@ export default defineContentScript({
       win: window,
       readState,
       fetchRaw: cachedFetchRaw,
-      analyze: (raw, history) => analyzeRawEmail(raw, { history, decodeImage: decodeImageInBrowser }),
+      analyze: analyzeInPage,
       settings: () => settings,
       loadHistory,
       rememberSender,

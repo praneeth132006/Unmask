@@ -41,7 +41,8 @@ export default defineConfig({
     short_name: 'Unmask',
     description:
       'See what a suspicious email is really hiding: real sender, real links, hidden text and attachment checks.',
-    permissions: ['storage', 'tabs', 'webRequest'],
+    // offscreen: HTML parsing for the in-Gmail checks if Gmail ever blocks it in the content script.
+    permissions: ['storage', 'tabs', 'webRequest', ...(browser === 'firefox' ? [] : ['offscreen'])],
     // Asked for only when the user first clicks "Trace redirects" (built-in tracer).
     optional_host_permissions: ['<all_urls>'],
     host_permissions: [

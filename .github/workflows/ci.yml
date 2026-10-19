@@ -30,3 +30,5 @@ jobs:
         run: pnpm --filter unmask-extension exec playwright install --with-deps chromium
       - name: End-to-end tests (built extension in Chromium)
         run: pnpm test:e2e
+      - name: End-to-end tests with in-page parsing blocked (offscreen fallback)
+        run: pnpm --filter unmask-extension test:e2e:offscreen

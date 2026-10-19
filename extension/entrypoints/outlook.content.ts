@@ -2,8 +2,7 @@ import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
 import type { FetchRawResponse, OpenPanelRequest } from '../src/lib/messages';
 import { startBridge, type BridgeRuntime } from '../src/lib/gmailBridge';
-import { analyzeRawEmail } from '../src/core/analyze';
-import { decodeImageInBrowser } from '../src/lib/imageDecode';
+import { analyzeInPage } from '../src/lib/remoteAnalyze';
 import { loadHistory, rememberSender } from '../src/lib/historyStore';
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY, type Settings } from '../src/lib/settings';
 import { startProtection } from '../src/lib/gmailProtect';
@@ -38,7 +37,7 @@ export default defineContentScript({
       win: window,
       readState,
       fetchRaw,
-      analyze: (raw, history) => analyzeRawEmail(raw, { history, decodeImage: decodeImageInBrowser }),
+      analyze: analyzeInPage,
       settings: () => settings,
       loadHistory,
       rememberSender,

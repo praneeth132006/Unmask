@@ -41,7 +41,7 @@ A technical tour for contributors and security reviewers.
    background.ts: same-origin Gmail fetch with host permissions
 ```
 
-All analysis runs in the **side panel**, an extension page with no Gmail code in it. The content scripts do as little as possible: find the open message, fetch its raw source, and outline elements.
+The full report runs in the **side panel**, an extension page with no Gmail code in it. The Gmail and Outlook content scripts also run the same `analyzeRawEmail()` on each email you open, to draw the in-page banner, inbox badges and link/reply warnings ([`lib/gmailProtect.ts`](../extension/src/lib/gmailProtect.ts)); the panel and the content script share one download per email. If a page blocks HTML parsing in the content script (see Trusted Types below), the email is analyzed in an extension-owned offscreen document instead ([`lib/remoteAnalyze.ts`](../extension/src/lib/remoteAnalyze.ts)).
 
 ## Repository layout
 
@@ -84,7 +84,7 @@ Unmask doesn't use the Gmail API or OAuth. It downloads the message the way you 
 
 The hex id is derived from the decimal id with `BigInt(dec).toString(16)` when the attribute is missing. *Download original* redirects to `mail-attachment.googleusercontent.com` and returns the raw RFC 5322 message.
 
-**4. Trusted Types.** Gmail enforces Trusted Types, so `DOMParser.parseFromString` and `innerHTML =` throw *"requires 'TrustedHTML' assignment"*, **including in extension content scripts**. The *Show original* page is therefore parsed with string functions (`parseOriginalPage`, `decodeEntities`), and the highlighter only uses `createElement`, `splitText` and attributes.
+**4. Trusted Types.** Gmail enforces Trusted Types, so `DOMParser.parseFromString` and `innerHTML =` throw *"requires 'TrustedHTML' assignment"* in the page. Whether that also reaches extension content scripts has varied between browser versions (current Chromium does not apply it to the isolated world), so the code never relies on it: the *Show original* page is parsed with string functions (`parseOriginalPage`, `decodeEntities`), the highlighter and the in-page warnings only use `createElement`, `splitText`, `textContent` and attributes, and the analysis checks whether parsing works ([`lib/htmlParsing.ts`](../extension/src/lib/htmlParsing.ts)). If it doesn't, it tries a Trusted Types policy used only by Unmask's world, and failing that sends the email to an offscreen document (Chrome, Edge) or the background page (Firefox). The e2e test serves the fake Gmail with Gmail's `require-trusted-types-for 'script'` header, and `pnpm test:e2e:offscreen` forces the fallback path.
 
 **5. Fallback fetch.** If the page-context fetch throws (for example a cross-origin redirect blocked by CORS), the content script asks the background worker to fetch the same URL. The worker only accepts requests from its own content script on a Gmail tab, for `mail.google.com` or `*.googleusercontent.com` URLs.
 

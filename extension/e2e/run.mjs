@@ -55,7 +55,8 @@ await ctx.route('https://mail.google.com/**', (route) => {
   if (url.includes('view=att') && url.includes('disp=comp')) {
     return route.fulfill({ status: 200, contentType: 'application/force-download', body: fixture });
   }
-  return route.fulfill({ status: 200, contentType: 'text/html', body: page });
+  // Real Gmail enforces Trusted Types, which also affects extension content scripts.
+  return route.fulfill({ status: 200, contentType: 'text/html', headers: { 'content-security-policy': "require-trusted-types-for 'script'" }, body: page });
 });
 
 let sw = ctx.serviceWorkers()[0] ?? (await ctx.waitForEvent('serviceworker'));
@@ -102,6 +103,11 @@ check(result.count === 1 && result.sender === 'billing@paypa1-support.xyz', `con
 check(result.ok && result.rawStart === 'Delivered-To:', `raw message downloaded via "${result.via}"`);
 check(requests.some((u) => u.includes('ik=a1b2c3d4e5') && u.includes('view=att')), 'download URL carries the session token');
 check(result.found === 1, 'highlight outlines the sender in the page');
+
+if (process.env.VITE_UNMASK_FORCE_REMOTE === '1') {
+  const contexts = await panel.evaluate(() => chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] }));
+  check(contexts.length === 1, 'with parsing blocked in the page, the email was analyzed in the offscreen document');
+}
 
 // Built-in redirect tracing, asked for by the panel like the "Trace redirects" button does.
 const trace = await panel.evaluate(async () => {

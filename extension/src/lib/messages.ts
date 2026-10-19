@@ -55,3 +55,11 @@ export type TraceResponse = { ok: true; result: import('../integrations/trace').
 export interface OpenPanelRequest {
   type: 'unmask:open-panel';
 }
+
+/** Content script → background (→ offscreen document): analyze an email where the page blocks HTML parsing. */
+export interface AnalyzeRequest {
+  type: 'unmask:analyze';
+  raw: string;
+  history?: import('../analyzers/history').SenderHistory;
+}
+export type AnalyzeResponse = { ok: true; report: import('../core/types').Report } | { ok: false; error: string };
