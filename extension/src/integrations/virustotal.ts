@@ -65,6 +65,35 @@ export async function lookupUrl(apiKey: string, url: string): Promise<VtResult> 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
+ * Submits a URL VirusTotal has never seen for a fresh scan and waits for the
+ * result. Uses one request to submit plus one per poll; polls every 15 s to
+ * stay inside the free 4-per-minute limit.
+ */
+export async function scanUrlNow(apiKey: string, url: string, onProgress?: (message: string) => void, pollMs = 15_000): Promise<VtResult> {
+  const permalink = `https://www.virustotal.com/gui/url/${vtUrlId(url)}`;
+  onProgress?.('Sending the link to VirusTotal…');
+  const res = await fetch(`${API}/urls`, {
+    method: 'POST',
+    headers: { ...headers(apiKey), 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ url }).toString(),
+  });
+  if (!res.ok) throw await vtError(res);
+  const analysisId = ((await res.json()) as { data?: { id?: string } }).data?.id;
+  if (!analysisId) throw new Error('VirusTotal did not return an analysis id.');
+
+  for (let attempt = 1; attempt <= 8; attempt++) {
+    onProgress?.(`70+ security vendors are checking it… (${Math.round((attempt * pollMs) / 1000)}s)`);
+    await sleep(pollMs);
+    const r = await fetch(`${API}/analyses/${analysisId}`, { headers: headers(apiKey) });
+    if (r.status === 429) continue;
+    if (!r.ok) throw await vtError(r);
+    const attrs = ((await r.json()) as VtObject).data?.attributes;
+    if (attrs?.status === 'completed') return { found: true, stats: attrs.stats ?? null, label: null, permalink };
+  }
+  throw new Error('VirusTotal is still scanning. Open the report link in a minute.');
+}
+
+/**
  * Uploads a file for scanning. WARNING: uploaded files can be downloaded by
  * VirusTotal's paying customers, so the UI must get explicit consent first.
  */

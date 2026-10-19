@@ -65,3 +65,19 @@ describe('rdap not found', () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe('virustotal scan now', () => {
+  it('submits the URL, polls the analysis and returns vendor stats', async () => {
+    const { scanUrlNow } = await import('../src/integrations/virustotal');
+    const calls: string[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      calls.push(`${init?.method ?? 'GET'} ${url.replace('https://www.virustotal.com/api/v3', '')}`);
+      if (url.endsWith('/urls')) return new Response(JSON.stringify({ data: { id: 'u-abc-1' } }), { status: 200 });
+      return new Response(JSON.stringify({ data: { attributes: { status: 'completed', stats: { malicious: 4, suspicious: 0, harmless: 60, undetected: 10 } } } }), { status: 200 });
+    }));
+    const r = await scanUrlNow('KEY', 'https://evil.top/login', undefined, 1);
+    expect(calls).toEqual(['POST /urls', 'GET /analyses/u-abc-1']);
+    expect(r.stats?.malicious).toBe(4);
+    vi.unstubAllGlobals();
+  });
+});

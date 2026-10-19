@@ -3,7 +3,7 @@ import type { Finding, LinkInfo, Report } from '../../core/types';
 import type { Settings } from '../../lib/settings';
 import { hasTracePermission, requestTracePermission, traceBuiltinFromPanel, traceRedirects, type TraceResult } from '../../integrations/trace';
 import { scanUrl, urlscanFindings, type UrlscanResult } from '../../integrations/urlscan';
-import { lookupUrl, vtFindings, type VtResult } from '../../integrations/virustotal';
+import { lookupUrl, scanUrlNow, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { Button, Card, CopyButton, ErrorText, Label, Mono, Pill, Spinner, type Async } from './ui';
 import { Icon } from './Icon';
 import { ServiceSetup, type Service } from './ServiceSetup';
@@ -64,6 +64,17 @@ function LinkCard({
   const hostAt = link.host ? target.toLowerCase().indexOf(link.host) : -1;
 
   const report = (findings: Finding[]) => onFindings(findings.map((f) => ({ ...f, target: { kind: 'links', indexes: [index] } as const })));
+
+  const scanNow = async () => {
+    set({ vt: { status: 'loading', message: 'Sending the link to VirusTotal…' } });
+    try {
+      const value = await scanUrlNow(settings.vtApiKey, target, (message) => set({ vt: { status: 'loading', message } }));
+      set({ vt: { status: 'done', value } });
+      report(vtFindings(`vt-url-${index}`, link.host || 'this link', value, 'links'));
+    } catch (e) {
+      set({ vt: { status: 'error', error: errMsg(e) } });
+    }
+  };
 
   const doTrace = async (s: Settings) => {
     set({ trace: { status: 'loading' } });
@@ -241,17 +252,34 @@ function LinkCard({
         </div>
       )}
 
+      {state.vt?.status === 'loading' && state.vt.message && <p className="mt-1.5 text-[11px] text-[var(--text-3)]">{state.vt.message}</p>}
       {state.vt?.status === 'error' && <ErrorText>{state.vt.error}</ErrorText>}
-      {state.vt?.status === 'done' && (
-        <div className="mt-2.5 flex items-center justify-between rounded-lg bg-[var(--surface-2)] px-2.5 py-2 text-[11px]">
-          <span className={state.vt.value.stats && state.vt.value.stats.malicious + state.vt.value.stats.suspicious > 0 ? 'font-semibold text-[var(--bad)]' : 'text-[var(--text-2)]'}>
-            {state.vt.value.found && state.vt.value.stats
-              ? `VirusTotal: ${state.vt.value.stats.malicious + state.vt.value.stats.suspicious} security vendors flag this URL`
-              : 'VirusTotal has no report for this URL yet'}
-          </span>
-          <a className="font-medium text-[var(--accent)] hover:underline" href={state.vt.value.permalink} target="_blank" rel="noreferrer">
-            Open
+      {state.vt?.status === 'done' && state.vt.value.found && state.vt.value.stats && (
+        <div className="mt-2.5 flex items-center justify-between gap-2 rounded-lg bg-[var(--surface-2)] px-2.5 py-2 text-[11px]">
+          {(() => {
+            const st = state.vt.value.stats;
+            const bad = st.malicious + st.suspicious;
+            const total = bad + st.harmless + st.undetected;
+            return (
+              <span className={bad ? 'font-semibold text-[var(--bad)]' : 'text-[var(--good)]'}>
+                {bad ? `${bad} of ${total} security vendors flag this link` : `None of ${total} security vendors flag this link`}
+              </span>
+            );
+          })()}
+          <a className="shrink-0 font-medium text-[var(--accent)] hover:underline" href={state.vt.value.permalink} target="_blank" rel="noreferrer">
+            Report
           </a>
+        </div>
+      )}
+      {state.vt?.status === 'done' && !state.vt.value.found && (
+        <div className="mt-2.5 rounded-lg bg-[var(--surface-2)] p-2.5 text-[11px] text-[var(--text-2)]">
+          <p>
+            <strong className="text-[var(--text)]">VirusTotal has never seen this link.</strong> New phishing links are often unknown, so this isn’t a clean result.
+          </p>
+          <Button variant="primary" className="mt-2" onClick={() => void scanNow()}>
+            <Icon name="shield" className="h-3.5 w-3.5" /> Scan it now
+          </Button>
+          <p className="mt-1.5 text-[var(--text-3)]">Sends this link to VirusTotal for a fresh scan by 70+ vendors (about 30–60 seconds).{link.unwrappedVia.length === 0 && /click|track|email\./i.test(link.host) ? ' Tip: this looks like a tracking link; Trace redirects first to scan the real destination.' : ''}</p>
         </div>
       )}
     </Card>
