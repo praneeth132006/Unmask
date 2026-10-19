@@ -6,7 +6,8 @@
     "dev": "pnpm --filter unmask-extension dev",
     "build": "pnpm --filter unmask-extension build",
     "zip": "pnpm --filter unmask-extension zip",
-    "test": "pnpm --filter unmask-extension test",
+    "backend": "pnpm --filter unmask-backend dev",
+    "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"
   }
 }
