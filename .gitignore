@@ -11,3 +11,4 @@ coverage/
 stats.html
 .claude/
 build/
+_site/

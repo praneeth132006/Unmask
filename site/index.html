@@ -1,0 +1,73 @@
+<section class="wrap hero">
+  <div>
+    <h1>See what a suspicious email is <em>really</em> hiding.</h1>
+    <p class="lead">Unmask is a free Chrome extension that checks the email you open in Gmail: the real sender, where every link really goes, hidden text, trackers and risky attachments. It explains everything in plain language.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="https://github.com/praneeth132006/Unmask/releases/latest">⬇ Download for Chrome</a>
+      <a class="btn btn-ghost" href="guide.html">Read the guide</a>
+    </div>
+    <p class="note">Free and open source (MIT) · Works in Chrome, Edge and Brave · Your email never leaves your browser</p>
+  </div>
+  <img class="shot" src="images/overview-dark.png" alt="Unmask showing a High risk verdict for a fake PayPal email" width="400" height="860">
+</section>
+
+<section class="wrap" id="install">
+  <h2>Install in two minutes</h2>
+  <p class="sub">Unmask isn't on the Chrome Web Store yet, so you load it yourself. No programming needed.</p>
+  <div class="steps">
+    <div class="card">
+      <h3>Download</h3>
+      <p>From the <a href="https://github.com/praneeth132006/Unmask/releases/latest">latest release</a>, download <code>unmask-chrome-&lt;version&gt;.zip</code> under <em>Assets</em> and unzip it. Keep the folder somewhere permanent.</p>
+    </div>
+    <div class="card">
+      <h3>Load it</h3>
+      <p>Open <code>chrome://extensions</code>, switch on <strong>Developer mode</strong>, click <strong>Load unpacked</strong> and choose the unzipped folder (the one containing <code>manifest.json</code>).</p>
+    </div>
+    <div class="card">
+      <h3>Check an email</h3>
+      <p>Pin Unmask, reload Gmail, open any email and click the Unmask icon. The report appears in a side panel.</p>
+    </div>
+  </div>
+  <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">Stuck? <a href="guide.html#if-loading-fails">Common install errors and fixes</a>.</p>
+</section>
+
+<section class="wrap" id="features">
+  <h2>Everything a phishing email tries to hide</h2>
+  <p class="sub">Every check runs inside your browser. Online checks are optional and only run when you click them.</p>
+  <div class="grid">
+    <div class="card feature"><div class="tag">Sender</div><h3>Who really sent it</h3><p>SPF, DKIM and DMARC, display names hiding another address, and look-alike domains like <code>paypa1.com</code> for 50+ brands.</p></div>
+    <div class="card feature"><div class="tag">Links</div><h3>Where links really go</h3><p>Text that shows one site but links to another, redirect wrappers removed, and one-click redirect tracing.</p></div>
+    <div class="card feature"><div class="tag">Hover</div><h3>Point at the problem</h3><p>Hover a red flag and Unmask outlines the exact link, sender, attachment or phrase in the Gmail email.</p></div>
+    <div class="card feature"><div class="tag">Files</div><h3>Risky attachments</h3><p>Executables, fake PDFs (<code>Invoice.pdf.html</code>), macro documents, encrypted ZIPs, plus a VirusTotal check.</p></div>
+    <div class="card feature"><div class="tag">Body</div><h3>Hidden text, safely shown</h3><p>Invisible text used to fool spam filters, forms asking for passwords, and pressure phrases, in a safe view with scripts off.</p></div>
+    <div class="card feature"><div class="tag">Privacy</div><h3>Trackers</h3><p>Tracking pixels and click-tracked links from about 40 services, with images blocked so senders can't tell you opened it.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>Hover a red flag, see it in the email</h2>
+  <p class="sub">No more guessing which link or sentence a warning is about.</p>
+  <div class="wide">
+    <img class="shot" src="images/highlight-link.png" alt="A suspicious link outlined in the email" width="688" height="288">
+    <img class="shot" src="images/highlight-text.png" alt="Pressure phrases marked in the email" width="688" height="288">
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>A closer look</h2>
+  <div class="gallery">
+    <figure><img class="shot" src="images/links-dark.png" alt="Links tab" width="400" height="860" loading="lazy"><figcaption>Every link's real destination</figcaption></figure>
+    <figure><img class="shot" src="images/body-light.png" alt="Body tab with hidden text revealed" width="400" height="860" loading="lazy"><figcaption>Hidden text revealed</figcaption></figure>
+    <figure><img class="shot" src="images/setup-virustotal.png" alt="VirusTotal setup steps" width="400" height="860" loading="lazy"><figcaption>Optional checks, set up in place</figcaption></figure>
+  </div>
+</section>
+
+<section class="wrap" id="privacy">
+  <h2>Private by design</h2>
+  <div class="grid">
+    <div class="card"><h3>Stays on your device</h3><p>The email is analyzed in your browser and never sent to an Unmask server. There are no accounts and no analytics.</p></div>
+    <div class="card"><h3>Online checks are opt-in</h3><p>VirusTotal and urlscan.io run only when you click them, and get a link or a file's fingerprint, not the email.</p></div>
+    <div class="card"><h3>Free, and never billed</h3><p>Free keys can't be charged; going over a limit just pauses that check. <a href="limits.html">Limits and costs</a>.</p></div>
+  </div>
+  <p class="callout" style="margin-top:20px">Unmask never says an email is "safe". A clean result means the checks found nothing, not that nothing is there. Stay careful with links and attachments you didn't expect.</p>
+</section>
