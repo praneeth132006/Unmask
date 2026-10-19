@@ -1,9 +1,11 @@
 name: CI
 
 on:
+  # Every branch, so changes are proven green before main moves (see CONTRIBUTING).
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
