@@ -14,7 +14,9 @@
     "typecheck": "pnpm -r typecheck",
     "test:e2e": "pnpm --filter unmask-extension build:e2e && pnpm --filter unmask-extension test:e2e",
     "site": "node site/build.mjs",
-    "wiki": "node site/wiki.mjs"
+    "wiki": "node site/wiki.mjs",
+    "ci:local": "sh scripts/ci-local.sh",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "license": "MIT",
   "repository": {

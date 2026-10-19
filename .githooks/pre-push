@@ -1,0 +1,8 @@
+#!/bin/sh
+# Blocks a push when the checks GitHub Actions runs would fail.
+# Skip only in an emergency: git push --no-verify
+echo "Running the CI checks locally before pushing (pnpm ci:local)…"
+sh "$(git rev-parse --show-toplevel)/scripts/ci-local.sh" || {
+  echo "\n✘ Push stopped: fix the failures above first (or git push --no-verify in an emergency)." >&2
+  exit 1
+}
