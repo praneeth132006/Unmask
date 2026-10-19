@@ -1,1 +1,79 @@
 @import 'tailwindcss';
+
+/* Design tokens: one palette, redefined for dark mode. Components use var(--…). */
+:root {
+  color-scheme: light;
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #f0f2f8;
+  --border: #e2e5ee;
+  --border-strong: #cfd4e2;
+  --text: #11152a;
+  --text-2: #4a5270;
+  --text-3: #8a91aa;
+  --accent: #5b4cf0;
+  --accent-hover: #4b3be0;
+  --accent-soft: #f2f0ff;
+  --accent-border: #dcd6ff;
+  --good: #0c8f61;
+  --good-soft: #e8f8f1;
+  --warn: #b86e00;
+  --warn-soft: #fff6e5;
+  --bad: #d92d20;
+  --bad-soft: #fdeceb;
+  --info: #5c6584;
+  --info-soft: #eef0f6;
+  --highlight: #fde68a;
+  --shadow: 0 1px 2px rgb(17 21 42 / 0.05), 0 1px 3px rgb(17 21 42 / 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0b0d14;
+    --surface: #131622;
+    --surface-2: #1b1f2e;
+    --border: #252a3b;
+    --border-strong: #333a50;
+    --text: #eceef6;
+    --text-2: #a4abc3;
+    --text-3: #6d7593;
+    --accent: #8b7eff;
+    --accent-hover: #9d92ff;
+    --accent-soft: #1b1a37;
+    --accent-border: #312d63;
+    --good: #3ad29a;
+    --good-soft: #0f2a21;
+    --warn: #f5b942;
+    --warn-soft: #2d2410;
+    --bad: #ff6b60;
+    --bad-soft: #351716;
+    --info: #9aa2bd;
+    --info-soft: #1d2131;
+    --highlight: #6b5310;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin, theme-aware scrollbars inside the narrow panel. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Flash when the panel jumps to an item (e.g. from a finding). */
+@keyframes unmask-flash {
+  0% { box-shadow: 0 0 0 3px var(--accent); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.unmask-flash {
+  animation: unmask-flash 1.4s ease-out;
+}

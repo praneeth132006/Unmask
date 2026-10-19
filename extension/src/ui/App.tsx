@@ -199,10 +199,7 @@ export function App() {
           <SettingsPanel
             settings={settings}
             onClose={() => setShowSettings(false)}
-            onSaved={(s) => {
-              setSettings(s);
-              setShowSettings(false);
-            }}
+            onSaved={setSettings}
           />
         ) : pasting ? (
           <PasteBox
@@ -303,8 +300,8 @@ export function App() {
                 <div className="pt-3" key={runId.current}>
                   {tab === 'overview' && <Overview report={report} />}
                   {tab === 'sender' && <SenderTab report={report} domainAge={domainAge} onCheckAge={() => void checkDomainAge(report, runId.current)} />}
-                  {tab === 'links' && <LinksTab report={report} settings={settings} onFindings={onFindings} />}
-                  {tab === 'attachments' && <AttachmentsTab report={report} settings={settings} onFindings={onFindings} />}
+                  {tab === 'links' && <LinksTab report={report} settings={settings} onSettingsChange={setSettings} onFindings={onFindings} />}
+                  {tab === 'attachments' && <AttachmentsTab report={report} settings={settings} onSettingsChange={setSettings} onFindings={onFindings} />}
                   {tab === 'body' && <BodyTab report={report} />}
                   {tab === 'headers' && <HeadersTab report={report} />}
                 </div>

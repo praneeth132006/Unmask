@@ -1,104 +1,144 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { saveSettings, type Settings } from '../../lib/settings';
-import { Button } from './ui';
+import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
+import { SERVICES, ServiceSetup, type Service } from './ServiceSetup';
 
-function Field({ label, hint, children }: { label: string; hint: ReactNode; children: ReactNode }) {
+function ServiceRow({ service, settings, onChange }: { service: Service; settings: Settings; onChange: (s: Settings) => void }) {
+  const info = SERVICES[service];
+  const connected = Boolean(settings[info.field]);
+  const [open, setOpen] = useState(false);
+
   return (
-    <label className="block">
-      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{label}</span>
-      <div className="mt-1">{children}</div>
-      <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-400">{hint}</span>
-    </label>
+    <div className="py-2.5 first:pt-0 last:pb-0">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 text-[13px] font-semibold">
+            {info.name}
+            {connected ? (
+              <span className="inline-flex items-center gap-0.5 rounded-md bg-[var(--good-soft)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--good)]">
+                <Icon name="check" className="h-3 w-3" /> Connected
+              </span>
+            ) : (
+              <span className="rounded-md bg-[var(--surface-2)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--text-3)]">Not set up</span>
+            )}
+          </div>
+          <p className="mt-0.5 text-[11px] text-[var(--text-3)]">{info.what}</p>
+        </div>
+        <div className="flex shrink-0 gap-1">
+          {connected && (
+            <Button
+              variant="ghost"
+              onClick={async () => {
+                const next = { ...settings, [info.field]: '' };
+                await saveSettings(next);
+                onChange(next);
+              }}
+            >
+              Remove
+            </Button>
+          )}
+          <Button variant={connected ? 'secondary' : 'primary'} onClick={() => setOpen((o) => !o)}>
+            {open ? 'Close' : connected ? 'Change' : 'Set up'}
+          </Button>
+        </div>
+      </div>
+      {open && (
+        <div className="mt-2.5">
+          <ServiceSetup
+            compact
+            service={service}
+            settings={settings}
+            onSaved={(s) => {
+              onChange(s);
+              setOpen(false);
+            }}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
-const input = 'w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 font-mono text-xs dark:border-slate-700 dark:bg-slate-900';
-
 export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settings; onClose: () => void; onSaved: (s: Settings) => void }) {
-  const [draft, setDraft] = useState(settings);
-  const [saving, setSaving] = useState(false);
-  const set = <K extends keyof Settings>(k: K, v: Settings[K]) => setDraft((d) => ({ ...d, [k]: v }));
+  const [advanced, setAdvanced] = useState(Boolean(settings.backendUrl));
+  const update = async (patch: Partial<Settings>) => {
+    const next = { ...settings, ...patch };
+    await saveSettings(next);
+    onSaved(next);
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Settings</h2>
-        <Button variant="ghost" onClick={onClose} aria-label="Close settings">
-          <Icon name="close" />
+    <div>
+      <div className="mb-3 flex items-center gap-1">
+        <Button variant="ghost" className="!px-1.5" onClick={onClose} aria-label="Back">
+          <Icon name="back" />
         </Button>
+        <h2 className="text-[15px] font-semibold">Settings</h2>
       </div>
-      <p className="text-xs text-slate-600 dark:text-slate-400">
-        Everything below is optional. Keys are stored only in this browser. Unmask's local checks work without any of them.
+
+      <Card className="!bg-[var(--accent-soft)] !border-[var(--accent-border)]">
+        <p className="text-xs text-[var(--text-2)]">
+          <strong className="text-[var(--text)]">Unmask works without any setup.</strong> Every check on the Overview runs inside your browser. The services below add optional extra checks you start with a button.
+        </p>
+      </Card>
+
+      <SectionTitle>Extra checks</SectionTitle>
+      <Card className="divide-y divide-[var(--border)]">
+        <ServiceRow service="virustotal" settings={settings} onChange={onSaved} />
+        <ServiceRow service="urlscan" settings={settings} onChange={onSaved} />
+      </Card>
+
+      {settings.urlscanApiKey && (
+        <>
+          <SectionTitle>urlscan.io scan visibility</SectionTitle>
+          <Card>
+            <select
+              className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-xs text-[var(--text)]"
+              value={settings.urlscanVisibility}
+              onChange={(e) => void update({ urlscanVisibility: e.target.value as Settings['urlscanVisibility'] })}
+            >
+              <option value="unlisted">Unlisted (recommended)</option>
+              <option value="private">Private (paid urlscan plans only)</option>
+              <option value="public">Public</option>
+            </select>
+            <p className="mt-1.5 text-[11px] text-[var(--text-3)]">Unlisted scans are hidden from urlscan’s public feed but visible to its security partners.</p>
+          </Card>
+        </>
+      )}
+
+      <SectionTitle>Privacy</SectionTitle>
+      <Card>
+        <label className="flex cursor-pointer items-start gap-2.5 text-xs">
+          <input type="checkbox" className="mt-0.5 accent-[var(--accent)]" checked={settings.autoDomainAge} onChange={(e) => void update({ autoDomainAge: e.target.checked })} />
+          <span>
+            <span className="font-semibold text-[var(--text)]">Check how old the sender’s domain is</span>
+            <span className="mt-0.5 block text-[11px] text-[var(--text-3)]">New domains are a strong phishing sign. Sends only the domain name (for example example.com) to rdap.org, the public domain registry lookup.</span>
+          </span>
+        </label>
+      </Card>
+
+      <SectionTitle
+        right={
+          <button type="button" className="text-[11px] font-medium text-[var(--accent)]" onClick={() => setAdvanced((a) => !a)}>
+            {advanced ? 'Hide' : 'Show'}
+          </button>
+        }
+      >
+        Advanced
+      </SectionTitle>
+      {advanced && (
+        <Card>
+          <ServiceRow service="backend" settings={settings} onChange={onSaved} />
+        </Card>
+      )}
+
+      <p className="mt-5 text-center text-[11px] text-[var(--text-3)]">
+        Keys never leave this browser except to the service they belong to.{' '}
+        <a className="underline" href="https://github.com/praneeth132006/Unmask/blob/main/docs/USER_GUIDE.md" target="_blank" rel="noreferrer">
+          User guide
+        </a>
       </p>
-
-      <Field
-        label="VirusTotal API key"
-        hint={
-          <>
-            Free at{' '}
-            <a className="text-indigo-600 underline" href="https://www.virustotal.com/gui/my-apikey" target="_blank" rel="noreferrer">
-              virustotal.com → API key
-            </a>
-            . Free keys allow 4 lookups per minute.
-          </>
-        }
-      >
-        <input className={input} type="password" autoComplete="off" value={draft.vtApiKey} onChange={(e) => set('vtApiKey', e.target.value)} />
-      </Field>
-
-      <Field
-        label="urlscan.io API key"
-        hint={
-          <>
-            Free at{' '}
-            <a className="text-indigo-600 underline" href="https://urlscan.io/user/profile/" target="_blank" rel="noreferrer">
-              urlscan.io → Settings &amp; API
-            </a>
-            .
-          </>
-        }
-      >
-        <input className={input} type="password" autoComplete="off" value={draft.urlscanApiKey} onChange={(e) => set('urlscanApiKey', e.target.value)} />
-      </Field>
-
-      <Field label="urlscan.io scan visibility" hint="Unlisted scans are hidden from the public feed but visible to urlscan's security partners. Private needs a paid plan.">
-        <select className={input} value={draft.urlscanVisibility} onChange={(e) => set('urlscanVisibility', e.target.value as Settings['urlscanVisibility'])}>
-          <option value="unlisted">Unlisted (recommended)</option>
-          <option value="private">Private</option>
-          <option value="public">Public</option>
-        </select>
-      </Field>
-
-      <Field label="Redirect-trace backend URL" hint="Your deployed Unmask backend, e.g. https://unmask-trace.vercel.app, or http://localhost:8787 when running it locally. See the README.">
-        <input className={input} type="url" placeholder="https://…" value={draft.backendUrl} onChange={(e) => set('backendUrl', e.target.value)} />
-      </Field>
-
-      <label className="flex items-start gap-2 text-xs">
-        <input type="checkbox" className="mt-0.5" checked={draft.autoDomainAge} onChange={(e) => set('autoDomainAge', e.target.checked)} />
-        <span>
-          <span className="font-semibold text-slate-800 dark:text-slate-200">Check domain age automatically</span>
-          <span className="block text-[11px] text-slate-500 dark:text-slate-400">Sends only the sender's domain name to rdap.org (the public registry lookup service).</span>
-        </span>
-      </label>
-
-      <div className="flex gap-2">
-        <Button
-          variant="primary"
-          disabled={saving}
-          onClick={async () => {
-            setSaving(true);
-            await saveSettings(draft);
-            setSaving(false);
-            onSaved({ ...draft, backendUrl: draft.backendUrl.trim().replace(/\/+$/, ''), vtApiKey: draft.vtApiKey.trim(), urlscanApiKey: draft.urlscanApiKey.trim() });
-          }}
-        >
-          Save
-        </Button>
-        <Button variant="ghost" onClick={onClose}>
-          Cancel
-        </Button>
-      </div>
     </div>
   );
 }

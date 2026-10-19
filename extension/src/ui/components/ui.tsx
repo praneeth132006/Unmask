@@ -1,27 +1,32 @@
-import { useState, type ReactNode, type ButtonHTMLAttributes } from 'react';
+import { useState, type ReactNode, type ButtonHTMLAttributes, type HTMLAttributes } from 'react';
 import type { Severity } from '../../core/types';
 
-export const SEVERITY_STYLE: Record<Severity, { dot: string; pill: string; label: string }> = {
-  critical: { dot: 'bg-red-600', pill: 'bg-red-600 text-white', label: 'Critical' },
-  high: { dot: 'bg-red-500', pill: 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200', label: 'High' },
-  medium: { dot: 'bg-amber-500', pill: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200', label: 'Medium' },
-  low: { dot: 'bg-yellow-400', pill: 'bg-yellow-100 text-yellow-900 dark:bg-yellow-950 dark:text-yellow-200', label: 'Low' },
-  info: { dot: 'bg-slate-400', pill: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300', label: 'Note' },
-  good: { dot: 'bg-emerald-500', pill: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200', label: 'Good' },
+/** Colour treatment per severity, all from the design tokens in style.css. */
+export const SEVERITY_STYLE: Record<Severity, { dot: string; pill: string; label: string; bar: string }> = {
+  critical: { dot: 'bg-[var(--bad)]', pill: 'bg-[var(--bad)] text-white', label: 'Critical', bar: 'bg-[var(--bad)]' },
+  high: { dot: 'bg-[var(--bad)]', pill: 'bg-[var(--bad-soft)] text-[var(--bad)]', label: 'High', bar: 'bg-[var(--bad)]' },
+  medium: { dot: 'bg-[var(--warn)]', pill: 'bg-[var(--warn-soft)] text-[var(--warn)]', label: 'Medium', bar: 'bg-[var(--warn)]' },
+  low: { dot: 'bg-[var(--warn)] opacity-60', pill: 'bg-[var(--warn-soft)] text-[var(--warn)]', label: 'Low', bar: 'bg-[var(--warn)] opacity-60' },
+  info: { dot: 'bg-[var(--info)]', pill: 'bg-[var(--info-soft)] text-[var(--info)]', label: 'Note', bar: 'bg-[var(--info)]' },
+  good: { dot: 'bg-[var(--good)]', pill: 'bg-[var(--good-soft)] text-[var(--good)]', label: 'Good', bar: 'bg-[var(--good)]' },
 };
 
 export function Pill({ severity, children }: { severity: Severity; children: ReactNode }) {
-  return <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium leading-tight ${SEVERITY_STYLE[severity].pill}`}>{children}</span>;
+  return <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium leading-tight ${SEVERITY_STYLE[severity].pill}`}>{children}</span>;
 }
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900 ${className}`}>{children}</div>;
+export function Card({ children, className = '', ...rest }: { children: ReactNode; className?: string } & HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div {...rest} className={`rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[var(--shadow)] ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 export function SectionTitle({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
-    <div className="mb-2 mt-4 flex items-center justify-between first:mt-0">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{children}</h3>
+    <div className="mb-2 mt-5 flex items-center justify-between first:mt-0">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-3)]">{children}</h3>
       {right}
     </div>
   );
@@ -29,10 +34,10 @@ export function SectionTitle({ children, right }: { children: ReactNode; right?:
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-indigo-600 text-white hover:bg-indigo-500 disabled:bg-indigo-300 dark:disabled:bg-indigo-900',
-  secondary: 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800',
-  ghost: 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
-  danger: 'bg-red-600 text-white hover:bg-red-500',
+  primary: 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]',
+  secondary: 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)]',
+  ghost: 'text-[var(--text-2)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]',
+  danger: 'bg-[var(--bad)] text-white hover:opacity-90',
 };
 
 export function Button({ variant = 'secondary', className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
@@ -40,7 +45,7 @@ export function Button({ variant = 'secondary', className = '', ...props }: Butt
     <button
       type="button"
       {...props}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
     />
   );
 }
@@ -50,7 +55,7 @@ export function CopyButton({ value, label = 'Copy' }: { value: string; label?: s
   return (
     <Button
       variant="ghost"
-      className="!px-1.5 !py-0.5"
+      className="!px-1.5 !py-0.5 text-[11px]"
       onClick={() => {
         navigator.clipboard.writeText(value).then(() => {
           setDone(true);
@@ -68,11 +73,15 @@ export function Spinner() {
 }
 
 export function Mono({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <code className={`break-all font-mono text-[11px] text-slate-700 dark:text-slate-300 ${className}`}>{children}</code>;
+  return <code className={`break-all font-mono text-[11px] text-[var(--text-2)] ${className}`}>{children}</code>;
 }
 
 export function ErrorText({ children }: { children: ReactNode }) {
-  return <p className="mt-1 text-xs text-red-600 dark:text-red-400">{children}</p>;
+  return <p className="mt-1.5 text-xs text-[var(--bad)]">{children}</p>;
+}
+
+export function Label({ children }: { children: ReactNode }) {
+  return <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">{children}</div>;
 }
 
 export function formatBytes(n: number): string {
