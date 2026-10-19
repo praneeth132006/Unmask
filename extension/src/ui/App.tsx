@@ -302,7 +302,7 @@ export function App() {
         </div>
 
         {report && !loading && !showSettings && !pasting && (
-          <nav className="flex gap-1 overflow-x-auto px-2 pb-2 [scrollbar-width:none]" role="tablist" aria-label="Report sections">
+          <nav className="flex flex-wrap gap-1 px-2 pb-2" role="tablist" aria-label="Report sections">
             {tabs.map((t) => (
               <button
                 key={t.id}
