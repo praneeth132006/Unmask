@@ -4,6 +4,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-19
+
 ### Added
 - **Hover to highlight:** hovering a finding, link, attachment or the sender outlines the matching part of the open Gmail message and scrolls it into view. Pressure phrases are marked word by word.
 - **Click to jump:** clicking a finding opens its tab focused on that item; **Back to summary** returns to the same finding.
@@ -12,6 +14,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - Summary chips for sender, links, files and trackers.
 - New logo and icons.
 - Full documentation: user guide, checks reference, architecture, backend, contributing.
+- Prebuilt `unmask-chrome-<version>.zip` on GitHub Releases, so Unmask installs without Node or pnpm.
+- CI on every push and pull request (tests, typecheck, build).
 
 ### Changed
 - Clean redesign with design tokens for light and dark mode; pinned pill tabs with warning dots.
