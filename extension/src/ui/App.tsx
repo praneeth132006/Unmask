@@ -267,7 +267,7 @@ export function App() {
         </div>
 
         {report && !loading && !showSettings && !pasting && (
-          <nav className="flex gap-1 overflow-x-auto px-2 pb-2" role="tablist" aria-label="Report sections">
+          <nav className="flex gap-1 overflow-x-auto px-2 pb-2 [scrollbar-width:none]" role="tablist" aria-label="Report sections">
             {tabs.map((t) => (
               <button
                 key={t.id}
@@ -384,7 +384,7 @@ export function App() {
                     <button
                       type="button"
                       onClick={backToSummary}
-                      className="inline-flex items-center gap-1 rounded-lg py-1 pl-1 pr-2 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-soft)]"
+                      className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-lg py-1 pl-1 pr-2 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-soft)]"
                     >
                       <Icon name="back" className="h-3.5 w-3.5" /> Back to summary
                     </button>

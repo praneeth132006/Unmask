@@ -36,17 +36,17 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
     <div>
       {hops.length > 0 && (
         <>
-          <SectionTitle>Delivery path (origin first)</SectionTitle>
+          <SectionTitle>Delivery path (where it came from, first)</SectionTitle>
           <Card>
             <ol className="space-y-1.5">
               {hops.map((h, i) => (
                 <li key={i} className="flex gap-2 text-xs">
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[10px] font-semibold dark:bg-slate-700">{i + 1}</span>
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent)]">{i + 1}</span>
                   <div className="min-w-0">
                     <Mono>{h.from ?? 'unknown'}</Mono>
-                    {h.ip && <span className="ml-1 text-slate-500">[{h.ip}]</span>}
+                    {h.ip && <span className="ml-1 text-[var(--text-3)]">[{h.ip}]</span>}
                     {h.by && (
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[11px] text-[var(--text-3)]">
                         → <Mono>{h.by}</Mono>
                       </div>
                     )}
@@ -64,17 +64,17 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filter headers"
-            className="w-36 rounded border border-slate-300 bg-white px-2 py-0.5 text-xs dark:border-slate-700 dark:bg-slate-900"
+            className="w-36 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs text-[var(--text)] placeholder:text-[var(--text-3)] focus:border-[var(--accent)] focus:outline-none"
           />
         }
       >
         All headers ({headers.length})
       </SectionTitle>
-      <Card className="!p-0">
-        <dl className="divide-y divide-slate-100 dark:divide-slate-800">
+      <Card className="!p-0 overflow-hidden">
+        <dl className="divide-y divide-[var(--border)]">
           {shown.map((h, i) => (
-            <div key={i} className={`px-3 py-1.5 ${KEY_HEADERS.has(h.key) ? 'bg-indigo-50/60 dark:bg-indigo-950/30' : ''}`}>
-              <dt className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">{h.key}</dt>
+            <div key={i} className={`px-3 py-1.5 ${KEY_HEADERS.has(h.key) ? 'bg-[var(--accent-soft)]' : ''}`}>
+              <dt className="text-[11px] font-semibold text-[var(--text)]">{h.key}</dt>
               <dd>
                 <Mono>{h.value}</Mono>
               </dd>
