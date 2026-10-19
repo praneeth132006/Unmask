@@ -6,6 +6,8 @@ export default defineConfig({
   // Visible folder at the repo root: load UNMASK/build/unmask-chrome via "Load unpacked".
   outDir: '../build',
   outDirTemplate: 'unmask-{{browser}}{{modeSuffix}}',
+  // Release asset name, e.g. build/unmask-chrome-0.2.0.zip.
+  zip: { artifactTemplate: 'unmask-{{browser}}-{{packageVersion}}.zip' },
   modules: ['@wxt-dev/module-react'],
   vite: () => ({
     plugins: [tailwindcss()],
