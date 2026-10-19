@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { Report } from '../../core/types';
-import { Card, CopyButton, Mono, SectionTitle } from './ui';
+import { Button, Card, Mono, SectionTitle } from './ui';
+import { Icon } from './Icon';
 
 const KEY_HEADERS = new Set(['from', 'reply-to', 'return-path', 'sender', 'to', 'subject', 'date', 'message-id', 'authentication-results', 'received-spf', 'x-originating-ip', 'x-mailer', 'list-unsubscribe']);
 
@@ -38,9 +39,9 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
         <>
           <SectionTitle>Delivery path (where it came from, first)</SectionTitle>
           <Card>
-            <ol className="space-y-1.5">
+            <ol className="space-y-2.5">
               {hops.map((h, i) => (
-                <li key={i} className="flex gap-2 text-xs">
+                <li key={i} className="flex gap-2.5 text-xs">
                   <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent)]">{i + 1}</span>
                   <div className="min-w-0">
                     <Mono>{h.from ?? 'unknown'}</Mono>
@@ -58,7 +59,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
         </>
       )}
 
-      <div className="mb-3 flex flex-wrap gap-1.5">
+      <div className={`flex flex-wrap gap-2 ${hops.length > 0 ? 'mt-2.5' : ''}`}>
         <CopyAll label="Copy all headers" value={headers.map((h) => `${h.name}: ${h.value}`).join('\n')} />
         {hops.length > 0 && <CopyAll label="Copy delivery path" value={hops.map((h, i) => `${i + 1}. ${h.from ?? 'unknown'}${h.ip ? ` [${h.ip}]` : ''}${h.by ? ` → ${h.by}` : ''}`).join('\n')} />}
       </div>
@@ -93,10 +94,18 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
 
 /** A visible button (not the small inline one) for copying a whole block. */
 function CopyAll({ label, value }: { label: string; value: string }) {
+  const [done, setDone] = useState(false);
   return (
-    <span className="inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] pl-2.5 text-xs font-medium text-[var(--text)]">
-      {label}
-      <CopyButton value={value} label="Copy" />
-    </span>
+    <Button
+      onClick={() => {
+        void navigator.clipboard.writeText(value).then(() => {
+          setDone(true);
+          setTimeout(() => setDone(false), 1200);
+        });
+      }}
+    >
+      <Icon name={done ? 'check' : 'copy'} className="h-3.5 w-3.5" />
+      {done ? 'Copied' : label}
+    </Button>
   );
 }
