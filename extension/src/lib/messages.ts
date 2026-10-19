@@ -19,7 +19,18 @@ export type PanelRequest =
   | { type: 'unmask:get-state' }
   | { type: 'unmask:fetch-raw'; message: GmailMessageRef };
 
-export type FetchRawResponse = { ok: true; raw: string } | { ok: false; error: string };
+export type FetchRawResponse =
+  | { ok: true; raw: string; via: string }
+  | { ok: false; error: string; /** What each URL attempt returned, for the "technical details" box. */ attempts?: { label: string; outcome: string }[] };
+
+/** Content script → background: fetch a Gmail URL with extension privileges (no CORS) when the page fetch fails. */
+export interface BackgroundFetchRequest {
+  type: 'unmask:bg-fetch';
+  url: string;
+}
+export type BackgroundFetchResponse =
+  | { ok: true; status: number; finalUrl: string; contentType: string; body: string }
+  | { ok: false; error: string };
 
 /** Broadcast by the content script whenever the open email changes. */
 export interface StateChanged {

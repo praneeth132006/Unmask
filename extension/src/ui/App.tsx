@@ -5,7 +5,7 @@ import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrati
 import { registrableDomain } from '../lib/domain';
 import { DEFAULT_SETTINGS, loadSettings, type Settings } from '../lib/settings';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
-import { messageKey, useGmail } from './useGmail';
+import { GmailFetchError, messageKey, useGmail } from './useGmail';
 import { Overview, VerdictCard } from './components/Overview';
 import { SenderTab } from './components/SenderTab';
 import { LinksTab } from './components/LinksTab';
@@ -13,7 +13,7 @@ import { AttachmentsTab } from './components/AttachmentsTab';
 import { BodyTab } from './components/BodyTab';
 import { HeadersTab } from './components/HeadersTab';
 import { SettingsPanel } from './components/SettingsPanel';
-import { Button, Spinner, type Async } from './components/ui';
+import { Button, CopyButton, Spinner, type Async } from './components/ui';
 import { Icon } from './components/Icon';
 
 type TabId = 'overview' | 'sender' | 'links' | 'attachments' | 'body' | 'headers';
@@ -27,7 +27,7 @@ export function App() {
   const [report, setReport] = useState<Report | null>(null);
   const [source, setSource] = useState<Source | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; details: string[] } | null>(null);
   const [tab, setTab] = useState<TabId>('overview');
   const [domainAge, setDomainAge] = useState<Async<DomainAge>>({ status: 'idle' });
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -85,7 +85,9 @@ export function App() {
         setReport(r);
         if (settings.autoDomainAge) void checkDomainAge(r, run);
       } catch (e) {
-        if (run === runId.current) setError(e instanceof Error ? e.message : String(e));
+        if (run === runId.current) {
+          setError({ message: e instanceof Error ? e.message : String(e), details: e instanceof GmailFetchError ? e.details : [] });
+        }
       } finally {
         if (run === runId.current) setLoading(false);
       }
@@ -111,6 +113,12 @@ export function App() {
     void analyze(() => gmail.fetchRaw(msg), { kind: 'gmail', key }, key);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(messages), selectedKey, source]);
+
+  const retry = () => {
+    if (source?.kind !== 'gmail') return;
+    const msg = messages.find((m) => messageKey(m) === source.key);
+    if (msg) void analyze(() => gmail.fetchRaw(msg), { kind: 'gmail', key: source.key }, undefined);
+  };
 
   const openFile = (file: File) => {
     void analyze(() => file.arrayBuffer(), { kind: 'file', name: file.name });
@@ -240,7 +248,31 @@ export function App() {
             {error && !loading && (
               <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200">
                 <p className="font-semibold">Could not analyze this email</p>
-                <p className="mt-1 text-xs">{error}</p>
+                <p className="mt-1 text-xs">{error.message}</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {source?.kind === 'gmail' && (
+                    <Button variant="secondary" onClick={retry}>
+                      <Icon name="refresh" className="h-3.5 w-3.5" /> Try again
+                    </Button>
+                  )}
+                  <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                    <Icon name="upload" className="h-3.5 w-3.5" /> Open .eml file
+                    <input type="file" accept=".eml,message/rfc822,.txt" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) openFile(f); e.target.value = ''; }} />
+                  </label>
+                </div>
+                {error.details.length > 0 && (
+                  <details className="mt-2 text-xs">
+                    <summary className="cursor-pointer select-none">Technical details</summary>
+                    <ul className="mt-1 space-y-0.5 font-mono text-[10px] break-all">
+                      {error.details.map((d, i) => (
+                        <li key={i}>{d}</li>
+                      ))}
+                    </ul>
+                    <div className="mt-1">
+                      <CopyButton value={error.details.join('\n')} label="Copy details" />
+                    </div>
+                  </details>
+                )}
               </div>
             )}
 

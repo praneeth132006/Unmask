@@ -4,6 +4,16 @@ import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, State
 
 export type GmailStatus = 'not-gmail' | 'no-script' | 'ready';
 
+/** Error carrying Gmail's per-URL diagnostics so the panel can show them. */
+export class GmailFetchError extends Error {
+  constructor(
+    message: string,
+    readonly details: string[],
+  ) {
+    super(message);
+  }
+}
+
 export function messageKey(m: GmailMessageRef): string {
   return m.permId ?? m.legacyId ?? '';
 }
@@ -65,7 +75,7 @@ export function useGmail() {
       if (tabId === null) throw new Error('No Gmail tab is active.');
       const res = (await browser.tabs.sendMessage(tabId, { type: 'unmask:fetch-raw', message } satisfies PanelRequest)) as FetchRawResponse | undefined;
       if (!res) throw new Error('Gmail did not answer. Reload the Gmail tab and try again.');
-      if (!res.ok) throw new Error(res.error);
+      if (!res.ok) throw new GmailFetchError(res.error, (res.attempts ?? []).map((a) => `${a.label}: ${a.outcome}`));
       return res.raw;
     },
     [tabId],

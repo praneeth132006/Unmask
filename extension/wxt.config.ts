@@ -20,6 +20,8 @@ export default defineConfig({
     permissions: ['storage', 'tabs'],
     host_permissions: [
       'https://mail.google.com/*',
+      // "Download original" can redirect to Google's content host.
+      'https://*.googleusercontent.com/*',
       'https://www.virustotal.com/*',
       'https://urlscan.io/*',
     ],

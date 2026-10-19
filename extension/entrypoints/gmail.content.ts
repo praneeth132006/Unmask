@@ -1,10 +1,19 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
-import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, StateChanged } from '../src/lib/messages';
+import type {
+  BackgroundFetchRequest,
+  BackgroundFetchResponse,
+  FetchRawResponse,
+  GmailMessageRef,
+  GmailState,
+  PanelRequest,
+  StateChanged,
+} from '../src/lib/messages';
+import { candidateUrls, describeResponse, findIkInHtml, looksLikeRawEmail, parseOriginalPage, type Attempt } from '../src/lib/gmailRaw';
 
 /**
  * Runs inside Gmail. Its only jobs are to notice which emails are open and to
- * download their raw source from Gmail's own "Show original" view, so no
+ * download their raw source from Gmail's own "Show original" endpoints, so no
  * OAuth or Gmail API access is needed. All analysis happens in the side panel.
  */
 export default defineContentScript({
@@ -69,7 +78,7 @@ function readState(): GmailState {
     const sender = node.querySelector<HTMLElement>('[email]');
     messages.push({
       permId: permId && permId.startsWith('msg-') ? permId : null,
-      legacyId,
+      legacyId: legacyId && /^[0-9a-f]+$/i.test(legacyId) ? legacyId : null,
       fromName: sender?.getAttribute('name') ?? sender?.textContent?.trim() ?? '',
       fromEmail: sender?.getAttribute('email') ?? '',
       subject,
@@ -79,55 +88,85 @@ function readState(): GmailState {
   return { accountIndex: accountIndex(), messages };
 }
 
-function looksLikeRawEmail(text: string): boolean {
-  const head = text.slice(0, 4000);
-  return /^[\w-]+:\s/m.test(head) && /^(received|from|message-id|date|delivered-to|mime-version):/im.test(head);
-}
-
-async function fetchText(url: string): Promise<string> {
-  const res = await fetch(url, { credentials: 'include' });
-  if (!res.ok) throw new Error(`Gmail returned HTTP ${res.status}`);
-  return res.text();
-}
-
-async function fromOriginalPage(url: string): Promise<string | null> {
-  const html = await fetchText(url);
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-
-  // Prefer the "Download original" link: it is never truncated for large emails.
-  const download = Array.from(doc.querySelectorAll<HTMLAnchorElement>('a[href]')).find((a) =>
-    /disp=comp|view=att/.test(a.getAttribute('href') ?? ''),
-  );
-  if (download) {
-    try {
-      const raw = await fetchText(new URL(download.getAttribute('href')!, url).href);
-      if (looksLikeRawEmail(raw)) return raw;
-    } catch {
-      // fall back to the <pre> below
-    }
+/** Gmail's per-session token, published by the MAIN-world script, with an HTML scan as fallback. */
+let cachedIk: string | null = null;
+function getIk(): string | null {
+  const fromAttr = document.documentElement.getAttribute('data-unmask-ik');
+  if (fromAttr) return (cachedIk = fromAttr);
+  if (cachedIk) return cachedIk;
+  for (const s of Array.from(document.scripts)) {
+    const ik = findIkInHtml(s.textContent ?? '');
+    if (ik) return (cachedIk = ik);
   }
+  return (cachedIk = findIkInHtml(document.documentElement.innerHTML.slice(0, 3_000_000)));
+}
 
-  const pre = doc.getElementById('raw_message_text');
-  const text = pre?.textContent ?? null;
-  return text && looksLikeRawEmail(text) ? text : null;
+interface Fetched {
+  status: number;
+  finalUrl: string;
+  contentType: string;
+  body: string;
+  via: 'page' | 'background';
+}
+
+/**
+ * Fetch from the page first (same origin, Gmail cookies). If that throws —
+ * usually a redirect to another Google domain that CORS blocks — retry from
+ * the extension's background worker, which has host permissions.
+ */
+async function fetchText(url: string): Promise<Fetched> {
+  try {
+    const res = await fetch(url, { credentials: 'include', redirect: 'follow' });
+    return { status: res.status, finalUrl: res.url || url, contentType: res.headers.get('content-type') ?? '', body: await res.text(), via: 'page' };
+  } catch (pageErr) {
+    const res = (await browser.runtime.sendMessage({ type: 'unmask:bg-fetch', url } satisfies BackgroundFetchRequest)) as BackgroundFetchResponse | undefined;
+    if (!res) throw new Error(`page fetch failed (${(pageErr as Error).message}) and the background worker did not answer`);
+    if (!res.ok) throw new Error(`page fetch failed (${(pageErr as Error).message}); background fetch failed (${res.error})`);
+    return { ...res, via: 'background' };
+  }
 }
 
 async function fetchRaw(message: GmailMessageRef): Promise<FetchRawResponse> {
-  const base = `${location.origin}/mail/u/${accountIndex()}/`;
-  const candidates: string[] = [];
-  if (message.permId) candidates.push(`${base}?view=om&permmsgid=${encodeURIComponent(message.permId)}`);
-  if (message.legacyId) candidates.push(`${base}?ui=2&view=om&th=${encodeURIComponent(message.legacyId)}`);
+  const ik = getIk();
+  const attempts: Attempt[] = [{ label: 'session token', outcome: ik ? 'found' : 'not found (trying without it)' }];
+  const tried = new Set<string>();
 
-  for (const url of candidates) {
+  const tryUrl = async (label: string, url: string): Promise<string | null> => {
+    if (tried.has(url)) return null;
+    tried.add(url);
     try {
-      const raw = await fromOriginalPage(url);
-      if (raw) return { ok: true, raw };
-    } catch {
-      // try the next URL shape
+      const r = await fetchText(url);
+      if (r.status === 200 && looksLikeRawEmail(r.body)) {
+        attempts.push({ label, outcome: `OK via ${r.via} fetch` });
+        return r.body;
+      }
+      if (r.status === 200 && /html/i.test(r.contentType)) {
+        const page = parseOriginalPage(r.body, r.finalUrl, new DOMParser());
+        // Prefer the download link (never truncated) over the on-page <pre>.
+        if (page.downloadUrl && !tried.has(page.downloadUrl)) {
+          const fromLink = await tryUrl(`${label} → download link`, page.downloadUrl);
+          if (fromLink) return fromLink;
+        }
+        if (page.raw) {
+          attempts.push({ label, outcome: `OK from page text via ${r.via} fetch` });
+          return page.raw;
+        }
+      }
+      attempts.push({ label, outcome: describeResponse(r.status, r.finalUrl, r.contentType, r.body) });
+    } catch (e) {
+      attempts.push({ label, outcome: e instanceof Error ? e.message : String(e) });
     }
+    return null;
+  };
+
+  for (const c of candidateUrls(location.origin, accountIndex(), message, ik)) {
+    const raw = await tryUrl(c.label, c.url);
+    if (raw) return { ok: true, raw, via: c.label };
   }
+
   return {
     ok: false,
-    error: 'Could not read the original message from Gmail. Open the email, then use ⋮ → "Show original" → "Download original" and drop the .eml file into Unmask.',
+    error: 'Gmail did not return the original message. You can still analyze it: in Gmail open ⋮ → "Download message", then drop the .eml file on this panel.',
+    attempts,
   };
 }
