@@ -45,7 +45,7 @@ export async function parseEmail(raw: string | ArrayBuffer | Uint8Array): Promis
   const returnPath = email.returnPath?.replace(/^<|>$/g, '').trim() || null;
 
   return {
-    headers: email.headers.map((h) => ({ key: h.key, value: h.value })),
+    headers: email.headers.map((h) => ({ key: h.key, name: h.originalKey ?? h.key, value: h.value })),
     from: toMailbox(email.from),
     sender: toMailbox(email.sender),
     replyTo: toMailboxes(email.replyTo),

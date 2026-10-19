@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Report } from '../../core/types';
-import { Card, Mono, SectionTitle } from './ui';
+import { Card, CopyButton, Mono, SectionTitle } from './ui';
 
 const KEY_HEADERS = new Set(['from', 'reply-to', 'return-path', 'sender', 'to', 'subject', 'date', 'message-id', 'authentication-results', 'received-spf', 'x-originating-ip', 'x-mailer', 'list-unsubscribe']);
 
@@ -58,6 +58,11 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
         </>
       )}
 
+      <div className="mb-3 flex flex-wrap gap-1.5">
+        <CopyAll label="Copy all headers" value={headers.map((h) => `${h.name}: ${h.value}`).join('\n')} />
+        {hops.length > 0 && <CopyAll label="Copy delivery path" value={hops.map((h, i) => `${i + 1}. ${h.from ?? 'unknown'}${h.ip ? ` [${h.ip}]` : ''}${h.by ? ` → ${h.by}` : ''}`).join('\n')} />}
+      </div>
+
       <SectionTitle
         right={
           <input
@@ -74,7 +79,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
         <dl className="divide-y divide-[var(--border)]">
           {shown.map((h, i) => (
             <div key={i} className={`px-3 py-1.5 ${KEY_HEADERS.has(h.key) ? 'bg-[var(--accent-soft)]' : ''}`}>
-              <dt className="text-[11px] font-semibold text-[var(--text)]">{h.key}</dt>
+              <dt className="text-[11px] font-semibold text-[var(--text)]">{h.name}</dt>
               <dd>
                 <Mono>{h.value}</Mono>
               </dd>
@@ -83,5 +88,15 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
         </dl>
       </Card>
     </div>
+  );
+}
+
+/** A visible button (not the small inline one) for copying a whole block. */
+function CopyAll({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] pl-2.5 text-xs font-medium text-[var(--text)]">
+      {label}
+      <CopyButton value={value} label="Copy" />
+    </span>
   );
 }

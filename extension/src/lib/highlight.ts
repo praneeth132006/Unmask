@@ -56,6 +56,13 @@ function normalise(url: string): string {
 
 function linkElements(root: Element, hrefs: string[]): Element[] {
   const wanted = new Set(hrefs.map(normalise));
+  const exact = linkElementsByHref(root, wanted);
+  if (exact.length) return exact;
+  // Plain-text parts often print the URL as the link's visible text.
+  return Array.from(bodyOf(root).querySelectorAll('a')).filter((a) => wanted.has(normalise((a.textContent ?? '').trim())));
+}
+
+function linkElementsByHref(root: Element, wanted: Set<string>): Element[] {
   return Array.from(bodyOf(root).querySelectorAll('a[href], area[href]')).filter((a) => {
     const raw = a.getAttribute('href') ?? '';
     if (wanted.has(normalise(raw))) return true;

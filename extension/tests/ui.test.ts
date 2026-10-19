@@ -69,3 +69,14 @@ describe('safe view hardening', () => {
     expect(performance.now() - t).toBeLessThan(1500);
   });
 });
+
+describe('plain-text URL splitting', () => {
+  it('separates URLs from text and trims trailing punctuation', async () => {
+    const { splitUrls } = await import('../src/ui/components/BodyTab');
+    expect(splitUrls('Read https://click.email.bbc.com/?qs=AB_12. Thanks')).toEqual([
+      { text: 'Read ' },
+      { text: 'https://click.email.bbc.com/?qs=AB_12', url: 'https://click.email.bbc.com/?qs=AB_12' },
+      { text: '. Thanks' },
+    ]);
+  });
+});

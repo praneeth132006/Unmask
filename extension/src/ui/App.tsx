@@ -8,6 +8,7 @@ import type { HighlightTarget } from '../lib/highlight';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
 import { GmailFetchError, messageKey, useGmail } from './useGmail';
 import { toFocus, toHighlight, type Focus } from './targets';
+import { unwrapUrl } from '../analyzers/links';
 import { Overview, VerdictCard } from './components/Overview';
 import { SenderTab } from './components/SenderTab';
 import { LinksTab } from './components/LinksTab';
@@ -161,6 +162,13 @@ export function App() {
 
   const onHoverFinding = (f: Finding | null) => highlight(f && report ? toHighlight(f.target, report) : null);
   const onHoverLink = (l: LinkInfo | null) => highlight(l ? { kind: 'links', hrefs: [l.href] } : null);
+  /** A URL from the plain-text part: outline every HTML link with the same address or the same real destination. */
+  const onHoverUrl = (url: string | null) => {
+    if (!url || !report) return highlight(null);
+    const dest = unwrapUrl(url).url;
+    const hrefs = [url, ...report.links.filter((l) => l.href === url || l.resolved === dest).map((l) => l.href)];
+    highlight({ kind: 'links', hrefs: [...new Set(hrefs)] });
+  };
   const onHoverAttachment = (a: AttachmentInfo | null) => highlight(a ? { kind: 'attachments', names: [a.filename] } : null);
 
   // ---- Navigation --------------------------------------------------------------
@@ -455,7 +463,7 @@ export function App() {
                       onHoverAttachment={onHoverAttachment}
                     />
                   )}
-                  {tab === 'body' && <BodyTab report={report} initialReveal={focus?.revealHidden} />}
+                  {tab === 'body' && <BodyTab report={report} initialReveal={focus?.revealHidden} onHoverUrl={canHighlight ? onHoverUrl : undefined} />}
                   {tab === 'headers' && <HeadersTab report={report} initialFilter={focus?.headerKey} />}
                   {tab === 'privacy' && <PrivacyTab report={report} />}
                 </div>

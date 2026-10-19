@@ -49,3 +49,11 @@ describe('applyHighlight', () => {
     expect(document.querySelectorAll('[data-unmask-hl]')).toHaveLength(0);
   });
 });
+
+describe('plain-text URL fallback', () => {
+  it('finds a link whose visible text is the URL when the href differs', () => {
+    document.querySelector('.a3s')!.insertAdjacentHTML('beforeend', '<a id="t" href="https://track.example/x?id=1">https://news.example/story</a>');
+    expect(applyHighlight(document, ref, { kind: 'links', hrefs: ['https://news.example/story'] }, false)).toBe(1);
+    expect(document.querySelector('[data-unmask-hl]')?.id).toBe('t');
+  });
+});

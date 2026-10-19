@@ -47,7 +47,8 @@ export interface ParsedAttachment {
 }
 
 export interface ParsedEmail {
-  headers: { key: string; value: string }[];
+  /** key is lowercase for lookups; name keeps the original capitalisation. */
+  headers: { key: string; name: string; value: string }[];
   from: Mailbox | null;
   sender: Mailbox | null;
   replyTo: Mailbox[];

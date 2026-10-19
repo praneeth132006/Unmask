@@ -18,7 +18,22 @@ function Toggle({ checked, onChange, children, title }: { checked: boolean; onCh
   );
 }
 
-export function BodyTab({ report, initialReveal }: { report: Report; initialReveal?: boolean }) {
+/** Splits text into plain runs and URLs (linear scan, no backtracking). */
+export function splitUrls(text: string): { text: string; url?: string }[] {
+  const out: { text: string; url?: string }[] = [];
+  const re = /https?:\/\/[^\s<>"'\])]{1,4000}/g;
+  let last = 0;
+  for (const m of text.matchAll(re)) {
+    const url = m[0].replace(/[.,;:!?]+$/, '');
+    if (m.index! > last) out.push({ text: text.slice(last, m.index) });
+    out.push({ text: url, url });
+    last = m.index! + url.length;
+  }
+  if (last < text.length) out.push({ text: text.slice(last) });
+  return out;
+}
+
+export function BodyTab({ report, initialReveal, onHoverUrl }: { report: Report; initialReveal?: boolean; onHoverUrl?: (url: string | null) => void }) {
   const { email, hidden, annotatedHtml } = report;
   const hasHtml = Boolean(email.html);
   const [view, setView] = useState<View>(hasHtml ? 'safe' : 'text');
@@ -80,8 +95,25 @@ export function BodyTab({ report, initialReveal }: { report: Report; initialReve
       {view === 'text' && (
         <Card>
           <pre className="max-h-[460px] overflow-auto whitespace-pre-wrap break-words font-sans text-xs leading-relaxed text-[var(--text)]">
-            {email.text?.trim() || '(This email has no plain-text part.)'}
+            {email.text?.trim()
+              ? splitUrls(email.text.trim()).map((part, i) =>
+                  part.url ? (
+                    <span
+                      key={i}
+                      title="Hover to see where this link is in the email"
+                      onMouseEnter={() => onHoverUrl?.(part.url!)}
+                      onMouseLeave={() => onHoverUrl?.(null)}
+                      className="cursor-help rounded-sm text-[var(--accent)] underline decoration-dotted underline-offset-2 hover:bg-[var(--accent-soft)]"
+                    >
+                      {part.text}
+                    </span>
+                  ) : (
+                    <span key={i}>{part.text}</span>
+                  ),
+                )
+              : '(This email has no plain-text part.)'}
           </pre>
+          {onHoverUrl && <p className="mt-2 text-[11px] text-[var(--text-3)]">Hover a link to outline it in the email in Gmail.</p>}
         </Card>
       )}
 

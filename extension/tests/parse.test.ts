@@ -29,3 +29,10 @@ describe('parseEmail', () => {
     expect(email.from?.address).toBe('noreply@github.com');
   });
 });
+
+describe('header names', () => {
+  it('keeps the original capitalisation for copying', async () => {
+    const email = await parseEmail(fixture('legit-newsletter.eml'));
+    expect(email.headers.find((h) => h.key === 'authentication-results')?.name).toBe('Authentication-Results');
+  });
+});
