@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="extension/public/icon/128.png" width="96" alt="Unmask logo">
+  <img src="docs/brand/logo-512.png" width="112" alt="Unmask logo">
 </p>
 
 <h1 align="center">Unmask</h1>

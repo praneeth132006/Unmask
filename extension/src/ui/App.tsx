@@ -168,9 +168,7 @@ export function App() {
     >
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/90 px-3 py-2 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
         <div className="flex items-center gap-1.5">
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600 text-white">
-            <Icon name="mask" className="h-4 w-4" />
-          </span>
+          <img src="/icon/48.png" alt="" className="h-6 w-6" />
           <span className="text-sm font-semibold">Unmask</span>
         </div>
         <div className="flex items-center gap-0.5">
@@ -328,9 +326,7 @@ export function App() {
 function EmptyState({ status, onReload }: { status: ReturnType<typeof useGmail>['status']; onReload: () => void }) {
   return (
     <div className="py-8 text-center">
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white">
-        <Icon name="mask" className="h-8 w-8" />
-      </div>
+      <img src="/icon/128.png" alt="" className="mx-auto mb-3 h-14 w-14" />
       {status === 'ready' && <p className="text-sm font-medium">Open an email in Gmail to inspect it.</p>}
       {status === 'no-script' && (
         <>
