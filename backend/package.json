@@ -1,0 +1,24 @@
+{
+  "name": "unmask-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Redirect tracer for the Unmask extension: follows a link's redirect chain from the server so the user's browser never loads it.",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13",
+    "undici": "^8.12.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "^5.0.5"
+  }
+}
