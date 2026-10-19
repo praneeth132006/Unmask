@@ -37,6 +37,12 @@ describe('applyHighlight', () => {
     expect(document.querySelector('.a3s')!.innerHTML).toBe(before);
   });
 
+  it('outlines the element when a phrase crosses tags', () => {
+    document.querySelector('.a3s')!.insertAdjacentHTML('beforeend', '<p id="split">Please confirm <i>your password</i> today</p>');
+    expect(applyHighlight(document, ref, { kind: 'text', phrases: ['confirm your password'] }, false)).toBe(1);
+    expect(document.querySelector('[data-unmask-hl]')?.id).toBe('split');
+  });
+
   it('clears the previous highlight and handles a missing message', () => {
     applyHighlight(document, ref, { kind: 'sender' }, false);
     expect(applyHighlight(document, { ...ref, permId: 'msg-f:999', legacyId: null }, { kind: 'sender' }, false)).toBe(0);

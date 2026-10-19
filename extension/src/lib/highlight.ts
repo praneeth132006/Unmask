@@ -17,7 +17,7 @@ const STYLE_ID = 'unmask-highlight-style';
 
 const CSS = `
 [${ATTR}] { outline: 3px solid #f59e0b !important; outline-offset: 2px !important; border-radius: 4px !important;
-  background-color: rgba(250, 204, 21, 0.28) !important; box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.18) !important; transition: outline-color .2s; }
+  background-color: rgba(250, 204, 21, 0.28) !important; box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.18) !important; }
 mark[${MARK}] { background: #fde047 !important; color: #111 !important; border-radius: 3px; padding: 0 2px;
   box-shadow: 0 0 0 2px #f59e0b; }
 `;
@@ -132,6 +132,33 @@ function markPhrases(root: Element, phrases: string[]): Element[] {
   return marks;
 }
 
+/**
+ * For phrases that cross tags (e.g. "verify <b>your account</b>") text-node marking
+ * finds nothing; outline the smallest element whose text contains the phrase instead.
+ */
+function elementsContaining(root: Element, phrases: string[]): Element[] {
+  const body = bodyOf(root);
+  const norm = (t: string) => t.replace(/\s+/g, ' ').toLowerCase();
+  const out: Element[] = [];
+  for (const phrase of phrases.map(norm).filter((p) => p.length >= 3)) {
+    if (!norm(body.textContent ?? '').includes(phrase)) continue;
+    let best: Element = body;
+    let descended = true;
+    while (descended) {
+      descended = false;
+      for (const child of Array.from(best.children)) {
+        if (norm(child.textContent ?? '').includes(phrase)) {
+          best = child;
+          descended = true;
+          break;
+        }
+      }
+    }
+    if (best !== body && !out.includes(best)) out.push(best);
+  }
+  return out;
+}
+
 export function clearHighlights(doc: Document): void {
   doc.querySelectorAll(`[${ATTR}]`).forEach((el) => el.removeAttribute(ATTR));
   doc.querySelectorAll(`mark[${MARK}]`).forEach((mark) => {
@@ -155,7 +182,13 @@ export function applyHighlight(doc: Document, ref: GmailMessageRef, target: High
   if (target.kind === 'links') els = linkElements(root, target.hrefs);
   else if (target.kind === 'sender') els = senderElements(root);
   else if (target.kind === 'attachments') els = attachmentElements(root, target.names);
-  else if (target.kind === 'text') els = markPhrases(root, target.phrases);
+  else if (target.kind === 'text') {
+    els = markPhrases(root, target.phrases);
+    if (!els.length) {
+      els = elementsContaining(root, target.phrases);
+      els.forEach((el) => el.setAttribute(ATTR, ''));
+    }
+  }
 
   if (target.kind !== 'text') els.forEach((el) => el.setAttribute(ATTR, ''));
   const first = els[0] as HTMLElement | undefined;
