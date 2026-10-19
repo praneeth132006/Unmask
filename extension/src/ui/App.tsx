@@ -1,3 +1,5 @@
+import { browser } from 'wxt/browser';
+import { PEEK_KEY, type PendingPeek } from '../lib/messages';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEvent } from 'react';
 import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
 import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/types';
@@ -26,7 +28,8 @@ import { ReportCard } from './components/ReportCard';
 import { Button, CopyButton, Spinner, type Async } from './components/ui';
 import { Icon } from './components/Icon';
 
-type Source = { kind: 'gmail'; key: string } | { kind: 'file'; name: string };
+/** peek: a Gmail message checked from the inbox list, not opened in Gmail. */
+type Source = { kind: 'gmail'; key: string } | { kind: 'file'; name: string } | { kind: 'peek'; key: string; subject: string };
 
 const MAX_EMAIL_BYTES = 40 * 1024 * 1024;
 const GUIDE_URL = 'https://praneeth132006.github.io/Unmask/guide.html';
@@ -157,7 +160,7 @@ export function App() {
         if (run !== runId.current) return;
         if (cacheKey) cache.current.set(cacheKey, { report: r, raw: source });
         setRaw(source);
-        if (settings.senderHistory && src.kind === 'gmail' && !cached) void rememberSender(r);
+        if (settings.senderHistory && src.kind !== 'file' && !cached) void rememberSender(r);
         setReport(r);
         if (settings.autoDomainAge) void checkDomainAge(r, run);
         if (settings.domainIntel) void checkIntel(r, run);
@@ -172,10 +175,32 @@ export function App() {
     [settings.autoDomainAge, settings.senderHistory, settings.domainIntel, checkDomainAge, checkIntel],
   );
 
+  // "Read it safely" from a Peek card in Gmail: show that message without it being opened there.
+  const gmailTabId = gmail.tabId;
+  const gmailFetch = gmail.fetchRaw;
+  useEffect(() => {
+    const session = (browser.storage as unknown as { session?: { get(k: string): Promise<Record<string, unknown>>; remove(k: string): Promise<void> } }).session;
+    if (!session || gmailTabId === null) return;
+    const take = async () => {
+      const peek = (await session.get(PEEK_KEY))[PEEK_KEY] as PendingPeek | undefined;
+      if (!peek || peek.tabId !== gmailTabId || Date.now() - peek.at > 120_000) return;
+      await session.remove(PEEK_KEY);
+      const key = peek.ref.permId ?? peek.ref.legacyId ?? 'peek';
+      setShowSettings(false);
+      void analyze(() => gmailFetch(peek.ref), { kind: 'peek', key, subject: peek.ref.subject }, key);
+    };
+    void take();
+    const onChange = (changes: Record<string, unknown>, area: string) => {
+      if (area === 'session' && changes[PEEK_KEY]) void take();
+    };
+    browser.storage.onChanged.addListener(onChange);
+    return () => browser.storage.onChanged.removeListener(onChange);
+  }, [gmailTabId, gmailFetch, analyze]);
+
   // Follow the email that is open in Gmail.
   const messages = gmail.state?.messages ?? [];
   useEffect(() => {
-    if (source?.kind === 'file') return;
+    if (source?.kind === 'file' || source?.kind === 'peek') return;
     const keys = messages.map(messageKey);
     const key = selectedKey && keys.includes(selectedKey) ? selectedKey : (keys[keys.length - 1] ?? null);
     if (!key) {
@@ -391,6 +416,17 @@ export function App() {
           />
         ) : (
           <>
+            {source?.kind === 'peek' && (
+              <div className="mb-2.5 rounded-lg bg-[var(--accent-soft)] px-2.5 py-2 text-xs text-[var(--accent)]">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">Peeking: not opened in Gmail</span>
+                  <button type="button" className="shrink-0 font-medium underline" onClick={backToGmail}>
+                    Back to Gmail
+                  </button>
+                </div>
+                <p className="mt-0.5 text-[11px] text-[var(--text-2)]">Nothing in this email has loaded, so its trackers haven’t fired. The Body tab shows it safely with images blocked.</p>
+              </div>
+            )}
             {source?.kind === 'file' && (
               <div className="mb-2.5 flex items-center justify-between gap-2 rounded-lg bg-[var(--accent-soft)] px-2.5 py-1.5 text-xs text-[var(--accent)]">
                 <span className="truncate">Analyzing {source.name}</span>

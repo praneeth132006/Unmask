@@ -54,6 +54,16 @@ export type TraceResponse = { ok: true; result: import('../integrations/trace').
 /** Content script → background: open the side panel for this tab (from a click in Gmail). */
 export interface OpenPanelRequest {
   type: 'unmask:open-panel';
+  /** Show this message in the panel without it being opened in Gmail ("Read it safely"). */
+  peek?: GmailMessageRef;
+}
+
+/** Kept in session storage between the click in Gmail and the panel loading. */
+export const PEEK_KEY = 'unmask:peek';
+export interface PendingPeek {
+  tabId: number;
+  ref: GmailMessageRef;
+  at: number;
 }
 
 /** Content script → background (→ offscreen document): analyze an email where the page blocks HTML parsing. */

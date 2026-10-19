@@ -12,7 +12,7 @@ import type { FetchRawResponse, GmailMessageRef, GmailState } from './messages';
 import type { SenderHistory } from '../analyzers/history';
 import type { ProtectionList } from '../analyzers/protection';
 import { findMessageRoot } from './highlight';
-import { BADGE_ATTR, BANNER_ATTR, confirmDialog, createBadge, createBanner, topReasons } from './inpage';
+import { BADGE_ATTR, BANNER_ATTR, PEEK_ATTR, confirmDialog, createBadge, createBanner, createPeekButton, showPeekCard, topReasons } from './inpage';
 import { plainSummary } from '../core/plain';
 import { linkWarning, pruneVerdicts, quickVerdict, replyWarning, type StoredVerdict } from './protect';
 import { press } from './gmailActions';
@@ -22,6 +22,10 @@ export interface ProtectSettings {
   inboxBadges: boolean;
   clickProtection: boolean;
   senderHistory: boolean;
+  /** "Peek" pill on inbox rows. */
+  peekButtons?: boolean;
+  /** Check unread rows automatically, before they're opened. */
+  scanInbox?: boolean;
 }
 
 /** Where a mail web app keeps its messages. Gmail is the default; Outlook on the web has its own. */
@@ -39,6 +43,10 @@ export interface MailSite {
   threadId(doc: Document): string | null;
   /** Inbox list rows, when the site has them. */
   inboxRows?(doc: Document): { row: Element; sender: Element; address: string; name: string; thread: string }[];
+  /** The message to download for an inbox row, so it can be checked without opening it. */
+  refForRow?(row: Element, thread: string): GmailMessageRef | null;
+  /** Unread rows in the list. */
+  isUnread?(row: Element): boolean;
 }
 
 export const GMAIL_SITE: MailSite = {
@@ -63,6 +71,15 @@ export const GMAIL_SITE: MailSite = {
         thread: row.querySelector('[data-thread-id]')?.getAttribute('data-thread-id')?.replace(/^#/, '') ?? '',
       }];
     }),
+  // A thread's id is its first message's id: thread-f:N belongs to msg-f:N.
+  refForRow: (row, thread) => {
+    const n = thread.match(/^thread-([af]):(\d+)$/);
+    const legacy = row.querySelector('[data-legacy-thread-id]')?.getAttribute('data-legacy-thread-id') ?? null;
+    if (!n && !legacy) return null;
+    const subject = row.querySelector('.bog, .bqe, [data-thread-id]')?.textContent?.trim() ?? '';
+    return { permId: n ? `msg-${n[1]}:${n[2]}` : null, legacyId: legacy && /^[0-9a-f]+$/i.test(legacy) ? legacy : null, fromName: '', fromEmail: '', subject };
+  },
+  isUnread: (row) => row.classList.contains('zE'),
 };
 
 export interface ProtectDeps {
@@ -80,6 +97,8 @@ export interface ProtectDeps {
   loadVerdicts: () => Promise<Record<string, StoredVerdict>>;
   saveVerdicts: (v: Record<string, StoredVerdict>) => Promise<void>;
   openPanel?: () => void;
+  /** Opens the side panel on a message that was peeked at, not opened. */
+  openPeekInPanel?: (ref: GmailMessageRef) => void;
   debounceMs?: number;
 }
 
@@ -135,21 +154,22 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     body.parentElement.insertBefore(banner, body);
   }
 
-  async function analyzeMessage(ref: GmailMessageRef) {
+  async function analyzeMessage(ref: GmailMessageRef, threadOverride?: string): Promise<Report | null> {
     const key = messageKey(ref);
     pending.add(key);
     try {
       const res = await deps.fetchRaw(ref);
-      if (!res.ok || stopped) return;
+      if (!res.ok) throw new Error(res.error);
+      if (stopped) return null;
       const s = deps.settings();
       history = s.senderHistory ? await deps.loadHistory().catch(() => undefined) : undefined;
       const protection = await deps.loadProtection?.().catch(() => undefined);
       const report = await deps.analyze(res.raw, { history, protection });
-      if (stopped) return;
+      if (stopped) return null;
       reports.set(key, report);
       drawBanner(key, report);
       if (s.senderHistory) await deps.rememberSender(report).catch(() => {});
-      const thread = site.threadId(doc);
+      const thread = threadOverride ?? site.threadId(doc);
       if (thread) {
         const v = await getVerdicts();
         const prev = v[thread];
@@ -159,18 +179,72 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
           await deps.saveVerdicts(verdicts).catch(() => {});
         }
       }
-    } catch {
+      return report;
+    } catch (e) {
       // Gmail didn't give us the source; the side panel explains why when opened.
+      if (threadOverride) throw e;
+      return null;
     } finally {
       pending.delete(key);
     }
   }
 
+  /** Checks an inbox row's email without opening it, and shows the result in a card. */
+  async function peek(ref: GmailMessageRef, thread: string, sender: { name: string; address: string }) {
+    const from = sender.name ? `${sender.name} <${sender.address}>` : sender.address;
+    showPeekCard(doc, { state: 'loading', subject: ref.subject, from });
+    try {
+      const report = reports.get(messageKey(ref)) ?? (await analyzeMessage(ref, thread));
+      if (!report) return;
+      const plain = plainSummary(report);
+      showPeekCard(doc, {
+        state: 'done',
+        subject: report.email.subject || ref.subject,
+        from: report.email.from ? `${report.email.from.name ? `${report.email.from.name} ` : ''}<${report.email.from.address}>` : from,
+        verdict: report.verdict,
+        score: report.score,
+        headline: plain.headline,
+        reasons: plain.reasons,
+        preview: report.previewText,
+        onReadSafely: deps.openPeekInPanel ? () => deps.openPeekInPanel!(ref) : undefined,
+      });
+      await badgeRows();
+    } catch (e) {
+      showPeekCard(doc, { state: 'error', subject: ref.subject, from, error: e instanceof Error ? e.message : String(e) });
+    }
+  }
+
+  /** Unread rows checked automatically, one at a time, at most 15 per visit to a list. */
+  const scanned = new Set<string>();
+  let scanning = false;
+  async function scanUnread(rows: { row: Element; thread: string }[]) {
+    if (scanning) return;
+    scanning = true;
+    let checked = 0;
+    try {
+      for (const { row, thread } of rows) {
+        if (stopped || !deps.settings().scanInbox || scanned.size >= 15) break;
+        if (!thread || scanned.has(thread) || !(site.isUnread?.(row) ?? false)) continue;
+        const v = await getVerdicts();
+        if (v[thread]) continue;
+        const ref = site.refForRow?.(row, thread);
+        if (!ref) continue;
+        scanned.add(thread);
+        if (await analyzeMessage(ref, thread).catch(() => null)) checked++;
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    } finally {
+      scanning = false;
+    }
+    // Re-badge only when something new was checked; badgeRows calls back into this function.
+    if (checked) await badgeRows();
+  }
+
   async function badgeRows() {
     const s = deps.settings();
     const rows = site.inboxRows?.(doc) ?? [];
-    if (!s.inboxBadges) {
-      doc.querySelectorAll(`[${BADGE_ATTR}]`).forEach((b) => b.remove());
+    if (!s.inboxBadges && !s.peekButtons) {
+      doc.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}]`).forEach((b) => b.remove());
       doc.querySelectorAll(`[${ROW_ATTR}]`).forEach((r) => r.removeAttribute(ROW_ATTR));
       return;
     }
@@ -180,13 +254,20 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     for (const { row, sender, address, name, thread } of rows) {
       const stored = thread ? v[thread] : undefined;
       const result = stored ?? quickVerdict(name, address, history);
-      const signature = `${address}|${thread}|${result.verdict}`;
+      const ref = s.peekButtons ? (site.refForRow?.(row, thread) ?? null) : null;
+      const signature = `${address}|${thread}|${result.verdict}|${s.inboxBadges ? 1 : 0}|${ref ? 1 : 0}`;
       if (row.getAttribute(ROW_ATTR) === signature) continue;
       row.setAttribute(ROW_ATTR, signature);
-      row.querySelectorAll(`[${BADGE_ATTR}]`).forEach((b) => b.remove());
-      if (result.verdict === 'clear') continue;
-      sender.parentElement?.insertBefore(createBadge(doc, result.verdict, result.reasons), sender.nextSibling);
+      row.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}]`).forEach((b) => b.remove());
+      let after: Node = sender;
+      if (s.inboxBadges && result.verdict !== 'clear') {
+        const badge = createBadge(doc, result.verdict, result.reasons);
+        sender.parentElement?.insertBefore(badge, after.nextSibling);
+        after = badge;
+      }
+      if (ref) sender.parentElement?.insertBefore(createPeekButton(doc, () => void peek(ref, thread, { name, address })), after.nextSibling);
     }
+    if (s.scanInbox) void scanUnread(rows);
   }
 
   async function scan() {
@@ -259,7 +340,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
   doc.addEventListener('click', listener, true);
   const observer = new (win as unknown as { MutationObserver: typeof MutationObserver }).MutationObserver((records) => {
     // Our own banners and badges changing must not trigger another pass.
-    if (records.every((r) => [...r.addedNodes, ...r.removedNodes].every((n) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR))))) return;
+    if (records.every((r) => [...r.addedNodes, ...r.removedNodes].every((n) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR) || n.hasAttribute(PEEK_ATTR) || n.hasAttribute('data-unmask-peek-card'))))) return;
     clearTimeout(timer);
     timer = setTimeout(() => void scan(), deps.debounceMs ?? 500);
   });
@@ -274,7 +355,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       clearTimeout(timer);
       observer.disconnect();
       doc.removeEventListener('click', listener, true);
-      doc.querySelectorAll(`[${BANNER_ATTR}], [${BADGE_ATTR}]`).forEach((n) => n.remove());
+      doc.querySelectorAll(`[${BANNER_ATTR}], [${BADGE_ATTR}], [${PEEK_ATTR}], [data-unmask-peek-card]`).forEach((n) => n.remove());
     },
   };
 }

@@ -29,6 +29,10 @@ await new Promise((r) => site.listen(0, '127.0.0.1', r));
 const sitePort = site.address().port;
 const fixture = readFileSync(join(here, '..', 'tests', 'fixtures', 'phishing-paypal.eml'), 'utf8');
 const page = readFileSync(join(here, 'fake-gmail.html'), 'utf8');
+// An inbox list with the same phishing email as an unopened row.
+const inboxPage = `<!doctype html><html><head><meta charset="utf-8"><script>var GLOBALS = [null,null,1,"/mail/u/0","en","US",null,"x",0,"a1b2c3d4e5",1];</script></head><body>
+<table><tr class="zA zE"><td><span email="billing@paypa1-support.xyz" name="PayPal Service">PayPal Service</span> <span class="bog">Your account has been limited</span><span data-thread-id="#thread-f:1780954093844218223" data-legacy-thread-id="18b7c4a2e5f1d06f"></span></td></tr></table>
+<div id="churn"></div></body></html>`;
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright');
 
@@ -56,7 +60,8 @@ await ctx.route('https://mail.google.com/**', (route) => {
     return route.fulfill({ status: 200, contentType: 'application/force-download', body: fixture });
   }
   // Real Gmail enforces Trusted Types, which also affects extension content scripts.
-  return route.fulfill({ status: 200, contentType: 'text/html', headers: { 'content-security-policy': "require-trusted-types-for 'script'" }, body: page });
+  const body = url.includes('/inbox-demo') ? inboxPage : page;
+  return route.fulfill({ status: 200, contentType: 'text/html', headers: { 'content-security-policy': "require-trusted-types-for 'script'" }, body });
 });
 
 let sw = ctx.serviceWorkers()[0] ?? (await ctx.waitForEvent('serviceworker'));
@@ -88,6 +93,18 @@ check(/paypa1-secure\.top/.test(dialogText ?? ''), 'clicking the risky link show
 check(ctx.pages().length === pagesBefore, 'the link did not open');
 await tab.locator('[data-unmask-dialog] button', { hasText: 'Go back' }).click();
 check((await tab.locator('[data-unmask-dialog]').count()) === 0, '"Go back" closes the warning');
+
+// Peek from the inbox list: the email is checked without being opened.
+const inbox = await ctx.newPage();
+await inbox.goto('https://mail.google.com/mail/u/0/inbox-demo');
+await inbox.waitForSelector('[data-unmask-peek] button', { timeout: 8000 }).catch(() => {});
+const rowClicks = await inbox.evaluate(() => { window.__rowClicks = 0; document.querySelector('tr.zA').addEventListener('click', () => window.__rowClicks++); return 0; });
+await inbox.click('[data-unmask-peek] button').catch(() => {});
+const peekText = await inbox.locator('[data-unmask-peek-card] .h').textContent({ timeout: 8000 }).catch(() => '');
+check(/looks like a scam/.test(peekText ?? ''), `Peek shows the verdict without opening the email ("${peekText}")`);
+check((await inbox.evaluate(() => window.__rowClicks)) === rowClicks, 'clicking Peek did not open the email');
+check((await inbox.locator('[data-unmask-peek-card] .pv').textContent().catch(() => '')).length > 20, 'Peek shows a text-only preview');
+await inbox.close();
 
 // Ask the content script for state and the raw message, like the side panel does.
 const panel = await ctx.newPage();

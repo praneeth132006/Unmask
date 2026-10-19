@@ -54,6 +54,7 @@ export default defineContentScript({
       loadVerdicts: async () => ((await browser.storage.local.get(VERDICTS_KEY))[VERDICTS_KEY] as Record<string, StoredVerdict> | undefined) ?? {},
       saveVerdicts: (v) => browser.storage.local.set({ [VERDICTS_KEY]: v }),
       openPanel: () => void browser.runtime.sendMessage({ type: 'unmask:open-panel' } satisfies OpenPanelRequest).catch(() => {}),
+      openPeekInPanel: (peek) => void browser.runtime.sendMessage({ type: 'unmask:open-panel', peek } satisfies OpenPanelRequest).catch(() => {}),
     });
     void loadSettings().then((s) => {
       settings = s;

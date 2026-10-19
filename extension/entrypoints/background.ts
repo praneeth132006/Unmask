@@ -1,5 +1,6 @@
 import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
+import { PEEK_KEY, type PendingPeek } from '../src/lib/messages';
 import type { AnalyzeRequest, AnalyzeResponse, BackgroundFetchRequest, BackgroundFetchResponse, OpenPanelRequest, TraceRequest, TraceResponse } from '../src/lib/messages';
 import { isOutlookUrl } from '../src/lib/outlookDom';
 import { traceQueued, webRequestHub } from '../src/lib/builtinTrace';
@@ -70,6 +71,10 @@ export default defineBackground(() => {
   // "See why" on a Gmail banner. Allowed because it comes from a user click in the page.
   browser.runtime.onMessage.addListener((req: OpenPanelRequest, sender) => {
     if (req?.type !== 'unmask:open-panel' || sender.id !== browser.runtime.id || !sender.tab?.id) return;
+    if (req.peek) {
+      const session = (browser.storage as unknown as { session?: { set(v: Record<string, unknown>): Promise<void> } }).session;
+      void session?.set({ [PEEK_KEY]: { tabId: sender.tab.id, ref: req.peek, at: Date.now() } satisfies PendingPeek });
+    }
     const b = browser as unknown as { sidePanel?: { open(o: { tabId: number }): Promise<void> }; sidebarAction?: { open(): Promise<void> } };
     const opening = b.sidePanel ? b.sidePanel.open({ tabId: sender.tab.id }) : b.sidebarAction?.open();
     opening?.catch((err: unknown) => console.warn('[unmask] could not open the panel', err));

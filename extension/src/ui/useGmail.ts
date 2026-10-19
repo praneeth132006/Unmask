@@ -114,5 +114,5 @@ export function useGmail() {
     if (tabId !== null) await browser.tabs.reload(tabId);
   }, [tabId]);
 
-  return { status, state, app, fetchRaw, refresh, reloadTab, highlight, reportPhishing };
+  return { status, state, app, tabId, fetchRaw, refresh, reloadTab, highlight, reportPhishing };
 }
