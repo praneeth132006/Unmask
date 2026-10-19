@@ -10,11 +10,21 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/praneeth132006/Unmask/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/praneeth132006/Unmask?label=download&color=6366F1"></a>
+  <a href="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/github/license/praneeth132006/Unmask?color=0c8f61"></a>
+  <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-5b4cf0"></a>
+</p>
+
+<p align="center">
   <a href="docs/USER_GUIDE.md">User guide</a> ·
   <a href="docs/CHECKS.md">What it checks</a> ·
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
+  <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·
+  <a href="SECURITY.md">Security</a> ·
   <a href="PRIVACY.md">Privacy</a>
 </p>
 
@@ -67,12 +77,14 @@ Unmask isn't on the Chrome Web Store yet, so you load it yourself. It takes abou
 
 ### Option 1: No-code install (recommended)
 
-1. Go to the [latest release](https://github.com/praneeth132006/Unmask/releases/latest) and download **`unmask-chrome-0.2.0.zip`** (under *Assets*).
-2. Unzip it. You get a folder named `unmask-chrome-0.2.0`. Keep it somewhere permanent, such as your Documents folder: Chrome loads Unmask from it.
-3. Open `chrome://extensions` and turn on **Developer mode** (top-right switch).
-4. Click **Load unpacked** and select the unzipped **`unmask-chrome-0.2.0`** folder.
+1. Open the **[latest release](https://github.com/praneeth132006/Unmask/releases/latest)** and, under **Assets**, download **`unmask-chrome-<version>.zip`** (for example `unmask-chrome-0.2.1.zip`). Not "Source code".
+2. **Unzip it.** You get a folder named `unmask-chrome-<version>` containing `manifest.json`. Move it somewhere permanent, such as **Documents**: Chrome loads Unmask from this folder.
+3. Open **`chrome://extensions`** in the address bar and turn on **Developer mode** (switch in the top-right corner).
+4. Click **Load unpacked** and select the unzipped folder, the one that directly contains `manifest.json`.
 5. Click the puzzle-piece icon in Chrome's toolbar and **pin Unmask**.
 6. **Reload Gmail**, open an email, and click the Unmask icon.
+
+Stuck? The [user guide](docs/USER_GUIDE.md#1-install) covers common errors (such as *Manifest file is missing*) and how to update without losing your settings.
 
 ### Option 2: Build from source
 
@@ -93,11 +105,13 @@ The [user guide](docs/USER_GUIDE.md) walks through each step, explains every par
 
 Unmask works with no setup at all. These free services add extra checks you run with a button:
 
-| Service | What it adds | Setup |
-|---|---|---|
-| **VirusTotal** | Checks attachments (by fingerprint) and links against 70+ antivirus engines | Click **Check on VirusTotal** on any file or link and follow the 3 steps in the panel |
-| **urlscan.io** | Opens a link in urlscan's sandbox browser and shows a screenshot of where it lands | Click **Sandbox scan** on any link and follow the steps |
-| **Redirect tracing** | Follows a link's redirects from your own server | For technical users: run `pnpm backend`, see [docs/BACKEND.md](docs/BACKEND.md) |
+| Service | What it adds | Free limit | Setup |
+|---|---|---|---|
+| **VirusTotal** | Checks attachments (by fingerprint) and links against 70+ antivirus engines | 4 lookups/min, 500/day | Click **Check on VirusTotal** on any file or link and follow the 3 steps in the panel |
+| **urlscan.io** | Opens a link in urlscan's sandbox browser and shows a screenshot of where it lands | 1,000 unlisted + 50 private scans/day | Click **Sandbox scan** on any link and follow the steps |
+| **Redirect tracing** | Follows a link's redirects from your own server | Free on your computer | For technical users: run `pnpm backend`, see [docs/BACKEND.md](docs/BACKEND.md) |
+
+**Free keys can never be charged.** Going over a limit just pauses that check until the quota resets. Paid plans exist only for heavy or commercial use: see **[Free limits and costs](docs/LIMITS_AND_COSTS.md)** for every number and price.
 
 <p align="center">
   <img src="docs/images/setup-virustotal.png" width="300" alt="Step-by-step VirusTotal setup shown inside the panel">
@@ -132,6 +146,12 @@ pnpm build       # production build into build/unmask-chrome
 - Gmail changes its page structure from time to time. If Unmask stops finding the open email, use the `.eml` fallback and [open an issue](https://github.com/praneeth132006/Unmask/issues).
 - Heuristics give false positives and miss some attacks. **Treat the score as advice, never as a guarantee.**
 
+## Community
+
+- Questions and bugs: [open an issue](https://github.com/praneeth132006/Unmask/issues/new/choose). There's a template for wrong verdicts.
+- Contributing: see [CONTRIBUTING.md](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md).
+- Security problems: report privately, see [SECURITY.md](SECURITY.md).
+
 ## License
 
-[MIT](LICENSE)
+Unmask is free software under the [MIT licence](LICENSE). The release zip includes `LICENSE.txt` and `THIRD_PARTY_LICENSES.txt` for the open-source libraries it bundles (React, postal-mime, tldts, punycode).

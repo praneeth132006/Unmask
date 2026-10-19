@@ -4,6 +4,19 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Fixed
+- **"Uncaught Error: Extension context invalidated"** on `chrome://extensions` after Unmask was reloaded or updated while Gmail was open. The Gmail script now detects that it's orphaned and shuts down without calling extension APIs.
+- **Security:** two ReDoS bugs, where crafted HTML could freeze the panel or tie up the trace server, are fixed with linear-time parsing. The safe view now also removes `<link>` prefetch hints, all `<meta>` tags, `<noscript>` and `ping`, and turns off DNS prefetching. Only real images are inlined from `cid:` parts. The trace server's rate limit no longer trusts a spoofable `X-Forwarded-For`. Files over 40 MB are refused instead of freezing the panel.
+
+### Added
+- [Free limits and costs](docs/LIMITS_AND_COSTS.md) for VirusTotal, urlscan.io, RDAP and Vercel, also shown in the setup cards and Settings.
+- End-to-end tests that load the built extension in Chromium (`pnpm test:e2e`, run in CI); CodeQL and Dependabot.
+- Code of conduct, issue and PR templates, expanded security policy; licence notices inside the extension zip.
+- Clearer install guide: which file to download, how to check the folder, common errors, updating without losing settings.
+
+### Changed
+- urlscan.io *Private* visibility is labelled correctly as available on the free plan (50 a day).
+
 ## [0.2.0] - 2026-10-19
 
 ### Added

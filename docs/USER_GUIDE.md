@@ -24,10 +24,15 @@ Unmask isn't on the Chrome Web Store yet, so it's installed as a "developer" ext
 
 No programming tools needed.
 
-1. Open the [latest Unmask release](https://github.com/praneeth132006/Unmask/releases/latest).
-2. Under **Assets**, click **`unmask-chrome-0.2.0.zip`** to download it.
-3. Unzip it: double-click the file on a Mac, or right-click → **Extract All** on Windows. You get a folder named **`unmask-chrome-0.2.0`**.
-4. Move that folder somewhere permanent, such as your Documents folder. Chrome loads Unmask from it, so don't delete it.
+1. Open the **[latest Unmask release](https://github.com/praneeth132006/Unmask/releases/latest)**.
+2. Scroll to **Assets** and click the file named **`unmask-chrome-<version>.zip`**, for example `unmask-chrome-0.2.1.zip`.
+   *Don't download "Source code (zip)": that's the code for developers, not the extension.*
+3. Unzip it:
+   - **Mac:** double-click the zip in Downloads. (Safari may already have unzipped it for you.)
+   - **Windows:** right-click the zip → **Extract All…** → **Extract**.
+   You now have a folder named **`unmask-chrome-<version>`**.
+4. Move that folder somewhere permanent, for example **Documents → Unmask**. Chrome loads Unmask from this folder every time it starts, so don't delete or rename it.
+5. **Check you have the right folder:** open it. You should see `manifest.json`, `sidepanel.html` and folders named `icon`, `chunks` and `content-scripts`. If you see another folder with the same name instead, go one level deeper: that inner folder is the one to load.
 
 Now [load it into Chrome](#1c-load-it-into-chrome).
 
@@ -51,7 +56,7 @@ This creates the folder **`build/unmask-chrome`**. That folder *is* the extensio
 2. Turn on **Developer mode** with the switch in the **top-right corner**.
 3. Three buttons appear on the left. Click **Load unpacked**.
 4. Select the extension folder and click **Select**:
-   - Option 1: the unzipped **`unmask-chrome-0.2.0`** folder.
+   - Option 1: the unzipped **`unmask-chrome-<version>`** folder (the one that contains `manifest.json`).
    - Option 2: open the project folder, open **`build`**, and click **`unmask-chrome`** once.
 5. Unmask appears in your list of extensions.
 6. Click the **puzzle-piece icon** in Chrome's toolbar and click the **pin** next to Unmask so its icon is always visible.
@@ -62,9 +67,20 @@ This creates the folder **`build/unmask-chrome`**. That folder *is* the extensio
 
 If Gmail was already open, **reload the Gmail tab** (press ⌘R or Ctrl+R). Unmask can only connect to Gmail pages opened after it was installed.
 
+### If loading fails
+
+| Chrome says | What it means | Fix |
+|---|---|---|
+| *Manifest file is missing or unreadable* | You selected the wrong folder (often the parent folder, or Downloads) | Select the folder that directly contains `manifest.json` |
+| You can't select the `.zip` file | Chrome loads folders, not zip files | Unzip it first (step 3) |
+| *Load unpacked* button is missing | Developer mode is off | Turn on the **Developer mode** switch, top right |
+| Unmask disappeared after a restart | The folder was moved or deleted | Put the folder back, or load it again from its new place |
+| *This extension is not from any known source* or *Disable developer mode extensions* pop-up | Chrome's normal warning for extensions not installed from the Web Store | Click **Cancel** / keep it enabled. It's expected for developer installs |
+
 ### Updating
 
-- **Option 1:** download the newer zip from the [latest release](https://github.com/praneeth132006/Unmask/releases/latest) and unzip it. Replace everything inside your existing Unmask folder with the new files (keep the same folder, so Chrome keeps your settings and API keys), then click the **↻ reload** button on the Unmask card in `chrome://extensions`.
+- **Option 1:** download the newer `unmask-chrome-<version>.zip` from the [latest release](https://github.com/praneeth132006/Unmask/releases/latest) and unzip it. **Copy the new files into your existing Unmask folder**, replacing the old ones, then click the **↻ reload** button on the Unmask card in `chrome://extensions`.
+  *Why the same folder?* Chrome identifies a developer-installed extension by its folder. Loading a new folder installs a second copy that starts with empty settings, so you'd have to set up your API keys again.
 - **Option 2:** after pulling new code and running `pnpm build` again, click the **↻ reload** button on the Unmask card.
 
 Then reload Gmail.
