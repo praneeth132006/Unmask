@@ -128,6 +128,11 @@ const FLAG_SPECS: Record<string, FlagSpec> = {
   'no-https': { severity: 'low', points: 3, title: 'Link is not encrypted (http://)' },
 };
 
+/** The plain-language title of a link flag, e.g. for "suspicious-tld". */
+export function linkFlagTitle(id: string): string | null {
+  return FLAG_SPECS[id]?.title ?? null;
+}
+
 function flag(id: keyof typeof FLAG_SPECS, label: string): LinkFlag {
   return { id, severity: FLAG_SPECS[id]!.severity, label };
 }

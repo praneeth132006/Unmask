@@ -7,7 +7,7 @@ import type { Finding, LinkInfo, ParsedEmail, Report, Verdict } from '../core/ty
 import { SEVERITY_RANK, scoreFindings, sortFindings } from '../core/score';
 import { analyzeSender } from '../analyzers/sender';
 import { historyFindings, type SenderHistory } from '../analyzers/history';
-import { unwrapUrl } from '../analyzers/links';
+import { linkFlagTitle, unwrapUrl } from '../analyzers/links';
 import { registrableDomain, safeUrl, sameOrg } from './domain';
 
 function normalise(url: string): string {
@@ -49,7 +49,11 @@ export function linkWarning(report: Report, href: string, saferedirect?: string 
   const riskyEmail = report.verdict === 'high' && offSender;
   if (!strongLink && !flaggedInSuspicious && !riskyEmail) return null;
 
-  const reasons = (link?.flags ?? []).filter((f) => SEVERITY_RANK[f.severity] >= SEVERITY_RANK.low).slice(0, 3).map((f) => f.label);
+  // Short labels (".top", "bit.ly") read better with the flag's title in front.
+  const reasons = (link?.flags ?? [])
+    .filter((f) => SEVERITY_RANK[f.severity] >= SEVERITY_RANK.low)
+    .slice(0, 3)
+    .map((f) => (f.label.length < 16 && linkFlagTitle(f.id) ? `${linkFlagTitle(f.id)} (${f.label})` : f.label));
   if (riskyEmail) reasons.push(`Unmask rated this email high risk (${report.score}/100)`);
   if (offSender && senderDomain) reasons.push(`It does not go to the sender’s domain (${registrableDomain(senderDomain)})`);
   return { host, url, reasons: [...new Set(reasons)] };
