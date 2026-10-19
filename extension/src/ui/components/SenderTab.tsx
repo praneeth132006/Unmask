@@ -66,7 +66,9 @@ export function SenderTab({
               <Spinner /> Looking up…
             </span>
           )}
+          {domainAge?.status === 'done' && domainAge.value.notFound && <span className="text-amber-700 dark:text-amber-400">No registration record found</span>}
           {domainAge?.status === 'done' &&
+            !domainAge.value.notFound &&
             (domainAge.value.created ? (
               <span>
                 {domainAge.value.ageDays! < 365 ? `${domainAge.value.ageDays} days` : `${(domainAge.value.ageDays! / 365).toFixed(1)} years`}{' '}

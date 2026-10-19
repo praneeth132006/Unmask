@@ -54,3 +54,14 @@ describe('urlscan', () => {
     expect(urlscanFindings('u', r)[0]?.severity).toBe('critical');
   });
 });
+
+describe('rdap not found', () => {
+  it('turns a 404 into a medium finding', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 404 })));
+    const { lookupDomainAge } = await import('../src/integrations/rdap');
+    const age = await lookupDomainAge('nope-not-real.xyz');
+    expect(age.notFound).toBe(true);
+    expect(domainAgeFindings(age, 'sender')[0]).toMatchObject({ severity: 'medium', points: 10 });
+    vi.unstubAllGlobals();
+  });
+});

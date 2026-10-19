@@ -5,6 +5,8 @@ export interface DomainAge {
   created: string | null;
   ageDays: number | null;
   registrar: string | null;
+  /** The registry has no record: the domain may not be registered at all. */
+  notFound?: boolean;
 }
 
 interface RdapEvent {
@@ -22,7 +24,8 @@ export async function lookupDomainAge(domain: string, signal?: AbortSignal): Pro
     headers: { accept: 'application/rdap+json, application/json' },
     signal,
   });
-  if (!res.ok) throw new Error(res.status === 404 ? 'Domain not found in RDAP' : `RDAP returned HTTP ${res.status}`);
+  if (res.status === 404) return { domain, created: null, ageDays: null, registrar: null, notFound: true };
+  if (!res.ok) throw new Error(`RDAP returned HTTP ${res.status}`);
   const data = (await res.json()) as { events?: RdapEvent[]; entities?: RdapEntity[] };
   return parseRdap(domain, data);
 }
@@ -36,10 +39,13 @@ export function parseRdap(domain: string, data: { events?: RdapEvent[]; entities
 }
 
 export function domainAgeFindings(age: DomainAge, role: 'sender' | 'link'): Finding[] {
-  if (age.ageDays === null) return [];
   const who = role === 'sender' ? 'Sender domain' : 'Link domain';
   const id = `age-${role}-${age.domain}`;
   const category = role === 'sender' ? 'sender' : 'links';
+  if (age.notFound) {
+    return [{ id, category, severity: 'medium', points: 10, title: `${who} ${age.domain} has no registration record`, detail: 'The public registry has no entry for it: it may be unregistered, just deleted, or on a registry that does not publish RDAP data.' }];
+  }
+  if (age.ageDays === null) return [];
   if (age.ageDays < 30) {
     return [{ id, category, severity: 'high', points: 25, title: `${who} ${age.domain} was registered ${age.ageDays} day${age.ageDays === 1 ? '' : 's'} ago`, detail: 'Phishing domains are usually brand new. Established companies send from domains that are years old.' }];
   }
