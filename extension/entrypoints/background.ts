@@ -18,6 +18,9 @@ export default defineBackground(() => {
   browser.sidePanel
     ?.setPanelBehavior({ openPanelOnActionClick: true })
     .catch((err: unknown) => console.error('[unmask] sidePanel behavior', err));
+  // Firefox has a sidebar instead of a side panel; the toolbar icon toggles it.
+  const sidebar = (browser as unknown as { sidebarAction?: { toggle(): Promise<void> } }).sidebarAction;
+  if (!browser.sidePanel && sidebar) browser.action.onClicked.addListener(() => void sidebar.toggle());
 
   // "See why" on a Gmail banner. Allowed because it comes from a user click in the page.
   browser.runtime.onMessage.addListener((req: OpenPanelRequest, sender) => {

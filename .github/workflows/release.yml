@@ -28,11 +28,16 @@ jobs:
             echo "Tag $GITHUB_REF_NAME does not match extension version $version" >&2
             exit 1
           fi
-      - run: pnpm zip
+      - run: pnpm zip:all
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" build/unmask-chrome-*.zip \
+          v="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" build/unmask-chrome-*.zip build/unmask-edge-*.zip build/unmask-firefox-*.zip build/unmask-extension-*-sources.zip \
             --title "Unmask $GITHUB_REF_NAME" \
-            --notes "Download **unmask-chrome-${GITHUB_REF_NAME#v}.zip** below, unzip it, then open \`chrome://extensions\`, turn on **Developer mode**, click **Load unpacked** and select the unzipped folder. See the [changelog](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for what changed."
+            --notes "**Chrome / Brave:** download **unmask-chrome-$v.zip**, unzip it, open \`chrome://extensions\`, turn on **Developer mode**, click **Load unpacked** and select the folder.
+          **Edge:** same with **unmask-edge-$v.zip** at \`edge://extensions\`.
+          **Firefox 128+:** download **unmask-firefox-$v.zip**, open \`about:debugging#/runtime/this-firefox\`, click **Load Temporary Add-on** and pick the zip.
+
+          See the [changelog](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for what changed."

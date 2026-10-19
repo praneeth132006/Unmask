@@ -36,7 +36,7 @@ export default defineConfig({
     // tldts bundles the full public-suffix list; a large single chunk is fine for an extension page.
     build: { chunkSizeWarningLimit: 1500 },
   }),
-  manifest: {
+  manifest: ({ browser }) => ({
     name: 'Unmask — Phishing Email Inspector',
     short_name: 'Unmask',
     description:
@@ -58,5 +58,19 @@ export default defineConfig({
     action: {
       default_title: 'Open Unmask',
     },
-  },
+    ...(browser === 'firefox'
+      ? {
+          browser_specific_settings: {
+            gecko: {
+              id: 'unmask@praneeth132006.github.io',
+              // world: 'MAIN' content scripts (the Gmail session token reader) need Firefox 128.
+              strict_min_version: '128.0',
+              // No data goes to the developer. Lookups send public domain names or hashes
+              // to the services named in Settings, only for the email being checked.
+              data_collection_permissions: { required: ['none'] },
+            },
+          },
+        }
+      : {}),
+  }),
 });

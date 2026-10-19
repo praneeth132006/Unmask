@@ -7,7 +7,12 @@
   "scripts": {
     "dev": "wxt",
     "build": "node scripts/third-party-licenses.mjs && wxt build",
+    "build:firefox": "node scripts/third-party-licenses.mjs && wxt build -b firefox --mv3",
+    "build:edge": "node scripts/third-party-licenses.mjs && wxt build -b edge",
     "zip": "node scripts/third-party-licenses.mjs && wxt zip",
+    "zip:firefox": "node scripts/third-party-licenses.mjs && wxt zip -b firefox --mv3",
+    "zip:edge": "node scripts/third-party-licenses.mjs && wxt zip -b edge",
+    "zip:all": "pnpm zip && pnpm zip:firefox && pnpm zip:edge",
     "postinstall": "wxt prepare",
     "icons": "node scripts/gen-icons.mjs",
     "test": "vitest run",
@@ -15,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "test:e2e": "node e2e/run.mjs",
     "licenses": "node scripts/third-party-licenses.mjs",
-    "build:e2e": "UNMASK_E2E=1 wxt build"
+    "build:e2e": "UNMASK_E2E=1 wxt build",
+    "logos": "node scripts/gen-logo-hashes.mjs"
   },
   "dependencies": {
     "jsqr": "1.4.0",

@@ -24,6 +24,8 @@ jobs:
       - run: pnpm test
       - run: pnpm typecheck
       - run: pnpm build
+      - run: pnpm build:firefox
+      - run: pnpm build:edge
       - name: Install Chromium for end-to-end tests
         run: pnpm --filter unmask-extension exec playwright install --with-deps chromium
       - name: End-to-end tests (built extension in Chromium)

@@ -1,0 +1,70 @@
+name: Publish to stores
+
+# Uploads a released version to the Chrome Web Store, Firefox Add-ons and
+# Microsoft Edge Add-ons and submits it for review. Run it by hand after a
+# release. Each store is skipped until its secrets are added under
+# Settings → Secrets and variables → Actions (see docs/STORE_LISTING.md).
+
+on:
+  workflow_dispatch:
+    inputs:
+      stores:
+        description: Which stores
+        type: choice
+        options: [all, chrome, firefox, edge]
+        default: all
+      dry_run:
+        description: Only check the credentials, don't upload
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+      CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+      CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+      CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
+      FIREFOX_EXTENSION_ID: unmask@praneeth132006.github.io
+      FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+      FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+      EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
+      EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+      EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm zip:all
+      - name: Submit
+        working-directory: extension
+        env:
+          STORES: ${{ inputs.stores }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          v=$(node -p "require('./package.json').version")
+          args=()
+          want() { [ "$STORES" = all ] || [ "$STORES" = "$1" ]; }
+          if want chrome && [ -n "$CHROME_EXTENSION_ID" ]; then
+            args+=(--chrome-zip "../build/unmask-chrome-$v.zip" --chrome-api-version v2)
+          elif want chrome; then echo "::warning::Chrome skipped: CHROME_* secrets are not set"; fi
+          if want firefox && [ -n "$FIREFOX_JWT_ISSUER" ]; then
+            args+=(--firefox-zip "../build/unmask-firefox-$v.zip" --firefox-sources-zip "../build/unmask-extension-$v-sources.zip")
+          elif want firefox; then echo "::warning::Firefox skipped: FIREFOX_JWT_* secrets are not set"; fi
+          if want edge && [ -n "$EDGE_PRODUCT_ID" ]; then
+            args+=(--edge-zip "../build/unmask-edge-$v.zip")
+          elif want edge; then echo "::warning::Edge skipped: EDGE_* secrets are not set"; fi
+          if [ ${#args[@]} -eq 0 ]; then echo "No store has credentials yet; nothing to do."; exit 0; fi
+          [ "$DRY_RUN" = true ] && args+=(--dry-run)
+          pnpm exec wxt submit "${args[@]}"

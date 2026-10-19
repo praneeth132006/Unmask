@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "pnpm --filter unmask-extension dev",
     "build": "pnpm --filter unmask-extension build",
+    "build:firefox": "pnpm --filter unmask-extension build:firefox",
+    "build:edge": "pnpm --filter unmask-extension build:edge",
     "zip": "pnpm --filter unmask-extension zip",
+    "zip:all": "pnpm --filter unmask-extension zip:all",
     "backend": "pnpm --filter unmask-backend dev",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
