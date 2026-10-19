@@ -100,6 +100,7 @@ describe('parseOriginalPage performance', () => {
   it('handles crafted pages with thousands of unterminated tags quickly', () => {
     const t = performance.now();
     expect(parseOriginalPage('<a '.repeat(50_000) + '<pre '.repeat(20_000), 'https://mail.google.com/').raw).toBeNull();
-    expect(performance.now() - t).toBeLessThan(500);
+    // ~170 ms alone; parallel test workers can triple that. A quadratic regression takes many seconds.
+    expect(performance.now() - t).toBeLessThan(2000);
   });
 });
