@@ -6,7 +6,11 @@
 
 <p align="center">
   <b>See what a suspicious email is really hiding.</b><br>
-  A Chrome extension that inspects the email you open in Gmail and explains, in plain language, whether it looks like phishing and why.
+  A browser extension for Gmail and Outlook that stops you before you click a phishing link, and explains in plain language what the email is really hiding.
+</p>
+
+<p align="center">
+  <img src="docs/images/gmail-link-warning.png" width="720" alt="Unmask stops a click: Wait, this link goes to paypa1-secure.top, with the reasons and Go back / Open anyway buttons">
 </p>
 
 <p align="center">
@@ -25,6 +29,8 @@
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
+  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="docs/PUBLISHING.md">Publishing</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·
   <a href="SECURITY.md">Security</a> ·
   <a href="PRIVACY.md">Privacy</a>
@@ -46,6 +52,34 @@
   <img src="docs/images/overview-dark.png" width="260" alt="Unmask summary in dark mode">
   &nbsp;
   <img src="docs/images/links-dark.png" width="260" alt="Links tab showing where each link really goes">
+</p>
+
+## See it in action
+
+**It stops the click.** Gmail shows `https://www.paypal.com/signin`, but the link really goes to `paypa1-secure.top`. Unmask catches it before the page opens and says why, in plain words.
+
+**It warns you inside your inbox, without opening anything.** Risky emails get a banner with the main reasons; risky senders get a badge in the email list.
+
+<p align="center">
+  <img src="docs/images/gmail-banner.png" width="430" alt="A red High risk banner above a fake PayPal email listing the main reasons">
+  &nbsp;
+  <img src="docs/images/inbox-badges.png" width="430" alt="Risky and Check badges next to suspicious senders in the Gmail inbox list">
+</p>
+
+**It catches replies going to the scammer** and QR codes hidden in PDFs, and it looks inside attachments without opening them.
+
+<p align="center">
+  <img src="docs/images/gmail-reply-warning.png" width="430" alt="Your reply will go somewhere else: secure-team@protonmail.com">
+  &nbsp;
+  <img src="docs/images/panel-qr.png" width="370" alt="A link decoded from a QR code inside a PDF, flagged as imitating PayPal">
+</p>
+
+<p align="center">
+  <img src="docs/images/panel-summary.png" width="250" alt="Summary with a High risk verdict and the red flags">
+  &nbsp;
+  <img src="docs/images/panel-files.png" width="250" alt="Files tab showing links inside a PDF and a program hidden in a ZIP">
+  &nbsp;
+  <img src="docs/images/panel-report.png" width="250" alt="Report or export: APWG, Netcraft, Google Safe Browsing, PhishTank, PDF and JSON">
 </p>
 
 ## What it does
