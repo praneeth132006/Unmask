@@ -1,5 +1,23 @@
 import { defineConfig } from 'wxt';
 import tailwindcss from '@tailwindcss/vite';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+/**
+ * Chrome refuses a content script containing Unicode noncharacters such as
+ * U+FFFF (it says the file "isn't UTF-8") and then won't load the extension
+ * at all. Fail the build instead of shipping that.
+ */
+function assertNoNoncharacters(dir: string): void {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) assertNoNoncharacters(path);
+    else if (entry.name.endsWith('.js')) {
+      const bad = readFileSync(path, 'utf8').match(/[\uFDD0-\uFDEF\uFFFE\uFFFF]/);
+      if (bad) throw new Error(`${path} contains U+${bad[0].charCodeAt(0).toString(16).toUpperCase()}; write it as an escape in the source.`);
+    }
+  }
+}
 
 export default defineConfig({
   srcDir: '.',
@@ -10,13 +28,13 @@ export default defineConfig({
   // Release asset name, e.g. build/unmask-chrome-0.2.0.zip.
   zip: { artifactTemplate: 'unmask-{{browser}}-{{packageVersion}}.zip' },
   modules: ['@wxt-dev/module-react'],
+  hooks: {
+    'build:done': (wxt) => assertNoNoncharacters(wxt.config.outDir),
+  },
   vite: () => ({
     plugins: [tailwindcss()],
     // tldts bundles the full public-suffix list; a large single chunk is fine for an extension page.
     build: { chunkSizeWarningLimit: 1500 },
-    // ASCII-only output: Chrome refuses to load a content script containing Unicode
-    // noncharacters such as U+FFFF (it reports the file as "not UTF-8").
-    esbuild: { charset: 'ascii' },
   }),
   manifest: {
     name: 'Unmask — Phishing Email Inspector',
