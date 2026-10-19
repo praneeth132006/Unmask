@@ -14,6 +14,9 @@ export default defineConfig({
     plugins: [tailwindcss()],
     // tldts bundles the full public-suffix list; a large single chunk is fine for an extension page.
     build: { chunkSizeWarningLimit: 1500 },
+    // ASCII-only output: Chrome refuses to load a content script containing Unicode
+    // noncharacters such as U+FFFF (it reports the file as "not UTF-8").
+    esbuild: { charset: 'ascii' },
   }),
   manifest: {
     name: 'Unmask — Phishing Email Inspector',

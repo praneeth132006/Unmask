@@ -94,7 +94,7 @@ export function unwrapUrl(href: string): { url: string; via: string[] } {
 
 /** Extracts a domain-looking token from visible link text ("www.paypal.com/signin" → "www.paypal.com"). */
 function domainInText(text: string): string | null {
-  const m = text.trim().match(/^(?:https?:\/\/)?((?:[a-z0-9¡-￿-]+\.)+[a-z¡-￿]{2,})(?:[/:?#]|\s|$)/i);
+  const m = text.trim().match(/^(?:https?:\/\/)?((?:[a-z0-9\u00a1-\uffff-]+\.)+[a-z\u00a1-\uffff]{2,})(?:[/:?#]|\s|$)/i);
   if (!m) return null;
   const host = m[1]!.toLowerCase();
   const info = hostInfo(host);
