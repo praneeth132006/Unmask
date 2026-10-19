@@ -61,5 +61,6 @@ export interface AnalyzeRequest {
   type: 'unmask:analyze';
   raw: string;
   history?: import('../analyzers/history').SenderHistory;
+  protection?: import('../analyzers/protection').ProtectionList;
 }
 export type AnalyzeResponse = { ok: true; report: import('../core/types').Report } | { ok: false; error: string };

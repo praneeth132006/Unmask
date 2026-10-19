@@ -1,8 +1,11 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import { sanitizeProtection } from '../../analyzers/protection';
+import { loadProtection, saveProtection } from '../../lib/protectionStore';
 import type { AuthResult, Report } from '../../core/types';
 import type { DomainAge } from '../../integrations/rdap';
 import type { DomainIntel } from '../../integrations/domainIntel';
 import { registrableDomain } from '../../lib/domain';
+import { Icon } from './Icon';
 import { Button, Card, ErrorText, Mono, Pill, SectionTitle, Spinner, type Async } from './ui';
 
 const AUTH_SEVERITY: Record<AuthResult, 'good' | 'high' | 'medium' | 'low' | 'info'> = {
@@ -141,6 +144,8 @@ export function SenderTab({
         )}
       </Card>
 
+      {from?.address && <ProtectButtons name={from.name} address={from.address} verified={auth.dmarc === 'pass'} />}
+
       {senderFindings.length > 0 && (
         <>
           <SectionTitle>Problems with the sender</SectionTitle>
@@ -180,6 +185,36 @@ export function SenderTab({
         ))}
         {!auth.raw && <p className="px-3 py-2.5 text-xs text-[var(--text-2)]">No authentication results were found. Forwarded or pasted emails often lose them.</p>}
       </Card>
+    </div>
+  );
+}
+
+/** One-click additions to the protection list from the email being viewed. */
+function ProtectButtons({ name, address, verified }: { name: string; address: string; verified: boolean }) {
+  const [note, setNote] = useState<string | null>(null);
+  const add = async (kind: 'trusted' | 'contact') => {
+    const list = await loadProtection();
+    const next =
+      kind === 'trusted'
+        ? sanitizeProtection({ ...list, trusted: [...list.trusted, address] })
+        : sanitizeProtection({ ...list, contacts: [...list.contacts.filter((c) => c.name.toLowerCase() !== name.toLowerCase()), { name, addresses: [...(list.contacts.find((c) => c.name.toLowerCase() === name.toLowerCase())?.addresses ?? []), address] }] });
+    await saveProtection(next);
+    setNote(kind === 'trusted' ? `${address} is now trusted. Emails that fake this address will be flagged.` : `Protected: any email calling itself “${name}” from another address will get a red warning.`);
+  };
+  return (
+    <div className="mt-2">
+      <div className="flex flex-wrap gap-1.5">
+        <Button onClick={() => void add('trusted')} title={verified ? '' : 'This email is not verified; only trust addresses you know are real'}>
+          <Icon name="shield" className="h-3.5 w-3.5" /> Trust this sender
+        </Button>
+        {name && (
+          <Button onClick={() => void add('contact')}>
+            <Icon name="key" className="h-3.5 w-3.5" /> Protect “{name.length > 22 ? `${name.slice(0, 22)}…` : name}”
+          </Button>
+        )}
+      </div>
+      {!verified && <p className="mt-1 text-[11px] text-[var(--text-3)]">Only do this for an email you know is genuine: this one isn’t verified.</p>}
+      {note && <p className="mt-1 text-[11px] text-[var(--good)]">{note}</p>}
     </div>
   );
 }

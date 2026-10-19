@@ -3,6 +3,7 @@ import { browser } from 'wxt/browser';
 import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse, GmailMessageRef, GmailState, OpenPanelRequest } from '../src/lib/messages';
 import { analyzeInPage } from '../src/lib/remoteAnalyze';
 import { loadHistory, rememberSender } from '../src/lib/historyStore';
+import { loadProtection } from '../src/lib/protectionStore';
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY, type Settings } from '../src/lib/settings';
 import { startProtection, messageKey } from '../src/lib/gmailProtect';
 import type { StoredVerdict } from '../src/lib/protect';
@@ -48,6 +49,7 @@ export default defineContentScript({
       analyze: analyzeInPage,
       settings: () => settings,
       loadHistory,
+      loadProtection,
       rememberSender,
       loadVerdicts: async () => ((await browser.storage.local.get(VERDICTS_KEY))[VERDICTS_KEY] as Record<string, StoredVerdict> | undefined) ?? {},
       saveVerdicts: (v) => browser.storage.local.set({ [VERDICTS_KEY]: v }),

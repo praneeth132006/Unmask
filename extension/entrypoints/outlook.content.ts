@@ -4,6 +4,7 @@ import type { FetchRawResponse, OpenPanelRequest } from '../src/lib/messages';
 import { startBridge, type BridgeRuntime } from '../src/lib/gmailBridge';
 import { analyzeInPage } from '../src/lib/remoteAnalyze';
 import { loadHistory, rememberSender } from '../src/lib/historyStore';
+import { loadProtection } from '../src/lib/protectionStore';
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY, type Settings } from '../src/lib/settings';
 import { startProtection } from '../src/lib/gmailProtect';
 import { buildOutlookRaw, OUTLOOK_SITE, readOutlookState } from '../src/lib/outlookDom';
@@ -40,6 +41,7 @@ export default defineContentScript({
       analyze: analyzeInPage,
       settings: () => settings,
       loadHistory,
+      loadProtection,
       rememberSender,
       loadVerdicts: async () => ((await browser.storage.local.get(VERDICTS_KEY))[VERDICTS_KEY] as Record<string, StoredVerdict> | undefined) ?? {},
       saveVerdicts: (v) => browser.storage.local.set({ [VERDICTS_KEY]: v }),

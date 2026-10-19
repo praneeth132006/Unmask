@@ -2,6 +2,7 @@ import type { Finding, Report, TabId } from '../../core/types';
 import { Card, SEVERITY_STYLE, SectionTitle } from './ui';
 import { Icon } from './Icon';
 import { targetHint } from '../targets';
+import { plainSummary } from '../../core/plain';
 
 const VERDICT = {
   high: {
@@ -159,13 +160,43 @@ function Group({ title, findings, onHover, onOpen }: { title: string; findings: 
   );
 }
 
+/** "In plain words": the verdict as an everyday sentence, its reasons, and what to do. */
+export function PlainCard({ report }: { report: Report }) {
+  const p = plainSummary(report);
+  const tone = report.verdict === 'high' ? 'var(--bad)' : report.verdict === 'suspicious' ? 'var(--warn)' : 'var(--good)';
+  return (
+    <Card className="mt-3" aria-label="In plain words">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">In plain words</div>
+      <p className="mt-1 text-[15px] font-semibold leading-snug" style={{ color: tone }}>
+        {p.headline}
+      </p>
+      {p.reasons.length > 0 && (
+        <ul className="mt-1.5 space-y-1 text-[13px] leading-snug text-[var(--text)]">
+          {p.reasons.map((r) => (
+            <li key={r} className="flex gap-2">
+              <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: tone }} />
+              {r}
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-2 rounded-lg bg-[var(--surface-2)] px-2.5 py-1.5 text-xs leading-snug text-[var(--text-2)]">
+        <strong className="text-[var(--text)]">What to do: </strong>
+        {p.action}
+      </p>
+    </Card>
+  );
+}
+
 export function Overview({
   report,
   onHoverFinding,
   onOpenFinding,
   onOpenTab,
   canHighlight,
+  simple = false,
 }: {
+  simple?: boolean;
   report: Report;
   onHoverFinding: (f: Finding | null) => void;
   onOpenFinding: (f: Finding) => void;
@@ -175,8 +206,8 @@ export function Overview({
   const red = report.findings.filter((f) => f.points > 0 && f.severity !== 'info' && f.severity !== 'good');
   const good = report.findings.filter((f) => f.severity === 'good');
   const notes = report.findings.filter((f) => !red.includes(f) && !good.includes(f));
-  return (
-    <div>
+  const technical = (
+    <>
       <SummaryChips report={report} onOpen={onOpenTab} />
       {red.length > 0 && canHighlight && (
         <p className="mt-3 flex items-center gap-1.5 text-[11px] text-[var(--text-3)]">
@@ -193,6 +224,21 @@ export function Overview({
       )}
       <Group title="Good signs" findings={good} onHover={onHoverFinding} onOpen={onOpenFinding} />
       <Group title="Notes" findings={notes} onHover={onHoverFinding} onOpen={onOpenFinding} />
+    </>
+  );
+  return (
+    <div>
+      <PlainCard report={report} />
+      <div className="mt-3">
+        {simple ? (
+          <details className="group">
+            <summary className="cursor-pointer select-none rounded-lg px-1 py-1.5 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-soft)]">Show the technical details ({red.length} red flag{red.length === 1 ? '' : 's'})</summary>
+            <div className="mt-2">{technical}</div>
+          </details>
+        ) : (
+          technical
+        )}
+      </div>
     </div>
   );
 }

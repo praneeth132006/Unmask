@@ -36,7 +36,7 @@ async function analyzeElsewhere(req: AnalyzeRequest): Promise<AnalyzeResponse> {
   // Firefox's background is a page with a DOM; Chrome's is a worker without one.
   if (import.meta.env.FIREFOX && typeof DOMParser !== 'undefined') {
     const [{ analyzeRawEmail }, { slimReport }] = await Promise.all([import('../src/core/analyze'), import('../src/lib/slimReport')]);
-    return { ok: true, report: slimReport(await analyzeRawEmail(req.raw, { history: req.history })) };
+    return { ok: true, report: slimReport(await analyzeRawEmail(req.raw, { history: req.history, protection: req.protection })) };
   }
   await ensureOffscreen();
   return ((await browser.runtime.sendMessage({ ...req, target: 'offscreen' })) as AnalyzeResponse | undefined) ?? { ok: false, error: 'The analysis page did not answer.' };

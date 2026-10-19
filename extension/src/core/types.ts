@@ -25,6 +25,8 @@ export interface Finding {
   points: number;
   title: string;
   detail?: string;
+  /** The same point in everyday words, for the plain-language summary. */
+  plain?: string;
   target?: FindingTarget;
 }
 
@@ -161,6 +163,8 @@ export interface Report {
   attachments: AttachmentInfo[];
   hidden: HiddenSnippet[];
   trackers: TrackerReport;
+  /** The first few hundred characters of visible text, for previews that never render the email. */
+  previewText: string;
   /** QR codes decoded from the email's images and PDFs. */
   qrCodes: QrCode[];
   /** Body HTML with hidden elements tagged (data-unmask-hidden) for the "reveal" view. */

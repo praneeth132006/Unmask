@@ -47,6 +47,8 @@ export function topReasons(findings: Finding[], max = 3): string[] {
 
 export interface BannerOptions {
   verdict: Verdict;
+  /** Plain-language one-liner, e.g. "This email looks like a scam." */
+  headline?: string;
   score: number;
   reasons: string[];
   onOpenPanel?: () => void;
@@ -61,6 +63,7 @@ export function createBanner(doc: Document, opts: BannerOptions): HTMLElement {
     `.b { margin: 8px 0 12px; padding: 10px 12px; border-radius: 8px; background: ${p.bg}; border: 1px solid ${p.border}; border-left-width: 4px; color: #202124; font-size: 13px; line-height: 1.4; }
      .t { display: flex; align-items: center; gap: 8px; font-weight: 600; color: ${p.text}; font-size: 14px; }
      .s { margin-left: auto; font-weight: 500; font-size: 12px; opacity: .8; }
+     .h { margin-top: 4px; font-weight: 500; }
      ul { margin: 6px 0 0; padding-left: 18px; }
      li { margin: 2px 0; }
      .a { margin-top: 8px; display: flex; gap: 8px; }
@@ -69,6 +72,7 @@ export function createBanner(doc: Document, opts: BannerOptions): HTMLElement {
   );
   const icon = opts.verdict === 'clear' ? '✓' : '⚠';
   const title = el(doc, 'div', { className: 't' }, el(doc, 'span', { text: `${icon} Unmask: ${p.label}` }), el(doc, 'span', { className: 's', text: `risk ${opts.score}/100` }));
+  const headline = opts.headline ? [el(doc, 'div', { className: 'h', text: opts.headline })] : [];
   const list = el(doc, 'ul', {}, ...opts.reasons.map((r) => el(doc, 'li', { text: r })));
   const actions = el(doc, 'div', { className: 'a' });
   if (opts.onOpenPanel) {
@@ -84,7 +88,7 @@ export function createBanner(doc: Document, opts: BannerOptions): HTMLElement {
     });
     actions.append(b);
   }
-  root.append(el(doc, 'div', { className: 'b' }, title, ...(opts.reasons.length ? [list] : []), ...(actions.childElementCount ? [actions] : [])));
+  root.append(el(doc, 'div', { className: 'b' }, title, ...headline, ...(opts.reasons.length ? [list] : []), ...(actions.childElementCount ? [actions] : [])));
   return h;
 }
 

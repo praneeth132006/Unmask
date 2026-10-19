@@ -25,6 +25,12 @@ export interface Settings {
   inboxBadges: boolean;
   /** "Wait, this goes to …" before risky links, and a warning when Reply goes elsewhere. */
   clickProtection: boolean;
+  /** Plain words only: hides the technical tabs and details until asked for. */
+  simpleMode: boolean;
+  /** A "Peek" button on inbox rows to check an email without opening it. */
+  peekButtons: boolean;
+  /** Check new (unread) inbox emails automatically, before they are opened. */
+  scanInbox: boolean;
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -42,6 +48,9 @@ export const DEFAULT_SETTINGS: Settings = {
   gmailBanner: true,
   inboxBadges: true,
   clickProtection: true,
+  simpleMode: false,
+  peekButtons: true,
+  scanInbox: false,
 };
 
 const THEME_CACHE = 'unmask:theme';

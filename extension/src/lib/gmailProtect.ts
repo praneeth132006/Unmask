@@ -10,8 +10,10 @@
 import type { Report } from '../core/types';
 import type { FetchRawResponse, GmailMessageRef, GmailState } from './messages';
 import type { SenderHistory } from '../analyzers/history';
+import type { ProtectionList } from '../analyzers/protection';
 import { findMessageRoot } from './highlight';
 import { BADGE_ATTR, BANNER_ATTR, confirmDialog, createBadge, createBanner, topReasons } from './inpage';
+import { plainSummary } from '../core/plain';
 import { linkWarning, pruneVerdicts, quickVerdict, replyWarning, type StoredVerdict } from './protect';
 import { press } from './gmailActions';
 
@@ -70,14 +72,21 @@ export interface ProtectDeps {
   win: Window;
   readState: () => GmailState;
   fetchRaw: (ref: GmailMessageRef) => Promise<FetchRawResponse>;
-  analyze: (raw: string, history: SenderHistory | undefined) => Promise<Report>;
+  analyze: (raw: string, extras: AnalyzeExtras) => Promise<Report>;
   settings: () => ProtectSettings;
   loadHistory: () => Promise<SenderHistory>;
+  loadProtection?: () => Promise<ProtectionList>;
   rememberSender: (report: Report) => Promise<void>;
   loadVerdicts: () => Promise<Record<string, StoredVerdict>>;
   saveVerdicts: (v: Record<string, StoredVerdict>) => Promise<void>;
   openPanel?: () => void;
   debounceMs?: number;
+}
+
+/** What the analysis needs besides the email itself. */
+export interface AnalyzeExtras {
+  history?: SenderHistory;
+  protection?: ProtectionList;
 }
 
 const ROW_ATTR = 'data-unmask-row';
@@ -121,7 +130,8 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     if (existing) return;
     const body = site.bodyOf(root);
     if (!body?.parentElement) return;
-    const banner = createBanner(doc, { verdict: report.verdict, score: report.score, reasons: topReasons(report.findings), onOpenPanel: deps.openPanel, onDismiss: () => dismissed.add(key) });
+    const plain = plainSummary(report);
+    const banner = createBanner(doc, { verdict: report.verdict, score: report.score, headline: plain.headline, reasons: plain.reasons.length ? plain.reasons : topReasons(report.findings), onOpenPanel: deps.openPanel, onDismiss: () => dismissed.add(key) });
     body.parentElement.insertBefore(banner, body);
   }
 
@@ -133,7 +143,8 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       if (!res.ok || stopped) return;
       const s = deps.settings();
       history = s.senderHistory ? await deps.loadHistory().catch(() => undefined) : undefined;
-      const report = await deps.analyze(res.raw, history);
+      const protection = await deps.loadProtection?.().catch(() => undefined);
+      const report = await deps.analyze(res.raw, { history, protection });
       if (stopped) return;
       reports.set(key, report);
       drawBanner(key, report);

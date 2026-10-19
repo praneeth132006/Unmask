@@ -66,10 +66,10 @@ function describeSwap(raw: string, keyword: string): string {
  * Checks whether a host imitates a known brand. Hosts that belong to the
  * brand itself never match.
  */
-export function detectLookalike(host: string): LookalikeMatch | null {
+export function detectLookalike(host: string, brands: Brand[] = BRANDS): LookalikeMatch | null {
   const info = hostInfo(host);
   if (info.isIp || !info.label) return null;
-  if (BRANDS.some((b) => isBrandDomain(b, info.domain))) return null;
+  if (brands.some((b) => isBrandDomain(b, info.domain))) return null;
 
   let label = info.label;
   if (label.startsWith('xn--')) {
@@ -84,7 +84,7 @@ export function detectLookalike(host: string): LookalikeMatch | null {
   const pieces = rawPieces.map(skeleton);
   const subdomainSkel = skeleton(info.host.slice(0, Math.max(0, info.host.length - info.domain.length - 1)));
 
-  for (const brand of BRANDS) {
+  for (const brand of brands) {
     for (const kw of brand.keywords) {
       const keyword = kw.replace(/\s+/g, '');
       const kwSkel = skeleton(keyword);

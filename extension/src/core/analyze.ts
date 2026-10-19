@@ -10,11 +10,14 @@ import { analyzeTrackers } from '../analyzers/trackers';
 import { analyzeBec } from '../analyzers/bec';
 import { historyFindings, type SenderHistory } from '../analyzers/history';
 import { findBrandLogos, logoFindings } from '../analyzers/logos';
+import { protectionFindings, type ProtectionList } from '../analyzers/protection';
 import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzers/qr';
 
 export interface AnalyzeOptions {
   /** Who normally emails this user, for "first contact" and impersonation checks. */
   history?: SenderHistory;
+  /** Your protected brands, protected contacts and trusted senders. */
+  protection?: ProtectionList;
   /** Decodes images for QR-code scanning. Without it, only PDF images that need no decoder are scanned. */
   decodeImage?: ImageDecoder;
 }
@@ -35,9 +38,12 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
   const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage));
-  const pastFindings = opts.history ? historyFindings(email, opts.history) : [];
+  const protectFindings = opts.protection ? protectionFindings(email, auth, links, opts.protection) : [];
+  const verifiedTrusted = protectFindings.some((f) => f.id === 'trusted-sender' && f.points < 0);
+  // A verified trusted sender is by definition not a stranger.
+  const pastFindings = (opts.history ? historyFindings(email, opts.history) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
 
-  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings]);
+  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
   const { score, verdict } = scoreFindings(findings);
 
   return {
@@ -48,6 +54,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
     hidden: content.hidden,
     trackers,
     qrCodes,
+    previewText: content.visibleText.replace(/\s+/g, ' ').trim().slice(0, 700),
     annotatedHtml: content.annotatedHtml,
     findings,
     score,

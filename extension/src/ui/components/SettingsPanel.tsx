@@ -4,6 +4,7 @@ import { clearHistory, historySize, loadHistory } from '../../lib/historyStore';
 import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 import { SERVICES, ServiceSetup, type Service } from './ServiceSetup';
+import { ProtectionPanel } from './ProtectionPanel';
 
 function ServiceRow({ service, settings, onChange }: { service: Service; settings: Settings; onChange: (s: Settings) => void }) {
   const info = SERVICES[service];
@@ -148,6 +149,15 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
 
       <SectionTitle>Protection inside Gmail</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">
+        <Toggle checked={settings.simpleMode} onChange={(v) => void update({ simpleMode: v })} title="Simple mode: plain words only">
+          Shows just the verdict, the reasons in everyday words and what to do. Technical details stay one click away. Good for parents and non-technical colleagues.
+        </Toggle>
+        <Toggle checked={settings.peekButtons} onChange={(v) => void update({ peekButtons: v })} title="Peek button in the inbox">
+          Check an email from the inbox list without opening it, so its trackers never fire.
+        </Toggle>
+        <Toggle checked={settings.scanInbox} onChange={(v) => void update({ scanInbox: v })} title="Check new emails before I open them">
+          Unmask checks up to 15 unread emails in the list you're looking at and marks the risky ones. Downloads each email's source from Gmail, like Peek; images and trackers never load.
+        </Toggle>
         <Toggle checked={settings.gmailBanner} onChange={(v) => void update({ gmailBanner: v })} title="Warning banner on risky emails">
           A red or amber banner above the email with the main reasons, without opening this panel.
         </Toggle>
@@ -158,6 +168,8 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
           Shows “Wait, this goes to …” before a risky link opens, and warns when Reply would go to a different address.
         </Toggle>
       </Card>
+
+      <ProtectionPanel />
 
       <SectionTitle>Extra checks</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">

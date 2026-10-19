@@ -11,7 +11,7 @@ import type { AnalyzeRequest, AnalyzeResponse } from '../../src/lib/messages';
  */
 browser.runtime.onMessage.addListener((req: AnalyzeRequest & { target?: string }, sender, sendResponse) => {
   if (req?.type !== 'unmask:analyze' || req.target !== 'offscreen' || sender.id !== browser.runtime.id) return;
-  analyzeRawEmail(req.raw, { history: req.history, decodeImage: decodeImageInBrowser }).then(
+  analyzeRawEmail(req.raw, { history: req.history, protection: req.protection, decodeImage: decodeImageInBrowser }).then(
     (report) => sendResponse({ ok: true, report: slimReport(report) } satisfies AnalyzeResponse),
     (err: unknown) => sendResponse({ ok: false, error: err instanceof Error ? err.message : String(err) } satisfies AnalyzeResponse),
   );

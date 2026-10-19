@@ -6,6 +6,7 @@ import { certFindings, lookupCerts, lookupMailRecords, mailRecordFindings, type 
 import { SEVERITY_RANK } from '../core/score';
 import { registrableDomain, sameOrg } from '../lib/domain';
 import { loadHistory, rememberSender } from '../lib/historyStore';
+import { loadProtection } from '../lib/protectionStore';
 import { decodeImageInBrowser } from '../lib/imageDecode';
 import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
 import type { HighlightTarget } from '../lib/highlight';
@@ -152,7 +153,7 @@ export function App() {
         // Emails opened from files may be samples from anywhere: compare them with the history, but never learn from them.
         const history = settings.senderHistory ? await loadHistory() : undefined;
         const source = cached?.raw ?? (await load());
-        const r = cached?.report ?? (await analyzeRawEmail(source, { history, decodeImage: decodeImageInBrowser }));
+        const r = cached?.report ?? (await analyzeRawEmail(source, { history, protection: await loadProtection(), decodeImage: decodeImageInBrowser }));
         if (run !== runId.current) return;
         if (cacheKey) cache.current.set(cacheKey, { report: r, raw: source });
         setRaw(source);
@@ -352,7 +353,7 @@ export function App() {
           </div>
         </div>
 
-        {report && !loading && !showSettings && !pasting && (
+        {report && !loading && !showSettings && !pasting && (!settings.simpleMode || tab !== 'overview') && (
           <nav className="flex flex-wrap gap-1 px-2 pb-2" role="tablist" aria-label="Report sections">
             {tabs.map((t) => (
               <button
@@ -491,6 +492,7 @@ export function App() {
                       onHoverFinding={onHoverFinding}
                       onOpenFinding={onOpenFinding}
                       onOpenTab={(t) => openTab(t)}
+                      simple={settings.simpleMode}
                     />
                   )}
                   {tab === 'overview' && (
