@@ -10,7 +10,8 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "test:e2e": "pnpm --filter unmask-extension build:e2e && pnpm --filter unmask-extension test:e2e",
-    "site": "node site/build.mjs"
+    "site": "node site/build.mjs",
+    "wiki": "node site/wiki.mjs"
   },
   "license": "MIT",
   "repository": {
