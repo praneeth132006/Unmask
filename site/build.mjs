@@ -147,4 +147,14 @@ for (const page of PAGES) {
     layout({ title: `${page.title} · Unmask`, description: `Unmask ${page.title.toLowerCase()}.`, current: page.out, body: `<article class="doc">${render(md)}</article>` }),
   );
 }
-console.log(`site built: ${['index.html', ...PAGES.map((p) => p.out)].join(', ')}`);
+// GitHub Pages serves 404.html for any unknown path. <base> keeps its relative links working from nested paths.
+writeFileSync(
+  join(out, '404.html'),
+  layout({
+    title: 'Page not found · Unmask',
+    description: 'This page does not exist.',
+    current: '',
+    body: '<article class="doc"><h1>Page not found</h1><p>That page does not exist. Try the <a href="index.html">home page</a> or the <a href="guide.html">user guide</a>.</p></article>',
+  }).replace('<head>\n', '<head>\n<base href="/Unmask/">\n'),
+);
+console.log(`site built: ${['index.html', ...PAGES.map((p) => p.out), '404.html'].join(', ')}`);
