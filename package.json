@@ -1,0 +1,12 @@
+{
+  "name": "unmask",
+  "private": true,
+  "description": "Browser extension that shows what a suspicious email is really hiding.",
+  "scripts": {
+    "dev": "pnpm --filter unmask-extension dev",
+    "build": "pnpm --filter unmask-extension build",
+    "zip": "pnpm --filter unmask-extension zip",
+    "test": "pnpm --filter unmask-extension test",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

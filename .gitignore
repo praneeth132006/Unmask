@@ -1,0 +1,11 @@
+node_modules/
+.output/
+.wxt/
+dist/
+.vercel/
+.env
+.env.*
+*.log
+.DS_Store
+coverage/
+stats.html
