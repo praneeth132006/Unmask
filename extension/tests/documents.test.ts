@@ -91,3 +91,12 @@ describe('looking inside attachments', () => {
     expect(att.contents).toBeUndefined();
   });
 });
+
+describe('attachment follow-ups', () => {
+  it('drops "contents could not be checked" once the archive was read', async () => {
+    const zipBytes = await makeZip([{ name: 'a.txt', data: new TextEncoder().encode('x') }]);
+    const att = await inspectAttachment({ filename: 'a.zip', mimeType: 'application/zip', size: zipBytes.length, disposition: 'attachment', related: false, content: zipBytes });
+    expect(att.flags.map((f) => f.id)).not.toContain('archive');
+    expect(att.contents?.files).toHaveLength(1);
+  });
+});

@@ -189,7 +189,8 @@ export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
 export function analyzeLinks(rawLinks: RawLink[], senderDomain = ''): { links: LinkInfo[]; findings: Finding[] } {
   const unique = new Map<string, RawLink>();
   for (const l of rawLinks) {
-    const key = `${l.href}\u0000${l.text}`;
+    // The same address found in two places (a PDF's link and a QR code in it) is listed for each.
+    const key = `${l.href}\u0000${l.text}\u0000${l.origin ? `${l.source}:${l.origin}` : ''}`;
     if (!unique.has(key)) unique.set(key, l);
   }
   const links = [...unique.values()].map((l) => inspectLink(l, senderDomain));

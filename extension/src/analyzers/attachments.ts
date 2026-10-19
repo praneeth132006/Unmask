@@ -93,6 +93,8 @@ export async function inspectAttachment(a: ParsedAttachment): Promise<Attachment
   // Inline images are body decoration; everything else gets looked inside.
   const deep = inline ? null : await inspectContents(a.content, ext, a.mimeType);
   if (deep) for (const fl of deep.flags) if (!flags.some((x) => x.id === fl.id)) flags.push(fl);
+  // Unmask did read inside this archive, so "contents could not be checked" no longer applies.
+  if (deep?.contents.kind === 'archive' && deep.contents.files.length) flags.splice(0, flags.length, ...flags.filter((x) => x.id !== 'archive'));
   if (deep?.contents.kind === 'archive' && deep.contents.files.some((x) => x.encrypted) && !flags.some((x) => x.id === 'encrypted-archive')) {
     flags.push(f('encrypted-archive', 'high', 'Password-protected archive: hides its contents from virus scanners'));
   }

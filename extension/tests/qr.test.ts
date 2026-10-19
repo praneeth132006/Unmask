@@ -61,3 +61,12 @@ describe('QR codes', () => {
     expect(decodeQr(samplesToRgba(noise, 64, 64, 1)!)).toBeNull();
   });
 });
+
+describe('QR link next to the same PDF link', () => {
+  it('lists the QR code link even when the PDF also links there', async () => {
+    const url = 'https://paypa1.com/login';
+    const pdf = await makePdf({ uris: [url], images: [qrGray(url)] });
+    const report = await analyzeRawEmail(email([{ name: 'm.pdf', mime: 'application/pdf', bytes: pdf }]));
+    expect(report.links.filter((l) => l.href === url).map((l) => l.source).sort()).toEqual(['attachment', 'qr']);
+  });
+});
