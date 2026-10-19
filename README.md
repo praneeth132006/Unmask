@@ -76,7 +76,7 @@ pnpm build
 
 Then load the extension:
 1. Open `chrome://extensions` and enable **Developer mode**
-2. Click **Load unpacked** and choose `extension/.output/chrome-mv3`
+2. Click **Load unpacked** and choose the `build/unmask-chrome` folder
 3. Open Gmail (reload it if it was already open), open an email and click the Unmask icon
 
 For development with hot reload:

@@ -10,3 +10,4 @@ dist/
 coverage/
 stats.html
 .claude/
+build/

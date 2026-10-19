@@ -3,6 +3,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   srcDir: '.',
+  // Visible folder at the repo root: load UNMASK/build/unmask-chrome via "Load unpacked".
+  outDir: '../build',
+  outDirTemplate: 'unmask-{{browser}}{{modeSuffix}}',
   modules: ['@wxt-dev/module-react'],
   vite: () => ({
     plugins: [tailwindcss()],
