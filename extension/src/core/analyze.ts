@@ -9,6 +9,7 @@ import { analyzeAttachments } from '../analyzers/attachments';
 import { analyzeTrackers } from '../analyzers/trackers';
 import { analyzeBec } from '../analyzers/bec';
 import { historyFindings, type SenderHistory } from '../analyzers/history';
+import { findBrandLogos, logoFindings } from '../analyzers/logos';
 import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzers/qr';
 
 export interface AnalyzeOptions {
@@ -33,9 +34,10 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks, ...qrLinks(qrCodes)], email.from?.domain ?? '');
   const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
+  const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage));
   const pastFindings = opts.history ? historyFindings(email, opts.history) : [];
 
-  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes)]);
+  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings]);
   const { score, verdict } = scoreFindings(findings);
 
   return {
