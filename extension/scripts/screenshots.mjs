@@ -168,6 +168,25 @@ await i.goto('https://mail.google.com/mail/u/0/inbox-demo');
 await i.waitForSelector('[data-unmask-badge]', { timeout: 15000 });
 await i.waitForTimeout(300);
 await shot(i, 'inbox-badges.png');
+// Peek at the PayPal row without opening it.
+await i.setViewportSize({ width: 900, height: 640 });
+await i.locator('tr.zA', { hasText: 'PayPal Service' }).locator('[data-unmask-peek] button').click();
+await i.waitForSelector('[data-unmask-peek-card] .h', { timeout: 15000 });
+await i.waitForTimeout(300);
+await shot(i, 'inbox-peek.png');
+
+// A protection list, as a family might set it up.
+await sw.evaluate(() =>
+  chrome.storage.local.set({
+    'unmask:protection': {
+      version: 1,
+      label: 'Sharma family',
+      brands: [{ name: 'PayPal', domains: ['paypal.com'] }, { name: 'Canara Bank', domains: ['canarabank.com'] }],
+      contacts: [{ name: 'Rahul Sharma', addresses: ['rahul@acme-corp.com'] }],
+      trusted: ['acme-corp.com'],
+    },
+  }),
+);
 
 // Side panel on the demo email.
 const p = await ctx.newPage();
@@ -194,6 +213,19 @@ await p.getByTitle('Settings').click();
 await p.locator('text=Protection inside Gmail').scrollIntoViewIfNeeded();
 await p.waitForTimeout(300);
 await shot(p, 'settings-protection.png');
+const listCard = p.locator('#unmask-protection-list');
+await listCard.scrollIntoViewIfNeeded();
+await p.waitForTimeout(200);
+await listCard.screenshot({ path: join(out, 'settings-protection-list.png') });
+console.log('wrote settings-protection-list.png');
+
+// Simple mode: plain words only.
+await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...r['unmask:settings'], simpleMode: true } })));
+await p.reload();
+await p.setInputFiles('input[type=file]', { name: 'demo.eml', mimeType: 'message/rfc822', buffer: Buffer.from(eml) });
+await p.waitForSelector('text=In plain words', { timeout: 15000 });
+await p.waitForTimeout(400);
+await shot(p, 'panel-simple.png');
 
 await ctx.close();
 

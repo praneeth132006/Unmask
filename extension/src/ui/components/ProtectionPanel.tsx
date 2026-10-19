@@ -90,7 +90,7 @@ export function ProtectionPanel() {
   return (
     <>
       <SectionTitle>Your protection list</SectionTitle>
-      <Card className="space-y-3">
+      <Card id="unmask-protection-list" className="space-y-3">
         <p className="text-[11px] text-[var(--text-3)]">
           Tell Unmask who scammers are likely to pretend to be. Anything imitating them gets the strongest warning. Stays in this browser; you can share it as a file.
         </p>
