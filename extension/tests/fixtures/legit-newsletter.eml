@@ -1,0 +1,33 @@
+Delivered-To: victim@example.com
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com [209.85.220.41])
+        by mx.google.com with SMTPS id xyz
+        for <victim@example.com>; Mon, 19 Oct 2026 08:00:00 -0700 (PDT)
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@github.com header.s=pf2023 header.b=AbCdEf;
+       spf=pass (google.com: domain of noreply@github.com designates 192.30.252.201 as permitted sender) smtp.mailfrom=noreply@github.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=github.com
+Return-Path: <noreply@github.com>
+From: GitHub <noreply@github.com>
+To: victim@example.com
+Subject: [GitHub] A new SSH key was added to your account
+Date: Mon, 19 Oct 2026 15:00:00 +0000
+Message-ID: <abc@github.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="ALT"
+
+--ALT
+Content-Type: text/plain; charset="utf-8"
+
+A new public key was added to your account. Review keys: https://github.com/settings/keys
+
+--ALT
+Content-Type: text/html; charset="utf-8"
+
+<html><body>
+<p>Hey there!</p>
+<p>A new public key was added to your account.</p>
+<p><a href="https://github.com/settings/keys">Review your SSH keys</a></p>
+<p><a href="https://docs.github.com/articles/connecting-to-github-with-ssh">Learn more about SSH keys</a></p>
+</body></html>
+
+--ALT--
