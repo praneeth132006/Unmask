@@ -3,6 +3,7 @@ import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
 import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/types';
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
 import { registrableDomain } from '../lib/domain';
+import { loadHistory, rememberSender } from '../lib/historyStore';
 import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
 import type { HighlightTarget } from '../lib/highlight';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
@@ -106,9 +107,12 @@ export function App() {
         setReport(null);
       }
       try {
-        const r = cached ?? (await analyzeRawEmail(await load()));
+        // Emails opened from files may be samples from anywhere: compare them with the history, but never learn from them.
+        const history = settings.senderHistory ? await loadHistory() : undefined;
+        const r = cached ?? (await analyzeRawEmail(await load(), { history }));
         if (run !== runId.current) return;
         if (cacheKey) cache.current.set(cacheKey, r);
+        if (settings.senderHistory && src.kind === 'gmail' && !cached) void rememberSender(r);
         setReport(r);
         if (settings.autoDomainAge) void checkDomainAge(r, run);
       } catch (e) {
@@ -119,7 +123,7 @@ export function App() {
         if (run === runId.current) setLoading(false);
       }
     },
-    [settings.autoDomainAge, checkDomainAge],
+    [settings.autoDomainAge, settings.senderHistory, checkDomainAge],
   );
 
   // Follow the email that is open in Gmail.

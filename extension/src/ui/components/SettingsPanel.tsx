@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { saveSettings, type Settings } from '../../lib/settings';
+import { clearHistory, historySize, loadHistory } from '../../lib/historyStore';
 import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 import { SERVICES, ServiceSetup, type Service } from './ServiceSetup';
@@ -56,6 +57,41 @@ function ServiceRow({ service, settings, onChange }: { service: Service; setting
           />
         </div>
       )}
+    </div>
+  );
+}
+
+/** One on/off setting with a title and a one-line explanation. */
+export function Toggle({ checked, onChange, title, children }: { checked: boolean; onChange: (v: boolean) => void; title: string; children: ReactNode }) {
+  return (
+    <label className="flex cursor-pointer items-start gap-2.5 py-2.5 text-xs first:pt-0 last:pb-0">
+      <input type="checkbox" className="mt-0.5 accent-[var(--accent)]" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+      <span>
+        <span className="font-semibold text-[var(--text)]">{title}</span>
+        <span className="mt-0.5 block text-[11px] text-[var(--text-3)]">{children}</span>
+      </span>
+    </label>
+  );
+}
+
+function HistoryRow() {
+  const [count, setCount] = useState<number | null>(null);
+  useEffect(() => {
+    void loadHistory().then((h) => setCount(historySize(h)));
+  }, []);
+  return (
+    <div className="flex items-center justify-between gap-2 pt-2.5 text-[11px] text-[var(--text-3)]">
+      <span>{count === null ? '…' : `${count} sender${count === 1 ? '' : 's'} remembered on this device`}</span>
+      <Button
+        variant="ghost"
+        disabled={!count}
+        onClick={async () => {
+          await clearHistory();
+          setCount(0);
+        }}
+      >
+        Forget all
+      </Button>
     </div>
   );
 }
@@ -135,14 +171,14 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
       )}
 
       <SectionTitle>Privacy</SectionTitle>
-      <Card>
-        <label className="flex cursor-pointer items-start gap-2.5 text-xs">
-          <input type="checkbox" className="mt-0.5 accent-[var(--accent)]" checked={settings.autoDomainAge} onChange={(e) => void update({ autoDomainAge: e.target.checked })} />
-          <span>
-            <span className="font-semibold text-[var(--text)]">Check how old the sender’s domain is</span>
-            <span className="mt-0.5 block text-[11px] text-[var(--text-3)]">New domains are a strong phishing sign. Sends only the domain name (for example example.com) to rdap.org, the public domain registry lookup.</span>
-          </span>
-        </label>
+      <Card className="divide-y divide-[var(--border)]">
+        <Toggle checked={settings.senderHistory} onChange={(v) => void update({ senderHistory: v })} title="Remember who emails me">
+          Powers “first contact” warnings and spots impostors using a contact’s name. The list stays in this browser and is never uploaded.
+        </Toggle>
+        {settings.senderHistory && <HistoryRow />}
+        <Toggle checked={settings.autoDomainAge} onChange={(v) => void update({ autoDomainAge: v })} title="Check how old the sender’s domain is">
+          New domains are a strong phishing sign. Sends only the domain name (for example example.com) to rdap.org, the public domain registry lookup.
+        </Toggle>
       </Card>
 
       <SectionTitle

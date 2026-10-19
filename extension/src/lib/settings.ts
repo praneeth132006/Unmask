@@ -15,6 +15,8 @@ export interface Settings {
   theme: Theme;
   /** How "Trace redirects" works: inside Unmask, or through a self-hosted server. */
   traceMode: 'builtin' | 'server';
+  /** Remember who emails you (on this device only) for "first contact" warnings. */
+  senderHistory: boolean;
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -27,6 +29,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoDomainAge: true,
   theme: 'system',
   traceMode: 'builtin',
+  senderHistory: true,
 };
 
 const THEME_CACHE = 'unmask:theme';

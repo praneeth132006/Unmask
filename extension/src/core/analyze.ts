@@ -8,13 +8,19 @@ import { analyzeLinks } from '../analyzers/links';
 import { analyzeAttachments } from '../analyzers/attachments';
 import { analyzeTrackers } from '../analyzers/trackers';
 import { analyzeBec } from '../analyzers/bec';
+import { historyFindings, type SenderHistory } from '../analyzers/history';
+
+export interface AnalyzeOptions {
+  /** Who normally emails this user, for "first contact" and impersonation checks. */
+  history?: SenderHistory;
+}
 
 /**
  * Full local analysis of a raw email. Makes no network requests: everything
  * here runs on the user's machine. Online checks are added later with
  * `withExtraFindings`.
  */
-export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array): Promise<Report> {
+export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, opts: AnalyzeOptions = {}): Promise<Report> {
   const email = await parseEmail(raw);
   const { auth, findings: authFindings } = analyzeAuth(email);
   const senderFindings = analyzeSender(email);
@@ -23,8 +29,9 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array): P
   const { attachments, findings: attachmentFindings } = await analyzeAttachments(email.attachments);
   const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links);
   const becFindings = analyzeBec(email, content.visibleText);
+  const pastFindings = opts.history ? historyFindings(email, opts.history) : [];
 
-  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings]);
+  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings]);
   const { score, verdict } = scoreFindings(findings);
 
   return {
