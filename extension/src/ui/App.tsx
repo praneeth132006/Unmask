@@ -11,7 +11,7 @@ import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings
 import type { HighlightTarget } from '../lib/highlight';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
 import { GmailFetchError, messageKey, useGmail } from './useGmail';
-import { toFocus, toHighlight, type Focus } from './targets';
+import { attachmentTarget, toFocus, toHighlight, type Focus } from './targets';
 import { unwrapUrl } from '../analyzers/links';
 import { Overview, VerdictCard } from './components/Overview';
 import { SenderTab } from './components/SenderTab';
@@ -212,7 +212,7 @@ export function App() {
   const onHoverFinding = (f: Finding | null) => highlight(f && report ? toHighlight(f.target, report) : null);
   // Links found inside a file or QR code have no element in the body: outline the attachment instead.
   const onHoverLink = (l: LinkInfo | null) =>
-    highlight(!l ? null : l.origin ? { kind: 'attachments', names: [l.origin.replace(/^QR code in /, '')] } : { kind: 'links', hrefs: [l.href] });
+    highlight(!l || !report ? null : l.origin ? attachmentTarget(report, l.origin.replace(/^QR code in /, '').replace(/^image in /, '')) : { kind: 'links', hrefs: [l.href] });
   /** A URL from the plain-text part: outline every HTML link with the same address or the same real destination. */
   const onHoverUrl = (url: string | null) => {
     if (!url || !report) return highlight(null);
@@ -220,7 +220,7 @@ export function App() {
     const hrefs = [url, ...report.links.filter((l) => l.href === url || l.resolved === dest).map((l) => l.href)];
     highlight({ kind: 'links', hrefs: [...new Set(hrefs)] });
   };
-  const onHoverAttachment = (a: AttachmentInfo | null) => highlight(a ? { kind: 'attachments', names: [a.filename] } : null);
+  const onHoverAttachment = (a: AttachmentInfo | null) => highlight(a && report ? attachmentTarget(report, a) : null);
 
   // ---- Navigation --------------------------------------------------------------
   const openTab = (next: TabId, nextFocus: Focus | null = null, fromFinding: string | null = null) => {

@@ -1,4 +1,4 @@
-import type { FindingTarget, Report, TabId } from '../core/types';
+import type { AttachmentInfo, FindingTarget, Report, TabId } from '../core/types';
 import type { HighlightTarget } from '../lib/highlight';
 
 /** What to outline in Gmail for a finding, or null when it has no visible counterpart (headers, hidden text). */
@@ -11,7 +11,7 @@ export function toHighlight(target: FindingTarget | undefined, report: Report): 
     }
     case 'attachment': {
       const att = report.attachments.find((a) => a.sha256 === target.sha256);
-      return att ? { kind: 'attachments', names: [att.filename] } : null;
+      return att ? attachmentTarget(report, att) : null;
     }
     case 'sender':
       return { kind: 'sender' };
@@ -71,4 +71,16 @@ export function targetHint(target: FindingTarget | undefined): string {
     default:
       return 'Click for details';
   }
+}
+
+/**
+ * The Gmail tile for an attachment: its name, plus its position among the
+ * email's real (non-inline) attachments, which Gmail shows in the same order.
+ */
+export function attachmentTarget(report: Report, att: AttachmentInfo | string): HighlightTarget | null {
+  const visible = report.attachments.filter((a) => !a.inline);
+  const found = typeof att === 'string' ? visible.find((a) => a.filename === att) : att;
+  if (!found) return typeof att === 'string' ? { kind: 'attachments', names: [att] } : null;
+  const index = visible.indexOf(found);
+  return { kind: 'attachments', names: [found.filename], index: index >= 0 ? index : undefined };
 }

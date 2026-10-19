@@ -8,7 +8,8 @@ import type { GmailMessageRef } from './messages';
 export type HighlightTarget =
   | { kind: 'links'; hrefs: string[] }
   | { kind: 'sender' }
-  | { kind: 'attachments'; names: string[] }
+  /** `index`: position among the email's real (non-inline) attachments, used when names don't settle it. */
+  | { kind: 'attachments'; names: string[]; index?: number }
   | { kind: 'text'; phrases: string[] };
 
 const ATTR = 'data-unmask-hl';
@@ -85,21 +86,52 @@ function senderElements(root: Element): Element[] {
   return el ? [el] : [];
 }
 
-function attachmentElements(root: Element, names: string[]): Element[] {
-  const lower = names.map((n) => n.toLowerCase());
-  const out = new Set<Element>();
-  // Gmail's attachment chips carry download_url="mime:filename:url".
-  root.querySelectorAll('[download_url]').forEach((el) => {
-    const v = (el.getAttribute('download_url') ?? '').toLowerCase();
-    if (lower.some((n) => v.includes(`:${n}:`))) out.add(el);
-  });
-  if (!out.size) {
-    root.querySelectorAll('[aria-label], [title]').forEach((el) => {
-      const label = `${el.getAttribute('aria-label') ?? ''} ${el.getAttribute('title') ?? ''}`.toLowerCase();
-      if (lower.some((n) => label.includes(n))) out.add(el);
+/** Gmail's attachment tiles in a message, in display order. */
+export function attachmentChips(root: Element): Element[] {
+  const byUrl = Array.from(root.querySelectorAll('[download_url]'));
+  if (byUrl.length) return byUrl;
+  // Newer layouts: one tile per attachment inside the attachment strip.
+  const strip = root.querySelector('.aQH');
+  if (strip) return Array.from(strip.children).filter((c) => !c.matches('.aZK, .aZJ'));
+  return Array.from(root.querySelectorAll('.aZo, .aQy'));
+}
+
+/** The file name a tile shows: from download_url ("mime:name:url"), its name label, or its aria-label/title. */
+export function chipName(chip: Element): string {
+  const url = chip.getAttribute('download_url');
+  if (url) {
+    const first = url.indexOf(':');
+    const last = url.indexOf(':http');
+    if (first >= 0 && last > first) return url.slice(first + 1, last);
+  }
+  const label = chip.querySelector('.aV3')?.textContent ?? chip.getAttribute('aria-label') ?? chip.getAttribute('title') ?? chip.querySelector('[aria-label], [title]')?.getAttribute('aria-label') ?? chip.textContent ?? '';
+  return label.replace(/^(attachment|preview attachment|download attachment)\s*:?\s*/i, '').trim();
+}
+
+const normName = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
+
+function attachmentElements(root: Element, names: string[], index?: number): Element[] {
+  const chips = attachmentChips(root);
+  if (!chips.length) return [];
+  const wanted = names.map(normName);
+  const labels = chips.map((c) => normName(chipName(c)));
+  // 1. The tile's name is exactly the file name.
+  let hits = chips.filter((_, i) => wanted.includes(labels[i]!));
+  // 2. Gmail shortens long names with an ellipsis: "GST-CHALLAN - K Mallik….pdf".
+  if (!hits.length) {
+    hits = chips.filter((_, i) => {
+      const parts = labels[i]!.split(/…|\.\.\./);
+      return parts.length === 2 && wanted.some((w) => w.startsWith(parts[0]!) && w.endsWith(parts[1]!));
     });
   }
-  return [...out];
+  // 3. The tile mentions the name (aria-labels add words around it).
+  if (!hits.length) hits = chips.filter((_, i) => wanted.some((w) => labels[i]!.includes(w)));
+  // Several matches (two files with the same name) or none: the position decides.
+  if (hits.length !== 1 && index !== undefined && chips[index]) {
+    const byIndex = chips[index]!;
+    if (!hits.length || hits.includes(byIndex)) return [byIndex];
+  }
+  return hits.slice(0, 1);
 }
 
 /** Wraps each occurrence of the phrases in <mark>, splitting text nodes. Returns the marks. */
@@ -188,7 +220,7 @@ export function applyHighlight(doc: Document, ref: GmailMessageRef, target: High
   let els: Element[] = [];
   if (target.kind === 'links') els = linkElements(root, target.hrefs);
   else if (target.kind === 'sender') els = senderElements(root);
-  else if (target.kind === 'attachments') els = attachmentElements(root, target.names);
+  else if (target.kind === 'attachments') els = attachmentElements(root, target.names, target.index);
   else if (target.kind === 'text') {
     els = markPhrases(root, target.phrases);
     if (!els.length) {
