@@ -1,4 +1,4 @@
-import { BRANDS, isBrandDomain, type Brand } from './brands';
+import { BRANDS, COMMON_WORD_KEYWORDS, OFFICIAL_CONTEXT, isBrandDomain, type Brand } from './brands';
 import { hostInfo } from '../lib/domain';
 import { toUnicode } from 'punycode/';
 
@@ -62,6 +62,14 @@ function describeSwap(raw: string, keyword: string): string {
   return swaps.length ? `uses ${[...new Set(swaps)].join(', ')}` : 'visually identical characters';
 }
 
+/** Real words one or two letters from a brand name: "finance" is not a misspelled Binance. */
+const NOT_TYPOS = new Set(['palpal', 'papal', 'parpal', 'acloud', 'cloud', 'goggle', 'googly', 'amazona', 'lessener', 'passenger', 'atwitter', 'titter', 'twister', 'twitten', 'witter', 'finance', 'finances', 'corton', 'morton', 'revolt', 'revolute', 'revolts', 'onliness', 'phoneme', 'artel', 'outbook', 'microstat', 'microvolt']);
+
+/** Suspicious extras around a brand name: "apple-id-verify", "chase-secure". */
+function soundsOfficial(host: string): boolean {
+  return OFFICIAL_CONTEXT.test(host.replace(/[.-]/g, ' '));
+}
+
 /**
  * Checks whether a host imitates a known brand. Hosts that belong to the
  * brand itself never match.
@@ -93,8 +101,14 @@ export function detectLookalike(host: string, brands: Brand[] = BRANDS): Lookali
       if (labelSkel === kwSkel && label.toLowerCase() !== keyword) {
         return { brand, kind: 'homoglyph', explanation: describeSwap(label, keyword) };
       }
+      // The brand's own name on another ending (meta.ai, google.co.in, amazon.de) is how
+      // big companies run country and product sites, not a phishing trick.
+      if (label.toLowerCase() === keyword && brand.domains.some((d) => d.split('.')[0] === keyword)) continue;
+      // Everyday words (apple, chase, zoom) spelled correctly need the rest of the host to
+      // sound official; misspellings and swapped letters are suspicious on their own.
+      const plainWord = COMMON_WORD_KEYWORDS.has(keyword) && !soundsOfficial(info.host);
       const pieceIdx = pieces.indexOf(kwSkel);
-      if (pieceIdx >= 0) {
+      if (pieceIdx >= 0 && !(plainWord && rawPieces[pieceIdx] === keyword)) {
         const rawPiece = rawPieces[pieceIdx]!;
         const swapped = rawPiece !== keyword;
         return {
@@ -107,14 +121,14 @@ export function detectLookalike(host: string, brands: Brand[] = BRANDS): Lookali
       if (keyword.length >= 6) {
         const maxDist = keyword.length >= 9 ? 2 : 1;
         const candidates = [labelSkel, ...pieces];
-        if (candidates.some((c) => c !== kwSkel && Math.abs(c.length - kwSkel.length) <= maxDist && levenshtein(c, kwSkel) <= maxDist)) {
+        if (candidates.some((c) => c !== kwSkel && !NOT_TYPOS.has(c) && Math.abs(c.length - kwSkel.length) <= maxDist && levenshtein(c, kwSkel) <= maxDist)) {
           return { brand, kind: 'typo', explanation: `one or two letters away from "${keyword}"` };
         }
-        if (labelSkel.includes(kwSkel)) {
+        if (labelSkel.includes(kwSkel) && !plainWord) {
           return { brand, kind: 'brand-in-domain', explanation: `contains "${keyword}" but is not a ${brand.name} domain` };
         }
       }
-      if (keyword.length >= 4 && subdomainSkel.split(/[.-]/).includes(kwSkel)) {
+      if (keyword.length >= 4 && !plainWord && subdomainSkel.split(/[.-]/).includes(kwSkel)) {
         return { brand, kind: 'brand-in-subdomain', explanation: `puts "${keyword}" in the subdomain of ${info.domain}` };
       }
     }

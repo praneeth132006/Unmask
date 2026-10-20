@@ -92,9 +92,16 @@ export function unwrapUrl(href: string): { url: string; via: string[] } {
   return { url: current, via };
 }
 
+/** File names whose extension happens to be a country domain: CLAUDE.md (Moldova), setup.py (Paraguay). */
+const FILE_EXT = /^(md|py|js|ts|jsx|tsx|sh|rs|go|pl|rb|cs|cc|cpp|h|java|kt|swift|php|json|yml|yaml|toml|ini|cfg|conf|lock|txt|csv|log|sql|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|gz|tar|mov|mp4|mp3|wav|png|jpg|jpeg|gif|svg|webp|exe|dll|app|dmg|iso|apk|ipynb|env)$/i;
+
 /** Extracts a domain-looking token from visible link text ("www.paypal.com/signin" → "www.paypal.com"). */
 function domainInText(text: string): string | null {
-  const m = text.trim().match(/^(?:https?:\/\/)?((?:[a-z0-9\u00a1-\uffff-]+\.)+[a-z\u00a1-\uffff]{2,})(?:[/:?#]|\s|$)/i);
+  const t = text.trim();
+  // "CLAUDE.md", "setup.py": a bare file name, not a website.
+  const bare = t.match(/^([\w-]+)\.([a-z0-9]+)$/i);
+  if (bare && FILE_EXT.test(bare[2]!)) return null;
+  const m = t.match(/^(?:https?:\/\/)?((?:[a-z0-9\u00a1-\uffff-]+\.)+[a-z\u00a1-\uffff]{2,})(?:[/:?#]|\s|$)/i);
   if (!m) return null;
   const host = m[1]!.toLowerCase();
   const info = hostInfo(host);

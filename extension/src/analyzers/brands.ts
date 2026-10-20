@@ -10,16 +10,16 @@ export interface Brand {
 
 export const BRANDS: Brand[] = [
   { name: 'PayPal', keywords: ['paypal'], domains: ['paypal.com', 'paypal.me', 'paypalobjects.com', 'paypal-communication.com'] },
-  { name: 'Apple', keywords: ['apple', 'icloud', 'itunes', 'appleid'], domains: ['apple.com', 'icloud.com', 'me.com', 'itunes.com', 'apple.news'] },
-  { name: 'Microsoft', keywords: ['microsoft', 'office365', 'office 365', 'outlook', 'onedrive', 'sharepoint', 'hotmail', 'xbox'], domains: ['microsoft.com', 'office.com', 'office365.com', 'outlook.com', 'live.com', 'hotmail.com', 'onedrive.com', 'sharepoint.com', 'microsoftonline.com', 'xbox.com', 'azure.com', 'microsoft365.com', 'msn.com', 'skype.com'] },
+  { name: 'Apple', keywords: ['apple', 'icloud', 'itunes', 'appleid'], domains: ['apple.com', 'icloud.com', 'me.com', 'itunes.com', 'apple.news', 'apple.co', 'mzstatic.com', 'cdn-apple.com'] },
+  { name: 'Microsoft', keywords: ['microsoft', 'office365', 'office 365', 'outlook', 'onedrive', 'sharepoint', 'hotmail', 'xbox'], domains: ['microsoft.com', 'office.com', 'office365.com', 'outlook.com', 'live.com', 'hotmail.com', 'onedrive.com', 'sharepoint.com', 'microsoftonline.com', 'xbox.com', 'azure.com', 'microsoft365.com', 'msn.com', 'skype.com', 'bing.com', 'windows.com', 'live.net', 'microsoftstore.com', 'office.net', 'sharepointonline.com', 'cloud.microsoft'] },
   { name: 'Google', keywords: ['google', 'gmail', 'youtube'], domains: ['google.com', 'gmail.com', 'youtube.com', 'googlemail.com', 'withgoogle.com', 'goo.gl', 'g.co', 'googleusercontent.com', 'googleapis.com', 'gstatic.com', 'google-analytics.com', 'doubleclick.net', 'googletagmanager.com'] },
-  { name: 'Amazon', keywords: ['amazon', 'aws', 'prime video'], domains: ['amazon.com', 'amazon.in', 'amazon.co.uk', 'amazon.de', 'amazon.ca', 'amazonses.com', 'aws.amazon.com', 'amazonaws.com', 'primevideo.com', 'a.co'] },
+  { name: 'Amazon', keywords: ['amazon', 'aws', 'prime video'], domains: ['amazon.com', 'amazon.in', 'amazon.co.uk', 'amazon.de', 'amazon.ca', 'amazonses.com', 'aws.amazon.com', 'amazonaws.com', 'primevideo.com', 'a.co', 'amzn.to', 'amzn.in', 'media-amazon.com', 'ssl-images-amazon.com', 'amazon.ae', 'amazon.co.jp', 'amazon.fr', 'amazon.it', 'amazon.es', 'amazon.com.au'] },
   { name: 'Netflix', keywords: ['netflix'], domains: ['netflix.com', 'nflxext.com', 'nflximg.net'] },
-  { name: 'Meta / Facebook', keywords: ['facebook', 'meta', 'messenger'], domains: ['facebook.com', 'facebookmail.com', 'fb.com', 'meta.com', 'messenger.com'] },
+  { name: 'Meta / Facebook', keywords: ['facebook', 'meta', 'messenger'], domains: ['facebook.com', 'facebookmail.com', 'fb.com', 'fb.me', 'meta.com', 'meta.ai', 'atmeta.com', 'messenger.com', 'threads.net', 'threads.com', 'oculus.com', 'workplace.com', 'fbcdn.net', 'facebook.net'] },
   { name: 'Instagram', keywords: ['instagram'], domains: ['instagram.com', 'mail.instagram.com'] },
   { name: 'WhatsApp', keywords: ['whatsapp'], domains: ['whatsapp.com', 'whatsapp.net'] },
   { name: 'LinkedIn', keywords: ['linkedin'], domains: ['linkedin.com', 'lnkd.in', 'licdn.com'] },
-  { name: 'X / Twitter', keywords: ['twitter'], domains: ['twitter.com', 'x.com', 't.co'] },
+  { name: 'X / Twitter', keywords: ['twitter'], domains: ['twitter.com', 'x.com', 't.co', 'twimg.com'] },
   { name: 'GitHub', keywords: ['github'], domains: ['github.com', 'githubusercontent.com', 'github.io'] },
   { name: 'DHL', keywords: ['dhl'], domains: ['dhl.com', 'dhl.de', 'dhl.co.uk', 'dhl.in'] },
   { name: 'FedEx', keywords: ['fedex'], domains: ['fedex.com'] },
@@ -62,6 +62,16 @@ export const BRANDS: Brand[] = [
   { name: 'Income Tax India', keywords: ['incometax', 'income tax department'], domains: ['incometax.gov.in', 'incometaxindia.gov.in'] },
 ];
 
+/**
+ * Brand keywords that are also everyday English words ("apple", "chase",
+ * "zoom"). On their own they say nothing: Chase Thompson, apple-farm.com and
+ * a "zoom call" are not impersonation. They only count with context.
+ */
+export const COMMON_WORD_KEYWORDS = new Set(['apple', 'outlook', 'amazon', 'meta', 'messenger', 'twitter', 'chase', 'adobe', 'steam', 'zoom', 'slack', 'ups', 'wise', 'citi', 'jio', 'meta']);
+
+/** Words that make a name or domain sound like an official account or a login page. */
+export const OFFICIAL_CONTEXT = /\b(bank|banking|support|security|secure|account|accounts|team|service|services|alert|alerts|billing|payment|payments|notification|notifications|customer|care|verify|verification|official|id|help|helpdesk|login|signin|sign in|update|noreply|no reply|admin|center|centre|wallet|refund|kyc|invoice|delivery|tracking|store|card|cards|prime|pay|online)\b/i;
+
 export function isBrandDomain(brand: Brand, registrable: string): boolean {
   return brand.domains.some((d) => registrable === d || registrable.endsWith(`.${d}`));
 }
@@ -71,13 +81,22 @@ export function brandOwningDomain(registrable: string): Brand | null {
   return BRANDS.find((b) => b.domains.includes(registrable)) ?? null;
 }
 
-/** Brands whose name appears as a whole word in free text such as a display name. */
+/**
+ * Brands whose name appears as a whole word in free text such as a display name.
+ * Everyday-word brands ("Chase", "Apple") need the text to be just the brand,
+ * or to sound official ("Chase Bank Alerts", "Apple Support").
+ */
 export function brandsMentionedIn(text: string): Brand[] {
   const hay = ` ${text.toLowerCase().replace(/[^a-z0-9]+/g, ' ')} `;
   const compact = text.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const official = OFFICIAL_CONTEXT.test(text);
   return BRANDS.filter((b) =>
     b.keywords.some((k) => {
       const words = k.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      if (COMMON_WORD_KEYWORDS.has(words)) {
+        const alone = hay.trim() === words || hay.trim() === b.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        return hay.includes(` ${words} `) && (alone || official);
+      }
       if (hay.includes(` ${words} `)) return true;
       // "PayPalService" style run-ons, only for distinctive keywords.
       return words.length >= 6 && !words.includes(' ') && compact.includes(words);
