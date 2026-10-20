@@ -48,6 +48,8 @@ export interface MailSite {
   refForRow?(row: Element, thread: string): GmailMessageRef | null;
   /** Unread rows in the list. */
   isUnread?(row: Element): boolean;
+  /** Where the badge and Peek button go in a row, so they're always visible. */
+  chipHost?(row: Element, sender: Element): Element | null;
 }
 
 export const GMAIL_SITE: MailSite = {
@@ -87,6 +89,7 @@ export const GMAIL_SITE: MailSite = {
     return { permId: last ? null : n ? `msg-${n[1]}:${n[2]}` : null, legacyId: legacy, fromName: '', fromEmail: '', subject };
   },
   isUnread: (row) => row.classList.contains('zE'),
+  chipHost: (row) => row.querySelector('.xT') ?? row.querySelector('[data-thread-id]')?.closest('td') ?? null,
 };
 
 export interface ProtectDeps {
@@ -116,6 +119,7 @@ export interface AnalyzeExtras {
 }
 
 const ROW_ATTR = 'data-unmask-row';
+const CHIPS_ATTR = 'data-unmask-chips';
 const BYPASS_ATTR = 'data-unmask-bypass';
 
 export function messageKey(m: GmailMessageRef): string {
@@ -251,7 +255,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     const s = deps.settings();
     const rows = site.inboxRows?.(doc) ?? [];
     if (!s.inboxBadges && !s.peekButtons) {
-      doc.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}]`).forEach((b) => b.remove());
+      doc.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}], [${CHIPS_ATTR}]`).forEach((b) => b.remove());
       doc.querySelectorAll(`[${ROW_ATTR}]`).forEach((r) => r.removeAttribute(ROW_ATTR));
       return;
     }
@@ -267,14 +271,19 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       const intact = (!ref || row.querySelector(`[${PEEK_ATTR}]`)) && (!(s.inboxBadges && result.verdict !== 'clear') || row.querySelector(`[${BADGE_ATTR}]`));
       if (row.getAttribute(ROW_ATTR) === signature && intact) continue;
       row.setAttribute(ROW_ATTR, signature);
-      row.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}]`).forEach((b) => b.remove());
-      let after: Node = sender;
-      if (s.inboxBadges && result.verdict !== 'clear') {
-        const badge = createBadge(doc, result.verdict, result.reasons);
-        sender.parentElement?.insertBefore(badge, after.nextSibling);
-        after = badge;
-      }
-      if (ref) sender.parentElement?.insertBefore(createPeekButton(doc, () => void peek(ref, thread, { name, address })), after.nextSibling);
+      row.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}], [${CHIPS_ATTR}]`).forEach((b) => b.remove());
+      row.querySelectorAll(`[${CHIPS_ATTR}]`).forEach((c) => c.remove());
+      const chips = doc.createElement('span');
+      chips.setAttribute(CHIPS_ATTR, '');
+      // Never shrink or wrap: Gmail clips long subjects, and our chips sit at the start.
+      chips.style.cssText = 'display:inline-flex;align-items:center;flex:none;margin-right:6px;vertical-align:middle;white-space:nowrap;';
+      if (s.inboxBadges && result.verdict !== 'clear') chips.append(createBadge(doc, result.verdict, result.reasons));
+      if (ref) chips.append(createPeekButton(doc, () => void peek(ref, thread, { name, address })));
+      if (!chips.childElementCount) continue;
+      // Where Gmail puts its own label chips: the start of the subject, which is never cut off.
+      // (Right after the sender name, Gmail's fixed-width column hid them.)
+      const host = site.chipHost?.(row, sender) ?? sender.parentElement;
+      host?.insertBefore(chips, host.firstChild);
     }
     if (s.scanInbox) void scanUnread(rows);
   }
@@ -349,7 +358,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
   doc.addEventListener('click', listener, true);
   const observer = new (win as unknown as { MutationObserver: typeof MutationObserver }).MutationObserver((records) => {
     // Our own banners and badges changing must not trigger another pass.
-    if (records.every((r) => [...r.addedNodes, ...r.removedNodes].every((n) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR) || n.hasAttribute(PEEK_ATTR) || n.hasAttribute('data-unmask-peek-card'))))) return;
+    if (records.every((r) => [...r.addedNodes, ...r.removedNodes].every((n) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR) || n.hasAttribute(PEEK_ATTR) || n.hasAttribute(CHIPS_ATTR) || n.hasAttribute('data-unmask-peek-card'))))) return;
     later.schedule();
   });
   observer.observe(doc.body, { childList: true, subtree: true });
@@ -364,7 +373,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       later.cancel();
       observer.disconnect();
       doc.removeEventListener('click', listener, true);
-      doc.querySelectorAll(`[${BANNER_ATTR}], [${BADGE_ATTR}], [${PEEK_ATTR}], [data-unmask-peek-card]`).forEach((n) => n.remove());
+      doc.querySelectorAll(`[${BANNER_ATTR}], [${BADGE_ATTR}], [${PEEK_ATTR}], [${CHIPS_ATTR}], [data-unmask-peek-card]`).forEach((n) => n.remove());
     },
   };
 }

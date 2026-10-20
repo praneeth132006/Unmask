@@ -100,7 +100,7 @@ export function createBadge(doc: Document, verdict: Exclude<Verdict, 'clear'>, r
     `.g { display: inline-block; margin: 0 6px 0 4px; padding: 0 6px; border-radius: 9px; font-size: 11px; line-height: 17px; font-weight: 600; white-space: nowrap; vertical-align: middle;
           background: ${p.bg}; color: ${p.text}; border: 1px solid ${p.border}; }`,
   );
-  h.style.display = 'inline';
+  h.style.display = 'inline-block';
   root.append(el(doc, 'span', { className: 'g', text: verdict === 'high' ? '⚠ Risky' : 'Check', title: `Unmask: ${p.label}\n${reasons.map((r) => `• ${r}`).join('\n')}` }));
   return h;
 }
@@ -182,7 +182,7 @@ export function createPeekButton(doc: Document, onPeek: () => void): HTMLElement
           background: #f1f3f4; color: #3c4043; border: 1px solid #dadce0; cursor: pointer; }
      .p:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }`,
   );
-  h.style.display = 'inline';
+  h.style.display = 'inline-block';
   const b = el(doc, 'button', { className: 'p', text: '👁 Peek', title: 'Check this email without opening it (Unmask). Images and trackers stay blocked.' });
   b.setAttribute('aria-label', 'Peek: check this email without opening it');
   root.append(b);

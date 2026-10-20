@@ -29,9 +29,22 @@ await new Promise((r) => site.listen(0, '127.0.0.1', r));
 const sitePort = site.address().port;
 const fixture = readFileSync(join(here, '..', 'tests', 'fixtures', 'phishing-paypal.eml'), 'utf8');
 const page = readFileSync(join(here, 'fake-gmail.html'), 'utf8');
-// An inbox list with the same phishing email as an unopened row.
-const inboxPage = `<!doctype html><html><head><meta charset="utf-8"><script>var GLOBALS = [null,null,1,"/mail/u/0","en","US",null,"x",0,"a1b2c3d4e5",1];</script></head><body>
-<table><tr class="zA zE"><td><span email="billing@paypa1-support.xyz" name="PayPal Service">PayPal Service</span> <span class="bog">Your account has been limited</span><span data-thread-id="#thread-f:1780954093844218223" data-legacy-thread-id="18b7c4a2e5f1d06f"></span></td></tr></table>
+// An inbox list built like Gmail's: fixed-width sender column that clips overflow,
+// a flex subject line, and a page that never stops changing.
+const gmailRow = (unread, name, email, subject, thread, legacy) => `<tr class="zA ${unread ? 'zE' : 'yO'}" role="row">
+  <td class="oZ-x3 xY"><div role="checkbox"></div></td>
+  <td class="yX xY"><div class="yW"><span class="bA4"><span class="${unread ? 'zF' : 'yP'}" email="${email}" name="${name}">${name}</span></span></div></td>
+  <td class="xY a4W"><div class="a4X"><div class="xS"><div class="xT"><div class="y6"><span class="bog"><span data-thread-id="#thread-f:${thread}" data-legacy-thread-id="${legacy}">${subject}</span></span></div><span class="y2"> - Please review the details in this message right away</span></div></div></div></td>
+  <td class="xW xY"><span>21:07</span></td></tr>`;
+const inboxPage = `<!doctype html><html><head><meta charset="utf-8"><script>var GLOBALS = [null,null,1,"/mail/u/0","en","US",null,"x",0,"a1b2c3d4e5",1];</script>
+<style>body{font-family:Arial;margin:0} table{table-layout:fixed;width:1000px;border-collapse:collapse} td{padding:8px 6px;border-bottom:1px solid #eee;overflow:hidden}
+td.oZ-x3{width:30px} td.yX{width:200px} .yW{overflow:hidden;white-space:nowrap;text-overflow:ellipsis} td.xW{width:70px;text-align:right}
+.xS,.xT{display:flex;overflow:hidden;white-space:nowrap;align-items:center} .y6{overflow:hidden;flex-shrink:1;min-width:0} .y2{color:#666;overflow:hidden;text-overflow:ellipsis;min-width:0}</style></head><body>
+<table>
+${gmailRow(true, 'PayPal Service Department Notifications', 'billing@paypa1-support.xyz', 'Your account has been limited - action required within 24 hours', '1780954093844218223', '18b7c4a2e5f1d06f')}
+${gmailRow(false, 'Kip Boyle via LinkedIn Newsletters', 'newsletters-noreply@linkedin.com', 'Cyber risk, explained for executives', '1780954093844218299', '18b7c4a2e5f1d0ab')}
+${gmailRow(false, 'Reddit', 'noreply@redditmail.com', 'Hiii romantically', '1780954093844218300', '18b7c4a2e5f1d0ac')}
+</table>
 <div id="churn"></div>
 <script>/* Like real Gmail, the page never stops changing. */ setInterval(function () { document.getElementById('churn').textContent = String(Date.now()); }, 60);</script>
 </body></html>`;
@@ -99,9 +112,24 @@ check((await tab.locator('[data-unmask-dialog]').count()) === 0, '"Go back" clos
 // Peek from the inbox list: the email is checked without being opened.
 const inbox = await ctx.newPage();
 await inbox.goto('https://mail.google.com/mail/u/0/inbox-demo');
-await inbox.waitForSelector('[data-unmask-peek] button', { timeout: 8000 }).catch(() => {});
+await inbox.waitForFunction(() => document.querySelectorAll('[data-unmask-peek]').length === 3, null, { timeout: 8000 }).catch(() => {});
+// Every row's Peek button must be really visible: the element under its centre is the button itself,
+// and it lies inside its row (Gmail's clipped sender column hid it before).
+const visibility = await inbox.evaluate(() =>
+  [...document.querySelectorAll('tr.zA')].map((row) => {
+    const host = row.querySelector('[data-unmask-peek]');
+    if (!host) return 'missing';
+    const r = host.getBoundingClientRect();
+    if (r.width < 20 || r.height < 10) return `too small ${r.width}x${r.height}`;
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const clip = host.closest('td').getBoundingClientRect();
+    return hit === host && r.right <= clip.right + 1 ? 'visible' : 'hidden';
+  }),
+);
+check(visibility.every((v) => v === 'visible'), `a visible Peek button on every row of a Gmail-like inbox (${visibility.join(', ')})`);
 const rowClicks = await inbox.evaluate(() => { window.__rowClicks = 0; document.querySelector('tr.zA').addEventListener('click', () => window.__rowClicks++); return 0; });
-await inbox.click('[data-unmask-peek] button').catch(() => {});
+// A real mouse click at the button's position, as a user would do.
+await inbox.locator('tr.zA').first().locator('[data-unmask-peek] button').click().catch(() => {});
 const peekText = await inbox.locator('[data-unmask-peek-card] .h').textContent({ timeout: 8000 }).catch(() => '');
 check(/looks like a scam/.test(peekText ?? ''), `Peek shows the verdict without opening the email ("${peekText}")`);
 check((await inbox.evaluate(() => window.__rowClicks)) === rowClicks, 'clicking Peek did not open the email');
