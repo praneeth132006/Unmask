@@ -173,6 +173,27 @@ check(trace.chain.ok && trace.chain.result.finalUrl === 'http://evil.unmask-e2e.
 check(!trace.blocked.ok || /local network/.test(trace.blocked.result.error ?? ''), `redirect to a local-network address is stopped (${trace.blocked.ok ? trace.blocked.result.error : trace.blocked.error})`);
 check(trace.local.ok && /local network/.test(trace.local.result.error ?? ''), 'tracing localhost is refused');
 check((await tab.locator('[data-unmask-hl]').count()) === 1, 'outline attribute present in the DOM');
+// Tracking pixels: the Gmail page marks the spot of a pixel shown through Gmail's image proxy.
+const pixelMark = await panel.evaluate(async () => {
+  const [gmail] = await chrome.tabs.query({ url: 'https://mail.google.com/*' });
+  const state = await chrome.tabs.sendMessage(gmail.id, { type: 'unmask:get-state' });
+  return chrome.tabs.sendMessage(gmail.id, { type: 'unmask:highlight', message: state.messages[0], target: { kind: 'pixel', src: 'https://open.list-manage.com/track/open.php?u=1&id=2', n: 1 } });
+});
+const markText = await tab.locator('[data-unmask-pixel-mark]').textContent().catch(() => '');
+check(pixelMark?.found === 1 && markText === '● Tracking pixel 1 is here', `the tracking pixel's spot is labelled in Gmail ("${markText}")`);
+
+// Tracking pixels in the panel: Privacy says where each one is; the safe view tags it and never loads it.
+const pixelEmail = ['From: "Shop" <news@shop.com>', 'Subject: Sale', 'Content-Type: text/html; charset=utf-8', '',
+  '<p>Our autumn sale starts today.</p><img src="https://cdn.shop.com/banner.jpg" width="600"><p>Unsubscribe | Privacy</p><img src="https://open.list-manage.com/track/open.php?u=1&amp;id=2" width="1" height="1">'].join('\r\n');
+await panel.setInputFiles('input[type=file]', { name: 'shop.eml', mimeType: 'message/rfc822', buffer: Buffer.from(pixelEmail) });
+await panel.locator('[role="tab"]', { hasText: 'Privacy' }).click().catch(() => {});
+const where = (await panel.locator('#unmask-pixel-1').textContent({ timeout: 5000 }).catch(() => '')) ?? '';
+check(where.includes('Image 2 of 2, at the very end of the email’s visible text (100% of the way down), after “Our autumn sale starts today. Unsubscribe | Privacy”'), `Privacy tab says where the pixel is ("${where.slice(0, 120)}")`);
+await panel.locator('#unmask-pixel-1 button', { hasText: 'Show it in the safe view' }).click().catch(() => {});
+const srcdoc = (await panel.locator('iframe[title="Email body (safe view)"]').getAttribute('srcdoc', { timeout: 5000 }).catch(() => '')) ?? '';
+check(/data-unmask-pixel-tag="1"[^>]*data-unmask-focus/.test(srcdoc) && srcdoc.includes('● Tracking pixel 1 (Mailchimp): blocked'), 'the safe view tags the pixel where it sits, highlighted');
+check(!srcdoc.includes('open.list-manage.com'), 'the safe view never loads the tracking pixel');
+
 // The tabs (including Headers) must be there in both normal and simple mode.
 for (const simpleMode of [false, true]) {
   await panel.evaluate((v) => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), simpleMode: v } })), simpleMode);

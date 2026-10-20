@@ -29,6 +29,8 @@ export interface Focus {
   sha256?: string;
   headerKey?: string;
   revealHidden?: boolean;
+  /** Tracking pixel number to point at in the Body tab. */
+  pixel?: number;
 }
 
 export function toFocus(target: FindingTarget | undefined): Focus | null {

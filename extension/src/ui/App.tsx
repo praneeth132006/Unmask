@@ -578,9 +578,15 @@ export function App() {
                       onHoverAttachment={onHoverAttachment}
                     />
                   )}
-                  {tab === 'body' && <BodyTab report={report} initialReveal={focus?.revealHidden} onHoverUrl={canHighlight ? onHoverUrl : undefined} />}
+                  {tab === 'body' && <BodyTab report={report} initialReveal={focus?.revealHidden} focusPixel={focus?.pixel} onHoverUrl={canHighlight ? onHoverUrl : undefined} />}
                   {tab === 'headers' && <HeadersTab report={report} initialFilter={focus?.headerKey} />}
-                  {tab === 'privacy' && <PrivacyTab report={report} />}
+                  {tab === 'privacy' && (
+                    <PrivacyTab
+                      report={report}
+                      onShowPixel={(n) => openTab('body', { tab: 'body', pixel: n })}
+                      onHoverPixel={canHighlight ? (p) => highlight(p ? { kind: 'pixel', src: p.src, n: p.n } : null) : undefined}
+                    />
+                  )}
                 </div>
               </>
             )}

@@ -1,5 +1,6 @@
-import type { Report } from '../../core/types';
-import { Card, Mono, Pill, SectionTitle } from './ui';
+import type { Report, TrackerPixel } from '../../core/types';
+import { describePixelPlace } from '../pixelPlace';
+import { Button, Card, CopyButton, Mono, Pill, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
 function Stat({ value, label, tone }: { value: number; label: string; tone: 'bad' | 'warn' | 'good' }) {
@@ -12,7 +13,17 @@ function Stat({ value, label, tone }: { value: number; label: string; tone: 'bad
   );
 }
 
-export function PrivacyTab({ report }: { report: Report }) {
+export function PrivacyTab({
+  report,
+  onShowPixel,
+  onHoverPixel,
+}: {
+  report: Report;
+  /** Open the Body tab with this pixel's tag highlighted. */
+  onShowPixel?: (n: number) => void;
+  /** Mark this pixel's spot in the email open in Gmail (null clears). */
+  onHoverPixel?: (p: TrackerPixel | null) => void;
+}) {
   const { pixels, trackedLinkCount, services, remoteImages } = report.trackers;
   const tracked = pixels.length > 0 || trackedLinkCount > 0;
 
@@ -53,20 +64,44 @@ export function PrivacyTab({ report }: { report: Report }) {
 
       {pixels.length > 0 && (
         <>
-          <SectionTitle>Tracking pixels</SectionTitle>
+          <SectionTitle>Where the tracking pixels are ({pixels.length})</SectionTitle>
           <Card className="!p-0">
             <ul className="divide-y divide-[var(--border)]">
-              {pixels.map((p, i) => (
-                <li key={i} className="px-3 py-2">
+              {pixels.map((p) => (
+                <li key={p.n} id={`unmask-pixel-${p.n}`} className="px-3 py-2.5" onMouseEnter={() => onHoverPixel?.(p)} onMouseLeave={() => onHoverPixel?.(null)}>
                   <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="font-medium">{p.service ?? p.host}</span>
-                    <span className="text-[11px] text-[var(--text-3)]">{p.reason}</span>
+                    <span className="font-semibold">
+                      <span className="mr-1.5 inline-block rounded-full bg-[var(--bad)] px-1.5 text-[10px] font-bold text-white">{p.n}</span>
+                      {p.service ?? 'Unknown service'} <span className="font-normal text-[var(--text-3)]">· {p.host}</span>
+                    </span>
                   </div>
-                  <Mono className="mt-0.5 block text-[10px]">{p.src.length > 160 ? `${p.src.slice(0, 160)}…` : p.src}</Mono>
+                  <dl className="mt-1.5 space-y-1 text-[11.5px] leading-snug">
+                    <div>
+                      <dt className="inline font-medium text-[var(--text)]">Where: </dt>
+                      <dd className="inline text-[var(--text-2)]">{describePixelPlace(p)}</dd>
+                    </div>
+                    <div>
+                      <dt className="inline font-medium text-[var(--text)]">Why it’s a pixel: </dt>
+                      <dd className="inline text-[var(--text-2)]">{p.reason}{p.size && !p.reason.includes(p.size) ? ` (size ${p.size})` : ''}.</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-[var(--text)]">Address it loads from:</dt>
+                      <dd className="flex items-start gap-1">
+                        <Mono className="block text-[10px]">{p.src.length > 200 ? `${p.src.slice(0, 200)}…` : p.src}</Mono>
+                        <CopyButton value={p.src} />
+                      </dd>
+                    </div>
+                  </dl>
+                  {onShowPixel && (
+                    <Button className="mt-2" onClick={() => onShowPixel(p.n)}>
+                      Show it in the safe view
+                    </Button>
+                  )}
                 </li>
               ))}
             </ul>
           </Card>
+          {onHoverPixel && <p className="mt-1.5 text-[11px] text-[var(--text-3)]">With the email open in Gmail, hover a pixel to mark its spot there (it only shows if Gmail is displaying the email’s images).</p>}
         </>
       )}
 

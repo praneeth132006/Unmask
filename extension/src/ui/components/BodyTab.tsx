@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import type { Report } from '../../core/types';
 import { buildSafeSrcDoc } from '../safeHtml';
+import { describePixelPlace } from '../pixelPlace';
 import { Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
@@ -33,18 +34,25 @@ export function splitUrls(text: string): { text: string; url?: string }[] {
   return out;
 }
 
-export function BodyTab({ report, initialReveal, onHoverUrl }: { report: Report; initialReveal?: boolean; onHoverUrl?: (url: string | null) => void }) {
+export function BodyTab({ report, initialReveal, focusPixel, onHoverUrl }: { report: Report; initialReveal?: boolean; focusPixel?: number; onHoverUrl?: (url: string | null) => void }) {
   const { email, hidden, annotatedHtml } = report;
   const hasHtml = Boolean(email.html);
   const [view, setView] = useState<View>(hasHtml ? 'safe' : 'text');
   const [reveal, setReveal] = useState(initialReveal ?? hidden.length > 0);
   const [remoteImages, setRemoteImages] = useState(false);
+  const pixels = report.trackers.pixels;
+  const [markPixels, setMarkPixels] = useState(pixels.length > 0);
 
   const remoteCount = report.trackers.remoteImages;
+  // Pixels inside a hidden block only show their tag when hidden text is revealed.
+  const focusHidden = focusPixel !== undefined && pixels.find((p) => p.n === focusPixel)?.inHiddenBlock;
+  const showHidden = reveal || Boolean(focusHidden);
   const srcDoc = useMemo(() => {
-    const base = reveal ? (annotatedHtml ?? email.html) : email.html;
-    return base ? buildSafeSrcDoc(base, { reveal, remoteImages, attachments: email.attachments }) : '';
-  }, [reveal, remoteImages, annotatedHtml, email.html, email.attachments]);
+    // The annotated HTML carries both the hidden-text and the tracking-pixel marks.
+    const base = annotatedHtml ?? email.html;
+    const labels = markPixels ? Object.fromEntries(pixels.map((p) => [p.n, p.service ?? p.host])) : undefined;
+    return base ? buildSafeSrcDoc(base, { reveal: showHidden, remoteImages, attachments: email.attachments, pixelLabels: labels, focusPixel }) : '';
+  }, [showHidden, remoteImages, annotatedHtml, email.html, email.attachments, markPixels, pixels, focusPixel]);
 
   const seg = (active: boolean) =>
     `flex-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${active ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--shadow)]' : 'text-[var(--text-2)] hover:text-[var(--text)]'}`;
@@ -70,15 +78,26 @@ export function BodyTab({ report, initialReveal, onHoverUrl }: { report: Report;
                 Show hidden text <span className="text-[var(--bad)]">({hidden.length})</span>
               </Toggle>
             )}
-            {remoteCount > 0 && (
-              <Toggle checked={remoteImages} onChange={setRemoteImages} title="Loading images tells the sender you opened the email">
-                Load {remoteCount} remote image{remoteCount === 1 ? '' : 's'}
+            {pixels.length > 0 && (
+              <Toggle checked={markPixels} onChange={setMarkPixels} title="Puts a red tag where each tracking pixel sits">
+                Mark tracking pixels <span className="text-[var(--bad)]">({pixels.length})</span>
+              </Toggle>
+            )}
+            {remoteCount - pixels.filter((p) => p.kind === 'img').length > 0 && (
+              <Toggle checked={remoteImages} onChange={setRemoteImages} title="Loading images can tell the sender you opened the email">
+                Load {remoteCount - pixels.filter((p) => p.kind === 'img').length} remote image{remoteCount - pixels.filter((p) => p.kind === 'img').length === 1 ? '' : 's'}
+                {pixels.length > 0 && <span className="text-[var(--text-3)]"> (tracking pixels stay blocked)</span>}
               </Toggle>
             )}
           </div>
           {remoteImages && (
             <p className="mb-2 flex items-center gap-1 rounded-lg bg-[var(--warn-soft)] px-2.5 py-1.5 text-[11px] text-[var(--warn)]">
-              <Icon name="alert" className="h-3.5 w-3.5" /> Images are loading: the sender can now see that you opened this email.
+              <Icon name="alert" className="h-3.5 w-3.5" /> Images are loading straight from the sender’s servers, so they can see that you opened this email and your IP address. Known tracking pixels stay blocked, but any image can be used to track.
+            </p>
+          )}
+          {focusPixel !== undefined && pixels.find((p) => p.n === focusPixel) && (
+            <p className="mb-2 rounded-lg bg-[var(--bad-soft)] px-2.5 py-1.5 text-[11px] text-[var(--text)]">
+              <strong className="text-[var(--bad)]">Tracking pixel {focusPixel}</strong> is marked with a highlighted red tag below. {describePixelPlace(pixels.find((p) => p.n === focusPixel)!)}
             </p>
           )}
           <iframe

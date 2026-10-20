@@ -10,15 +10,20 @@ export type HighlightTarget =
   | { kind: 'sender' }
   /** `index`: position among the email's real (non-inline) attachments, used when names don't settle it. */
   | { kind: 'attachments'; names: string[]; index?: number }
-  | { kind: 'text'; phrases: string[] };
+  | { kind: 'text'; phrases: string[] }
+  /** A tracking pixel, by the address it loads from; marked with a visible label because it is 1×1. */
+  | { kind: 'pixel'; src: string; n: number };
 
 const ATTR = 'data-unmask-hl';
 const MARK = 'data-unmask-mark';
 const STYLE_ID = 'unmask-highlight-style';
+const PIXEL_MARK = 'data-unmask-pixel-mark';
 
 const CSS = `
 [${ATTR}] { outline: 3px solid #f59e0b !important; outline-offset: 2px !important; border-radius: 4px !important;
   background-color: rgba(250, 204, 21, 0.28) !important; box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.18) !important; }
+[${PIXEL_MARK}] { display: inline-block !important; margin: 2px 4px !important; padding: 1px 8px !important; border-radius: 9px !important;
+  font: 600 12px/1.6 Roboto, Arial, sans-serif !important; color: #fff !important; background: #d93025 !important; box-shadow: 0 0 0 3px #fbbc04 !important; }
 mark[${MARK}] { background: #fde047 !important; color: #111 !important; border-radius: 3px; padding: 0 2px;
   box-shadow: 0 0 0 2px #f59e0b; }
 `;
@@ -198,7 +203,25 @@ function elementsContaining(root: Element, phrases: string[]): Element[] {
   return out;
 }
 
+/**
+ * Gmail shows remote images through its proxy, whose URL ends with "#<original address>",
+ * so a pixel is found by its original address in either form.
+ */
+export function pixelElements(root: Element, src: string): Element[] {
+  const want = src.trim();
+  return Array.from(bodyOf(root).querySelectorAll('img')).filter((img) => {
+    const s = img.getAttribute('src') ?? '';
+    if (s === want || s.endsWith(`#${want}`)) return true;
+    try {
+      return decodeURIComponent(s.split('#').slice(1).join('#')) === want;
+    } catch {
+      return false;
+    }
+  });
+}
+
 export function clearHighlights(doc: Document): void {
+  doc.querySelectorAll(`[${PIXEL_MARK}]`).forEach((el) => el.remove());
   doc.querySelectorAll(`[${ATTR}]`).forEach((el) => el.removeAttribute(ATTR));
   doc.querySelectorAll(`mark[${MARK}]`).forEach((mark) => {
     const parent = mark.parentNode;
@@ -221,6 +244,16 @@ export function applyHighlight(doc: Document, ref: GmailMessageRef, target: High
   if (target.kind === 'links') els = linkElements(root, target.hrefs);
   else if (target.kind === 'sender') els = senderElements(root);
   else if (target.kind === 'attachments') els = attachmentElements(root, target.names, target.index);
+  else if (target.kind === 'pixel') {
+    // A 1×1 image can't be seen even when outlined: put a label right before it.
+    els = pixelElements(root, target.src).map((img) => {
+      const label = doc.createElement('span');
+      label.setAttribute(PIXEL_MARK, '');
+      label.textContent = `● Tracking pixel ${target.n} is here`;
+      img.parentNode?.insertBefore(label, img);
+      return label;
+    });
+  }
   else if (target.kind === 'text') {
     els = markPhrases(root, target.phrases);
     if (!els.length) {
@@ -229,7 +262,7 @@ export function applyHighlight(doc: Document, ref: GmailMessageRef, target: High
     }
   }
 
-  if (target.kind !== 'text') els.forEach((el) => el.setAttribute(ATTR, ''));
+  if (target.kind !== 'text' && target.kind !== 'pixel') els.forEach((el) => el.setAttribute(ATTR, ''));
   const first = els[0] as HTMLElement | undefined;
   if (scroll && first && typeof first.scrollIntoView === 'function') {
     const r = first.getBoundingClientRect();

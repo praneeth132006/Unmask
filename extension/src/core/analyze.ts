@@ -41,7 +41,8 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const { attachments, findings: attachmentFindings, links: fileLinks } = await analyzeAttachments(email.attachments);
   const qrCodes = await findQrCodes(email, opts.decodeImage);
   const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks, ...qrLinks(qrCodes)], email.from?.domain ?? '');
-  const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
+  // Runs on the body already marked for hidden text, and marks each tracking pixel in it too.
+  const { trackers, findings: trackerFindings, annotatedHtml } = analyzeTrackers(content.annotatedHtml ?? email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
   const pressure = [...content.findings, ...becFindings].some((f) => ['credential-request', 'html-form', 'urgency', 'bec-bank-change', 'bec-payment', 'bec-gift-card'].includes(f.id));
   const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage), pressure);
@@ -62,7 +63,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
     trackers,
     qrCodes,
     previewText: content.visibleText.replace(/\s+/g, ' ').trim().slice(0, 700),
-    annotatedHtml: content.annotatedHtml,
+    annotatedHtml: annotatedHtml ?? content.annotatedHtml,
     findings,
     score,
     verdict,

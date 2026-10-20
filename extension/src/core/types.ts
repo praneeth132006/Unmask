@@ -139,6 +139,21 @@ export interface TrackerPixel {
   /** Known tracking service, e.g. "Mailchimp", or null if unknown. */
   service: string | null;
   reason: string;
+  /** 1-based number, also set on the element as data-unmask-pixel in the annotated HTML. */
+  n: number;
+  /** Where it is: the Nth image of the email (0 for a CSS background pixel). */
+  imageIndex: number;
+  imageCount: number;
+  /** How far through the email's visible text it sits, 0-100 (hidden text is not counted). */
+  positionPct: number;
+  /** Visible text just before and after it, so you can find the spot. */
+  before: string;
+  after: string;
+  /** Size from its attributes or style, e.g. "1×1", or null if not given. */
+  size: string | null;
+  kind: 'img' | 'background';
+  /** Inside an element hidden from view (display:none and similar). */
+  inHiddenBlock: boolean;
 }
 
 export interface TrackerReport {

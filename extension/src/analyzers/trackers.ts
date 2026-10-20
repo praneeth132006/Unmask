@@ -74,21 +74,22 @@ function pixelReason(img: Element, src: string): string | null {
  * links. These are about privacy, not phishing: they tell the sender when and
  * where you opened the email, so findings carry no risk points.
  */
-export function analyzeTrackers(html: string | null, links: LinkInfo[]): { trackers: TrackerReport; findings: Finding[] } {
+export function analyzeTrackers(html: string | null, links: LinkInfo[]): { trackers: TrackerReport; findings: Finding[]; annotatedHtml: string | null } {
   const pixels: TrackerPixel[] = [];
   let remoteImages = 0;
+  let annotatedHtml: string | null = null;
 
   if (html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
-    doc.querySelectorAll('img[src]').forEach((img) => {
+    const imgs = Array.from(doc.querySelectorAll('img[src]'));
+    const found: { el: Element; src: string; service: string | null; reason: string; kind: 'img' | 'background' }[] = [];
+    imgs.forEach((img) => {
       const src = (img.getAttribute('src') ?? '').trim();
       if (!/^https?:\/\//i.test(src)) return;
       remoteImages++;
       const service = serviceForUrl(src);
       const reason = pixelReason(img, src);
-      if (reason || (service && PIXEL_PATH.test(src))) {
-        pixels.push({ src, host: safeUrl(src)?.hostname ?? '', service, reason: reason ?? 'image from a tracking service' });
-      }
+      if (reason || (service && PIXEL_PATH.test(src))) found.push({ el: img, src, service, reason: reason ?? 'image from a tracking service', kind: 'img' });
     });
     // Hidden CSS background images can track opens too.
     doc.querySelectorAll('[style*="url("]').forEach((el) => {
@@ -96,8 +97,53 @@ export function analyzeTrackers(html: string | null, links: LinkInfo[]): { track
       if (!m) return;
       const src = m[1]!;
       const service = serviceForUrl(src);
-      if (service || PIXEL_PATH.test(src)) pixels.push({ src, host: safeUrl(src)?.hostname ?? '', service, reason: 'background image from a tracking address' });
+      if (service || PIXEL_PATH.test(src)) found.push({ el, src, service, reason: 'background image from a tracking address', kind: 'background' });
     });
+
+    if (found.length && doc.body) {
+      // Walk the body in reading order once: text lengths before each pixel, and the text around it.
+      // Text in reading order, with a space where a block starts, so "today.</p><p>Unsubscribe" reads "today. Unsubscribe".
+      const order: (string | Element)[] = [];
+      const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+      const targets = new Set(found.map((f) => f.el));
+      const BLOCK = /^(P|DIV|TD|TH|TR|LI|BR|H[1-6]|TABLE|SECTION|ARTICLE|HEADER|FOOTER|BLOCKQUOTE|UL|OL|CENTER)$/;
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (node.nodeType === 3) {
+          const parent = (node as Text).parentElement;
+          if (parent && !parent.closest('style, script, head, title, [data-unmask-hidden]')) order.push((node as Text).data);
+        } else if (targets.has(node as Element)) order.push(node as Element);
+        else if (BLOCK.test((node as Element).tagName)) order.push(' ');
+      }
+      const clean = (t: string) => t.replace(/\s+/g, ' ');
+      const texts = order.map((n) => (typeof n === 'string' ? clean(n) : ''));
+      // Measured exactly like the text before each pixel (whitespace collapsed, trimmed), so the end is 100%.
+      const total = clean(texts.join('')).trim().length || 1;
+      found.forEach((f, i) => {
+        const at = order.indexOf(f.el);
+        const beforeText = clean(texts.slice(0, Math.max(at, 0)).join('')).trim();
+        const afterText = clean(texts.slice(at + 1).join('')).trim();
+        const st = styleOf(f.el);
+        const w = px(f.el.getAttribute('width')) ?? px(st['width']);
+        const h = px(f.el.getAttribute('height')) ?? px(st['height']);
+        f.el.setAttribute('data-unmask-pixel', String(i + 1));
+        pixels.push({
+          src: f.src,
+          host: safeUrl(f.src)?.hostname ?? '',
+          service: f.service,
+          reason: f.reason,
+          n: i + 1,
+          imageIndex: f.kind === 'img' ? imgs.indexOf(f.el) + 1 : 0,
+          imageCount: imgs.length,
+          positionPct: Math.round((beforeText.length / total) * 100),
+          before: beforeText.length > 70 ? `…${beforeText.slice(-70).replace(/^\S*\s/, '')}` : beforeText,
+          after: afterText.length > 70 ? `${afterText.slice(0, 70).replace(/\s\S*$/, '')}…` : afterText,
+          size: w !== null || h !== null ? `${w ?? '?'}×${h ?? '?'}` : null,
+          kind: f.kind,
+          inHiddenBlock: Boolean(f.el.closest('[data-unmask-hidden]')),
+        });
+      });
+      annotatedHtml = doc.documentElement.outerHTML;
+    }
   }
 
   const trackedLinks = links.filter((l) => serviceForUrl(l.href) !== null);
@@ -127,5 +173,5 @@ export function analyzeTrackers(html: string | null, links: LinkInfo[]): { track
       target: { kind: 'tab', tab: 'privacy' },
     });
   }
-  return { trackers, findings };
+  return { trackers, findings, annotatedHtml };
 }

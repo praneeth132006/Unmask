@@ -6,6 +6,10 @@ export interface SafeHtmlOptions {
   /** Allow remote images (tells the sender you opened the email). */
   remoteImages: boolean;
   attachments: ParsedAttachment[];
+  /** Put a visible tag where each tracking pixel (data-unmask-pixel) sits; labels by pixel number. */
+  pixelLabels?: Record<number, string>;
+  /** The pixel to emphasise. */
+  focusPixel?: number;
 }
 
 function toDataUrl(att: ParsedAttachment): string {
@@ -45,6 +49,23 @@ export function buildSafeSrcDoc(html: string, opts: SafeHtmlOptions): string {
     form.setAttribute('data-unmask-form', '');
   });
 
+  // Tracking pixels never load, even when remote images are allowed: loading one tells the sender you opened it.
+  doc.querySelectorAll('[data-unmask-pixel]').forEach((el) => {
+    const n = Number(el.getAttribute('data-unmask-pixel'));
+    if (el.tagName === 'IMG') el.removeAttribute('src');
+    el.removeAttribute('srcset');
+    const style = el.getAttribute('style');
+    if (style) el.setAttribute('style', style.replace(/url\([^)]*\)/gi, 'none'));
+    if (opts.pixelLabels) {
+      const tag = doc.createElement('span');
+      tag.setAttribute('data-unmask-pixel-tag', String(n));
+      if (n === opts.focusPixel) tag.setAttribute('data-unmask-focus', '');
+      tag.textContent = `● Tracking pixel ${n}${opts.pixelLabels[n] ? ` (${opts.pixelLabels[n]})` : ''}: blocked`;
+      if (el.tagName === 'IMG') el.parentNode?.insertBefore(tag, el);
+      else el.prepend(tag);
+    }
+  });
+
   const byCid = new Map(opts.attachments.filter((a) => a.contentId).map((a) => [a.contentId!.replace(/^<|>$/g, ''), a]));
   doc.querySelectorAll('img[src^="cid:" i]').forEach((img) => {
     const att = byCid.get(img.getAttribute('src')!.slice(4));
@@ -61,6 +82,10 @@ export function buildSafeSrcDoc(html: string, opts: SafeHtmlOptions): string {
     img { max-width: 100%; height: auto; }
     [data-unmask-link] { color: #1d4ed8; text-decoration: underline; cursor: help; }
     [data-unmask-form] { outline: 3px solid #dc2626; outline-offset: 2px; }
+    [data-unmask-pixel-tag] { display: inline-block !important; margin: 2px 4px !important; padding: 1px 7px !important; border-radius: 9px !important;
+      font: 600 11px/1.6 system-ui, sans-serif !important; color: #fff !important; background: #d93025 !important; white-space: nowrap !important;
+      visibility: visible !important; opacity: 1 !important; position: static !important; }
+    [data-unmask-pixel-tag][data-unmask-focus] { outline: 3px solid #fbbc04 !important; outline-offset: 2px !important; font-size: 13px !important; }
     ${
       opts.reveal
         ? `[data-unmask-hidden] { display: block !important; visibility: visible !important; opacity: 1 !important;
