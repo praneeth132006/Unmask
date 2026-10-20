@@ -4,6 +4,14 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-10-20
+
+### Added
+- **See where each tracking pixel is.** The Privacy tab lists every pixel with its service, full address, why it counts as a pixel, and where it sits: image number, how far through the visible text, the words just before and after it, and whether it's inside a hidden block. **Show it in the safe view** opens the Body tab with a red tag at that exact spot. With the email open in Gmail, hovering a pixel labels its spot there.
+
+### Fixed
+- **Load remote images** in the Body tab also loaded tracking pixels, which told the sender you opened the email. Tracking pixels now stay blocked; the switch says so, and its warning now says images load straight from the sender's servers (so they see your IP address).
+
 ## [0.3.3] - 2026-10-20
 
 ### Fixed

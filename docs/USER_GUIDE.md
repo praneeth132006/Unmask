@@ -13,6 +13,7 @@ This guide is for everyone, no technical background needed. It covers installing
 - [8a. Warnings inside your inbox](#8a-warnings-inside-your-inbox)
 - [8b. Reporting an email](#8b-reporting-an-email)
 - [8c. Peek: check an email without opening it](#8c-peek-check-an-email-without-opening-it)
+- [8f. Finding the tracking pixels](#8f-finding-the-tracking-pixels)
 - [8d. Plain words and simple mode](#8d-plain-words-and-simple-mode)
 - [8e. Your protection list (and sharing it with family or a team)](#8e-your-protection-list-and-sharing-it-with-family-or-a-team)
 - [9. Settings](#9-settings)
@@ -141,7 +142,7 @@ The row under the Unmask logo stays visible while you scroll. A **red dot** on a
 | **Links** | Each link: the text you see, where it **really** goes (with the real website in bold), warnings, and buttons for extra checks |
 | **Files** | Each attachment: type, size, fingerprint (SHA-256), warnings, and a VirusTotal check |
 | **Body** | The email shown safely: scripts off, links disabled, images blocked. Switch on **Show hidden text** to see invisible text outlined in red |
-| **Privacy** | Tracking pixels and click-tracked links, which company runs them, and how to avoid tracking |
+| **Privacy** | Tracking pixels and click-tracked links, which company runs them, **where each pixel sits in the email**, and how to avoid tracking |
 | **Headers** | The path the email took to reach you, and every technical header, with a filter box |
 
 <p>
@@ -327,6 +328,28 @@ The row's badge updates with the full result, so you won't need to Peek again.
 - In a conversation with several messages, Peek checks the first message.
 - Peek works in Gmail. Outlook on the web doesn't let pages download a message's source, so there you get the inbox badges only.
 - Unmask's tests use a stand-in for Gmail, so we can't promise how Gmail treats the download. If Gmail marks the email as read, that only changes the bold styling in your own inbox; it isn't sent to the sender.
+
+---
+
+## 8f. Finding the tracking pixels
+
+A tracking pixel is a tiny image, usually 1×1 and invisible, that the sender's mailing service hosts. When your mail app downloads it, the service learns that you opened the email and when. Unmask shows exactly where each one is.
+
+<img src="images/panel-pixel-where.png" width="330" alt="Privacy tab entry: Mailchimp pixel, where it is, why it's a pixel, its address">
+
+**Privacy tab → Where the tracking pixels are.** Each pixel gets a number and:
+- **which service** runs it (Mailchimp, SendGrid…) and the host it loads from;
+- **Where:** for example *"Image 2 of 2, at the very end of the email's visible text (100% of the way down), after '…with your phone.'"*. The position is measured on the text you'd actually see; hidden text isn't counted. If the pixel sits inside a hidden block, it says so: you'd never see it, but it still loads with the email's images;
+- **Why it's a pixel:** for example *1×1 pixel image*, *hidden image* or *image at a tracking address*;
+- **the full address it loads from**, with a Copy button.
+
+**See it in the email:**
+- **Show it in the safe view** opens the Body tab with a red **"● Tracking pixel 1 (Mailchimp): blocked"** tag exactly where the invisible pixel is, highlighted, plus a note repeating where it is. Scroll the preview to that tag.
+- With the email open in Gmail, **hover** a pixel in the Privacy tab and Unmask puts a red **"● Tracking pixel 1 is here"** label at that spot in Gmail. This only works when Gmail is showing the email's images; with "Ask before displaying external images" on, Gmail hasn't added the image, so there's nothing to label.
+
+<img src="images/panel-pixel-tag.png" width="280" alt="Body tab safe view with a red 'Tracking pixel 1 (Mailchimp): blocked' tag at the pixel's spot">
+
+**Tracking pixels never load in Unmask.** The safe view and Peek never load them, even if you switch on **Load remote images** in the Body tab (it says "tracking pixels stay blocked"). Other images do load then, straight from the sender's servers, which shows them your IP address. Unmask warns you when you switch it on.
 
 ---
 

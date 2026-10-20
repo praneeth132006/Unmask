@@ -49,7 +49,7 @@ const html = `<div style="font-family:Arial,sans-serif;max-width:560px">
 <p>We noticed unusual sign-in activity. Your account has been limited. You must verify your account within 24 hours or it will be permanently closed.</p>
 <p>Please note our billing bank details have changed. Use the new account for any payment due this week.</p>
 <p><a href="${LINK.replace(/&/g, '&amp;')}">https://www.paypal.com/signin</a></p>
-<p>Or scan the QR code in the attached secure message with your phone.</p>
+<p>Or scan the QR code in the attached secure message with your phone.<img src="https://open.list-manage.com/track/open.php?u=8f2&amp;id=4c1" width="1" height="1" alt=""></p>
 <p style="color:#ffffff;font-size:1px">paypal security team official notice account services</p>
 </div>`;
 const b64 = (b) => Buffer.from(b).toString('base64').replace(/.{76}/g, '$&\r\n');
@@ -147,7 +147,7 @@ const shot = async (page, name, clip) => {
 // In Gmail: banner, link warning, reply warning.
 const g = await ctx.newPage();
 await g.setViewportSize({ width: 900, height: 600 });
-await g.goto('https://mail.google.com/mail/u/0/');
+await g.goto('https://mail.google.com/mail/u/0/', { waitUntil: 'domcontentloaded' });
 await g.waitForSelector('[data-unmask-banner]', { timeout: 15000 });
 await shot(g, 'gmail-banner.png');
 await g.click('.a3s a');
@@ -164,7 +164,7 @@ await g.locator('[data-unmask-dialog] button', { hasText: 'Go back' }).click();
 // Inbox badges.
 const i = await ctx.newPage();
 await i.setViewportSize({ width: 900, height: 420 });
-await i.goto('https://mail.google.com/mail/u/0/inbox-demo');
+await i.goto('https://mail.google.com/mail/u/0/inbox-demo', { waitUntil: 'domcontentloaded' });
 await i.waitForSelector('[data-unmask-badge]', { timeout: 15000 });
 await i.waitForTimeout(300);
 await shot(i, 'inbox-badges.png');
@@ -209,6 +209,17 @@ await qrCard.scrollIntoViewIfNeeded();
 await p.waitForTimeout(300);
 await qrCard.screenshot({ path: join(out, 'panel-qr.png') });
 console.log('wrote panel-qr.png');
+// Where the tracking pixel is: Privacy tab entry, then its tag in the safe view.
+await p.evaluate(() => window.scrollTo(0, 0));
+await p.getByRole('tab', { name: /Privacy/ }).click();
+const pixelCard = p.locator('#unmask-pixel-1');
+await pixelCard.scrollIntoViewIfNeeded();
+await p.waitForTimeout(300);
+await pixelCard.screenshot({ path: join(out, 'panel-pixel-where.png') });
+console.log('wrote panel-pixel-where.png');
+await pixelCard.locator('button', { hasText: 'Show it in the safe view' }).click();
+await p.waitForTimeout(600);
+await shot(p, 'panel-pixel-tag.png');
 await p.getByTitle('Settings').click();
 await p.locator('text=Protection inside Gmail').scrollIntoViewIfNeeded();
 await p.waitForTimeout(300);

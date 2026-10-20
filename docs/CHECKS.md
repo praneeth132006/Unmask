@@ -291,6 +291,7 @@ Source: [`analyzers/trackers.ts`](../extension/src/analyzers/trackers.ts). These
 
 - **Tracking pixels:** remote images 3×3 pixels or smaller, hidden or transparent images, images at tracking paths (`/open`, `/wf/open`, `/pixel`, …), and CSS background images from tracking addresses.
 - **Click-tracked links:** links routed through a known tracking service.
+- **Where each pixel is:** its number, image position ("image 2 of 2"), how far through the visible text it sits, the words just before and after it, whether it's inside a hidden block, its size and its full address. The Body tab's safe view tags each pixel's spot, and pixels are never loaded there, even when other remote images are. Source: [`analyzers/trackers.ts`](../extension/src/analyzers/trackers.ts).
 - **Services recognized (~40):** Mailchimp, SendGrid, HubSpot, Mailtrack, Mixmax, Yesware, Streak, Superhuman, Bananatag, ContactMonkey, Boomerang, Mailgun, SparkPost, Amazon SES, Postmark, Salesforce Marketing Cloud, Klaviyo, Campaign Monitor, Constant Contact, Customer.io, Intercom, Iterable, Braze, Mailjet, Brevo, Kit, Substack, beehiiv, MailerLite, GetResponse, ActiveCampaign, Marketo, Oracle Eloqua, Zoho Campaigns, Omnisend, Drip, Google Analytics, Google Ads, Meta Pixel, LinkedIn Ads.
 
 ---
