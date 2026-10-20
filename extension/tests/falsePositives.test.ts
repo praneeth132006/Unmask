@@ -173,3 +173,38 @@ describe('accuracy: everyday inbox emails are not flagged', () => {
     expect(r.verdict).toBe('clear');
   });
 });
+
+describe('accuracy: newsletters and a company’s own links', () => {
+  const mail = (from: string, html: string, subject = 'This week in AI') => {
+    const domain = from.match(/@([^>]+)>/)![1]!;
+    return [
+      `Authentication-Results: mx.google.com; dkim=pass header.d=${domain}; spf=pass smtp.mailfrom=${domain}; dmarc=pass header.from=${domain}`,
+      `From: ${from}`,
+      `Subject: ${subject}`,
+      'Content-Type: text/html; charset=utf-8',
+      '',
+      html,
+    ].join('\r\n');
+  };
+
+  it('a newsletter showing Meta’s and Google’s logos is not impersonating them', async () => {
+    const r = await analyzeRawEmail(mail('That1AI Newsletter <that1ai@mail.beehiiv.com>', '<img alt="Meta logo" src="https://scontent.xx.fbcdn.net/meta.png"><img alt="Google" src="https://www.gstatic.com/logo.png"><p>Meta released a new model.</p>'));
+    expect(r.findings.filter((f) => f.id.startsWith('fake-logo'))).toEqual([]);
+    expect(r.verdict).toBe('clear');
+  });
+
+  it('an email claiming to be PayPal with PayPal’s logo is still flagged', async () => {
+    const r = await analyzeRawEmail(mail('PayPal Service <service@secure-notice.top>', '<img alt="PayPal" src="https://www.paypalobjects.com/logo.png">', 'Your PayPal account'));
+    expect(r.findings.map((f) => f.id)).toContain('fake-logo-paypal');
+  });
+
+  it('LinkedIn’s own short links and Google’s own Docs links are not flagged in their own mail', async () => {
+    const li = await analyzeRawEmail(mail('LinkedIn <messages-noreply@linkedin.com>', '<a href="https://lnkd.in/abc">View</a>'));
+    const g = await analyzeRawEmail(mail('Google Docs <comments-noreply@docs.google.com>', '<a href="https://docs.google.com/document/d/1">Open</a>'));
+    expect(li.findings.map((f) => f.id)).not.toContain('link-shortener');
+    expect(g.findings.map((f) => f.id)).not.toContain('link-abused-host');
+    // From anyone else they still are.
+    const other = await analyzeRawEmail(mail('Someone <a@random-site.top>', '<a href="https://lnkd.in/abc">View</a>'));
+    expect(other.findings.map((f) => f.id)).toContain('link-shortener');
+  });
+});

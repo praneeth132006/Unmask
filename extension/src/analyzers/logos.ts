@@ -11,6 +11,7 @@ import type { Finding, ParsedEmail } from '../core/types';
 import { BRANDS, brandOwningDomain, brandsMentionedIn, isBrandDomain, type Brand } from './brands';
 import type { ImageDecoder } from './qr';
 import { unwrapUrl } from './links';
+import { detectLookalike } from './lookalike';
 import { registrableDomain, safeUrl } from '../lib/domain';
 import { dHash, hamming } from '../lib/dhash';
 import LOGO_HASHES from './logoHashes.json';
@@ -94,7 +95,8 @@ export async function findBrandLogos(email: ParsedEmail, decode?: ImageDecoder):
   return hits;
 }
 
-export function logoFindings(email: ParsedEmail, hits: LogoHit[]): Finding[] {
+/** `pressure`: the email also asks you to log in, verify, pay or act fast. */
+export function logoFindings(email: ParsedEmail, hits: LogoHit[], pressure = false): Finding[] {
   const from = email.from;
   if (!from || !hits.length) return [];
   const fromOrg = registrableDomain(from.domain);
@@ -103,9 +105,13 @@ export function logoFindings(email: ParsedEmail, hits: LogoHit[]): Finding[] {
   for (const h of hits) if (!isBrandDomain(h.brand, fromOrg)) byBrand.set(h.brand, [...(byBrand.get(h.brand) ?? []), h]);
 
   const findings: Finding[] = [];
+  const lookalike = detectLookalike(from.domain);
   for (const [brand, list] of byBrand) {
-    // Strong when the email also presents itself as the brand, or the logo is matched by its pixels.
-    const strong = claimed.has(brand.name) || list.some((h) => h.how === 'fingerprint') || list.length > 1;
+    // A logo only matters when the email presents itself as that brand (sender name, subject,
+    // look-alike domain) or uses it to push you to log in or pay. Newsletters about Meta or Google
+    // show their logos all the time.
+    if (!claimed.has(brand.name) && lookalike?.brand.name !== brand.name && !pressure) continue;
+    const strong = list.some((h) => h.how === 'fingerprint') || list.length > 1 || claimed.has(brand.name);
     findings.push({
       id: `fake-logo-${brand.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
       category: 'sender',

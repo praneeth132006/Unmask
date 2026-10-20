@@ -37,7 +37,8 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks, ...qrLinks(qrCodes)], email.from?.domain ?? '');
   const { trackers, findings: trackerFindings } = analyzeTrackers(email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
-  const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage));
+  const pressure = [...content.findings, ...becFindings].some((f) => ['credential-request', 'html-form', 'urgency', 'bec-bank-change', 'bec-payment', 'bec-gift-card'].includes(f.id));
+  const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage), pressure);
   const protectFindings = opts.protection ? protectionFindings(email, auth, links, opts.protection) : [];
   const verifiedTrusted = protectFindings.some((f) => f.id === 'trusted-sender' && f.points < 0);
   // A verified trusted sender is by definition not a stranger.

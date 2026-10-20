@@ -36,10 +36,13 @@ describe('fake brand logos', () => {
   it('flags an embedded PayPal logo in mail not from PayPal', async () => {
     const px = logo(si.siPaypal);
     const decode: ImageDecoder = async () => ({ data: new Uint8ClampedArray(px.data), width: px.width, height: px.height });
-    const email = await parseEmail(html('Account Team <alerts@secure-mailer.top>', '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB"><p>Verify now</p>'));
+    const email = await parseEmail(html('Account Team <alerts@secure-mailer.top>', '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB"><p>Please verify your account now.</p>'));
     const hits = await findBrandLogos(email, decode);
     expect(hits).toEqual([expect.objectContaining({ how: 'fingerprint' })]);
-    expect(logoFindings(email, hits)[0]).toMatchObject({ severity: 'high', title: "Shows the PayPal logo, but PayPal didn't send it" });
+    // A generic sender using PayPal's logo to make you verify an account: flagged.
+    expect(logoFindings(email, hits, true)[0]).toMatchObject({ severity: 'high', title: "Shows the PayPal logo, but PayPal didn't send it" });
+    // The same logo with no claim and no pressure (a newsletter article): not flagged.
+    expect(logoFindings(email, hits, false)).toEqual([]);
   });
 
   it('notices logos hot-linked from the brand or named in alt text', async () => {
@@ -48,7 +51,9 @@ describe('fake brand logos', () => {
     expect(hits.map((h) => `${h.brand.name}:${h.how}`)).toEqual(['PayPal:asset-host', 'Netflix:label']);
     const f = logoFindings(email, hits);
     expect(f.find((x) => x.id === 'fake-logo-paypal')?.severity).toBe('high'); // display name also claims PayPal
-    expect(f.find((x) => x.id === 'fake-logo-netflix')?.severity).toBe('medium');
+    // Netflix is only shown, never claimed, and nothing pushes you to act: no finding.
+    expect(f.find((x) => x.id === 'fake-logo-netflix')).toBeUndefined();
+    expect(logoFindings(email, hits, true).find((x) => x.id === 'fake-logo-netflix')?.severity).toBe('medium');
   });
 
   it('ignores social icons and badges that link to the brand, and mail from the brand itself', async () => {

@@ -2,6 +2,7 @@ import type { Finding, LinkFlag, LinkInfo, Severity } from '../core/types';
 import type { RawLink } from './content';
 import { hostInfo, registrableDomain, safeUrl, sameOrg } from '../lib/domain';
 import { detectLookalike } from './lookalike';
+import { brandOwningDomain, isBrandDomain } from './brands';
 
 const SHORTENERS = new Set([
   'bit.ly', 'bitly.com', 'tinyurl.com', 't.co', 'goo.gl', 'is.gd', 'ow.ly', 'buff.ly', 'rebrand.ly', 'cutt.ly', 'shorturl.at',
@@ -173,8 +174,11 @@ export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
     else flags.push(flag('brand-in-domain', `${host} ${look.explanation}`));
   }
 
-  if (SHORTENERS.has(host) || SHORTENERS.has(domain)) flags.push(flag('shortener', host));
-  if (matchesHost(host, ABUSED_HOSTS)) flags.push(flag('abused-host', host));
+  // A company's own short links and hosting (lnkd.in in LinkedIn mail, docs.google.com in Google mail).
+  const senderBrand = senderDomain ? brandOwningDomain(registrableDomain(senderDomain)) : null;
+  const ownService = sameOrg(host, senderDomain) || (senderBrand !== null && isBrandDomain(senderBrand, domain));
+  if (!ownService && (SHORTENERS.has(host) || SHORTENERS.has(domain))) flags.push(flag('shortener', host));
+  if (!ownService && matchesHost(host, ABUSED_HOSTS)) flags.push(flag('abused-host', host));
   if (info.suffix && SUSPICIOUS_TLDS.has(info.suffix.split('.').pop()!)) flags.push(flag('suspicious-tld', `.${info.suffix}`));
   if (info.subdomainDepth >= 4) flags.push(flag('many-subdomains', host));
   if (u?.port && !['80', '443'].includes(u.port)) flags.push(flag('odd-port', `port ${u.port}`));
