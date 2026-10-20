@@ -4,6 +4,11 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-10-20
+
+### Fixed
+- **Simple mode hid the tabs**, so Sender, Links, Files, Body, Privacy and Headers couldn't be opened from the Summary. The tabs are now always shown; simple mode only folds the technical red flags on the Summary. The end-to-end test checks all seven tabs and the Headers tab in both modes.
+
 ## [0.3.2] - 2026-10-20
 
 ### Fixed

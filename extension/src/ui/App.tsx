@@ -380,7 +380,8 @@ export function App() {
           </div>
         </div>
 
-        {report && !loading && !showSettings && !pasting && (!settings.simpleMode || tab !== 'overview') && (
+        {/* The tabs are always shown: simple mode only folds the technical details on the Summary. */}
+        {report && !loading && !showSettings && !pasting && (
           <nav className="flex flex-wrap gap-1 px-2 pb-2" role="tablist" aria-label="Report sections">
             {tabs.map((t) => (
               <button

@@ -173,6 +173,20 @@ check(trace.chain.ok && trace.chain.result.finalUrl === 'http://evil.unmask-e2e.
 check(!trace.blocked.ok || /local network/.test(trace.blocked.result.error ?? ''), `redirect to a local-network address is stopped (${trace.blocked.ok ? trace.blocked.result.error : trace.blocked.error})`);
 check(trace.local.ok && /local network/.test(trace.local.result.error ?? ''), 'tracing localhost is refused');
 check((await tab.locator('[data-unmask-hl]').count()) === 1, 'outline attribute present in the DOM');
+// The tabs (including Headers) must be there in both normal and simple mode.
+for (const simpleMode of [false, true]) {
+  await panel.evaluate((v) => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), simpleMode: v } })), simpleMode);
+  await panel.reload();
+  await panel.setInputFiles('input[type=file]', { name: 'phish.eml', mimeType: 'message/rfc822', buffer: Buffer.from(fixture) });
+  await panel.waitForSelector('[role="tab"]', { timeout: 10000 }).catch(() => {});
+  const tabs = await panel.locator('[role="tab"]').allTextContents();
+  const names = tabs.map((t) => t.replace(/\d+/g, '').trim());
+  const all = ['Summary', 'Sender', 'Links', 'Files', 'Body', 'Privacy', 'Headers'].every((n) => names.includes(n));
+  check(all, `all 7 tabs shown with simple mode ${simpleMode ? 'on' : 'off'} (${names.join(', ')})`);
+  await panel.locator('[role="tab"]', { hasText: 'Headers' }).click().catch(() => {});
+  const headersShown = await panel.getByText(/^All headers \(\d+\)$/).waitFor({ timeout: 5000 }).then(() => true, () => false);
+  check(headersShown, `the Headers tab opens with simple mode ${simpleMode ? 'on' : 'off'}`);
+}
 await panel.close();
 
 // Reload the extension, as when you press ↻ in chrome://extensions. The old content script is now orphaned.

@@ -336,7 +336,7 @@ Every report starts with an **In plain words** card: one sentence ("This email l
 
 <img src="images/panel-simple.png" width="280" align="right" alt="Simple mode: only the plain-words card and the report buttons">
 
-For parents or colleagues who don't want the technical side, turn on **Settings → Appearance → Simple mode**. The panel then shows only the plain-words card and the report buttons. The tabs and red flags are one click away under **Show the technical details**.
+For parents or colleagues who don't want the technical side, turn on **Settings → Appearance → Simple mode**. The Summary then shows the plain-words card and the report buttons first, with the red flags folded under **Show the technical details**. The tabs (Sender, Links, Files, Body, Privacy, Headers) stay at the top as usual.
 
 <br clear="right">
 

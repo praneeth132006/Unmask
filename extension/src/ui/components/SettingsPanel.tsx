@@ -147,8 +147,8 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         </div>
         <p className="mt-1.5 text-[11px] text-[var(--text-3)]">System follows your computer’s light or dark setting. Also switchable from the header.</p>
         <div className="mt-3 border-t border-[var(--border)] pt-3">
-          <Toggle checked={settings.simpleMode} onChange={(v) => void update({ simpleMode: v })} title="Simple mode: plain words only">
-            Shows just the verdict, the reasons in everyday words and what to do. Technical details stay one click away. Good for parents and non-technical colleagues.
+          <Toggle checked={settings.simpleMode} onChange={(v) => void update({ simpleMode: v })} title="Simple mode: plain words first">
+            The Summary shows the verdict, the reasons in everyday words and what to do, with the technical red flags folded away. All tabs (Sender, Links, Files, Body, Privacy, Headers) stay available.
           </Toggle>
         </div>
       </Card>
