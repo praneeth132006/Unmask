@@ -126,7 +126,8 @@ const FLAG_SPECS: Record<string, FlagSpec> = {
   'userinfo': { severity: 'high', points: 25, title: 'Link hides its real host behind an @ sign' },
   'ip-host': { severity: 'high', points: 20, title: 'Link points straight at an IP address' },
   'shortener': { severity: 'medium', points: 10, title: 'Link uses a URL shortener that hides the destination' },
-  'abused-host': { severity: 'medium', points: 10, title: 'Link is hosted on a free hosting / forms service often used for phishing' },
+  // Weak on its own: Typeform, Google Forms and Notion are used by real companies every day.
+  'abused-host': { severity: 'low', points: 5, title: 'Link goes to a free hosting or forms service (also popular with phishers)' },
   'open-redirect': { severity: 'low', points: 4, title: 'Link bounces through a redirect on an unrelated site' },
   'download': { severity: 'medium', points: 8, title: 'Link downloads a risky file type' },
   'tracker-mismatch': { severity: 'low', points: 3, title: 'Link goes through a mail tracking service, so the final site is unknown' },

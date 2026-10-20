@@ -112,7 +112,7 @@ export function analyzeTrackers(html: string | null, links: LinkInfo[]): { track
       severity: 'info',
       points: 0,
       title: `${pixels.length} tracking pixel${pixels.length === 1 ? '' : 's'}${services.length ? ` (${services.slice(0, 3).join(', ')})` : ''}`,
-      detail: 'Loading images would tell the sender when you opened the email, your IP address and your device. Unmask blocks them in its safe view.',
+      detail: 'Loading images tells the sender that and when you opened the email (in Gmail, through Google’s image proxy, without your IP address). Unmask’s safe view and Peek never load them.',
       target: { kind: 'tab', tab: 'privacy' },
     });
   }

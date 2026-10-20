@@ -207,6 +207,10 @@ export interface PeekCardData {
   score?: number;
   headline?: string;
   reasons?: string[];
+  /** Exact facts about trackers in the email and what loaded (nothing). */
+  privacy?: string[];
+  /** Verdict name, e.g. "Low risk"; defaults to the palette label. */
+  label?: string;
   preview?: string;
   error?: string;
   onReadSafely?: () => void;
@@ -229,6 +233,7 @@ export function showPeekCard(doc: Document, data: PeekCardData): () => void {
      .h { margin-top: 10px; font-weight: 600; font-size: 14px; color: ${p.text}; }
      ul { margin: 6px 0 0; padding-left: 18px; }
      .pv { margin-top: 10px; padding: 8px 10px; background: #f8f9fa; border-radius: 8px; max-height: 150px; overflow: auto; white-space: pre-wrap; color: #3c4043; font-size: 12px; }
+     .pr { margin: 4px 0 0; padding-left: 18px; color: #3c4043; font-size: 12px; }
      .pl { margin-top: 10px; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #80868b; }
      .a { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
      .a button { border-radius: 6px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; border: 1px solid #dadce0; background: #fff; color: #3c4043; }
@@ -252,7 +257,7 @@ export function showPeekCard(doc: Document, data: PeekCardData): () => void {
       ? el(doc, 'div', { className: 't' }, el(doc, 'span', { className: 'spin' }), el(doc, 'span', { text: 'Unmask is checking this email…' }), el(doc, 'span', { className: 's' }), x)
       : data.state === 'error'
         ? el(doc, 'div', { className: 't' }, el(doc, 'span', { text: 'Unmask could not check this email' }), el(doc, 'span', { className: 's' }), x)
-        : el(doc, 'div', { className: 't' }, el(doc, 'span', { text: `${data.verdict === 'clear' ? '✓' : '⚠'} ${p.label}` }), el(doc, 'span', { className: 's', text: `risk ${data.score}/100` }), x);
+        : el(doc, 'div', { className: 't' }, el(doc, 'span', { text: `${data.verdict === 'clear' ? '✓' : '⚠'} ${data.label ?? p.label}` }), el(doc, 'span', { className: 's', text: `risk ${data.score}/100` }), x);
   const body: Node[] = [title];
   if (data.from || data.subject) {
     body.push(el(doc, 'div', { className: 'm' }, el(doc, 'b', { text: data.subject || '(no subject)' }), doc.createElement('br'), doc.createTextNode(data.from ?? '')));
@@ -261,7 +266,8 @@ export function showPeekCard(doc: Document, data: PeekCardData): () => void {
   if (data.state === 'done') {
     if (data.headline) body.push(el(doc, 'div', { className: 'h', text: data.headline }));
     if (data.reasons?.length) body.push(el(doc, 'ul', {}, ...data.reasons.map((r) => el(doc, 'li', { text: r }))));
-    body.push(el(doc, 'div', { className: 'pl', text: 'Text preview (no images, no trackers)' }), el(doc, 'div', { className: 'pv', text: data.preview || '(no text)' }));
+    if (data.privacy?.length) body.push(el(doc, 'div', { className: 'pl', text: 'Trackers' }), el(doc, 'ul', { className: 'pr' }, ...data.privacy.map((l) => el(doc, 'li', { text: l }))));
+    body.push(el(doc, 'div', { className: 'pl', text: 'Text preview (no images were loaded)' }), el(doc, 'div', { className: 'pv', text: data.preview || '(no text)' }));
     const actions = el(doc, 'div', { className: 'a' });
     if (data.onReadSafely) {
       const go = el(doc, 'button', { className: 'go', text: 'Read it safely in Unmask' });
@@ -274,7 +280,7 @@ export function showPeekCard(doc: Document, data: PeekCardData): () => void {
     const done = el(doc, 'button', { text: 'Close' });
     done.addEventListener('click', close);
     actions.append(done);
-    body.push(actions, el(doc, 'div', { className: 'f', text: '✓ Not opened in Gmail. Nothing in this email was loaded, so the sender can’t tell you looked.' }));
+    body.push(actions, el(doc, 'div', { className: 'f', text: '✓ Not opened in Gmail. Unmask read only the email’s text; none of its images or links were loaded.' }));
   }
   const card = el(doc, 'div', { className: 'c' }, ...body);
   card.setAttribute('role', 'dialog');

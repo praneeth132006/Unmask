@@ -134,6 +134,9 @@ const peekText = await inbox.locator('[data-unmask-peek-card] .h').textContent({
 check(/looks like a scam/.test(peekText ?? ''), `Peek shows the verdict without opening the email ("${peekText}")`);
 check((await inbox.evaluate(() => window.__rowClicks)) === rowClicks, 'clicking Peek did not open the email');
 check((await inbox.locator('[data-unmask-peek-card] .pv').textContent().catch(() => '')).length > 20, 'Peek shows a text-only preview');
+const cardText = (await inbox.locator('[data-unmask-peek-card] .c').textContent().catch(() => '')) ?? '';
+check(/Text preview \(no images were loaded\)/.test(cardText) && !/no trackers/i.test(cardText), 'Peek card never claims the email has "no trackers"');
+check(/Contains (no remote images|\d+ (tracking pixel|remote image))/.test(cardText), 'Peek card states what trackers and images the email contains');
 await inbox.close();
 
 // Ask the content script for state and the raw message, like the side panel does.

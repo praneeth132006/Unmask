@@ -169,7 +169,7 @@ await i.waitForSelector('[data-unmask-badge]', { timeout: 15000 });
 await i.waitForTimeout(300);
 await shot(i, 'inbox-badges.png');
 // Peek at the PayPal row without opening it.
-await i.setViewportSize({ width: 900, height: 640 });
+await i.setViewportSize({ width: 900, height: 760 });
 await i.locator('tr.zA', { hasText: 'PayPal Service' }).locator('[data-unmask-peek] button').click();
 await i.waitForSelector('[data-unmask-peek-card] .h', { timeout: 15000 });
 await i.waitForTimeout(300);

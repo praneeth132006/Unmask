@@ -1,6 +1,7 @@
 import { analyzeRawEmail } from '../src/core/analyze';
 import { startProtection, type ProtectSettings } from '../src/lib/gmailProtect';
 import { PEEK_ATTR } from '../src/lib/inpage';
+import { peekPrivacyLines } from '../src/core/facts';
 import { EMPTY_HISTORY } from '../src/analyzers/history';
 import type { GmailMessageRef } from '../src/lib/messages';
 import { fixture } from './helpers';
@@ -68,8 +69,12 @@ describe('Peek: check an inbox email without opening it', () => {
     expect(fetched[0]).toMatchObject({ permId: 'msg-f:1780954093844218223', legacyId: '18b7c4a2e5f1d06f' });
     const text = card()!.textContent!;
     expect(text).toContain('This email looks like a scam.');
-    expect(text).toContain('Text preview (no images, no trackers)');
+    expect(text).toContain('Text preview (no images were loaded)');
     expect(text).toContain('Not opened in Gmail');
+    // Every tracker statement on the card is exactly the one derived from the analysis.
+    const report = await analyzeRawEmail(fixture('phishing-paypal.eml'));
+    for (const line of peekPrivacyLines(report)) expect(text).toContain(line);
+    expect(text.toLowerCase()).not.toContain('no trackers');
     Array.from(card()!.querySelectorAll('button')).find((b) => b.textContent === 'Read it safely in Unmask')!.click();
     expect(peeked).toHaveLength(1);
     // The full verdict now drives the row's badge.

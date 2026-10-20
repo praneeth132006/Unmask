@@ -14,6 +14,7 @@ import type { ProtectionList } from '../analyzers/protection';
 import { findMessageRoot } from './highlight';
 import { BADGE_ATTR, BANNER_ATTR, PEEK_ATTR, confirmDialog, createBadge, createBanner, createPeekButton, showPeekCard, topReasons } from './inpage';
 import { plainSummary } from '../core/plain';
+import { peekPrivacyLines, verdictLabel } from '../core/facts';
 import { linkWarning, pruneVerdicts, quickVerdict, replyWarning, type StoredVerdict } from './protect';
 import { press } from './gmailActions';
 import { debounceMax } from './schedule';
@@ -216,6 +217,8 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
         score: report.score,
         headline: plain.headline,
         reasons: plain.reasons,
+        label: verdictLabel(report),
+        privacy: peekPrivacyLines(report),
         preview: report.previewText,
         onReadSafely: deps.openPeekInPanel ? () => deps.openPeekInPanel!(ref) : undefined,
       });

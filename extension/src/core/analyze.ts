@@ -30,7 +30,13 @@ export interface AnalyzeOptions {
 export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, opts: AnalyzeOptions = {}): Promise<Report> {
   const email = await parseEmail(raw);
   const { auth, findings: authFindings } = analyzeAuth(email);
-  const senderFindings = analyzeSender(email);
+  // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:
+  // still worth knowing, but not a high-risk sign on its own.
+  const senderFindings = analyzeSender(email).map((f) =>
+    f.id === 'reply-to-mismatch' && f.severity === 'high' && auth.dmarc === 'pass'
+      ? { ...f, severity: 'medium' as const, points: 10, detail: `${f.detail} The sender's domain is verified, so this is common for small newsletters; be careful if it asks for money or details.` }
+      : f,
+  );
   const content = analyzeContent(email);
   const { attachments, findings: attachmentFindings, links: fileLinks } = await analyzeAttachments(email.attachments);
   const qrCodes = await findQrCodes(email, opts.decodeImage);

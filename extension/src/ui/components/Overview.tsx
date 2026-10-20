@@ -3,6 +3,7 @@ import { Card, SEVERITY_STYLE, SectionTitle } from './ui';
 import { Icon } from './Icon';
 import { targetHint } from '../targets';
 import { plainSummary } from '../../core/plain';
+import { concernsHeading, trackerChipLabel, verdictLabel } from '../../core/facts';
 
 const VERDICT = {
   high: {
@@ -57,14 +58,16 @@ function ScoreRing({ score, color }: { score: number; color: string }) {
 
 export function VerdictCard({ report }: { report: Report }) {
   const v = VERDICT[report.verdict];
+  const label = verdictLabel(report);
+  const note = label === 'Low risk' ? 'Nothing typical of phishing. A few minor points are listed below; they are worth knowing, not alarming.' : v.note;
   const from = report.email.from;
   return (
     <div className={`rounded-xl border ${v.border} ${v.bg} p-3`}>
       <div className="flex items-center gap-3">
         <ScoreRing score={report.score} color={v.ring} />
         <div className="min-w-0">
-          <div className={`text-[15px] font-semibold ${v.text}`}>{v.label}</div>
-          <p className="mt-0.5 text-xs leading-snug text-[var(--text-2)]">{v.note}</p>
+          <div className={`text-[15px] font-semibold ${v.text}`}>{label}</div>
+          <p className="mt-0.5 text-xs leading-snug text-[var(--text-2)]">{note}</p>
         </div>
       </div>
       <div className="mt-3 border-t border-[var(--border)] pt-2.5 text-xs">
@@ -90,13 +93,14 @@ function SummaryChips({ report, onOpen }: { report: Report; onOpen: (tab: TabId)
   const flaggedLinks = report.links.filter((l) => l.flags.some((f) => f.severity !== 'info' && f.severity !== 'low')).length;
   const riskyFiles = report.attachments.filter((a) => a.flags.length).length;
   const trackers = report.trackers.pixels.length + report.trackers.trackedLinkCount;
+  const trackerLabel = trackerChipLabel(report);
   const authOk = report.auth.dmarc === 'pass';
   const authBad = report.auth.dmarc === 'fail' || report.auth.spf === 'fail';
   const chips: { tab: TabId; label: string; tone: 'good' | 'bad' | 'warn' | 'info' }[] = [
     { tab: 'sender', label: authOk ? 'Sender verified' : authBad ? 'Sender not verified' : 'Sender unverified', tone: authOk ? 'good' : authBad ? 'bad' : 'warn' },
     { tab: 'links', label: report.links.length ? `${flaggedLinks}/${report.links.length} links flagged` : 'No links', tone: flaggedLinks ? 'bad' : 'good' },
     { tab: 'attachments', label: report.attachments.length ? `${riskyFiles}/${report.attachments.length} files risky` : 'No files', tone: riskyFiles ? 'bad' : 'good' },
-    { tab: 'privacy', label: trackers ? `${trackers} tracker${trackers === 1 ? '' : 's'}` : 'No trackers', tone: trackers ? 'warn' : 'good' },
+    { tab: 'privacy', label: trackerLabel, tone: trackers ? 'warn' : 'good' },
   ];
   const tone = { good: 'text-[var(--good)]', bad: 'text-[var(--bad)]', warn: 'text-[var(--warn)]', info: 'text-[var(--info)]' };
   const dot = { good: 'bg-[var(--good)]', bad: 'bg-[var(--bad)]', warn: 'bg-[var(--warn)]', info: 'bg-[var(--info)]' };
@@ -214,7 +218,7 @@ export function Overview({
           <Icon name="eye" className="h-3.5 w-3.5" /> Hover a red flag to see it in the email. Click it for details.
         </p>
       )}
-      <Group title={`Red flags (${red.length})`} findings={red} onHover={onHoverFinding} onOpen={onOpenFinding} />
+      <Group title={concernsHeading(report, red.length)} findings={red} onHover={onHoverFinding} onOpen={onOpenFinding} />
       {!red.length && (
         <Card className="mt-4 text-center">
           <Icon name="check" className="mx-auto h-5 w-5 text-[var(--good)]" />
@@ -232,7 +236,7 @@ export function Overview({
       <div className="mt-3">
         {simple ? (
           <details className="group">
-            <summary className="cursor-pointer select-none rounded-lg px-1 py-1.5 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-soft)]">Show the technical details ({red.length} red flag{red.length === 1 ? '' : 's'})</summary>
+            <summary className="cursor-pointer select-none rounded-lg px-1 py-1.5 text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-soft)]">Show the technical details ({report.verdict === 'clear' ? `${red.length} point${red.length === 1 ? '' : 's'} worth knowing` : `${red.length} red flag${red.length === 1 ? '' : 's'}`})</summary>
             <div className="mt-2">{technical}</div>
           </details>
         ) : (

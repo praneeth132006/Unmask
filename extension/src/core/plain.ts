@@ -36,7 +36,10 @@ export function plainReason(f: Finding, report: Report): string | null {
   }
   if (id === 'display-name-email') return 'The sender’s name hides a different email address.';
   if (id === 'freemail-org') return 'It claims to be a company but comes from a free personal email account.';
-  if (id === 'reply-to-mismatch') return 'If you reply, your answer goes to a stranger, not the sender.';
+  if (id === 'reply-to-mismatch') {
+    const to = report.email.replyTo.find((r) => r.address)?.address;
+    return to ? `If you reply, your answer goes to ${to}, not to the address it came from.` : 'If you reply, your answer goes to a different address than the one it came from.';
+  }
   if (id === 'dmarc-fail') return 'Its sender address could not be confirmed as real.';
   if (id === 'link-lookalike' || id === 'link-brand-in-domain') return 'A link leads to a fake website made to look like a real one.';
   if (id === 'link-text-mismatch') return 'A link says one website but really goes to another.';
@@ -99,7 +102,7 @@ export function plainSummary(report: Report): PlainSummary {
     };
   }
   return {
-    headline: trusted ? 'This email is from a sender on your trusted list.' : 'Nothing looks wrong with this email.',
+    headline: trusted ? 'This email is from a sender on your trusted list.' : reasons.length ? 'Nothing serious found. Worth knowing:' : 'Nothing looks wrong with this email.',
     reasons: reasons.length ? reasons : known ? ['You often get email from this sender.'] : [],
     action: 'That isn’t a guarantee. If it asks for money or a password out of the blue, double-check first.',
   };

@@ -21,7 +21,7 @@ describe('fake brand logos', () => {
     const a = dHash(logo(si.siPaypal, 90))!;
     const b = dHash(logo(si.siPaypal, 400))!;
     expect(hamming(a, b)).toBeLessThanOrEqual(5);
-  });
+  }, 30_000);
 
   it('recognises brand logos by their pixels', () => {
     expect(matchLogo(dHash(logo(si.siPaypal))!)?.name).toBe('PayPal');

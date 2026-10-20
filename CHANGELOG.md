@@ -4,6 +4,16 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-10-20
+
+### Fixed
+- **The Peek card said "no trackers" for emails that have trackers.** Its preview label "(no images, no trackers)" meant *nothing was loaded*, but read as *the email has none*. The card now lists exactly what the email contains (tracking pixels, remote images, click-tracked links) and says that Peek loaded none of them, and that opening it in Gmail will.
+- **"No red flags found" above a list titled "Red flags".** A clean verdict with minor points is now **Low risk**, and its list is **Worth knowing**. "No red flags" appears only when there is nothing to point out. The plain summary says "Nothing serious found. Worth knowing:" instead of "Nothing looks wrong" followed by warnings.
+- The Summary chip says what the trackers are, for example "1 pixel · 24 tracked links", instead of adding them into one number.
+- The side panel no longer says a peeked email's trackers "haven't fired" after you open that email in Gmail; it says Gmail has loaded its images.
+- Privacy wording corrected: in Gmail, images load through Google's proxy, so senders learn *that* and *when* you opened an email, not your IP address.
+- "Replies go to a different address" names the address instead of calling it "a stranger", and is medium (not high) when the sender's domain is verified. Free forms and hosting links (Typeform, Google Forms, Notion) are a low note on their own.
+
 ## [0.3.1] - 2026-10-20
 
 ### Fixed

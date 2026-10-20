@@ -199,6 +199,8 @@ export function App() {
 
   // Follow the email that is open in Gmail.
   const messages = gmail.state?.messages ?? [];
+  /** The peeked email is now open in Gmail itself, so its images have loaded there. */
+  const openedSincePeek = source?.kind === 'peek' && messages.some((m) => m.permId === source.key || m.legacyId === source.key || (m.subject !== '' && m.subject === source.subject));
   useEffect(() => {
     if (source?.kind === 'file' || source?.kind === 'peek') return;
     const keys = messages.map(messageKey);
@@ -416,7 +418,22 @@ export function App() {
           />
         ) : (
           <>
-            {source?.kind === 'peek' && (
+            {source?.kind === 'peek' && openedSincePeek && (
+              <div className="mb-2.5 rounded-lg bg-[var(--warn-soft)] px-2.5 py-2 text-xs text-[var(--warn)]">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">You have now opened this email in Gmail</span>
+                  <button type="button" className="shrink-0 font-medium underline" onClick={backToGmail}>
+                    Follow Gmail
+                  </button>
+                </div>
+                <p className="mt-0.5 text-[11px] text-[var(--text-2)]">
+                  {report && report.trackers.remoteImages > 0
+                    ? `Gmail has loaded its images${report.trackers.pixels.length ? `, including ${report.trackers.pixels.length} tracking pixel${report.trackers.pixels.length === 1 ? '' : 's'}` : ''}, so the sender can now tell you opened it.`
+                    : 'This email has no remote images, so opening it told the sender nothing.'}
+                </p>
+              </div>
+            )}
+            {source?.kind === 'peek' && !openedSincePeek && (
               <div className="mb-2.5 rounded-lg bg-[var(--accent-soft)] px-2.5 py-2 text-xs text-[var(--accent)]">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-medium">Peeking: not opened in Gmail</span>
@@ -424,7 +441,7 @@ export function App() {
                     Back to Gmail
                   </button>
                 </div>
-                <p className="mt-0.5 text-[11px] text-[var(--text-2)]">Nothing in this email has loaded, so its trackers haven’t fired. The Body tab shows it safely with images blocked.</p>
+                <p className="mt-0.5 text-[11px] text-[var(--text-2)]">Unmask has not loaded any of this email’s images or links, so none of its trackers have fired. The Body tab shows it with images blocked.</p>
               </div>
             )}
             {source?.kind === 'file' && (

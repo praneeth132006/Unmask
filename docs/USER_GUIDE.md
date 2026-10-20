@@ -306,7 +306,9 @@ Unmask never sends a report itself; you always review and send it.
 
 1. Click **Peek** on any email in the list. The email does **not** open.
 2. Unmask downloads that email's original source from Gmail (the same file Gmail's *Download message* gives you) and checks it on your computer.
-3. A card shows the verdict, the reasons in plain words and a **text-only preview**: the words of the email, with no pictures and nothing from the internet. Since nothing was loaded, the sender's trackers never fire.
+3. A card shows the verdict, the reasons in plain words, a **Trackers** section and a **text-only preview** of the email's words.
+   - **Trackers** says exactly what the email contains, for example *"Contains 1 tracking pixel among 4 remote images. Peek loaded none of them"* and *"24 links are click-tracked"*. The email still has these trackers; Peek just didn't load them, so none fired. If you then open the email in Gmail, its images load and the pixels do fire.
+   - The preview shows no pictures and loads nothing from the internet.
 4. Choose:
    - **Read it safely in Unmask**: the side panel opens with the full report. The **Body** tab shows the email with pictures blocked and links disabled. It's still not opened in Gmail.
    - **Close** and delete or report the email from the list without ever opening it.

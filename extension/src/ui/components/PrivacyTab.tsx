@@ -27,8 +27,8 @@ export function PrivacyTab({ report }: { report: Report }) {
             <div className="text-[13px] font-semibold">{tracked ? 'This email tracks you' : 'No tracking found'}</div>
             <p className="mt-0.5 text-xs text-[var(--text-2)]">
               {tracked
-                ? 'When images load, the sender learns that you opened it, when, roughly where (your IP address) and on what device. Unmask’s safe view keeps them blocked.'
-                : 'No tracking pixels or click-tracked links were found. Remote images could still reveal that you opened it.'}
+                ? 'When its images load, the sender learns that you opened it and when. In Gmail, images are fetched through Google’s proxy, so your IP address stays hidden; in other mail apps the sender can also see your IP address and device. Tracked links report only when clicked. Unmask’s safe view and Peek load no images.'
+                : 'No known tracking pixels or click-tracked links were found. Any remote image can still reveal that you opened it.'}
             </p>
           </div>
         </div>
