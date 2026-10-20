@@ -16,6 +16,7 @@ import { BADGE_ATTR, BANNER_ATTR, PEEK_ATTR, confirmDialog, createBadge, createB
 import { plainSummary } from '../core/plain';
 import { linkWarning, pruneVerdicts, quickVerdict, replyWarning, type StoredVerdict } from './protect';
 import { press } from './gmailActions';
+import { debounceMax } from './schedule';
 
 export interface ProtectSettings {
   gmailBanner: boolean;
@@ -74,10 +75,16 @@ export const GMAIL_SITE: MailSite = {
   // A thread's id is its first message's id: thread-f:N belongs to msg-f:N.
   refForRow: (row, thread) => {
     const n = thread.match(/^thread-([af]):(\d+)$/);
-    const legacy = row.querySelector('[data-legacy-thread-id]')?.getAttribute('data-legacy-thread-id') ?? null;
+    // Prefer the conversation's latest message when Gmail exposes it; otherwise its first.
+    const hex = (attr: string) => {
+      const v = row.querySelector(`[${attr}]`)?.getAttribute(attr) ?? null;
+      return v && /^[0-9a-f]+$/i.test(v) ? v : null;
+    };
+    const last = hex('data-legacy-last-non-draft-message-id') ?? hex('data-legacy-last-message-id');
+    const legacy = last ?? hex('data-legacy-thread-id');
     if (!n && !legacy) return null;
     const subject = row.querySelector('.bog, .bqe, [data-thread-id]')?.textContent?.trim() ?? '';
-    return { permId: n ? `msg-${n[1]}:${n[2]}` : null, legacyId: legacy && /^[0-9a-f]+$/i.test(legacy) ? legacy : null, fromName: '', fromEmail: '', subject };
+    return { permId: last ? null : n ? `msg-${n[1]}:${n[2]}` : null, legacyId: legacy, fromName: '', fromEmail: '', subject };
   },
   isUnread: (row) => row.classList.contains('zE'),
 };
@@ -124,7 +131,7 @@ function replyButton(target: Element): Element | null {
   return REPLY_LABEL.test(label) ? el : null;
 }
 
-export function startProtection(deps: ProtectDeps): { stop: () => void; scan: () => Promise<void>; reports: Map<string, Report> } {
+export function startProtection(deps: ProtectDeps): { stop: () => void; scan: () => Promise<void>; reports: Map<string, Report>; inboxStatus: () => { rows: number; peekButtons: number; peekEnabled: boolean } } {
   const { doc, win } = deps;
   const site = deps.site ?? GMAIL_SITE;
   const reports = new Map<string, Report>();
@@ -133,7 +140,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
   let verdicts: Record<string, StoredVerdict> | null = null;
   let history: SenderHistory | undefined;
   let stopped = false;
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  const later = debounceMax(() => void scan(), deps.debounceMs ?? 500, 1500);
 
   const getVerdicts = async (): Promise<Record<string, StoredVerdict>> => (verdicts ??= await deps.loadVerdicts().catch(() => ({})));
 
@@ -256,7 +263,9 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       const result = stored ?? quickVerdict(name, address, history);
       const ref = s.peekButtons ? (site.refForRow?.(row, thread) ?? null) : null;
       const signature = `${address}|${thread}|${result.verdict}|${s.inboxBadges ? 1 : 0}|${ref ? 1 : 0}`;
-      if (row.getAttribute(ROW_ATTR) === signature) continue;
+      // Gmail redraws rows in place; the marker can outlive the elements it stands for.
+      const intact = (!ref || row.querySelector(`[${PEEK_ATTR}]`)) && (!(s.inboxBadges && result.verdict !== 'clear') || row.querySelector(`[${BADGE_ATTR}]`));
+      if (row.getAttribute(ROW_ATTR) === signature && intact) continue;
       row.setAttribute(ROW_ATTR, signature);
       row.querySelectorAll(`[${BADGE_ATTR}], [${PEEK_ATTR}]`).forEach((b) => b.remove());
       let after: Node = sender;
@@ -341,8 +350,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
   const observer = new (win as unknown as { MutationObserver: typeof MutationObserver }).MutationObserver((records) => {
     // Our own banners and badges changing must not trigger another pass.
     if (records.every((r) => [...r.addedNodes, ...r.removedNodes].every((n) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR) || n.hasAttribute(PEEK_ATTR) || n.hasAttribute('data-unmask-peek-card'))))) return;
-    clearTimeout(timer);
-    timer = setTimeout(() => void scan(), deps.debounceMs ?? 500);
+    later.schedule();
   });
   observer.observe(doc.body, { childList: true, subtree: true });
   void scan();
@@ -350,9 +358,10 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
   return {
     reports,
     scan,
+    inboxStatus: () => ({ rows: site.inboxRows?.(doc).length ?? 0, peekButtons: doc.querySelectorAll(`[${PEEK_ATTR}]`).length, peekEnabled: deps.settings().peekButtons !== false }),
     stop() {
       stopped = true;
-      clearTimeout(timer);
+      later.cancel();
       observer.disconnect();
       doc.removeEventListener('click', listener, true);
       doc.querySelectorAll(`[${BANNER_ATTR}], [${BADGE_ATTR}], [${PEEK_ATTR}], [data-unmask-peek-card]`).forEach((n) => n.remove());

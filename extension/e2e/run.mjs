@@ -32,7 +32,9 @@ const page = readFileSync(join(here, 'fake-gmail.html'), 'utf8');
 // An inbox list with the same phishing email as an unopened row.
 const inboxPage = `<!doctype html><html><head><meta charset="utf-8"><script>var GLOBALS = [null,null,1,"/mail/u/0","en","US",null,"x",0,"a1b2c3d4e5",1];</script></head><body>
 <table><tr class="zA zE"><td><span email="billing@paypa1-support.xyz" name="PayPal Service">PayPal Service</span> <span class="bog">Your account has been limited</span><span data-thread-id="#thread-f:1780954093844218223" data-legacy-thread-id="18b7c4a2e5f1d06f"></span></td></tr></table>
-<div id="churn"></div></body></html>`;
+<div id="churn"></div>
+<script>/* Like real Gmail, the page never stops changing. */ setInterval(function () { document.getElementById('churn').textContent = String(Date.now()); }, 60);</script>
+</body></html>`;
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ? pathToFileURL(process.env.PLAYWRIGHT_MODULE).href : 'playwright');
 

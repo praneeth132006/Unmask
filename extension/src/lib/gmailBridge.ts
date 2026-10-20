@@ -9,8 +9,9 @@
  * shows up as an uncaught error on chrome://extensions. Every API access here
  * goes through `alive()` / `safely()`, and invalidation removes all listeners.
  */
-import type { FetchRawResponse, GmailState, PanelRequest, ReportPhishingResponse, StateChanged } from './messages';
+import type { FetchRawResponse, GmailState, InboxStatus, PanelRequest, ReportPhishingResponse, StateChanged } from './messages';
 import { applyHighlight, clearHighlights } from './highlight';
+import { debounceMax } from './schedule';
 
 /** The subset of the extension runtime the bridge uses, injectable for tests. */
 export interface BridgeRuntime {
@@ -30,6 +31,7 @@ export interface BridgeDeps {
   fetchRaw: (message: GmailState['messages'][number]) => Promise<FetchRawResponse>;
   /** Opens the mail app's own "report phishing" flow for a message. */
   reportPhishing?: (message: GmailState['messages'][number]) => Promise<ReportPhishingResponse>;
+  inboxStatus?: () => InboxStatus;
   /** Called by WXT when it detects invalidation; the bridge also detects it itself. */
   onInvalidated?: (cb: () => void) => void;
   debounceMs?: number;
@@ -48,12 +50,13 @@ export function startBridge(deps: BridgeDeps): { stop: () => void; notify: () =>
   const { doc, win, readState, fetchRaw, runtime } = deps;
   let stopped = false;
   let lastSignature = '';
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  // Hoisted function: safe to reference before its declaration below.
+  const later = debounceMax(() => notify(), deps.debounceMs ?? 400, 1500);
 
   const stop = () => {
     if (stopped) return;
     stopped = true;
-    clearTimeout(timer);
+    later.cancel();
     observer.disconnect();
     win.removeEventListener('hashchange', notify);
     try {
@@ -115,6 +118,10 @@ export function startBridge(deps: BridgeDeps): { stop: () => void; notify: () =>
       respond(sendResponse, { found: applyHighlight(doc, req.message, req.target) });
       return;
     }
+    if (req?.type === 'unmask:inbox-status') {
+      respond(sendResponse, deps.inboxStatus?.() ?? null);
+      return;
+    }
     if (req?.type === 'unmask:report-phishing') {
       if (!deps.reportPhishing) {
         respond(sendResponse, { ok: false, error: 'Not supported here.' } satisfies ReportPhishingResponse);
@@ -137,8 +144,7 @@ export function startBridge(deps: BridgeDeps): { stop: () => void; notify: () =>
 
   const observer = new (win as unknown as { MutationObserver: typeof MutationObserver }).MutationObserver(() => {
     if (stopped) return;
-    clearTimeout(timer);
-    timer = setTimeout(notify, deps.debounceMs ?? 400);
+    later.schedule();
   });
 
   if (!alive(runtime)) {
