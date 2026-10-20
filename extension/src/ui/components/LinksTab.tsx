@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Finding, LinkInfo, Report } from '../../core/types';
 import type { Settings } from '../../lib/settings';
 import { hasTracePermission, requestTracePermission, traceBuiltinFromPanel, traceRedirects, type TraceResult } from '../../integrations/trace';
-import { scanUrl, urlscanFindings, type UrlscanResult } from '../../integrations/urlscan';
+import { scanUrl, urlscanFindings, UrlscanPending, type UrlscanResult } from '../../integrations/urlscan';
 import { lookupUrl, scanUrlNow, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { Button, Card, CopyButton, ErrorText, Label, Mono, Pill, Spinner, type Async } from './ui';
 import { Icon } from './Icon';
@@ -55,6 +55,8 @@ function LinkCard({
   const [state, setState] = useState<LinkState>({});
   const [setup, setSetup] = useState<Action | null>(null);
   const [askTrace, setAskTrace] = useState(false);
+  /** A scan that is still running on urlscan.io: show its report link instead of an error. */
+  const [urlscanPending, setUrlscanPending] = useState<string | null>(null);
   const set = (patch: LinkState) => setState((s) => ({ ...s, ...patch }));
   const target = link.resolved;
   const worst = link.flags[0]?.severity;
@@ -109,12 +111,14 @@ function LinkCard({
     if (action === 'trace') {
       void doTrace(s);
     } else if (action === 'urlscan') {
+      setUrlscanPending(null);
       set({ urlscan: { status: 'loading', message: 'Submitting…' } });
       try {
         const value = await scanUrl(s.urlscanApiKey, target, s.urlscanVisibility, (message) => set({ urlscan: { status: 'loading', message } }));
         set({ urlscan: { status: 'done', value } });
         report(urlscanFindings(`urlscan-${index}`, value));
       } catch (e) {
+        if (e instanceof UrlscanPending) setUrlscanPending(e.reportUrl);
         set({ urlscan: { status: 'error', error: errMsg(e) } });
       }
     } else {
@@ -246,7 +250,18 @@ function LinkCard({
       )}
 
       {state.urlscan?.status === 'loading' && <p className="mt-1.5 text-[11px] text-[var(--text-3)]">{state.urlscan.message}</p>}
-      {state.urlscan?.status === 'error' && <ErrorText>{state.urlscan.error}</ErrorText>}
+      {state.urlscan?.status === 'error' &&
+        (urlscanPending ? (
+          <p className="mt-1.5 text-[11px] text-[var(--text-2)]">
+            urlscan.io is still scanning this link.{' '}
+            <a className="font-medium text-[var(--accent)] hover:underline" href={urlscanPending} target="_blank" rel="noreferrer">
+              Open its report
+            </a>{' '}
+            in a minute, or press Sandbox scan again.
+          </p>
+        ) : (
+          <ErrorText>{state.urlscan.error}</ErrorText>
+        ))}
       {state.urlscan?.status === 'done' && (
         <div className="mt-2.5 rounded-lg bg-[var(--surface-2)] p-2.5">
           <div className="flex items-center justify-between">

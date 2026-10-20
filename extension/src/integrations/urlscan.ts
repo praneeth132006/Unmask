@@ -25,6 +25,7 @@ export async function scanUrl(
   url: string,
   visibility: 'public' | 'unlisted' | 'private',
   onProgress?: (message: string) => void,
+  { firstWaitMs = 10_000, pollMs = 4_000, maxWaitMs = 150_000 } = {},
 ): Promise<UrlscanResult> {
   if (!apiKey) throw new Error('Add your free urlscan.io API key in Settings first.');
   onProgress?.('Submitting to urlscan.io…');
@@ -41,19 +42,34 @@ export async function scanUrl(
   }
   const { uuid } = (await res.json()) as { uuid: string };
 
-  // Scans take ~10-30s; the result endpoint returns 404 until ready.
-  await sleep(10_000);
-  for (let i = 0; i < 30; i++) {
-    onProgress?.(`Waiting for the sandbox browser… (${10 + i * 3}s)`);
-    const r = await fetch(`https://urlscan.io/api/v1/result/${uuid}/`);
+  const reportUrl = `https://urlscan.io/result/${uuid}/`;
+
+  // Scans take ~10-60s; the result endpoint returns 404 until ready. Unlisted and
+  // private results are only visible with the key that submitted them.
+  const started = Date.now();
+  await sleep(firstWaitMs);
+  while (Date.now() - started < maxWaitMs) {
+    onProgress?.(`Waiting for the sandbox browser… (${Math.round((Date.now() - started) / 1000)}s)`);
+    const r = await fetch(`https://urlscan.io/api/v1/result/${uuid}/`, { headers: { 'API-Key': apiKey } });
     if (r.status === 404) {
-      await sleep(3_000);
+      await sleep(pollMs);
+      continue;
+    }
+    if (r.status === 429) {
+      await sleep(pollMs * 2);
       continue;
     }
     if (!r.ok) throw new Error(`urlscan.io returned HTTP ${r.status}`);
     return parseUrlscan(uuid, await r.json());
   }
-  throw new Error('urlscan.io is taking too long. Open the report link later.');
+  throw new UrlscanPending(reportUrl);
+}
+
+/** The scan was submitted but isn't finished yet; the report link will show it. */
+export class UrlscanPending extends Error {
+  constructor(readonly reportUrl: string) {
+    super('urlscan.io is still scanning this link. Its report will be ready shortly.');
+  }
 }
 
 interface UrlscanJson {

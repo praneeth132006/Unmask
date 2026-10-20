@@ -101,3 +101,34 @@ describe('VirusTotal upload', () => {
     expect(r).toMatchObject({ found: true, stats: { malicious: 5 }, permalink: 'https://www.virustotal.com/gui/file/abc' });
   });
 });
+
+describe('urlscan polling', () => {
+  it('sends the API key when fetching the result, so unlisted and private scans are found', async () => {
+    const { scanUrl } = await import('../src/integrations/urlscan');
+    const calls: { url: string; key: string | null }[] = [];
+    let polls = 0;
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      const url = String(input);
+      calls.push({ url, key: new Headers(init?.headers).get('API-Key') });
+      if (url.endsWith('/scan/')) return new Response(JSON.stringify({ uuid: 'u1' }), { status: 200 });
+      // Like urlscan: without the key, an unlisted result stays "not found".
+      if (!new Headers(init?.headers).get('API-Key')) return new Response('', { status: 404 });
+      return ++polls < 2 ? new Response('', { status: 404 }) : new Response(JSON.stringify({ page: { url: 'https://x.example/' } }), { status: 200 });
+    });
+    const r = await scanUrl('key-1', 'https://x.example/', 'unlisted', undefined, { firstWaitMs: 1, pollMs: 1, maxWaitMs: 5000 });
+    fetchMock.mockRestore();
+    expect(r.finalUrl).toBe('https://x.example/');
+    expect(calls.filter((c) => c.url.includes('/result/')).every((c) => c.key === 'key-1')).toBe(true);
+  });
+
+  it('reports a still-running scan with its report link instead of failing', async () => {
+    const { scanUrl, UrlscanPending } = await import('../src/integrations/urlscan');
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) =>
+      String(input).endsWith('/scan/') ? new Response(JSON.stringify({ uuid: 'u2' }), { status: 200 }) : new Response('', { status: 404 }),
+    );
+    const err = await scanUrl('k', 'https://x.example/', 'unlisted', undefined, { firstWaitMs: 1, pollMs: 1, maxWaitMs: 30 }).catch((e: unknown) => e);
+    fetchMock.mockRestore();
+    expect(err).toBeInstanceOf(UrlscanPending);
+    expect((err as InstanceType<typeof UrlscanPending>).reportUrl).toBe('https://urlscan.io/result/u2/');
+  });
+});
