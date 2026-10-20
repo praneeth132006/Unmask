@@ -8,7 +8,7 @@
  * are normal in legitimate email and are ignored.
  */
 import type { Finding, ParsedEmail } from '../core/types';
-import { BRANDS, brandOwningDomain, brandsMentionedIn, isBrandDomain, type Brand } from './brands';
+import { BRANDS, brandOwningDomain, brandsMentionedIn, isBrandDomain, senderClaim, type Brand } from './brands';
 import type { ImageDecoder } from './qr';
 import { unwrapUrl } from './links';
 import { detectLookalike } from './lookalike';
@@ -100,7 +100,7 @@ export function logoFindings(email: ParsedEmail, hits: LogoHit[], pressure = fal
   const from = email.from;
   if (!from || !hits.length) return [];
   const fromOrg = registrableDomain(from.domain);
-  const claimed = new Set(brandsMentionedIn(`${from.name} ${email.subject}`).map((b) => b.name));
+  const claimed = new Set(brandsMentionedIn(`${senderClaim(from.name, from.domain)} ${email.subject}`).map((b) => b.name));
   const byBrand = new Map<Brand, LogoHit[]>();
   for (const h of hits) if (!isBrandDomain(h.brand, fromOrg)) byBrand.set(h.brand, [...(byBrand.get(h.brand) ?? []), h]);
 

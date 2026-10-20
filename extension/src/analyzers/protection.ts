@@ -6,7 +6,7 @@
  * computer, so one person can set it up for a family or a small team.
  */
 import type { Finding, LinkInfo, ParsedEmail, AuthSummary } from '../core/types';
-import type { Brand } from './brands';
+import { senderClaim, type Brand } from './brands';
 import { detectLookalike } from './lookalike';
 import { normalizeName } from './history';
 import { registrableDomain } from '../lib/domain';
@@ -149,7 +149,7 @@ export function protectionFindings(email: ParsedEmail, auth: AuthSummary, links:
   list.brands.forEach((b, i) => {
     const brand = brands[i]!;
     if (brand.domains.some((d) => org === d || org.endsWith(`.${d}`))) return;
-    if (mentions(from.name, b) || mentions(email.subject, b)) {
+    if (mentions(senderClaim(from.name, from.domain), b) || mentions(email.subject, b)) {
       findings.push({
         id: 'protected-brand',
         category: 'sender',

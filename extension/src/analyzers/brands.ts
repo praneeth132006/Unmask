@@ -1,3 +1,5 @@
+import { registrableDomain } from '../lib/domain';
+
 /**
  * Frequently impersonated brands and the domains they legitimately send from
  * or link to. `keywords` are matched against display names and domain labels.
@@ -102,6 +104,23 @@ export function brandsMentionedIn(text: string): Brand[] {
       return words.length >= 6 && !words.includes(' ') && compact.includes(words);
     }),
   );
+}
+
+/**
+ * Who a display name says is sending. Platforms that deliver for their members write
+ * "Google Workspace via LinkedIn" or "Anna (via Google Docs)". When the email really comes
+ * from the platform named after "via", the sender is that platform, and the member's name
+ * before it is not a claim to be them.
+ */
+export function senderClaim(name: string, fromDomain: string): string {
+  const m = name.match(/^(.+?)\s*\(?\bvia\s+([^()]+?)\)?\s*$/i);
+  if (!m) return name;
+  const platform = m[2]!;
+  const org = registrableDomain(fromDomain);
+  const label = org.split('.')[0]!;
+  const owner = BRANDS.find((b) => isBrandDomain(b, org));
+  const named = (owner && brandsMentionedIn(platform).includes(owner)) || (label.length >= 3 && platform.toLowerCase().replace(/[^a-z0-9]/g, '').includes(label));
+  return named ? platform : name;
 }
 
 export const FREE_MAIL_DOMAINS = new Set([

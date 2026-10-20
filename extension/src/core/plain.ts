@@ -4,7 +4,7 @@
  * analyzers already produced, so it never says more than the evidence.
  */
 import type { Finding, Report } from './types';
-import { brandsMentionedIn } from '../analyzers/brands';
+import { brandsMentionedIn, senderClaim } from '../analyzers/brands';
 import { detectLookalike } from '../analyzers/lookalike';
 
 export interface PlainSummary {
@@ -19,7 +19,7 @@ export interface PlainSummary {
 function claimedBrand(report: Report): string | null {
   const from = report.email.from;
   if (!from) return null;
-  return brandsMentionedIn(from.name)[0]?.name ?? detectLookalike(from.domain)?.brand.name ?? null;
+  return brandsMentionedIn(senderClaim(from.name, from.domain))[0]?.name ?? detectLookalike(from.domain)?.brand.name ?? null;
 }
 
 /** An everyday sentence for a finding, or null if it isn't worth saying to a non-expert. */

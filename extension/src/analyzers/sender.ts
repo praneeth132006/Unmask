@@ -1,5 +1,5 @@
 import type { Finding, ParsedEmail } from '../core/types';
-import { brandsMentionedIn, FREE_MAIL_DOMAINS, isBrandDomain } from './brands';
+import { brandsMentionedIn, FREE_MAIL_DOMAINS, isBrandDomain, senderClaim } from './brands';
 import { detectLookalike } from './lookalike';
 import { registrableDomain, sameOrg } from '../lib/domain';
 
@@ -43,7 +43,7 @@ export function analyzeSender(email: ParsedEmail): Finding[] {
   }
 
   // 3. Display name claims a brand, but the domain isn't that brand's.
-  const claimed = brandsMentionedIn(from.name).filter((b) => !isBrandDomain(b, fromOrg));
+  const claimed = brandsMentionedIn(senderClaim(from.name, from.domain)).filter((b) => !isBrandDomain(b, fromOrg));
   const explainedByLookalike = look !== null && claimed.some((b) => b.name === look.brand.name);
   if (claimed.length && !explainedByLookalike) {
     findings.push({

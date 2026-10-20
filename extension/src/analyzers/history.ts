@@ -4,7 +4,7 @@
  * be tested and run in both the side panel and the Gmail content script.
  */
 import type { Finding, ParsedEmail } from '../core/types';
-import { brandsMentionedIn, FREE_MAIL_DOMAINS, isBrandDomain, type Brand } from './brands';
+import { brandsMentionedIn, FREE_MAIL_DOMAINS, isBrandDomain, senderClaim, type Brand } from './brands';
 import { detectLookalike } from './lookalike';
 import { registrableDomain } from '../lib/domain';
 
@@ -85,7 +85,7 @@ function monthYear(ts: number): string {
 /** Brands this sender appears to claim: from its display name, or a domain imitating one. */
 function claimedBrands(email: ParsedEmail): Brand[] {
   const from = email.from!;
-  const out = brandsMentionedIn(from.name);
+  const out = brandsMentionedIn(senderClaim(from.name, from.domain));
   const look = detectLookalike(from.domain);
   if (look && !out.includes(look.brand)) out.push(look.brand);
   return out;

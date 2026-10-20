@@ -198,6 +198,21 @@ describe('accuracy: newsletters and a company’s own links', () => {
     expect(r.findings.map((f) => f.id)).toContain('fake-logo-paypal');
   });
 
+  it('a company’s newsletter sent through LinkedIn is LinkedIn, not an impersonation', async () => {
+    const r = await analyzeRawEmail(mail('Google Workspace via LinkedIn <newsletters-noreply@linkedin.com>', '<img alt="Google" src="https://www.gstatic.com/logo.png"><p>AI@Work with Google Workspace</p>', 'Bridging the gap between AI ambition and readiness: new survey data'));
+    const ids = r.findings.map((f) => f.id);
+    expect(ids).not.toContain('brand-impersonation');
+    expect(ids.filter((id) => id.startsWith('fake-logo'))).toEqual([]);
+    expect(r.verdict).not.toBe('danger');
+    const docs = await analyzeRawEmail(mail('Anna Rao (via Google Docs) <comments-noreply@docs.google.com>', '<p>Anna commented</p>'));
+    expect(docs.findings.map((f) => f.id)).not.toContain('brand-impersonation');
+  });
+
+  it('"via" a platform that didn’t send it is still an impersonation', async () => {
+    const r = await analyzeRawEmail(mail('PayPal via LinkedIn <alerts@secure-notice.top>', '<p>Verify your account</p>', 'Your PayPal account'));
+    expect(r.findings.map((f) => f.id)).toContain('brand-impersonation');
+  });
+
   it('LinkedIn’s own short links and Google’s own Docs links are not flagged in their own mail', async () => {
     const li = await analyzeRawEmail(mail('LinkedIn <messages-noreply@linkedin.com>', '<a href="https://lnkd.in/abc">View</a>'));
     const g = await analyzeRawEmail(mail('Google Docs <comments-noreply@docs.google.com>', '<a href="https://docs.google.com/document/d/1">Open</a>'));
