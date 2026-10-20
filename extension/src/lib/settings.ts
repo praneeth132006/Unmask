@@ -31,6 +31,8 @@ export interface Settings {
   peekButtons: boolean;
   /** Check new (unread) inbox emails automatically, before they are opened. */
   scanInbox: boolean;
+  /** Settings layout version, for one-time upgrades of saved settings. */
+  settingsVersion: number;
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -50,8 +52,24 @@ export const DEFAULT_SETTINGS: Settings = {
   clickProtection: true,
   simpleMode: false,
   peekButtons: true,
-  scanInbox: false,
+  scanInbox: true,
+  settingsVersion: 2,
 };
+
+/** Every protection inside Gmail, all on by default. */
+export const PROTECTION_KEYS = ['gmailBanner', 'inboxBadges', 'clickProtection', 'peekButtons', 'scanInbox'] as const;
+
+/**
+ * Brings saved settings up to date. Version 2 turned every in-Gmail
+ * protection on; settings saved before it may have them off.
+ */
+export function migrateSettings(stored: Partial<Settings> | undefined): { settings: Settings; changed: boolean } {
+  const s = { ...DEFAULT_SETTINGS, ...(stored ?? {}) };
+  if (!stored || (stored.settingsVersion ?? 1) >= 2) return { settings: s, changed: false };
+  for (const k of PROTECTION_KEYS) s[k] = true;
+  s.settingsVersion = 2;
+  return { settings: s, changed: true };
+}
 
 const THEME_CACHE = 'unmask:theme';
 
@@ -83,7 +101,9 @@ const KEY = SETTINGS_KEY;
 
 export async function loadSettings(): Promise<Settings> {
   const stored = await browser.storage.local.get(KEY);
-  return { ...DEFAULT_SETTINGS, ...((stored[KEY] as Partial<Settings> | undefined) ?? {}) };
+  const { settings, changed } = migrateSettings(stored[KEY] as Partial<Settings> | undefined);
+  if (changed) await browser.storage.local.set({ [KEY]: settings });
+  return settings;
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {

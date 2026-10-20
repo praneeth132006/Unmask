@@ -31,10 +31,12 @@ export default defineContentScript({
       readState,
       fetchRaw: cachedFetchRaw,
       reportPhishing: (ref) => reportPhishingInGmail(document, ref),
+      inboxStatus: () => protectionRef?.inboxStatus() ?? { rows: 0, peekButtons: 0, peekEnabled: false },
       onInvalidated: (cb) => ctx.onInvalidated(cb),
     });
 
     let settings: Settings = DEFAULT_SETTINGS;
+    let protectionRef: ReturnType<typeof startProtection> | undefined;
     const onStorage = (changes: Record<string, { newValue?: unknown }>, area: string) => {
       if (area === 'local' && changes[SETTINGS_KEY]) {
         settings = { ...DEFAULT_SETTINGS, ...(changes[SETTINGS_KEY].newValue as Partial<Settings>) };
@@ -56,6 +58,7 @@ export default defineContentScript({
       openPanel: () => void browser.runtime.sendMessage({ type: 'unmask:open-panel' } satisfies OpenPanelRequest).catch(() => {}),
       openPeekInPanel: (peek) => void browser.runtime.sendMessage({ type: 'unmask:open-panel', peek } satisfies OpenPanelRequest).catch(() => {}),
     });
+    protectionRef = protection;
     void loadSettings().then((s) => {
       settings = s;
       void protection.scan();

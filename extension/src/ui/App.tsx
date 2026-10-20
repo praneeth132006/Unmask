@@ -1,5 +1,5 @@
 import { browser } from 'wxt/browser';
-import { PEEK_KEY, type PendingPeek } from '../lib/messages';
+import { PEEK_KEY, type InboxStatus, type PendingPeek } from '../lib/messages';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEvent } from 'react';
 import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
 import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/types';
@@ -499,7 +499,7 @@ export function App() {
               </div>
             )}
 
-            {!report && !loading && !error && <EmptyState status={gmail.status} app={gmail.app} onReload={gmail.reloadTab} />}
+            {!report && !loading && !error && <EmptyState status={gmail.status} app={gmail.app} onReload={gmail.reloadTab} inboxStatus={gmail.inboxStatus} />}
 
             {report && !loading && (
               <>
@@ -579,8 +579,30 @@ export function App() {
   );
 }
 
-function EmptyState({ status, app, onReload }: { status: ReturnType<typeof useGmail>['status']; app: ReturnType<typeof useGmail>['app']; onReload: () => void }) {
+function EmptyState({
+  status,
+  app,
+  onReload,
+  inboxStatus,
+}: {
+  status: ReturnType<typeof useGmail>['status'];
+  app: ReturnType<typeof useGmail>['app'];
+  onReload: () => void;
+  inboxStatus: ReturnType<typeof useGmail>['inboxStatus'];
+}) {
   const name = app === 'outlook' ? 'Outlook' : 'Gmail';
+  const [inbox, setInbox] = useState<InboxStatus | null>(null);
+  useEffect(() => {
+    if (status !== 'ready' || app !== 'gmail') return;
+    let live = true;
+    const check = () => void inboxStatus().then((s) => live && setInbox(s));
+    check();
+    const t = setInterval(check, 2000);
+    return () => {
+      live = false;
+      clearInterval(t);
+    };
+  }, [status, app, inboxStatus]);
   return (
     <div className="px-2 py-10 text-center">
       <img src="/icon/128.png" alt="" className="mx-auto mb-4 h-16 w-16 drop-shadow-sm" />
@@ -588,6 +610,16 @@ function EmptyState({ status, app, onReload }: { status: ReturnType<typeof useGm
         <>
           <p className="text-[15px] font-semibold">Open an email to inspect it</p>
           <p className="mt-1 text-xs text-[var(--text-2)]">Unmask checks the sender, links, attachments and hidden text of the email you open in {name}.</p>
+          {app === 'gmail' && (
+            <div className="mx-auto mt-4 max-w-[300px] rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3 text-left text-xs text-[var(--text-2)]">
+              <p className="font-semibold text-[var(--text)]">👁 Check emails without opening them</p>
+              <p className="mt-1">In your inbox, click <strong className="text-[var(--text)]">Peek</strong> next to any sender. Unmask checks the email and shows a text-only preview, so its trackers never fire.</p>
+              {inbox && inbox.peekButtons > 0 && <p className="mt-1.5 text-[var(--good)]">✓ Peek is on for {inbox.peekButtons} email{inbox.peekButtons === 1 ? '' : 's'} in this list.</p>}
+              {inbox && !inbox.peekEnabled && <p className="mt-1.5 text-[var(--warn)]">Peek is switched off in Settings → Protection inside Gmail.</p>}
+              {inbox && inbox.peekEnabled && inbox.rows > 0 && inbox.peekButtons === 0 && <p className="mt-1.5 text-[var(--warn)]">Adding Peek buttons to {inbox.rows} emails…</p>}
+              {inbox && inbox.peekEnabled && inbox.rows === 0 && <p className="mt-1.5 text-[var(--text-3)]">Open your inbox or a label to see the email list.</p>}
+            </div>
+          )}
           {app === 'outlook' && (
             <p className="mt-2 text-[11px] text-[var(--text-3)]">In Outlook on the web Unmask reads the email from the page, so header checks (SPF, DKIM, DMARC) need … → View → View message source pasted in with the clipboard button.</p>
           )}

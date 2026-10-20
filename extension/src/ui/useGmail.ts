@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { HighlightTarget } from '../lib/highlight';
 import { isOutlookUrl } from '../lib/outlookDom';
-import type { FetchRawResponse, GmailMessageRef, GmailState, PanelRequest, ReportPhishingResponse, StateChanged } from '../lib/messages';
+import type { FetchRawResponse, GmailMessageRef, GmailState, InboxStatus, PanelRequest, ReportPhishingResponse, StateChanged } from '../lib/messages';
 
 export type GmailStatus = 'not-gmail' | 'no-script' | 'ready';
 /** Which web mail app the active tab is. */
@@ -110,9 +110,18 @@ export function useGmail() {
     [tabId],
   );
 
+  const inboxStatus = useCallback(async (): Promise<InboxStatus | null> => {
+    if (tabId === null) return null;
+    try {
+      return ((await browser.tabs.sendMessage(tabId, { type: 'unmask:inbox-status' } satisfies PanelRequest)) as InboxStatus | null) ?? null;
+    } catch {
+      return null;
+    }
+  }, [tabId]);
+
   const reloadTab = useCallback(async () => {
     if (tabId !== null) await browser.tabs.reload(tabId);
   }, [tabId]);
 
-  return { status, state, app, tabId, fetchRaw, refresh, reloadTab, highlight, reportPhishing };
+  return { status, state, app, tabId, fetchRaw, refresh, reloadTab, highlight, reportPhishing, inboxStatus };
 }

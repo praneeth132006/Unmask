@@ -1,3 +1,4 @@
+import { browser } from 'wxt/browser';
 import { useEffect, useState, type ReactNode } from 'react';
 import { saveSettings, type Settings } from '../../lib/settings';
 import { clearHistory, historySize, loadHistory } from '../../lib/historyStore';
@@ -145,18 +146,20 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
           ))}
         </div>
         <p className="mt-1.5 text-[11px] text-[var(--text-3)]">System follows your computer’s light or dark setting. Also switchable from the header.</p>
+        <div className="mt-3 border-t border-[var(--border)] pt-3">
+          <Toggle checked={settings.simpleMode} onChange={(v) => void update({ simpleMode: v })} title="Simple mode: plain words only">
+            Shows just the verdict, the reasons in everyday words and what to do. Technical details stay one click away. Good for parents and non-technical colleagues.
+          </Toggle>
+        </div>
       </Card>
 
       <SectionTitle>Protection inside Gmail</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">
-        <Toggle checked={settings.simpleMode} onChange={(v) => void update({ simpleMode: v })} title="Simple mode: plain words only">
-          Shows just the verdict, the reasons in everyday words and what to do. Technical details stay one click away. Good for parents and non-technical colleagues.
-        </Toggle>
         <Toggle checked={settings.peekButtons} onChange={(v) => void update({ peekButtons: v })} title="Peek button in the inbox">
           Check an email from the inbox list without opening it, so its trackers never fire.
         </Toggle>
         <Toggle checked={settings.scanInbox} onChange={(v) => void update({ scanInbox: v })} title="Check new emails before I open them">
-          Unmask checks up to 15 unread emails in the list you're looking at and marks the risky ones. Downloads each email's source from Gmail, like Peek; images and trackers never load.
+          Unmask checks up to 15 unread emails in the list you're looking at and marks the risky ones before you open them. Downloads each email's source from Gmail, like Peek; images and trackers never load.
         </Toggle>
         <Toggle checked={settings.gmailBanner} onChange={(v) => void update({ gmailBanner: v })} title="Warning banner on risky emails">
           A red or amber banner above the email with the main reasons, without opening this panel.
@@ -247,6 +250,7 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
       )}
 
       <p className="mt-5 text-center text-[11px] text-[var(--text-3)]">
+        Unmask {browser.runtime.getManifest?.().version ?? ''} ·{' '}
         Keys never leave this browser except to the service they belong to.{' '}
         <a className="underline" href="https://praneeth132006.github.io/Unmask/guide.html" target="_blank" rel="noreferrer">
           User guide

@@ -279,7 +279,7 @@ Unmask checks each email as you open it, even when its panel is closed:
 - **Before replying** to an email whose replies are set to go to a different address, Unmask shows where your answer would really go.
 - **First contact:** Unmask remembers, only on your device, who normally emails you. It tells you when a sender has never emailed you before, or when "PayPal" writes from a domain your PayPal emails never came from. It starts doing this after it has seen 10 senders.
 
-Each of these can be switched off in Settings.
+All of these are on by default; each can be switched off in **Settings → Protection inside Gmail**.
 
 ---
 
@@ -314,7 +314,12 @@ Unmask never sends a report itself; you always review and send it.
 
 The row's badge updates with the full result, so you won't need to Peek again.
 
-**Check new emails automatically (optional).** Turn on **Settings → Protection inside Gmail → Check new emails before I open them**. Unmask then Peeks at up to 15 unread emails in the list you're looking at, one at a time, and badges the risky ones. It's off by default because it downloads each of those emails from Gmail.
+**New emails are checked automatically.** With **Settings → Protection inside Gmail → Check new emails before I open them** (on by default), Unmask Peeks at up to 15 unread emails in the list you're looking at, one at a time, and badges the risky ones before you open anything. Turn it off if you'd rather only check emails when you click Peek.
+
+**No Peek buttons?**
+1. Make sure you have version 0.3.0 or later: the version is at the bottom of Settings.
+2. After updating, click **↻ reload** on Unmask in `chrome://extensions`, then **reload the Gmail tab**. Gmail tabs opened before the update keep running the old version.
+3. Open the Unmask panel on your inbox. It says how many emails in the list have a Peek button, or that Peek is switched off.
 
 **Good to know**
 - In a conversation with several messages, Peek checks the first message.
@@ -329,7 +334,7 @@ Every report starts with an **In plain words** card: one sentence ("This email l
 
 <img src="images/panel-simple.png" width="280" align="right" alt="Simple mode: only the plain-words card and the report buttons">
 
-For parents or colleagues who don't want the technical side, turn on **Settings → Protection inside Gmail → Simple mode**. The panel then shows only the plain-words card and the report buttons. The tabs and red flags are one click away under **Show the technical details**.
+For parents or colleagues who don't want the technical side, turn on **Settings → Appearance → Simple mode**. The panel then shows only the plain-words card and the report buttons. The tabs and red flags are one click away under **Show the technical details**.
 
 <br clear="right">
 

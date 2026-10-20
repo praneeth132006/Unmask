@@ -21,7 +21,15 @@ export type PanelRequest =
   /** Outline the part of the open email a finding refers to; target null clears it. */
   | { type: 'unmask:highlight'; message: GmailMessageRef; target: import('./highlight').HighlightTarget | null }
   /** Open Gmail's own "Report phishing" for this message; Gmail then asks the user to confirm. */
-  | { type: 'unmask:report-phishing'; message: GmailMessageRef };
+  | { type: 'unmask:report-phishing'; message: GmailMessageRef }
+  /** How many inbox rows the page shows and how many have a Peek button. */
+  | { type: 'unmask:inbox-status' };
+
+export interface InboxStatus {
+  rows: number;
+  peekButtons: number;
+  peekEnabled: boolean;
+}
 
 export type ReportPhishingResponse = { ok: true } | { ok: false; error: string };
 
