@@ -98,7 +98,7 @@ const style = `<style>body{margin:0;font-family:"Google Sans",Roboto,Arial,sans-
 h2{font-size:22px;font-weight:400;margin:4px 0 16px}.from{font-size:14px}.from b{font-weight:600}.from span{color:#5e5e5e}
 .a3s{font-size:14px;line-height:1.5}.btn{display:inline-block;border:1px solid #747775;border-radius:18px;padding:7px 18px;font-size:14px;margin-top:16px;cursor:pointer}
 table{border-collapse:collapse;width:100%;background:#fff}tr.zA td{padding:11px 14px;border-bottom:1px solid #eef0f3;font-size:14px;white-space:nowrap}
-tr.zA td.s{width:230px;font-weight:600}tr.zA td.m{color:#5e5e5e;overflow:hidden;text-overflow:ellipsis;max-width:420px}tr.zA td.m b{color:#1f1f1f;font-weight:600}</style>`;
+table{table-layout:fixed}tr.zA td.s{width:200px;font-weight:600}.yW{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}tr.zA td.m{color:#5e5e5e}.xT{display:flex;align-items:center;overflow:hidden;white-space:nowrap}.y2{overflow:hidden;text-overflow:ellipsis;min-width:0}tr.zA td.m b{color:#1f1f1f;font-weight:600}</style>`;
 const message = `<!doctype html><html><head><meta charset="utf-8">${GLOBALS}${style}</head><body>
 <div class="top">☰ &nbsp;<b style="color:#d93025">M</b> Gmail</div>
 <div class="card">
@@ -119,7 +119,7 @@ const rows = [
 const inbox = `<!doctype html><html><head><meta charset="utf-8">${GLOBALS}${style}</head><body>
 <div class="top">☰ &nbsp;<b style="color:#d93025">M</b> Gmail &nbsp;·&nbsp; Inbox</div>
 <div class="card" style="padding:0;overflow:hidden"><table>${rows
-  .map(([n, e, s, t]) => `<tr class="zA"><td class="s"><span email="${e}" name="${n}">${n}</span><span data-thread-id="#${t}"></span></td><td class="m"><b>${s}</b> - Please review the details in this message</td></tr>`)
+  .map(([n, e, s, t]) => `<tr class="zA"><td class="s"><div class="yW"><span email="${e}" name="${n}">${n}</span></div></td><td class="m"><div class="xT"><span class="bog"><b data-thread-id="#${t}">${s}</b></span><span class="y2">&nbsp;- Please review the details in this message</span></div></td></tr>`)
   .join('')}</table></div></body></html>`;
 
 // ---- Run --------------------------------------------------------------------------------

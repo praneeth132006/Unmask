@@ -300,7 +300,7 @@ Unmask never sends a report itself; you always review and send it.
 
 **Why:** when you open an email, Gmail shows its pictures. Marketing and scam emails hide tiny invisible pictures ("tracking pixels") among them. Loading one tells the sender *that* you opened it and *when*, which confirms your address is real. Gmail fetches pictures through its own proxy, so the sender doesn't get your IP address, but it still learns you opened the email.
 
-**What Peek does:** every row in your inbox list gets a small **👁 Peek** button.
+**What Peek does:** every row in your inbox list gets a small **👁 Peek** button at the start of the subject, where Gmail shows its own labels. Risky senders also get a **⚠ Risky** or **Check** badge there.
 
 <img src="images/inbox-peek.png" width="560" alt="Peek card over the Gmail inbox: High risk, This email looks like a scam, reasons, text preview, Read it safely in Unmask">
 

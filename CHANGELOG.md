@@ -4,6 +4,13 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-20
+
+### Fixed
+- **Peek buttons were invisible in real Gmail.** They sat after the sender's name, inside Gmail's fixed-width sender column, which cut them off for longer names. They're now at the start of the subject, where Gmail shows its own labels. The end-to-end test now copies Gmail's real inbox layout and checks every button is visible and clickable.
+- **False alarms on legitimate links and newsletters:** `research.meta.ai` flagged as "not a Meta domain"; link text like `CLAUDE.md` read as a website; brands' own country and product domains (`google.co.in`, `amazon.de`, `paypal.de`, `meta.ai`) treated as lookalikes; everyday words (a person called Chase, `apple-farm.com`, `wise-owl.org`) treated as brand claims; real words treated as typos (`finance` vs Binance, `revolt` vs Revolut); newsletters showing a company's logo flagged as fakes; LinkedIn's `lnkd.in` and Google's `docs.google.com` flagged in those companies' own emails. A 100-case accuracy corpus of real links, senders and phishing patterns now guards against this.
+- **urlscan.io "taking too long":** results of unlisted and private scans were fetched without the API key, so they could never be found. A scan still running after 2.5 minutes now shows a link to its report instead of an error.
+
 ## [0.3.0] - 2026-10-20
 
 ### Added

@@ -1,7 +1,7 @@
 {
   "name": "unmask-extension",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "description": "See what a suspicious email is really hiding.",
   "scripts": {
