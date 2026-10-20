@@ -4,6 +4,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-20
+
 ### Added
 - **All protection inside Gmail is on by default**, including checking new emails before you open them; settings saved by older versions are switched on once. Simple mode moved to Settings → Appearance. The panel shows how many emails have a Peek button, and Settings shows the version (now 0.3.0).
 - **Peek:** a button on every Gmail inbox row checks the email without opening it. You see the verdict, plain reasons and a text-only preview; images and trackers never load. *Read it safely in Unmask* opens the full report, still unopened. Optional automatic checks of unread emails.
