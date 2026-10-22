@@ -30,7 +30,6 @@
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
   <a href="CHANGELOG.md">Changelog</a> ·
-  <a href="docs/PUBLISHING.md">Publishing</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·
   <a href="SECURITY.md">Security</a> ·
   <a href="PRIVACY.md">Privacy</a>

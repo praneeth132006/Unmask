@@ -50,10 +50,10 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Domain intelligence:** first TLS certificate from Certificate Transparency (crt.sh) and MX/SPF/DMARC records (dns.google).
 - **Report or export:** Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus PDF, JSON and .eml downloads.
 - **Outlook on the web** support.
-- **Firefox and Edge** builds, a store listing guide and a *Publish to stores* workflow.
+- **Firefox and Edge** builds.
 - Website 404 page.
-- **Screenshots of every new feature** in the README and on the website, made from the real extension by `pnpm --filter unmask-extension screenshots`, plus store-ready 1280×800 images and a promo tile in `docs/store/`.
-- **Changelog** and **publishing guide** pages on the website; [docs/PUBLISHING.md](docs/PUBLISHING.md) walks through the Chrome, Firefox and Edge stores step by step.
+- **Screenshots of every new feature** in the README and on the website, made from the real extension by `pnpm --filter unmask-extension screenshots`.
+- **Changelog** page on the website.
 - **One-click redirect tracing inside Unmask**: no server needed. It follows HTTP, meta-refresh and JavaScript redirects in the background without cookies, blocks local-network targets, and asks for its optional permission once.
 - **VirusTotal "Scan it now"** for links VirusTotal has never seen.
 - **Hover a URL in the Plain text view** to outline that link in the Gmail email.

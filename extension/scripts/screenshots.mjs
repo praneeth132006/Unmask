@@ -2,7 +2,7 @@
 // running in Chromium. Gmail is a local test double; no account is used.
 //
 //   pnpm --filter unmask-extension build:e2e && node scripts/screenshots.mjs
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -239,34 +239,3 @@ await p.waitForTimeout(400);
 await shot(p, 'panel-simple.png');
 
 await ctx.close();
-
-// ---- Store images: 1280×800 screenshots and the 440×280 promo tile --------------------
-const store = join(here, '..', '..', 'docs', 'store');
-mkdirSync(store, { recursive: true });
-const dataUrl = (file) => `data:image/png;base64,${readFileSync(join(out, file)).toString('base64')}`;
-const logo = `data:image/png;base64,${readFileSync(join(here, '..', '..', 'docs', 'brand', 'logo-512.png')).toString('base64')}`;
-const browser = await chromium.launch({ channel: 'chromium', headless: true });
-const sp = await browser.newPage({ deviceScaleFactor: 1 });
-const frame = (title, body) => `<!doctype html><html><body style="margin:0;width:1280px;height:800px;background:linear-gradient(135deg,#222629,#3a4046);font-family:'Google Sans',Roboto,Arial,sans-serif;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;overflow:hidden">
-<div style="font-size:40px;font-weight:700;letter-spacing:-.01em">${title}</div>${body}</body></html>`;
-const slides = [
-  ['1-stops-the-click.png', 'Stops the click before a phishing page opens', `<img src="${dataUrl('gmail-link-warning.png')}" style="width:900px;border-radius:14px;box-shadow:0 20px 60px #0008">`],
-  ['2-inbox-warnings.png', 'Warns you inside Gmail, without opening anything', `<div style="display:flex;gap:24px"><img src="${dataUrl('gmail-banner.png')}" style="width:560px;border-radius:12px"><img src="${dataUrl('inbox-badges.png')}" style="width:560px;height:262px;border-radius:12px"></div>`],
-  ['3-reply-warning.png', 'Catches replies going to the scammer', `<img src="${dataUrl('gmail-reply-warning.png')}" style="width:900px;border-radius:14px;box-shadow:0 20px 60px #0008">`],
-  ['4-full-report.png', 'A plain-language report for every email', `<div style="display:flex;gap:24px;align-items:flex-start"><img src="${dataUrl('panel-summary.png')}" style="height:560px;border-radius:12px"><img src="${dataUrl('panel-files.png')}" style="height:560px;border-radius:12px"><img src="${dataUrl('panel-report.png')}" style="height:560px;border-radius:12px"></div>`],
-  ['5-qr-codes.png', 'Decodes QR codes hidden in images and PDFs', `<img src="${dataUrl('panel-qr.png')}" style="width:760px;border-radius:14px;box-shadow:0 20px 60px #0008">`],
-];
-await sp.setViewportSize({ width: 1280, height: 800 });
-for (const [file, title, body] of slides) {
-  await sp.setContent(frame(title, body));
-  await sp.waitForTimeout(200);
-  await sp.screenshot({ path: join(store, file) });
-  console.log('wrote store/' + file);
-}
-await sp.setViewportSize({ width: 440, height: 280 });
-await sp.setContent(`<!doctype html><html><body style="margin:0;width:440px;height:280px;background:linear-gradient(135deg,#222629,#3a4046);font-family:'Google Sans',Roboto,Arial,sans-serif;color:#fff;display:flex;align-items:center;gap:20px;padding:0 30px;box-sizing:border-box">
-<img src="${logo}" style="width:110px;height:110px"><div><div style="font-size:38px;font-weight:700">Unmask</div><div style="font-size:17px;line-height:1.35;color:#c9d3b8;margin-top:6px">Stops phishing clicks in Gmail and Outlook</div></div></body></html>`);
-await sp.waitForTimeout(200);
-await sp.screenshot({ path: join(store, 'promo-440x280.png') });
-console.log('wrote store/promo-440x280.png');
-await browser.close();

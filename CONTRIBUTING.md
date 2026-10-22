@@ -84,7 +84,7 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 - [Conventional commits](https://www.conventionalcommits.org): `feat(links): …`, `fix(gmail): …`, `docs: …`, `test: …`.
 - One logical change per commit, with the *why* in the body.
 - **Never push something CI would fail.** `pnpm install` turns on a `pre-push` hook that runs `pnpm ci:local`, the same steps as CI (tests, typecheck, Chrome/Firefox/Edge builds, both end-to-end runs), and stops the push if any fail. Maintainers push to a branch first and move `main` only after GitHub Actions is green there.
-- Feature screenshots: after a UI change run `pnpm --filter unmask-extension screenshots` to refresh `docs/images` and `docs/store`.
+- Feature screenshots: after a UI change run `pnpm --filter unmask-extension screenshots` to refresh `docs/images`.
 - Update [CHANGELOG.md](CHANGELOG.md) under *Unreleased*.
 
 ## Releasing (maintainers)
@@ -92,7 +92,6 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 1. Move *Unreleased* in CHANGELOG.md to a new version and set the same version in `extension/package.json`.
 2. Commit, then tag and push: `git tag v0.2.1 && git push origin v0.2.1`.
 3. The release workflow tests, builds the Chrome, Edge and Firefox zips (with licence notices) and publishes the GitHub Release.
-4. To update the browser stores, follow [docs/PUBLISHING.md](docs/PUBLISHING.md).
 
 ## Reporting security issues
 
