@@ -24,7 +24,9 @@ This guide is for everyone, no technical background needed. It covers installing
 
 ## 1. Install
 
-Unmask isn't on the Chrome Web Store yet, so it's installed as a "developer" extension. You only do this once. Pick **Option 1** unless you want to build Unmask yourself.
+**Easiest (Chrome, Edge, Brave):** open [Unmask on the Chrome Web Store](https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc) and click **Add to Chrome**. While the extension is new, Chrome may show *"not trusted by Enhanced Safe Browsing"*; click **Continue to install**.
+
+For Firefox, or if you'd rather not use the store, install it as a "developer" extension. You only do this once. Pick **Option 1** unless you want to build Unmask yourself.
 
 ### 1a. Option 1: No-code install (recommended)
 
