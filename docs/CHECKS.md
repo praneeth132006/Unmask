@@ -283,6 +283,8 @@ Named techniques that analysts recognise by their shape rather than by a bad lin
 | A real notification platform carrying a scammer's message | High | 22 | An email that passed DMARC from PayPal, DocuSign, QuickBooks/Intuit, Square, Google, Microsoft, Dropbox, Adobe Sign, Zoom… (services that let anyone send invoices, shares and invites with their own text) containing a callback phone number, a link with its own high-risk flags, or a personal webmail contact. Replaces the callback finding |
 | Device-code phishing | High | 22 | A link to a real device sign-in page (`microsoft.com/devicelogin`, `google.com/device`, `github.com/login/device`…) or a code to enter there. The page is genuine; the code signs the attacker's device in |
 | Consent (app-permission) link | High (20) when it asks for mail/file access (`offline_access`, `Mail.Read`, Gmail, Drive…) or sends you on to an unrelated `redirect_uri`, otherwise Medium (12) | | A link straight to a Microsoft or Google OAuth authorize page |
+| "ClickFix": paste a command into your computer | Critical (35) with both keyboard steps and a command, otherwise High (22) | | Steps like *Windows key + R, Ctrl + V* together with Run/PowerShell/Terminal, or commands such as `powershell -enc`, `mshta https://…`, `iex(`, `curl … \| sh` |
+| HTML/SVG attachment that copies a command to your clipboard | Critical | 35 | `navigator.clipboard.writeText` or `execCommand('copy')` with PowerShell, mshta or cmd |
 
 ---
 
