@@ -36,6 +36,7 @@ Each finding has a **severity** and **points**:
 The **score** is the sum of points, from 0 to 100:
 
 - Reassuring findings can take off **at most 15 points** in total, so a passing DMARC check can't hide real problems.
+- **Reassurance takes off nothing once there is a high or critical finding.** Passing DMARC, a verified signature or a sender you know proves who sent the email, not that it is safe: hacked accounts, replayed emails and attackers' own domains pass too.
 - **Any critical finding, or two high findings, forces at least 60**, which means *High risk*.
 - Verdict: **0–19** *No red flags found* · **20–49** *Suspicious* · **50–100** *High risk*.
 

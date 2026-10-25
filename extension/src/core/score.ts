@@ -7,12 +7,16 @@ export const VERDICT_THRESHOLDS = { suspicious: 20, high: 50 } as const;
 /**
  * Turns findings into a 0–100 score and a verdict.
  * - Points add up, with reassuring signals (negative points) able to offset at most 15.
+ * - Reassurance offsets nothing once there is a high or critical finding: a passing
+ *   DMARC check or a known sender proves who sent it, not that it is safe
+ *   (hacked accounts and attackers' own domains pass too).
  * - Any critical finding forces a "high" verdict: one fake login form is enough.
  * - Two or more high findings also force "high".
  */
 export function scoreFindings(findings: Finding[]): { score: number; verdict: Verdict } {
   const positive = findings.filter((f) => f.points > 0).reduce((n, f) => n + f.points, 0);
-  const negative = Math.max(-15, findings.filter((f) => f.points < 0).reduce((n, f) => n + f.points, 0));
+  const serious = findings.some((f) => f.severity === 'high' || f.severity === 'critical');
+  const negative = serious ? 0 : Math.max(-15, findings.filter((f) => f.points < 0).reduce((n, f) => n + f.points, 0));
   let score = Math.max(0, Math.min(100, positive + negative));
 
   const critical = findings.some((f) => f.severity === 'critical');

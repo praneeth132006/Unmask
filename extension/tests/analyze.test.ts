@@ -16,6 +16,10 @@ describe('scoreFindings', () => {
     expect(scoreFindings([finding('medium', 30), finding('good', -10), finding('good', -10)]).score).toBe(15);
   });
 
+  it('lets nothing offset a high or critical finding (passing DMARC is not "safe")', () => {
+    expect(scoreFindings([finding('high', 25), finding('good', -10)])).toEqual({ score: 25, verdict: 'suspicious' });
+  });
+
   it('forces a high verdict for any critical finding', () => {
     expect(scoreFindings([finding('critical', 35)]).verdict).toBe('high');
   });
