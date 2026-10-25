@@ -17,6 +17,7 @@ import { dkimFindings } from '../analyzers/dkim';
 import { arcFindings, readArcChain } from '../analyzers/arc';
 import { identityFindings } from '../analyzers/identity';
 import { replayFindings } from '../analyzers/replay';
+import { callbackFindings } from '../analyzers/techniques';
 import { publicInfo, readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
 import { getHeaders } from './parse';
@@ -61,6 +62,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   // Runs on the body already marked for hidden text, and marks each tracking pixel in it too.
   const { trackers, findings: trackerFindings, annotatedHtml } = analyzeTrackers(content.annotatedHtml ?? email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
+  const techniqueFindings = [...callbackFindings(email, content.visibleText, auth)];
   const pressure = [...content.findings, ...becFindings].some((f) => ['credential-request', 'html-form', 'urgency', 'bec-bank-change', 'bec-payment', 'bec-gift-card'].includes(f.id));
   const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage), pressure);
   const protectFindings = opts.protection ? protectionFindings(email, auth, links, opts.protection) : [];
@@ -68,7 +70,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   // A verified trusted sender is by definition not a stranger.
   const pastFindings = (opts.history ? historyFindings(email, opts.history) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
 
-  const findings = sortFindings([...authFindings, ...pathFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
+  const findings = sortFindings([...authFindings, ...pathFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...techniqueFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
   const { score, verdict } = scoreFindings(findings);
 
   return {

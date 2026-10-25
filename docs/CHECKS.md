@@ -273,6 +273,16 @@ Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts).
 
 ---
 
+## Attack techniques
+
+Named techniques that analysts recognise by their shape rather than by a bad link or a failed check. Source: [`analyzers/techniques.ts`](../extension/src/analyzers/techniques.ts).
+
+| Check | Severity | Points | What it looks for |
+|---|---|---|---|
+| Callback scam ("TOAD") | High | 22 | A phone number, an instruction to call, a charge, renewal or invoice, and a dispute or an amount. No link: the scam happens on the phone. From a verified brand (DMARC pass) it is only a Low (3) note |
+
+---
+
 ## Sender history
 
 Source: [`analyzers/history.ts`](../extension/src/analyzers/history.ts). Unmask remembers, in this browser only, which addresses have emailed you, how often and since when. High-risk emails and emails opened from files are never learned. You can turn this off or forget everything in Settings → Privacy.
