@@ -307,6 +307,11 @@ Source: [`analyzers/history.ts`](../extension/src/analyzers/history.ts). Unmask 
 | "You've never received mail from example.xyz": first email from both this address and its domain | Low (Medium with another sender problem) | 5 (10) |
 | First email from this address, but you know the domain | Note | 0 |
 | You've had 3+ emails from this sender | Good | −5 |
+| **Fingerprint changed:** a sender you've had 3+ emails from asks, for the first time, for replies to go to another domain | Medium | 15 |
+| Fingerprint changed: a sender who always signed their emails sent one without a signature, or two or more traits changed | Medium | 12 |
+| Fingerprint changed: one trait (delivering mail service, Message-ID domain, mail program) | Low | 4 |
+
+**Fingerprints.** For every sender, Unmask remembers how their emails are usually built: the DKIM signing domain, the mail service that handed them to your provider, the Message-ID domain, the mail program, and any Reply-To domain. Analysts compare a suspicious email with a known-good one from the same sender; this does it automatically, but only for traits that were consistent in at least 75% of earlier emails. Emails without real headers (Outlook's page view) are not used. Source: [`analyzers/fingerprint.ts`](../extension/src/analyzers/fingerprint.ts).
 
 First-contact warnings start once Unmask knows 10 senders, so a new install doesn't flag everyone.
 

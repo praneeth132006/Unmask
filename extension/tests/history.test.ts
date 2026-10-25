@@ -77,3 +77,53 @@ describe('sender history', () => {
     expect(ids(none.findings)).not.toContain('first-contact');
   });
 });
+
+describe('sender fingerprints', () => {
+  const vendor = (opts: { dkim?: string; route?: string; mailer?: string; replyTo?: string; id: number }) =>
+    [
+      `Received: from ${opts.route ?? 'o1.mail.vendor.com'} (${opts.route ?? 'o1.mail.vendor.com'} [198.51.100.7]) by mx.google.com; Mon, 19 Oct 2026 16:00:00 +0000`,
+      `Authentication-Results: mx.google.com; ${opts.dkim === 'none' ? 'dkim=none' : `dkim=pass header.d=${opts.dkim ?? 'vendor.com'}`}; spf=pass smtp.mailfrom=vendor.com; dmarc=${opts.dkim === 'none' ? 'fail' : 'pass'} header.from=vendor.com`,
+      'From: Accounts <accounts@vendor.com>',
+      ...(opts.replyTo ? [`Reply-To: ${opts.replyTo}`] : []),
+      `X-Mailer: ${opts.mailer ?? 'Microsoft Outlook 16.0'}`,
+      `Message-ID: <${opts.id}@vendor.com>`,
+      'Subject: Invoice',
+      '',
+      'Please find this month’s invoice.',
+    ].join('\n');
+
+  async function learned(n: number) {
+    const { senderTraits } = await import('../src/analyzers/fingerprint');
+    const { analyzeAuth } = await import('../src/analyzers/auth');
+    const { deliveryPath } = await import('../src/analyzers/received');
+    const { getHeaders } = await import('../src/core/parse');
+    let h: SenderHistory = EMPTY_HISTORY;
+    for (let i = 0; i < n; i++) {
+      const e = await parseEmail(vendor({ id: i }));
+      const hops = deliveryPath(getHeaders(e, 'received'));
+      h = recordSender(h, e, 1_700_000_000_000, senderTraits(e, analyzeAuth(e, hops).auth, hops));
+    }
+    return h;
+  }
+
+  const findingsFor = async (raw: string, h: SenderHistory) => (await analyzeRawEmail(raw, { history: h })).findings.filter((f) => f.id === 'fingerprint-changed');
+
+  it('is quiet while the sender behaves as usual', async () => {
+    expect(await findingsFor(vendor({ id: 99 }), await learned(4))).toEqual([]);
+  });
+
+  it('flags a new Reply-To on a known sender (classic vendor fraud)', async () => {
+    const [f] = await findingsFor(vendor({ id: 99, replyTo: 'accounts@vendor-billing.com' }), await learned(4));
+    expect(f).toMatchObject({ severity: 'medium', points: 15, title: 'First time accounts@vendor.com asks for replies to go somewhere else' });
+  });
+
+  it('flags a lost signature and a different route', async () => {
+    const [f] = await findingsFor(vendor({ id: 99, dkim: 'none', route: 'vps-22.hosting.example' }), await learned(4));
+    expect(f?.title).toBe("accounts@vendor.com always signs their emails; this one isn't signed");
+    expect(f?.detail).toMatch(/sent through hosting\.example \(usually sent through vendor\.com\)/);
+  });
+
+  it('needs a few earlier emails first', async () => {
+    expect(await findingsFor(vendor({ id: 99, replyTo: 'x@other.com' }), await learned(2))).toEqual([]);
+  });
+});

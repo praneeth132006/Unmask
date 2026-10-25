@@ -9,6 +9,7 @@ import { analyzeAttachments } from '../analyzers/attachments';
 import { analyzeTrackers } from '../analyzers/trackers';
 import { analyzeBec } from '../analyzers/bec';
 import { historyFindings, type SenderHistory } from '../analyzers/history';
+import { senderTraits } from '../analyzers/fingerprint';
 import { findBrandLogos, logoFindings } from '../analyzers/logos';
 import { protectionFindings, type ProtectionList } from '../analyzers/protection';
 import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzers/qr';
@@ -70,7 +71,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const protectFindings = opts.protection ? protectionFindings(email, auth, links, opts.protection) : [];
   const verifiedTrusted = protectFindings.some((f) => f.id === 'trusted-sender' && f.points < 0);
   // A verified trusted sender is by definition not a stranger.
-  const pastFindings = (opts.history ? historyFindings(email, opts.history) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
+  const pastFindings = (opts.history ? historyFindings(email, opts.history, senderTraits(email, auth, hops)) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
 
   const findings = sortFindings([...authFindings, ...pathFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...techniqueFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
   const { score, verdict } = scoreFindings(findings);

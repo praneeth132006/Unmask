@@ -1,6 +1,7 @@
 import { browser } from 'wxt/browser';
 import type { Report } from '../core/types';
 import { EMPTY_HISTORY, recordSender, type SenderHistory } from '../analyzers/history';
+import { senderTraits } from '../analyzers/fingerprint';
 
 const KEY = 'unmask:sender-history';
 
@@ -21,7 +22,7 @@ export async function loadHistory(): Promise<SenderHistory> {
 export async function rememberSender(report: Report): Promise<void> {
   if (report.verdict === 'high' || !report.email.from) return;
   const history = await loadHistory();
-  const next = recordSender(history, report.email);
+  const next = recordSender(history, report.email, Date.now(), senderTraits(report.email, report.auth, report.forensics?.hops ?? []));
   if (next !== history) await browser.storage.local.set({ [KEY]: next });
 }
 

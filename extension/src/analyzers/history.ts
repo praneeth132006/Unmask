@@ -7,6 +7,7 @@ import type { Finding, ParsedEmail } from '../core/types';
 import { brandsMentionedIn, FREE_MAIL_DOMAINS, isBrandDomain, senderClaim, type Brand } from './brands';
 import { detectLookalike } from './lookalike';
 import { registrableDomain } from '../lib/domain';
+import { addTraits, fingerprintFindings, type SenderTraits, type TraitCounts } from './fingerprint';
 
 export interface SenderRecord {
   address: string;
@@ -19,6 +20,8 @@ export interface SenderRecord {
   lastSeen: number;
   /** Recent message keys, so re-opening the same email doesn't count twice. */
   ids: string[];
+  /** How this sender's emails are usually signed, routed and built. Missing in histories from before fingerprints. */
+  traits?: TraitCounts;
 }
 
 export interface SenderHistory {
@@ -50,7 +53,7 @@ export function normalizeName(name: string): string {
 }
 
 /** Adds this email's sender to the history. Returns a new object; the input is not changed. */
-export function recordSender(history: SenderHistory, email: ParsedEmail, now = Date.now()): SenderHistory {
+export function recordSender(history: SenderHistory, email: ParsedEmail, now = Date.now(), traits?: SenderTraits): SenderHistory {
   const from = email.from;
   if (!from?.address) return history;
   const address = from.address.toLowerCase();
@@ -60,6 +63,7 @@ export function recordSender(history: SenderHistory, email: ParsedEmail, now = D
   const rec: SenderRecord = prev
     ? { ...prev, name: from.name || prev.name, count: prev.count + 1, lastSeen: now, ids: [...prev.ids, key].slice(-MAX_IDS) }
     : { address, name: from.name, domain: registrableDomain(from.domain), count: 1, firstSeen: now, lastSeen: now, ids: [key] };
+  if (traits) rec.traits = addTraits(prev?.traits, traits);
   const senders = { ...history.senders, [address]: rec };
   const keys = Object.keys(senders);
   if (keys.length > MAX_SENDERS) {
@@ -91,7 +95,7 @@ function claimedBrands(email: ParsedEmail): Brand[] {
   return out;
 }
 
-export function historyFindings(email: ParsedEmail, history: SenderHistory): Finding[] {
+export function historyFindings(email: ParsedEmail, history: SenderHistory, traits?: SenderTraits): Finding[] {
   const from = email.from;
   if (!from?.address) return [];
   const findings: Finding[] = [];
@@ -163,7 +167,13 @@ export function historyFindings(email: ParsedEmail, history: SenderHistory): Fin
     }
   } else if (prior === 0) {
     findings.push({ id: 'first-contact', category: 'sender', severity: 'info', points: 0, target, title: `First email from this address, but you know ${domain}`, detail: `You've had ${domainPrior} earlier email${domainPrior === 1 ? '' : 's'} from other addresses at ${domain}.` });
-  } else if (prior >= 3 && !findings.length) {
+  }
+
+  // 4. A known sender whose emails are suddenly built or sent differently.
+  const drift = traits ? fingerprintFindings(address, history.senders[address]?.traits, traits) : [];
+  findings.push(...drift);
+
+  if (prior >= 3 && !findings.length) {
     const rec = history.senders[address]!;
     findings.push({ id: 'known-sender', category: 'sender', severity: 'good', points: -5, target, title: `You've had ${prior} emails from this sender`, detail: `Since ${monthYear(rec.firstSeen)}. Senders you hear from often are less likely to be impostors, but accounts do get hacked.` });
   }
