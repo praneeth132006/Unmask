@@ -39,3 +39,20 @@ describe('identity consistency', () => {
     }
   });
 });
+
+describe('Unicode look-alikes and invisible characters', () => {
+  it('uses Unicode confusables beyond the hand-made list', async () => {
+    const { skeleton, detectLookalike } = await import('../src/analyzers/lookalike');
+    const { toASCII } = await import('punycode/');
+    expect(skeleton('ⲣaypal')).toBe('paypal'); // Coptic ⲣ
+    expect(skeleton('Ꮲaypal')).toBe('paypal'); // Cherokee Ꮲ
+    expect(detectLookalike(toASCII('ⲣaypal.com'))?.brand.name).toBe('PayPal');
+  });
+
+  it('flags a brand name spelt with Cyrillic letters or broken by zero-width spaces', async () => {
+    const cyr = (await analyzeRawEmail(mail('From: "PаyPal Support" <help@pp-help.top>', 'Subject: hi', 'Message-ID: <1@pp-help.top>'))).findings.find((f) => f.id === 'disguised-from');
+    expect(cyr).toMatchObject({ severity: 'medium', title: 'The sender name spells "PayPal" with disguised letters' });
+    expect(await ids(mail('From: a@example.com', 'Subject: Net​flix payment failed', 'Message-ID: <1@example.com>'))).toContain('disguised-subject');
+    expect(await ids(mail('From: "Zoë Müller" <z@example.de>', 'Subject: Grüße', 'Message-ID: <1@example.de>'))).not.toEqual(expect.arrayContaining(['disguised-from']));
+  });
+});

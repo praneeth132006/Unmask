@@ -9,6 +9,7 @@ import { getHeaders } from '../core/parse';
 import type { RawMessage } from '../lib/rawMessage';
 import { registrableDomain, sameOrg } from '../lib/domain';
 import { brandOwningDomain, brandsMentionedIn, FREE_MAIL_DOMAINS, senderClaim } from './brands';
+import { INVISIBLE, mixedScriptWords, skeleton } from './lookalike';
 
 /** How each webmail service writes its Message-IDs. A gmail.com From with any other kind wasn't written in Gmail. */
 const WEBMAIL_MESSAGE_ID: { domains: string[]; name: string; id: RegExp }[] = [
@@ -87,6 +88,23 @@ export function identityFindings(email: ParsedEmail, raw: RawMessage, auth: Auth
     if (addressed && !addressed.includes(deliveredTo) && !addressed.includes('undisclosed')) {
       findings.push({ id: 'replay-addressee', category: 'auth', severity: 'low', points: 5, title: `A genuine ${fromOrg} email, but addressed to someone else`, detail: `It is signed by ${fromOrg}, yet it was written for ${email.to[0]?.address ?? 'another address'}, not you (${deliveredTo}). If you don\'t forward mail from that address here: attackers trigger real notifications to their own account and re-send them unchanged ("DKIM replay"), so the signature still passes.`, target: { kind: 'header', key: 'to' } });
     }
+  }
+  // 6. Disguised words: invisible characters or letters from another alphabet in the name or subject.
+  for (const [where, text, key] of [['sender name', from?.name ?? '', 'from'], ['subject', email.subject, 'subject']] as const) {
+    const invisible = text.match(INVISIBLE)?.length ?? 0;
+    const mixed = mixedScriptWords(text);
+    if (!invisible && !mixed.length) continue;
+    const disguised = brandsMentionedIn(skeleton(text.replace(INVISIBLE, ''))).filter((b) => !brandsMentionedIn(text).includes(b));
+    const strong = where === 'sender name' || disguised.length > 0;
+    findings.push({
+      id: `disguised-${key}`,
+      category: 'sender',
+      severity: strong ? 'medium' : 'low',
+      points: disguised.length ? 15 : strong ? 10 : 5,
+      title: disguised.length ? `The ${where} spells "${disguised[0]!.name}" with disguised letters` : `The ${where} hides ${mixed.length ? 'letters from another alphabet' : 'invisible characters'}`,
+      detail: `${mixed.length ? `"${mixed[0]}" mixes Latin letters with look-alikes from another alphabet. ` : ''}${invisible ? `It contains ${invisible} invisible character${invisible === 1 ? '' : 's'}. ` : ''}This is done to slip a name past filters that look for it, while it reads normally to you.`,
+      target: { kind: 'header', key },
+    });
   }
   return findings;
 }

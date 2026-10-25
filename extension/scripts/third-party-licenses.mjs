@@ -38,6 +38,8 @@ const parts = [
   ...[...seen.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([name, info]) => `${'='.repeat(78)}\n${name}@${info.version} (${info.license})\n${'='.repeat(78)}\n\n${info.text ?? `Licensed under ${info.license}.`}\n`),
+  // Data, not a package: the look-alike character table built by scripts/gen-confusables.mjs.
+  `${'='.repeat(78)}\nUnicode confusables data, UTS #39 (Unicode License v3)\n${'='.repeat(78)}\n\n${readFileSync(join(root, 'scripts', 'licenses', 'unicode-license-v3.txt'), 'utf8').trim()}\n`,
 ];
 writeFileSync(join(root, 'public', 'THIRD_PARTY_LICENSES.txt'), parts.join('\n'));
 // Unmask's own licence ships in the zip too.

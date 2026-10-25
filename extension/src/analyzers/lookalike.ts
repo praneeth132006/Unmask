@@ -1,6 +1,10 @@
 import { BRANDS, COMMON_WORD_KEYWORDS, OFFICIAL_CONTEXT, isBrandDomain, type Brand } from './brands';
 import { hostInfo } from '../lib/domain';
 import { toUnicode } from 'punycode/';
+import unicodeConfusables from './confusables.json';
+
+/** Unicode's own list (UTS #39) of characters confusable with an ASCII letter or digit, ~1,600 of them. */
+const UNICODE_CONFUSABLES: Record<string, string> = unicodeConfusables.map;
 
 export type LookalikeKind = 'homoglyph' | 'typo' | 'brand-in-domain' | 'brand-in-subdomain';
 
@@ -11,7 +15,7 @@ export interface LookalikeMatch {
   explanation: string;
 }
 
-/** Characters that render (nearly) identically to Latin letters. */
+/** Characters that render (nearly) identically to Latin letters, checked before Unicode's list (digits like 1 → l are ours). */
 const CONFUSABLES: Record<string, string> = {
   // Cyrillic
   а: 'a', е: 'e', о: 'o', р: 'p', с: 'c', у: 'y', х: 'x', і: 'i', ј: 'j', ԁ: 'd', ɡ: 'g', ӏ: 'l', ѕ: 's', ԛ: 'q', ԝ: 'w', һ: 'h', к: 'k', м: 'm', т: 't', в: 'b', н: 'h',
@@ -23,12 +27,13 @@ const CONFUSABLES: Record<string, string> = {
 
 /** Reduce a label to a "skeleton" so visually confusable strings compare equal. */
 export function skeleton(input: string): string {
-  const stripped = input
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '');
+  const stripped = input.normalize('NFKD').replace(/[̀-ͯ]/g, '');
   let out = '';
-  for (const ch of stripped) out += CONFUSABLES[ch] ?? ch;
+  // Look up before lowercasing too: some look-alikes are listed only as capitals (Cherokee Ꮲ, not ꮲ).
+  for (const ch of stripped) {
+    const lower = ch.toLowerCase();
+    out += CONFUSABLES[lower] ?? UNICODE_CONFUSABLES[ch] ?? UNICODE_CONFUSABLES[lower] ?? lower;
+  }
   return out.replace(/rn/g, 'm').replace(/vv/g, 'w');
 }
 
@@ -134,4 +139,12 @@ export function detectLookalike(host: string, brands: Brand[] = BRANDS): Lookali
     }
   }
   return null;
+}
+
+/** Zero-width and direction-control characters: invisible, used to break up words filters look for. */
+export const INVISIBLE = /[\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\u3164\ufeff]/g;
+
+/** Words that mix Latin letters with look-alikes from another alphabet, e.g. "PаyPal" with a Cyrillic а. */
+export function mixedScriptWords(text: string): string[] {
+  return (text.match(/[\p{L}\p{M}]+/gu) ?? []).filter((w) => /\p{Script=Latin}/u.test(w) && /[\p{Script=Cyrillic}\p{Script=Greek}\p{Script=Armenian}\p{Script=Cherokee}]/u.test(w));
 }
