@@ -41,3 +41,26 @@ describe('abused notification platforms', () => {
     expect(await ids(paypalInvoice('Acme Ltd sent you an invoice for $25.00. View and pay it at https://www.paypal.com/invoice/p/#ABC'))).not.toContain('platform-abuse');
   });
 });
+
+describe('consent and device-code lures', () => {
+  const html = (body: string) => mail(['From: IT <it@corp-helpdesk.co>', 'Subject: Action needed', 'Content-Type: text/html'], body);
+
+  it('flags device-code phishing', async () => {
+    const r = await analyzeRawEmail(html('<p>To keep access, go to <a href="https://microsoft.com/devicelogin">microsoft.com/devicelogin</a> and enter code: QXT7-K29PA</p>'));
+    const f = r.findings.find((x) => x.id === 'device-code-lure');
+    expect(f?.severity).toBe('high');
+    expect(f?.detail).toContain('QXT7-K29PA');
+  });
+
+  it('flags a consent link asking for mail access or redirecting elsewhere', async () => {
+    const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=14b2864e-3cff-4d33-b5cd-7f14ca272ea4&response_type=code&scope=offline_access%20Mail.Read&redirect_uri=https%3A%2F%2Fchikeukohandco.com%2Fsaas%2FIndex.html';
+    const f = (await analyzeRawEmail(html(`<a href="${url}">Review document</a>`))).findings.find((x) => x.id === 'oauth-consent-link');
+    expect(f).toMatchObject({ severity: 'high', title: 'Asks you to give an app access to your email or files' });
+    expect(f?.detail).toContain('chikeukohandco.com');
+  });
+
+  it('ignores ordinary Microsoft links', async () => {
+    const found = await ids(html('<a href="https://login.microsoftonline.com/">Sign in</a> <a href="https://www.microsoft.com/en-us/security">Security</a>'));
+    expect(found.filter((id) => id === 'device-code-lure' || id === 'oauth-consent-link')).toEqual([]);
+  });
+});

@@ -281,6 +281,8 @@ Named techniques that analysts recognise by their shape rather than by a bad lin
 |---|---|---|---|
 | Callback scam ("TOAD") | High | 22 | A phone number, an instruction to call, a charge, renewal or invoice, and a dispute or an amount. No link: the scam happens on the phone. From a verified brand (DMARC pass) it is only a Low (3) note |
 | A real notification platform carrying a scammer's message | High | 22 | An email that passed DMARC from PayPal, DocuSign, QuickBooks/Intuit, Square, Google, Microsoft, Dropbox, Adobe Sign, Zoom… (services that let anyone send invoices, shares and invites with their own text) containing a callback phone number, a link with its own high-risk flags, or a personal webmail contact. Replaces the callback finding |
+| Device-code phishing | High | 22 | A link to a real device sign-in page (`microsoft.com/devicelogin`, `google.com/device`, `github.com/login/device`…) or a code to enter there. The page is genuine; the code signs the attacker's device in |
+| Consent (app-permission) link | High (20) when it asks for mail/file access (`offline_access`, `Mail.Read`, Gmail, Drive…) or sends you on to an unrelated `redirect_uri`, otherwise Medium (12) | | A link straight to a Microsoft or Google OAuth authorize page |
 
 ---
 

@@ -80,3 +80,53 @@ export function platformAbuseFindings(email: ParsedEmail, visibleText: string, a
   ];
 }
 
+/** Device-code and consent-page lures: the login page is real, the app you approve is the attacker's. */
+const DEVICE_LOGIN = /^https?:\/\/(?:www\.)?(?:microsoft\.com\/(?:[a-z-]+\/)?devicelogin|aka\.ms\/devicelogin|login\.microsoftonline\.com\/(?:common|organizations|[\w.-]+)\/oauth2\/(?:v2\.0\/)?deviceauth|login\.microsoft\.com\/device|google\.com\/device|github\.com\/login\/device)/i;
+const CONSENT = /^https?:\/\/(?:login\.microsoftonline\.com|login\.microsoft\.com|login\.live\.com|accounts\.google\.com)\/[^?]*(?:oauth2|o\/oauth2)[^?]*\/(?:v2\.0\/)?(?:authorize|auth|v2\/auth)\b/i;
+const CODE = /\b(?:code|kód|código|code d'accès)\s*[:：]?\s*([A-Z0-9]{4}-?[A-Z0-9]{4,5})\b/;
+const BROAD_SCOPES = /(offline_access|mail\.read|mail\.readwrite|mail\.send|files\.read(write)?\.all|full_access_as_user|https:\/\/mail\.google\.com|gmail\.(readonly|modify)|drive(\.readonly)?\b)/i;
+
+export function consentLureFindings(visibleText: string, links: LinkInfo[]): Finding[] {
+  const findings: Finding[] = [];
+  const device = links.find((l) => DEVICE_LOGIN.test(l.resolved) || DEVICE_LOGIN.test(l.href));
+  const code = visibleText.match(CODE)?.[1];
+  if (device || (code && /devicelogin|device login|microsoft\.com\/device/i.test(visibleText))) {
+    findings.push({
+      id: 'device-code-lure',
+      category: 'links',
+      severity: 'high',
+      points: 22,
+      title: 'Device-code phishing: asks you to enter a code on a real login page',
+      detail: `It sends you to ${device ? new URL(device.resolved).host : 'a device sign-in page'}${code ? ` with the code ${code}` : ''}. The page is genuine, but entering the code signs the attacker's device into your account, no password needed. Never enter a code you didn't request yourself.`,
+      plain: 'It asks you to type a code on a real login page, which would let a stranger into your account.',
+      target: device ? { kind: 'links', indexes: [links.indexOf(device)] } : { kind: 'body' },
+    });
+  }
+  // The href, not the resolved URL: Unmask's unwrapping follows redirect_uri, which is the point here.
+  const consent = links.filter((l) => CONSENT.test(l.href) || CONSENT.test(l.resolved));
+  for (const l of consent.slice(0, 1)) {
+    const u = new URL(CONSENT.test(l.href) ? l.href : l.resolved);
+    const redirect = u.searchParams.get('redirect_uri') ?? '';
+    const redirectHost = (() => {
+      try {
+        return new URL(redirect).host;
+      } catch {
+        return '';
+      }
+    })();
+    const scope = u.searchParams.get('scope') ?? '';
+    const broad = BROAD_SCOPES.test(scope);
+    const foreignRedirect = redirectHost && !brandOwningDomain(registrableDomain(redirectHost));
+    findings.push({
+      id: 'oauth-consent-link',
+      category: 'links',
+      severity: broad || foreignRedirect ? 'high' : 'medium',
+      points: broad || foreignRedirect ? 20 : 12,
+      title: broad ? 'Asks you to give an app access to your email or files' : 'Links straight to an app-permission (consent) page',
+      detail: `The link opens ${u.host}'s real sign-in page to approve an app${u.searchParams.get('client_id') ? ` (client_id ${u.searchParams.get('client_id')})` : ''}${broad ? ` that wants ${scope.split(/[\s+]/).filter((s) => BROAD_SCOPES.test(s)).slice(0, 3).join(', ')}` : ''}${foreignRedirect ? `, and then sends you on to ${redirectHost}` : ''}. Approving gives that app lasting access even if you change your password.`,
+      target: { kind: 'links', indexes: [links.indexOf(l)] },
+    });
+  }
+  return findings;
+}
+
