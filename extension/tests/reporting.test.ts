@@ -1,5 +1,5 @@
 import { analyzeRawEmail } from '../src/core/analyze';
-import { buildJsonReport, buildPdfReport, composeUrl, defang, suspiciousUrls, urlReportPage } from '../src/lib/reporting';
+import { analystReport, buildJsonReport, buildPdfReport, composeUrl, defang, indicatorText, suspiciousUrls, urlReportPage } from '../src/lib/reporting';
 import { buildPdf } from '../src/lib/pdf';
 import { reportPhishingInGmail } from '../src/lib/gmailActions';
 import { fixture } from './helpers';
@@ -18,6 +18,20 @@ describe('reports', () => {
     expect(json.indicators.urls.length).toBeGreaterThan(0);
     expect(json.indicators.urls).toEqual(suspiciousUrls(r, 50));
     expect(JSON.parse(JSON.stringify(json)).authentication.raw).toBeUndefined();
+  });
+
+  it('writes an analyst write-up in SOC order, with defanged indicators', async () => {
+    const r = await analyzeRawEmail(fixture('phishing-paypal.eml'));
+    const text = analystReport(r, '1.2.3', new Date('2026-10-19T00:00:00Z'));
+    const order = ['## Verdict', '## Message', '## Authentication', '## Delivery path', '## Findings', '## Indicators', '## Not checked', '## Recommended actions'].map((h) => text.indexOf(h));
+    expect(order.every((n, i) => n > 0 && (i === 0 || n > order[i - 1]!))).toBe(true);
+    expect(text).toContain('Impersonation (high confidence)');
+    const iocs = indicatorText(r);
+    expect(iocs).toContain('sender\tbilling[@]paypa1-support[.]xyz');
+    expect(iocs).toContain('reply-to\tsecure-team[@]protonmail[.]com');
+    expect(iocs).toContain('origin-ip\t185[.]220[.]101[.]4');
+    expect(iocs).toMatch(/^url\thxxps:\/\//m);
+    expect(iocs).not.toMatch(/https?:\/\//);
   });
 
   it('writes a structurally valid PDF', async () => {

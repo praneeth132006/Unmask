@@ -294,6 +294,8 @@ At the bottom of the Summary, **Report or export** offers:
 - **Send to APWG** or **Netcraft:** downloads the email as an `.eml` file and opens a pre-filled email to their reporting address. Attach the downloaded file and send.
 - **Report the riskiest link** to Google Safe Browsing (address filled in), PhishTank or Netcraft (address copied; paste it in).
 - **PDF report**, **JSON** and **Original (.eml)** for your IT or security team.
+- **Copy analyst write-up**: a plain-text case report in the order a security analyst works (verdict and attack type, message identifiers, authentication and DKIM signatures, delivery path, findings, indicators, what wasn't checked, recommended actions), ready to paste into a ticket.
+- **Copy indicators**: the sender, Reply-To, bounce address, origin IP, delivering server, signing domains, suspicious URLs and domains, file hashes and callback phone numbers, one per line and defanged (`hxxps://paypa1[.]top`, `billing[@]evil[.]xyz`) so nothing becomes a clickable link.
 
 Unmask never sends a report itself; you always review and send it.
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { Report } from '../../core/types';
-import { buildJsonReport, buildPdfReport, composeUrl, safeFileName, suspiciousUrls, urlReportPage, type ReportService } from '../../lib/reporting';
+import { analystReport, buildJsonReport, buildPdfReport, composeUrl, indicatorText, safeFileName, suspiciousUrls, urlReportPage, type ReportService } from '../../lib/reporting';
 import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
@@ -41,6 +41,14 @@ export function ReportCard({
   const urls = suspiciousUrls(report);
   const top = urls[0];
 
+  const copy = async (text: string, done: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setNote({ ok: true, text: done });
+    } catch {
+      setNote({ ok: false, text: 'Could not copy to the clipboard.' });
+    }
+  };
   const downloadEml = () => raw && download(`${base}.eml`, raw, 'message/rfc822');
   const sendTo = (service: ReportService) => {
     downloadEml();
@@ -104,6 +112,14 @@ export function ReportCard({
                 <Icon name="download" className="h-3.5 w-3.5" /> Original (.eml)
               </Button>
             )}
+          </div>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <Button onClick={() => void copy(analystReport(report, version), 'Analyst write-up copied: verdict, authentication, delivery path, findings and indicators.')} title="A case write-up in the order a security analyst works">
+              <Icon name="copy" className="h-3.5 w-3.5" /> Copy analyst write-up
+            </Button>
+            <Button onClick={() => void copy(indicatorText(report), 'Indicators copied, defanged so they can’t be clicked.')} title="Sender, Reply-To, origin IP, URLs, domains, file hashes: defanged">
+              <Icon name="copy" className="h-3.5 w-3.5" /> Copy indicators
+            </Button>
           </div>
         </div>
         {note && <p className={`mt-2.5 text-xs ${note.ok ? 'text-[var(--text-2)]' : 'text-[var(--bad)]'}`}>{note.text}</p>}

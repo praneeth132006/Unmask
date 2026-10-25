@@ -7,12 +7,21 @@
 import type { LinkInfo, Report, Severity } from '../core/types';
 import { SEVERITY_RANK } from '../core/score';
 import { buildPdf, type PdfLine } from './pdf';
+import { hypotheses, limitations } from '../core/assessment';
+import { phoneNumbers } from '../analyzers/techniques';
+import { entryHop } from '../analyzers/received';
+import { registrableDomain } from './domain';
 
 export const TOOL = 'Unmask (https://github.com/praneeth132006/Unmask)';
 
 /** hxxps://paypa1[.]top/login — readable, but no client will turn it into a link. */
 export function defang(url: string): string {
   return url.replace(/^http/i, 'hxxp').replace(/\./g, '[.]');
+}
+
+/** 185[.]220[.]101[.]4, billing[@]paypa1-support[.]xyz: safe to paste into tickets and chats. */
+export function defangText(s: string): string {
+  return s.replace(/\./g, '[.]').replace(/@/g, '[@]');
 }
 
 function worst(l: LinkInfo): number {
@@ -29,6 +38,125 @@ export function suspiciousUrls(report: Report, max = 10): string[] {
 }
 
 const VERDICT_TEXT = { high: 'High risk', suspicious: 'Suspicious', clear: 'No red flags found' } as const;
+
+export interface Indicators {
+  senderAddress: string | null;
+  senderDomain: string | null;
+  replyTo: string[];
+  returnPath: string | null;
+  originIp: string | null;
+  /** The server that handed the email to your provider, as your provider saw it. */
+  deliveringServer: string | null;
+  dkimDomains: string[];
+  urls: string[];
+  domains: string[];
+  sha256: string[];
+  phones: string[];
+}
+
+/** Indicators of compromise, the list an analyst blocks and searches for across the mailbox. */
+export function indicators(report: Report, maxUrls = 50): Indicators {
+  const { email } = report;
+  const entry = entryHop(report.forensics.hops);
+  const callback = report.findings.some((f) => f.id === 'callback-phishing' || f.id === 'platform-abuse');
+  return {
+    senderAddress: email.from?.address ?? null,
+    senderDomain: email.from?.domain ?? null,
+    replyTo: email.replyTo.map((r) => r.address),
+    returnPath: email.returnPath,
+    originIp: report.forensics.originIp,
+    deliveringServer: entry ? [entry.rdns && entry.rdns !== 'unknown' ? entry.rdns : entry.helo, entry.ip && `[${entry.ip}]`].filter(Boolean).join(' ') || null : null,
+    dkimDomains: [...new Set(report.forensics.dkim.map((d) => d.domain))],
+    urls: suspiciousUrls(report, maxUrls),
+    domains: [...new Set(report.links.filter((l) => worst(l) >= SEVERITY_RANK.medium).map((l) => l.domain).filter(Boolean))],
+    sha256: report.attachments.filter((a) => a.flags.length).map((a) => a.sha256),
+    phones: callback ? phoneNumbers(report.previewText) : [],
+  };
+}
+
+/** Indicators as defanged lines, ready to paste into a ticket. */
+export function indicatorText(report: Report): string {
+  const i = indicators(report);
+  const lines: string[] = [];
+  const add = (label: string, values: (string | null)[], fang = true) => {
+    for (const v of values) if (v) lines.push(`${label}\t${fang ? defangText(v) : v}`);
+  };
+  add('sender', [i.senderAddress]);
+  add('reply-to', i.replyTo);
+  add('return-path', [i.returnPath]);
+  add('origin-ip', [i.originIp]);
+  add('delivered-by', [i.deliveringServer]);
+  add('dkim-domain', i.dkimDomains);
+  for (const u of i.urls) lines.push(`url\t${defang(u)}`);
+  add('domain', i.domains);
+  add('sha256', i.sha256, false);
+  add('phone', i.phones, false);
+  return lines.join('\n');
+}
+
+/**
+ * A plain-text case write-up in the order a SOC analyst works: verdict and
+ * attack type, identifiers, authentication, delivery path, findings,
+ * indicators, and what was not checked.
+ */
+export function analystReport(report: Report, version: string, now = new Date()): string {
+  const { email, auth, forensics } = report;
+  const kinds = hypotheses(report);
+  const out: string[] = [];
+  const section = (title: string) => out.push('', `## ${title}`);
+  out.push(`# Phishing analysis: ${email.subject || '(no subject)'}`, `Generated ${now.toISOString()} by ${TOOL} ${version}. All checks ran on the analyst's computer unless noted.`);
+
+  section('Verdict');
+  out.push(`${VERDICT_TEXT[report.verdict]}, risk score ${report.score}/100.`);
+  for (const h of kinds) out.push(`- ${h.label} (${h.confidence} confidence): ${h.meaning}`);
+
+  section('Message');
+  out.push(`From: ${email.from ? `${email.from.name ? `"${email.from.name}" ` : ''}<${email.from.address}>` : 'missing'}`);
+  if (email.replyTo.length) out.push(`Reply-To: ${email.replyTo.map((r) => r.address).join(', ')}`);
+  if (email.returnPath) out.push(`Return-Path: ${email.returnPath}`);
+  out.push(`To: ${email.to.map((t) => t.address).join(', ') || 'none'}`, `Date: ${email.date ?? 'unknown'}`, `Message-ID: ${email.messageId ?? 'none'}`);
+
+  section('Authentication');
+  out.push(`Provider verdict${auth.server ? ` (${auth.server})` : ''}: SPF ${auth.spf}${auth.spfDomain ? ` (${auth.spfDomain})` : ''}, DKIM ${auth.dkim}${auth.dkimDomains.length ? ` (${auth.dkimDomains.join(', ')})` : ''}, DMARC ${auth.dmarc}${auth.dmarcDomain ? ` (${auth.dmarcDomain})` : ''}.`);
+  for (const d of forensics.dkim) {
+    out.push(`- DKIM d=${d.domain} s=${d.selector} ${d.algorithm}${d.keyBits ? ` ${d.keyBits}-bit` : ''}: body ${d.bodyHash}, signature ${d.signature ?? 'not verified'}${d.bodyLength !== null ? `, l=${d.bodyLength}` : ''}${d.signedAt ? `, signed ${new Date(d.signedAt).toISOString()}` : ''}${d.reason ? ` (${d.reason})` : ''}`);
+  }
+  for (const a of forensics.arc) out.push(`- ARC i=${a.instance} by ${a.domain}, cv=${a.cv}: ${Object.entries(a.results).map(([m, r]) => `${m}=${r}`).join(' ')}`);
+  if (forensics.arcProblem) out.push(`- ARC problem: ${forensics.arcProblem}`);
+
+  if (forensics.hops.length) {
+    section('Delivery path (origin first)');
+    for (const h of forensics.hops) {
+      const when = h.time ? new Date(h.time).toISOString() : 'no time';
+      out.push(`${h.n}. ${h.helo ?? h.rdns ?? 'unknown'}${h.ip ? ` [${h.ip}]` : ''}${h.rdns && h.rdns !== h.helo ? ` rDNS ${h.rdns}` : ''} -> ${h.by ?? '?'} at ${when}${h.delaySec !== null ? ` (+${h.delaySec}s)` : ''}${h.trusted ? '' : ' [unverifiable]'}`);
+    }
+    if (forensics.sender) out.push(`Delivering server network: ${[forensics.sender.network, forensics.sender.asn && `AS${forensics.sender.asn}`, forensics.sender.country].filter(Boolean).join(', ')}`);
+  }
+
+  section(`Findings (${report.findings.filter((f) => f.points > 0).length} red flags)`);
+  for (const f of report.findings) out.push(`- [${f.severity.toUpperCase()}${f.points ? ` ${f.points > 0 ? '+' : ''}${f.points}` : ''}] ${f.title}${f.detail ? `\n  ${f.detail}` : ''}`);
+
+  const iocs = indicatorText(report);
+  if (iocs) {
+    section('Indicators (defanged)');
+    out.push(iocs);
+  }
+
+  const limits = limitations(report);
+  if (limits.length) {
+    section('Not checked');
+    for (const l of limits) out.push(`- ${l}`);
+  }
+  section('Recommended actions');
+  if (report.verdict === 'high') {
+    out.push('- Do not click, reply or open files. Report it and delete it.', '- Search other mailboxes for the sender, Reply-To, URLs and hashes above, and block them.', '- If anyone clicked or replied: reset their password, revoke sessions and app consents, and check their mailbox rules.');
+  } else if (report.verdict === 'suspicious') {
+    out.push('- Confirm with the sender through a known channel (phone, official app) before acting.', '- Run a sandbox scan of the links and a VirusTotal check of the files.');
+  } else {
+    out.push('- No action needed from these checks. Still verify unexpected payment or password requests out of band.');
+  }
+  return out.join('\n');
+}
 
 export function buildJsonReport(report: Report, version: string, now = new Date()) {
   const { email } = report;
@@ -52,12 +180,10 @@ export function buildJsonReport(report: Report, version: string, now = new Date(
     links: report.links.map((l) => ({ href: l.href, resolved: l.resolved, text: l.text, source: l.source, origin: l.origin, domain: l.domain, flags: l.flags.map((f) => f.label) })),
     attachments: report.attachments.map((a) => ({ filename: a.filename, mimeType: a.mimeType, size: a.size, sha256: a.sha256, flags: a.flags.map((f) => f.label), contents: a.contents })),
     qrCodes: report.qrCodes,
-    indicators: {
-      urls: suspiciousUrls(report, 50),
-      domains: [...new Set(report.links.filter((l) => worst(l) >= SEVERITY_RANK.medium).map((l) => l.domain).filter(Boolean))],
-      senderDomain: email.from?.domain ?? null,
-      sha256: report.attachments.filter((a) => a.flags.length).map((a) => a.sha256),
-    },
+    assessment: hypotheses(report).map(({ kind, label, confidence, evidence }) => ({ kind, label, confidence, evidence })),
+    notChecked: limitations(report),
+    forensics: report.forensics,
+    indicators: indicators(report),
     headers: email.headers.map((h) => ({ name: h.name, value: h.value })),
   };
 }
@@ -78,6 +204,8 @@ export function buildPdfReport(report: Report, version: string, now = new Date()
   L.push({ kind: 'small', text: `Generated ${now.toISOString().replace('T', ' ').slice(0, 16)} UTC by Unmask ${version}. All checks ran locally in the browser unless noted.` });
   L.push({ kind: 'gap' });
   L.push({ kind: 'text', text: `Verdict: ${VERDICT_TEXT[report.verdict]} (risk score ${report.score}/100)`, color: report.verdict === 'high' ? SEV_COLOR.high : report.verdict === 'suspicious' ? SEV_COLOR.medium : SEV_COLOR.good });
+
+  for (const h of hypotheses(report)) L.push({ kind: 'small', text: `${h.label} (${h.confidence} confidence): ${h.meaning}` });
 
   L.push({ kind: 'heading', text: 'Message' });
   L.push({ kind: 'text', text: `Subject: ${email.subject || '(none)'}` });
@@ -110,6 +238,11 @@ export function buildPdfReport(report: Report, version: string, now = new Date()
   if (report.qrCodes.length) {
     L.push({ kind: 'heading', text: 'QR codes' });
     for (const q of report.qrCodes) L.push({ kind: 'mono', text: `${q.origin}: ${/^http/i.test(q.text) ? defang(q.text) : q.text}` });
+  }
+  const limits = limitations(report);
+  if (limits.length) {
+    L.push({ kind: 'heading', text: 'Not checked' });
+    for (const l of limits) L.push({ kind: 'small', text: `- ${l}` });
   }
   L.push({ kind: 'heading', text: 'Delivery headers' });
   for (const h of email.headers.filter((x) => ['received', 'authentication-results', 'received-spf', 'dkim-signature', 'arc-authentication-results', 'x-originating-ip'].includes(x.key)).slice(0, 25)) {
