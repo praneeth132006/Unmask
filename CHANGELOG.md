@@ -4,7 +4,12 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-25
+
 ### Added
+- **HTML entity and encoding tricks:** words spelt letter by letter in character codes (`&#80;&#97;&#121;…`), link addresses written in codes or with `%`-encoded host letters, words split by soft hyphens and zero-width spaces, and body words mixing alphabets.
+- **Landing-page screenshots from private sandbox scans:** the urlscan.io screenshot is fetched with your key, shown in the Links tab with **Save screenshot**, and where the link lands is added to the reports.
+- **How Unmask analyses an email:** a new documentation and website page explaining every step in SOC order, how each result is reported, and what is sent where, with new screenshots.
 - **Header forensics, the way analysts read them.** The delivery path (`Received` headers) is parsed hop by hop, and only the hops your own provider wrote are trusted; out-of-order times, mail sent straight from a workstation and senders with no DNS name are flagged.
 - **Fake "passed" stamps are ignored.** An `Authentication-Results` header naming Google, Microsoft, Yahoo or Apple when they never handled the email is reported and not used.
 - **DKIM checked by Unmask itself.** Body hashes are recomputed locally (changed after signing, content added past an `l=` limit, a second Subject or From added on top), and with online checks on, each signature is verified with the signer's public key (RSA-SHA256, RSA-SHA1, Ed25519). Signatures naming keys that don't exist, withdrawn and weak keys are flagged. The Headers tab lists every signature and the ARC chain.
@@ -20,6 +25,9 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - A labelled corpus of phishing and legitimate emails that every check is measured against in CI.
 
 ### Changed
+- **urlscan.io sandbox scans are always private**: only your key can see them, never urlscan's public feed or search, and never urlscan Pro for its partners. The visibility setting is gone.
+- **Submitting an unknown link to VirusTotal asks first**, because submitted links become visible to VirusTotal's customers (file uploads already asked).
+- Indicator lists give each link's exact host, not its registrable domain, so blocking them can't block a whole platform such as `pages.dev`.
 - Reassuring signals (DMARC pass, a known sender) no longer offset a high or critical red flag.
 - A DKIM failure is only a note when DMARC still passed (mailing lists); Reply-To on verified share and invite notifications isn't counted.
 
