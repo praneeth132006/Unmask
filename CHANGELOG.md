@@ -4,6 +4,25 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Added
+- **Header forensics, the way analysts read them.** The delivery path (`Received` headers) is parsed hop by hop, and only the hops your own provider wrote are trusted; out-of-order times, mail sent straight from a workstation and senders with no DNS name are flagged.
+- **Fake "passed" stamps are ignored.** An `Authentication-Results` header naming Google, Microsoft, Yahoo or Apple when they never handled the email is reported and not used.
+- **DKIM checked by Unmask itself.** Body hashes are recomputed locally (changed after signing, content added past an `l=` limit, a second Subject or From added on top), and with online checks on, each signature is verified with the signer's public key (RSA-SHA256, RSA-SHA1, Ed25519). Signatures naming keys that don't exist, withdrawn and weak keys are flagged. The Headers tab lists every signature and the ARC chain.
+- **DKIM replay detection**, modelled on the 2025 Google OAuth-alert campaign: an old genuine signature, a recipient other than you, a forwarding service and a pass at an earlier ARC hop together.
+- **How the email was built:** two From headers, gmail.com/Outlook.com/Yahoo senders whose Message-ID was made elsewhere, spam tools and web scripts, "Re:" subjects that reply to nothing, names spelt with look-alike letters or invisible characters.
+- **Attack techniques:** callback scams, abused notification platforms (PayPal invoices, DocuSign, Google shares…), device-code and OAuth consent lures, ClickFix, locked archives sent with their password, phishing-kit links carrying your address, image-only emails, more abused hosting services.
+- **Sender DNS posture:** SPF `+all`/`?all`, DMARC `p=none`, and certified BIMI logos.
+- **Who runs the sending server** (optional, off by default): reverse DNS and network owner of the server that delivered the email, flagging home connections and rented servers.
+- **Sender fingerprints:** a known sender who suddenly signs, routes or builds their email differently, or asks for replies elsewhere for the first time.
+- **What this looks like:** the Summary names the kind of attack with a confidence, and lists what Unmask couldn't check.
+- **Copy analyst write-up** and **Copy indicators** (defanged) in Report or export; the JSON and PDF reports include the assessment and forensics.
+- **Look-alike letters from Unicode's confusables list** (UTS #39, about 1,600 characters).
+- A labelled corpus of phishing and legitimate emails that every check is measured against in CI.
+
+### Changed
+- Reassuring signals (DMARC pass, a known sender) no longer offset a high or critical red flag.
+- A DKIM failure is only a note when DMARC still passed (mailing lists); Reply-To on verified share and invite notifications isn't counted.
+
 ## [0.3.4] - 2026-10-20
 
 ### Added

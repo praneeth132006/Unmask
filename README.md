@@ -119,7 +119,11 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 
 | | |
 |---|---|
-| **Sender checks** | SPF, DKIM and DMARC; display names that hide another address; look-alike domains such as `paypa1.com` or `pаypal.com` (Cyrillic а) for 50+ brands; brand names sent from free webmail; Reply-To and bounce addresses elsewhere; brand-new domains. |
+| **Sender checks** | SPF, DKIM and DMARC; display names that hide another address; look-alike domains such as `paypa1.com` or `pаypal.com` (Cyrillic а) for 50+ brands, using Unicode's confusables list; brand names sent from free webmail; Reply-To and bounce addresses elsewhere; brand-new domains. |
+| **Header forensics** | Verifies DKIM signatures itself (fetches the signer's key; RSA and Ed25519) and recomputes body hashes to catch emails changed after signing, headers added on top of signed ones and `l=` tricks. Reads the delivery path the way an analyst does, trusting only your provider's hops; spots fake "passed" stamps, DKIM replay of genuine emails, broken ARC chains, Gmail/Outlook senders whose Message-ID was made elsewhere, spam tools and workstation senders. |
+| **Attack techniques** | Callback ("TOAD") scams, genuine PayPal/DocuSign/Google notifications carrying a scammer's text, device-code and OAuth consent lures, ClickFix "paste this command" instructions, locked ZIPs sent with their password, phishing-kit links carrying your address, image-only emails. |
+| **Sender fingerprints** | Learns how each sender's emails are signed, routed and built, and warns when a known sender suddenly sends differently, such as a first-ever Reply-To elsewhere. |
+| **Analyst write-up** | Says what kind of attack it is (with a confidence) and what couldn't be checked; one click copies a SOC-style case write-up or a defanged indicator list. |
 | **Where the trackers are** | Each tracking pixel's service, address, and exact spot ("image 2 of 2, at the very end, after '…Unsubscribe'"), tagged in the safe view and in Gmail. Pixels are never loaded. |
 | **Peek before opening** | Checks an inbox email without opening it; text-only preview, no trackers. Optional automatic checks of unread mail. |
 | **Plain words** | Every verdict in one everyday sentence with what to do; simple mode for non-technical users. |
@@ -135,7 +139,7 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 | **Privacy** | Tracking pixels and click-tracked links from ~40 services (Mailchimp, HubSpot, Mailtrack, Superhuman, …). |
 | **Optional online checks** | VirusTotal for files and links, urlscan.io for a sandbox screenshot of where a link lands, and a self-hosted server that traces redirect chains. Each one is set up from inside the panel. |
 
-See [docs/CHECKS.md](docs/CHECKS.md) for every check and how many points it adds.
+See [docs/CHECKS.md](docs/CHECKS.md) for every check and how many points it adds. Every check is measured against a [labelled corpus](extension/tests/fixtures/corpus) of phishing and legitimate emails in CI.
 
 ## Install
 
