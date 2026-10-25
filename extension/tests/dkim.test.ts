@@ -58,3 +58,26 @@ describe('DKIM body hash (local)', () => {
     expect(ids(r.findings)).toContain('dkim-old-signature');
   });
 });
+
+describe('DKIM replay', () => {
+  it('recognises the Google OAuth-alert replay pattern', async () => {
+    const alert = message(['From: Google <no-reply@accounts.google.com>', 'To: attacker.lure@gmail.com', 'Subject: Security alert', 'Date: Mon, 12 Oct 2026 10:00:00 +0000', 'Message-ID: <a1@accounts.google.com>'], 'Google Legal: a subpoena has been issued. View the case: https://sites.google.com/view/case-3381\r\n');
+    const signed = await sign(alert, { key, domain: 'accounts.google.com', selector: '20230601', signTime: new Date('2026-10-12T10:00:00Z') });
+    const raw = [
+      'Delivered-To: victim@example.org',
+      'Received: from fwd-03.fwd.privateemail.com (fwd-03.fwd.privateemail.com [198.54.122.148]) by mx.google.com with ESMTPS; Mon, 19 Oct 2026 16:00:00 +0000',
+      'Authentication-Results: mx.google.com; dkim=pass header.i=@accounts.google.com header.s=20230601; spf=pass smtp.mailfrom=SRS1=HHH=accounts.google.com==ab12=xyz@eforward.registrar-servers.com; dmarc=pass header.from=accounts.google.com',
+      'Return-Path: <SRS1=HHH=accounts.google.com==ab12=xyz@eforward.registrar-servers.com>',
+    ].join('\r\n') + '\r\n' + signed;
+    const r = await analyzeRawEmail(raw);
+    const replay = r.findings.find((f) => f.id === 'dkim-replay');
+    expect(replay?.severity).toBe('high');
+    expect(replay?.detail).toMatch(/signed long before.*addressed to someone else.*forwarding service/);
+    expect(r.findings.map((f) => f.id)).not.toContain('dmarc-pass');
+  });
+
+  it('does not call an ordinary signed email a replay', async () => {
+    const r = await analyzeRawEmail(`Received: from mx.example.com (mx.example.com [198.51.100.1]) by mx.google.com; Mon, 19 Oct 2026 16:00:30 +0000\r\n${await sign(base, { key })}`);
+    expect(r.findings.map((f) => f.id)).not.toContain('dkim-replay');
+  });
+});

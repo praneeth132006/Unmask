@@ -83,6 +83,16 @@ Unmask also reads every `DKIM-Signature` itself and recomputes its body hash on 
 With online checks on, Unmask also fetches each signer's public key and verifies the signature itself (RSA-SHA256, RSA-SHA1 and Ed25519), the same check your provider ran on arrival. A signature that passed on arrival but fails now is treated as a rotated key, not tampering. See [Online checks](#online-checks).
 | This copy differs from what your provider verified | Note | 0 | Usually a pasted copy rather than the original |
 
+### DKIM replay
+
+A genuine signed email (often a notification the attacker triggered on their own account, with the lure in a field they control) re-sent unchanged to many people. The signature verifies and DMARC can pass, so it needs several signs together. Source: [`analyzers/replay.ts`](../extension/src/analyzers/replay.ts).
+
+| Check | Severity | Points |
+|---|---|---|
+| Signed by the From domain, plus two or more of: signed or written days before arrival · addressed to someone else · passed at an earlier ARC hop and failed at yours · passed on by a forwarding service (SRS bounce address) · SPF failed for an unrelated delivering server | High | 20 |
+
+When it fires, the *DMARC passed* reassurance is removed.
+
 ### Forwarding record (ARC)
 
 Forwarding servers that support ARC record the authentication results they saw and seal them (`ARC-Seal`, `ARC-Message-Signature`, `ARC-Authentication-Results`). Unmask reads the chain's structure and results; it does not verify the seals' signatures. Source: [`analyzers/arc.ts`](../extension/src/analyzers/arc.ts).

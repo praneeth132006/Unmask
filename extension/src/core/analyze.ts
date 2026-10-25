@@ -16,6 +16,7 @@ import { deliveryPath, entryHop, originIp, receivedFindings } from '../analyzers
 import { dkimFindings } from '../analyzers/dkim';
 import { arcFindings, readArcChain } from '../analyzers/arc';
 import { identityFindings } from '../analyzers/identity';
+import { replayFindings } from '../analyzers/replay';
 import { publicInfo, readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
 import { getHeaders } from './parse';
@@ -43,6 +44,9 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const arc = readArcChain(rawMessage);
   const forensics: Forensics = { hops, originIp: originIp(hops, getHeaders(email, 'x-originating-ip')[0]), dkim: signatures.map(publicInfo), arc: arc.sets, arcProblem: arc.problem };
   const pathFindings = [...receivedFindings(hops, email.date), ...dkimFindings(signatures, rawMessage, auth, entryHop(hops)?.time ?? null, email.from?.domain ?? ''), ...arcFindings(arc.sets, arc.problem, auth), ...identityFindings(email, rawMessage, auth)];
+  pathFindings.push(...replayFindings(email, auth, signatures, pathFindings));
+  // A replayed email passes DMARC by design, so passing proves nothing here.
+  if (pathFindings.some((f) => f.id === 'dkim-replay')) authFindings.splice(0, authFindings.length, ...authFindings.filter((f) => f.id !== 'dmarc-pass'));
   // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:
   // still worth knowing, but not a high-risk sign on its own.
   const senderFindings = analyzeSender(email).map((f) =>
