@@ -16,6 +16,9 @@ const ABUSED_HOSTS = [
   'sites.google.com', 'docs.google.com', 'forms.gle', 'forms.office.com', 'sway.office.com', 'storage.googleapis.com', 'blob.core.windows.net',
   'r2.dev', 'ipfs.io', 'dweb.link', 'cloudflare-ipfs.com', 'dropboxusercontent.com', 'herokuapp.com', 'onrender.com', 'square.site',
   'godaddysites.com', 'webflow.io', 'framer.app', 'notion.site', 'canva.site', 'typeform.com', 'jotform.com', 'surge.sh', 'translate.goog',
+  'azurewebsites.net', 'web.core.windows.net', 'amplifyapp.com', 'appspot.com', 'firebasestorage.googleapis.com', 'pythonanywhere.com', 'gitbook.io',
+  'lovable.app', 'telegra.ph', 'jimdosite.com', 'yolasite.com', 'mystrikingly.com', 'carrd.co', 'tilda.ws', 'filesusr.com', 'usrfiles.com',
+  'supabase.co', 'backblazeb2.com', 'digitaloceanspaces.com', 'wasabisys.com', 'storage.cloud.google.com', 'cprapid.com', 'start.page', 'b-cdn.net',
 ];
 
 /** Email service providers whose click-tracking hosts legitimately differ from the link text. */
@@ -135,7 +138,40 @@ const FLAG_SPECS: Record<string, FlagSpec> = {
   'many-subdomains': { severity: 'low', points: 5, title: 'Link has an unusually long chain of subdomains' },
   'odd-port': { severity: 'low', points: 5, title: 'Link uses a non-standard port' },
   'no-https': { severity: 'low', points: 3, title: 'Link is not encrypted (http://)' },
+  // Phishing kits read the victim's address from the link to pre-fill a fake login page.
+  'victim-email': { severity: 'high', points: 18, title: 'Link carries an email address, hidden, for a pre-filled login page' },
+  'encoded-email': { severity: 'medium', points: 10, title: 'Link carries an email address in encoded form' },
 };
+
+const EMAIL_RE = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/;
+
+function tryBase64(token: string): string {
+  try {
+    const b = atob(token.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(token.length / 4) * 4, '='));
+    return /^[\x20-\x7e]+$/.test(b) ? b : '';
+  } catch {
+    return '';
+  }
+}
+
+/** An email address hidden in a URL part, plain or base64. */
+export function hiddenEmail(part: string): { address: string; encoded: boolean } | null {
+  let text = part;
+  try {
+    text = decodeURIComponent(part);
+  } catch {
+    /* keep raw */
+  }
+  const plain = text.match(EMAIL_RE)?.[0];
+  if (plain) return { address: plain, encoded: false };
+  // Base64 may contain "/", which is also the path separator, so try the whole run and its segments.
+  const runs = text.match(/[A-Za-z0-9+/_-]{16,}={0,2}/g) ?? [];
+  for (const token of [...runs, ...runs.flatMap((r) => r.split('/'))].filter((t) => t.length >= 16)) {
+    const address = tryBase64(token).match(EMAIL_RE)?.[0];
+    if (address) return { address, encoded: true };
+  }
+  return null;
+}
 
 /** The plain-language title of a link flag, e.g. for "suspicious-tld". */
 export function linkFlagTitle(id: string): string | null {
@@ -185,6 +221,14 @@ export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
   if (u?.port && !['80', '443'].includes(u.port)) flags.push(flag('odd-port', `port ${u.port}`));
   if (u && DOWNLOAD_EXT.test(u.pathname)) flags.push(flag('download', u.pathname.split('/').pop() ?? u.pathname));
   if (u?.protocol === 'http:' && !info.isIp) flags.push(flag('no-https', host));
+
+  if (u) {
+    const viaTrackerHost = matchesHost(originalHost, TRACKERS) || matchesHost(host, TRACKERS);
+    const inFragment = u.hash.length > 1 ? hiddenEmail(u.hash.slice(1)) : null;
+    const inPath = !inFragment && !ownService && !viaTrackerHost ? hiddenEmail(`${u.pathname}${u.search}`) : null;
+    if (inFragment) flags.push(flag('victim-email', `${inFragment.encoded ? 'encoded ' : ''}${inFragment.address} after the # in ${host}`));
+    else if (inPath?.encoded) flags.push(flag('encoded-email', `${inPath.address} encoded in the ${host} link`));
+  }
 
   const shown = domainInText(raw.text);
   if (shown && host && !sameOrg(shown, host)) {

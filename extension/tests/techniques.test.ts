@@ -105,3 +105,18 @@ describe('locked archive with the password in the email', () => {
     expect(await ids(await withZip('Please find the invoice attached.'))).not.toContain('archive-password-in-body');
   });
 });
+
+describe('links that carry your email address', () => {
+  const html = (href: string) => mail(['From: a@b.top', 'Subject: Document shared', 'Content-Type: text/html'], `<a href="${href}">Open</a>`);
+  const flagsOf = async (href: string) => (await analyzeRawEmail(html(href))).links[0]!.flags.map((f) => f.id);
+
+  it('flags an address after the # (plain or base64): a pre-filled phishing login', async () => {
+    expect(await flagsOf('https://login-docs.pages.dev/#victim@example.org')).toContain('victim-email');
+    expect(await flagsOf(`https://login-docs.pages.dev/#${btoa('victim@example.org')}`)).toContain('victim-email');
+  });
+
+  it('flags a base64 address in the path, not a plain unsubscribe link', async () => {
+    expect(await flagsOf(`https://share-files.top/d/${btoa('victim@example.org')}`)).toContain('encoded-email');
+    expect(await flagsOf('https://news.example.com/unsubscribe?email=victim@example.org')).not.toContain('encoded-email');
+  });
+});

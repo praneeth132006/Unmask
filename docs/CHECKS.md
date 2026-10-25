@@ -191,11 +191,13 @@ Findings are grouped by type: the same problem on several links becomes one find
 | `javascript:` / `data:` link | Critical | 30 |
 | Text shows one site, link goes to another | High | 25 |
 | Real host hidden behind `@` (`https://paypal.com@evil.top`) | High | 25 |
+| Carries an email address after the `#`, plain or base64 (a phishing kit pre-filling its fake login page) | High | 18 |
 | Punycode / internationalized domain | High | 20 |
 | Points straight at an IP address | High | 20 |
 | Domain contains a brand it doesn't own | High | 18 |
 | URL shortener (bit.ly, tinyurl, …) | Medium | 10 |
-| Free hosting or forms service (Firebase, Netlify, Google Forms, IPFS, …) | Medium | 10 |
+| Carries a base64-encoded email address in its path or query (not on the sender's own or a mail-tracking domain) | Medium | 10 |
+| Free hosting or forms service (Firebase, Netlify, Cloudflare Pages/Workers/R2, Azure Web Apps, Google Forms, IPFS, Telegraph, …) | Low | 5 |
 | Downloads a risky file (`.exe`, `.zip`, `.iso`, …) | Medium | 8 |
 | Domain ending popular with scammers (`.top`, `.xyz`, `.zip`, …) | Low | 6 |
 | 4+ subdomains | Low | 5 |
