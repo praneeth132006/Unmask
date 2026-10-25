@@ -26,6 +26,7 @@
   <a href="https://praneeth132006.github.io/Unmask/"><b>Website</b></a> ·
   <a href="https://praneeth132006.github.io/Unmask/guide.html"><b>User guide</b></a> ·
   <a href="https://github.com/praneeth132006/Unmask/wiki">Wiki</a> ·
+  <a href="docs/ANALYSIS.md">How it analyses an email</a> ·
   <a href="docs/CHECKS.md">What it checks</a> ·
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·

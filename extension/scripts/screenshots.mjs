@@ -2,7 +2,7 @@
 // running in Chromium. Gmail is a local test double; no account is used.
 //
 //   pnpm --filter unmask-extension build:e2e && node scripts/screenshots.mjs
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -229,6 +229,65 @@ await listCard.scrollIntoViewIfNeeded();
 await p.waitForTimeout(200);
 await listCard.screenshot({ path: join(out, 'settings-protection-list.png') });
 console.log('wrote settings-protection-list.png');
+
+// ---- Analyst views on corpus samples ---------------------------------------------
+const corpus = (name) => readFileSync(join(here, '..', 'tests', 'fixtures', 'corpus', name));
+const openSample = async (name) => {
+  await p.goto(`chrome-extension://${extId}/sidepanel.html`);
+  await p.setInputFiles('input[type=file]', { name: 'sample.eml', mimeType: 'message/rfc822', buffer: corpus(name) });
+  await p.waitForSelector('[aria-label="Assessment"]', { timeout: 15000 });
+  await p.waitForTimeout(400);
+};
+const element = async (locator, name) => {
+  await locator.scrollIntoViewIfNeeded();
+  await p.waitForTimeout(200);
+  await locator.screenshot({ path: join(out, name) });
+  console.log('wrote', name);
+};
+// A replayed genuine Google alert: what it looks like, and the header forensics.
+await openSample('phish/dkim-replay-google-alert.eml');
+await shot(p, 'panel-replay-summary.png');
+await element(p.locator('[aria-label="Assessment"]'), 'panel-assessment.png');
+await p.getByRole('tab', { name: /Headers/ }).click();
+await p.waitForTimeout(300);
+await shot(p, 'panel-forensics-headers.png');
+// A mailing-list post: the ARC record and a trusted internal hop.
+await openSample('ham/mailing-list-arc.eml');
+await p.getByRole('tab', { name: /Headers/ }).click();
+await p.waitForTimeout(300);
+await element(p.locator('[aria-label="ARC chain"]'), 'panel-arc.png');
+// HTML-entity obfuscation and invisible characters.
+await openSample('phish/entity-obfuscated-m365.eml');
+await element(p.locator('ul').filter({ hasText: 'character codes' }).first(), 'panel-obfuscation.png');
+// Report or export with the analyst write-up.
+await openSample('phish/docusign-lookalike-prefilled.eml');
+await element(p.locator('[aria-label="Report or export"]'), 'panel-report-analyst.png');
+
+// A private sandbox scan of the DocuSign link. urlscan.io is a local test double, like Gmail above,
+// and the "landing page" is a demo phishing page rendered here, so no real site is contacted.
+const landing = await ctx.newPage();
+await landing.setViewportSize({ width: 1280, height: 800 });
+await landing.setContent(`<body style="margin:0;font-family:Arial;background:#f4f4f4"><div style="background:#1e1e1e;color:#fff;padding:18px 32px;font-size:22px;font-weight:bold">Docu<span style="color:#ffcc22">Sign</span></div>
+<div style="max-width:420px;margin:80px auto;background:#fff;padding:32px;border-radius:6px;box-shadow:0 2px 8px #0002"><h2 style="margin-top:0">Sign in to review your document</h2>
+<p style="color:#555">Q4 Compensation Adjustment.pdf</p><input value="alex.morgan@example.org" style="width:100%;padding:10px;margin:8px 0;box-sizing:border-box"><input type="password" placeholder="Password" style="width:100%;padding:10px;margin:8px 0;box-sizing:border-box">
+<button style="width:100%;padding:12px;background:#ffcc22;border:0;font-weight:bold;margin-top:8px">REVIEW DOCUMENT</button></div></body>`);
+const landingPng = await landing.screenshot();
+await landing.close();
+await ctx.route('https://urlscan.io/**', (route) => {
+  const url = route.request().url();
+  if (url.endsWith('/api/v1/scan/')) return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ uuid: 'demo-scan' }) });
+  if (url.includes('/api/v1/result/')) return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ page: { url: 'https://review-docs-7731.pages.dev/sign', domain: 'review-docs-7731.pages.dev', ip: '198.51.100.9', country: 'US', title: 'DocuSign - Sign in' }, verdicts: { overall: { malicious: true, score: 100, brands: [{ name: 'DocuSign' }] } } }) });
+  if (url.includes('/screenshots/')) return route.fulfill({ status: 200, contentType: 'image/png', body: landingPng });
+  return route.fulfill({ status: 200, body: '{}' });
+});
+await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...r['unmask:settings'], urlscanApiKey: 'demo-key-00000000-0000-0000-0000-000000000000' } })));
+await openSample('phish/docusign-lookalike-prefilled.eml');
+await p.getByRole('tab', { name: /Links/ }).click();
+const linkCard = p.locator('[id^="unmask-link-"]').first();
+await linkCard.getByRole('button', { name: /Sandbox scan/ }).click();
+await linkCard.locator('text=Save screenshot').waitFor({ timeout: 40000 });
+await p.waitForTimeout(300);
+await element(linkCard, 'panel-landing-page.png');
 
 // Simple mode: plain words only.
 await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...r['unmask:settings'], simpleMode: true } })));

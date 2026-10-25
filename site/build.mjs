@@ -14,6 +14,7 @@ const REPO = 'https://github.com/praneeth132006/Unmask';
 /** Markdown files that become pages, and the doc links that should point at them. */
 const PAGES = [
   { md: 'docs/USER_GUIDE.md', out: 'guide.html', title: 'User guide', nav: 'Guide' },
+  { md: 'docs/ANALYSIS.md', out: 'analysis.html', title: 'How Unmask analyses an email', nav: 'How it works' },
   { md: 'docs/CHECKS.md', out: 'checks.html', title: 'What Unmask checks', nav: 'Checks' },
   { md: 'docs/LIMITS_AND_COSTS.md', out: 'limits.html', title: 'Free limits and costs', nav: 'Limits' },
   { md: 'PRIVACY.md', out: 'privacy.html', title: 'Privacy policy', nav: 'Privacy' },
@@ -21,6 +22,7 @@ const PAGES = [
 ];
 const LINK_MAP = {
   'USER_GUIDE.md': 'guide.html',
+  'ANALYSIS.md': 'analysis.html',
   'CHECKS.md': 'checks.html',
   'LIMITS_AND_COSTS.md': 'limits.html',
   'PRIVACY.md': 'privacy.html',
@@ -32,6 +34,8 @@ function slug(text) {
   return text
     .toLowerCase()
     .replace(/<[^>]+>/g, '')
+    // marked escapes ' and " as entities; GitHub drops them, so drop the whole entity.
+    .replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi, '')
     .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .trim()
     .replace(/\s/g, '-');

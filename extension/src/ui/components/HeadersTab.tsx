@@ -18,7 +18,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
       {dkim.length > 0 && (
         <>
           <SectionTitle>Signatures (DKIM)</SectionTitle>
-          <Card>
+          <Card aria-label="DKIM signatures">
             <ul className="space-y-2 text-xs">
               {dkim.map((d, i) => (
                 <li key={i} className="min-w-0">
@@ -45,7 +45,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
       {arc.length > 0 && (
         <>
           <SectionTitle>Forwarding record (ARC)</SectionTitle>
-          <Card>
+          <Card aria-label="ARC chain">
             <ol className="space-y-1.5 text-xs">
               {arc.map((a) => (
                 <li key={a.instance}>
@@ -64,7 +64,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
       {hops.length > 0 && (
         <>
           <SectionTitle>Delivery path (where it came from, first)</SectionTitle>
-          <Card>
+          <Card aria-label="Delivery path">
             <ol className="space-y-2.5">
               {hops.map((h, i) => (
                 <li key={i} className="flex gap-2.5 text-xs">

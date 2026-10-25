@@ -121,7 +121,11 @@ At the top is the **verdict**:
 | 🟠 **Suspicious** | 20 to 49 | Some warning signs. Check with the sender another way, for example by calling them, before acting. |
 | 🟢 **No red flags found** | 0 to 19 | Nothing obviously wrong. That's not a guarantee, so stay careful. |
 
-Below it, four **summary chips** give the state of the sender, links, files and trackers at a glance. Click a chip to open that section.
+Below it, four **summary chips** give the state of the sender, links, files and trackers at a glance. Click a chip to open that section. When a genuine signature is being misused (a replayed email or a fake "passed" stamp), the sender chip says **Signature passes, but misused** instead of *Sender verified*.
+
+**What this looks like** names the kind of attack the red flags point to, such as *Password phishing*, *Callback scam* or *Replayed genuine email*, each with a confidence. Open **What Unmask couldn't check** to see this email's blind spots, such as links checked by address only or a signature not verified with the sender's key.
+
+<p><img src="images/panel-assessment.png" width="320" alt="What this looks like: Replayed genuine email, high confidence"></p>
 
 Then come the findings:
 
@@ -145,7 +149,7 @@ The row under the Unmask logo stays visible while you scroll. A **red dot** on a
 | **Files** | Each attachment: type, size, fingerprint (SHA-256), warnings, and a VirusTotal check |
 | **Body** | The email shown safely: scripts off, links disabled, images blocked. Switch on **Show hidden text** to see invisible text outlined in red |
 | **Privacy** | Tracking pixels and click-tracked links, which company runs them, **where each pixel sits in the email**, and how to avoid tracking |
-| **Headers** | The path the email took to reach you, and every technical header, with a filter box |
+| **Headers** | Every DKIM signature (did the text change after signing? does the signature verify with the sender's key?), the forwarding record (ARC), the delivery path from the first server to your inbox (steps written before your provider got the email are marked *can't be verified*, and the sending server's network when that check is on), and every technical header, with a filter box |
 
 <p>
   <img src="images/sender-light.png" width="230" alt="Sender tab">
@@ -166,7 +170,7 @@ The row under the Unmask logo stays visible while you scroll. A **red dot** on a
 | *Hidden text blocks* | Invisible text, often stuffed in to fool spam filters. |
 | *Sender domain was registered N days ago* | Real companies use domains that are years old. New ones are a strong warning sign. |
 
-The full list, with points, is in [CHECKS.md](CHECKS.md).
+The full list, with points, is in [CHECKS.md](CHECKS.md). How each step works, from the delivery path to the analyst write-up, is in [How Unmask analyses an email](ANALYSIS.md).
 
 ---
 
@@ -209,6 +213,8 @@ Unmask checks the key works before saving it. You'll see **"Connected to VirusTo
 > **What is an "API key"?** A password that lets an app use your VirusTotal account. It's not your account password. Unmask stores it only in your browser.
 
 **Limits and cost:** free keys allow 4 lookups per minute and 500 per day, and **can never be charged**: going over just pauses lookups until the limit resets. The free API is for personal use; using Unmask for your company's security work needs a VirusTotal Premium licence. See [Free limits and costs](LIMITS_AND_COSTS.md).
+
+**Scanning a new link:** if VirusTotal has never seen a link, Unmask offers **Scan it now**. Submitted links become visible to VirusTotal's customers, including any name, address or token inside them, so Unmask asks you to confirm first. For personal links use the private **Sandbox scan** instead.
 
 **Uploading files:** if VirusTotal has never seen a file, Unmask offers **Upload file…**. Uploaded files can be downloaded by VirusTotal's paying customers, so **never upload anything confidential** such as invoices, contracts, payslips or ID documents. Unmask asks you to confirm first.
 
@@ -405,7 +411,8 @@ Open Settings with the **gear icon**. The **?** icon next to it opens this guide
 - **Protection inside Gmail:** the warning banner, inbox badges, and the link and reply checks, each with its own switch.
 - **Privacy → Remember who emails me:** powers first-contact warnings. Shows how many senders are remembered, with **Forget all**.
 - **Privacy → Check how old the sender's domain is:** on by default. It sends only the domain name (for example `example.com`) to rdap.org, the public registry lookup.
-- **Privacy → Check certificate history and mail records:** on by default. Sends only domain names to crt.sh and dns.google to spot brand-new certificates and domains without mail records.
+- **Privacy → Check certificate history and mail records:** on by default. Sends only domain names to crt.sh and dns.google to spot brand-new certificates and domains without mail records, and fetches each DKIM signing key so Unmask can verify signatures itself.
+- **Privacy → Check who runs the sending server:** off by default. Sends the IP address of the server that delivered the email (never your own) to dns.google, to spot mail sent from home connections and rented servers.
 - **Appearance:** System (follows your computer), Light or Dark. The sun/moon button in the header switches it too.
 - **Advanced → Redirect tracing:** *Inside Unmask* (default) or *My own server*, with the server's address.
 

@@ -65,7 +65,7 @@ export function ReportCard({
   return (
     <>
       <SectionTitle>Report or export</SectionTitle>
-      <Card>
+      <Card aria-label="Report or export">
         <div className="flex flex-wrap gap-1.5">
           {onReportInGmail && (
             <Button

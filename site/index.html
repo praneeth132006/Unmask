@@ -62,7 +62,11 @@
   <h2>Everything a phishing email tries to hide</h2>
   <p class="sub">Every check runs inside your browser. The few online lookups send only a domain name or a file fingerprint, and each can be turned off.</p>
   <div class="grid">
-    <div class="card feature"><div class="tag">Sender</div><h3>Who really sent it</h3><p>SPF, DKIM and DMARC, display names hiding another address, and look-alike domains like <code>paypa1.com</code> for 50+ brands.</p></div>
+    <div class="card feature"><div class="tag">Sender</div><h3>Who really sent it</h3><p>SPF, DKIM and DMARC, display names hiding another address, and look-alike domains like <code>paypa1.com</code> for 50+ brands, using Unicode's confusables list.</p></div>
+    <div class="card feature"><div class="tag">0.4</div><h3>Header forensics</h3><p>DKIM signatures verified by Unmask itself, emails changed after signing, fake "passed" stamps, replayed genuine emails, and the delivery path read the way an analyst does.</p></div>
+    <div class="card feature"><div class="tag">0.4</div><h3>Attack techniques</h3><p>Callback scams, real PayPal and DocuSign emails carrying a scammer's text, device-code and consent lures, ClickFix, locked ZIPs sent with their password.</p></div>
+    <div class="card feature"><div class="tag">0.4</div><h3>Encoding tricks</h3><p>Words spelt in HTML character codes, disguised link addresses, invisible characters splitting brand names, and letters from other alphabets.</p></div>
+    <div class="card feature"><div class="tag">0.4</div><h3>Analyst write-up</h3><p>What kind of attack it is, what couldn't be checked, a SOC-style case report and defanged indicators, one click each.</p></div>
     <div class="card feature"><div class="tag">Links</div><h3>Where links really go</h3><p>Text that shows one site but links to another, redirect wrappers removed, and one-click redirect tracing.</p></div>
     <div class="card feature"><div class="tag">Hover</div><h3>Point at the problem</h3><p>Hover a red flag and Unmask outlines the exact link, sender, attachment or phrase in the Gmail email.</p></div>
     <div class="card feature"><div class="tag">Files</div><h3>Risky attachments</h3><p>Executables, fake PDFs (<code>Invoice.pdf.html</code>), macro documents, encrypted ZIPs, plus a VirusTotal check.</p></div>
@@ -77,6 +81,18 @@
     <div class="card feature"><div class="tag">New</div><h3>Inside attachments</h3><p>Links hidden in PDFs, macros in Office files, the file list of ZIPs, and a safe preview of HTML attachments.</p></div>
     <div class="card feature"><div class="tag">New</div><h3>Fake logos and new domains</h3><p>An email showing PayPal's logo that PayPal didn't send, brand-new TLS certificates and domains without mail records.</p></div>
     <div class="card feature"><div class="tag">New</div><h3>Report in one click</h3><p>Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus a PDF or JSON report for your IT team.</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="forensics">
+  <h2>Analysed the way a security analyst would</h2>
+  <p class="sub">Unmask reads the delivery path, verifies signatures, names the kind of attack and shows where a link really lands, in a private sandbox. <a href="analysis.html">How Unmask analyses an email</a>.</p>
+  <div class="gallery">
+    <figure><img class="shot" src="images/panel-replay-summary.png" alt="A replayed genuine Google alert rated High risk" width="400" height="860" loading="lazy"><figcaption>A genuine signed email, re-sent by someone else</figcaption></figure>
+    <figure><img class="shot" src="images/panel-forensics-headers.png" alt="Headers tab with DKIM signature results and the delivery path" width="400" height="860" loading="lazy"><figcaption>Signatures and the delivery path, checked</figcaption></figure>
+    <figure><img class="shot" src="images/panel-landing-page.png" alt="A private sandbox scan showing the fake DocuSign page a link leads to" width="376" height="640" loading="lazy"><figcaption>Where a link lands, from a private urlscan.io scan</figcaption></figure>
+    <figure><img class="shot" src="images/panel-obfuscation.png" alt="Findings for words hidden in HTML character codes and invisible characters" width="374" height="567" loading="lazy"><figcaption>HTML-entity and invisible-character tricks</figcaption></figure>
+    <figure><img class="shot" src="images/panel-report-analyst.png" alt="Report or export with Copy analyst write-up and Copy indicators" width="376" height="259" loading="lazy"><figcaption>An analyst write-up and defanged indicators</figcaption></figure>
   </div>
 </section>
 
@@ -107,7 +123,7 @@
   <h2>Private by design</h2>
   <div class="grid">
     <div class="card"><h3>Stays on your device</h3><p>The email is analyzed in your browser and never sent to an Unmask server. There are no accounts and no analytics.</p></div>
-    <div class="card"><h3>Online checks are opt-in</h3><p>VirusTotal and urlscan.io run only when you click them, and get a link or a file's fingerprint, not the email.</p></div>
+    <div class="card"><h3>Online checks are opt-in</h3><p>VirusTotal and urlscan.io run only when you click them, and get a link or a file's fingerprint, not the email. Sandbox scans are always <b>private</b>: only your key can see them.</p></div>
     <div class="card"><h3>Free, and never billed</h3><p>Free keys can't be charged; going over a limit just pauses that check. <a href="limits.html">Limits and costs</a>.</p></div>
   </div>
   <p class="callout" style="margin-top:20px">Unmask never says an email is "safe". A clean result means the checks found nothing, not that nothing is there. Stay careful with links and attachments you didn't expect.</p>

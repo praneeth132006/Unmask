@@ -31,7 +31,7 @@ const GUIDE_PAGES = {
   10: 'Troubleshooting',
   11: 'FAQ',
 };
-const DOC_PAGES = { 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs' };
+const DOC_PAGES = { 'ANALYSIS.md': 'How-Unmask-analyses-an-email', 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs' };
 
 function slug(text) {
   return text.toLowerCase().replace(/<[^>]+>/g, '').replace(/[^\p{L}\p{N}\s-]/gu, '').trim().replace(/\s/g, '-');
