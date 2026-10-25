@@ -18,6 +18,7 @@ import { deliveryPath, entryHop, originIp, receivedFindings } from '../analyzers
 import { dkimFindings } from '../analyzers/dkim';
 import { arcFindings, readArcChain } from '../analyzers/arc';
 import { identityFindings } from '../analyzers/identity';
+import { obfuscationFindings } from '../analyzers/obfuscation';
 import { replayFindings } from '../analyzers/replay';
 import { PLATFORMS, archivePasswordFindings, callbackFindings, clickFixFindings, consentLureFindings, platformAbuseFindings } from '../analyzers/techniques';
 import { publicInfo, readDkimSignatures } from '../lib/dkim';
@@ -69,7 +70,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const becFindings = analyzeBec(email, content.visibleText);
   const abuse = platformAbuseFindings(email, content.visibleText, auth, links);
   // The platform-abuse finding already explains the phone number; don't count it twice.
-  const techniqueFindings = [...(abuse.length ? [] : callbackFindings(email, content.visibleText, auth)), ...abuse, ...consentLureFindings(content.visibleText, links), ...clickFixFindings(content.visibleText, email, attachments), ...archivePasswordFindings(content.visibleText, email.subject, attachments)];
+  const techniqueFindings = [...(abuse.length ? [] : callbackFindings(email, content.visibleText, auth)), ...abuse, ...consentLureFindings(content.visibleText, links), ...clickFixFindings(content.visibleText, email, attachments), ...archivePasswordFindings(content.visibleText, email.subject, attachments), ...obfuscationFindings(email.html, content.visibleText)];
   const pressure = [...content.findings, ...becFindings].some((f) => ['credential-request', 'html-form', 'urgency', 'bec-bank-change', 'bec-payment', 'bec-gift-card'].includes(f.id));
   const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage), pressure);
   const protectFindings = opts.protection ? protectionFindings(email, auth, links, opts.protection) : [];

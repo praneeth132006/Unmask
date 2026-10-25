@@ -19,6 +19,7 @@ const EXPECTED: Record<string, AttackKind> = {
   'device-code-teams.eml': 'consent',
   'dkim-replay-google-alert.eml': 'replay',
   'docusign-lookalike-prefilled.eml': 'credential-phishing',
+  'entity-obfuscated-m365.eml': 'credential-phishing',
   'fake-reply-bank-change.eml': 'payment-fraud',
   'forged-google-stamp.eml': 'spoofing',
   'geek-squad-renewal-callback.eml': 'callback',

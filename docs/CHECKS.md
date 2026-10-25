@@ -277,6 +277,15 @@ Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts).
 | Hidden text 200–600 characters | Low | 3 |
 | Short hidden text (usually an inbox preview line) | Note | 0 |
 
+**Encoding tricks.** Mail apps decode the HTML source before showing it; keyword and link filters often read the source. Phishers exploit the gap. Legitimate email tools encode punctuation (`&#39;`, `&#8217;`, `&nbsp;`), never ordinary letters. Source: [`analyzers/obfuscation.ts`](../extension/src/analyzers/obfuscation.ts).
+
+| Check | Severity | Points | Example |
+|---|---|---|---|
+| Words written letter by letter as character codes | High (18) when they spell a brand, an address or a domain, otherwise Medium (10) | | `&#80;&#97;&#121;&#80;&#97;&#108;` shows as "PayPal" |
+| A link address written in character codes, or with `%`-encoded letters in its host | High | 18 | `https://&#108;&#111;&#103;&#105;&#110;&#46;evil.top`, `https://%70aypa1.top` |
+| Words split by invisible soft hyphens or zero-width spaces (3+) | High (15) when they spell a brand, otherwise Medium (8) | | `Pay&shy;Pal`, `pass&#8203;word` |
+| Words that mix alphabets in the body | High (15) when they spell a brand, otherwise Low (4) | | `Micrоsoft` with a Cyrillic о |
+
 **Hidden text** means elements styled `display:none`, `visibility:hidden`, fully transparent, a zero-size font, collapsed to zero height, or text coloured the same as its background. The Body tab's **Show hidden text** switch outlines it in red.
 
 **Phrases** include "within 24 hours", "account has been suspended", "unusual sign-in", "final notice", "verify your account", "confirm your password", "update your payment information", "mailbox full", "gift card", "wire transfer" and more. Hovering these findings marks the words in the email.

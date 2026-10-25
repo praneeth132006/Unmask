@@ -1,0 +1,12 @@
+Delivered-To: alex.morgan@example.org
+Received: from mail.m365-alerts.click (mail.m365-alerts.click [192.0.2.71]) by mx.google.com with ESMTPS id x1si2 for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com; dkim=none; spf=pass smtp.mailfrom=m365-alerts.click; dmarc=none header.from=m365-alerts.click
+From: "Account Security" <security@m365-alerts.click>
+To: alex.morgan@example.org
+Subject: Password expires today
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <e1@m365-alerts.click>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>Your &#77;&#105;&#99;&#114;&#111;&#115;&#111;&#102;&#116; 365 pass&#8203;word ex&#8203;pires to&shy;day.</p><p><a href="https://&#108;&#111;&#103;&#105;&#110;&#46;m365-alerts.click/?u=alex">Keep my password</a></p>
