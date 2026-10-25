@@ -154,3 +154,23 @@ export function clickFixFindings(visibleText: string, email: ParsedEmail, attach
   return findings;
 }
 
+const ARCHIVE_PASSWORD = /\b(?:password|passcode|pass|pwd|kennwort|mot de passe|contraseña|senha|पासवर्ड)\s*(?:is|:|=|-|：)\s*["'“]?([^\s"'”<]{3,24})/i;
+
+export function archivePasswordFindings(visibleText: string, subject: string, attachments: AttachmentInfo[]): Finding[] {
+  const locked = attachments.find((a) => a.flags.some((f) => f.id === 'encrypted-archive'));
+  if (!locked) return [];
+  const pw = `${subject}\n${visibleText}`.match(ARCHIVE_PASSWORD);
+  if (!pw) return [];
+  return [
+    {
+      id: 'archive-password-in-body',
+      category: 'attachments',
+      severity: 'critical',
+      points: 30,
+      title: `Locked archive with its password in the email ("${pw[1]}")`,
+      detail: `${locked.filename} is password-protected so virus scanners can't look inside, and the email gives you the password. Nobody legitimate does both: this is how malware is smuggled past filters.`,
+      plain: 'It has a locked file and tells you the password, a trick to sneak malware past virus scanners.',
+      target: { kind: 'attachment', sha256: locked.sha256 },
+    },
+  ];
+}

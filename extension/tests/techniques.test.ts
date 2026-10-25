@@ -1,5 +1,6 @@
 import { analyzeRawEmail } from '../src/core/analyze';
 import { callbackSigns, phoneNumbers } from '../src/analyzers/techniques';
+import { makeZip } from './helpers';
 
 const ids = async (raw: string) => (await analyzeRawEmail(raw)).findings.map((f) => f.id);
 const mail = (headers: string[], body: string) => `${headers.join('\n')}\n\n${body}`;
@@ -82,5 +83,25 @@ describe('ClickFix', () => {
 
   it('ignores normal keyboard tips', async () => {
     expect(await ids(mail(['From: a@example.com', 'Subject: tips'], 'Tip: press Ctrl + V to paste text into the editor.'))).not.toContain('clickfix');
+  });
+});
+
+describe('locked archive with the password in the email', () => {
+  async function withZip(body: string) {
+    const zip = await makeZip([{ name: 'invoice.js', data: new TextEncoder().encode('x') }]);
+    zip[6] = zip[6]! | 1; // the "encrypted" bit
+    return [
+      'From: accounts@supplier-docs.top', 'Subject: Invoice', 'MIME-Version: 1.0', 'Content-Type: multipart/mixed; boundary="B"', '', '--B', 'Content-Type: text/plain', '', body, '--B',
+      'Content-Type: application/zip; name="invoice.zip"', 'Content-Disposition: attachment; filename="invoice.zip"', 'Content-Transfer-Encoding: base64', '', Buffer.from(zip).toString('base64'), '--B--',
+    ].join('\r\n');
+  }
+
+  it('flags it critical', async () => {
+    const f = (await analyzeRawEmail(await withZip('Please find the invoice attached. Password: 4471'))).findings.find((x) => x.id === 'archive-password-in-body');
+    expect(f).toMatchObject({ severity: 'critical', title: 'Locked archive with its password in the email ("4471")' });
+  });
+
+  it('needs the password to be in the email', async () => {
+    expect(await ids(await withZip('Please find the invoice attached.'))).not.toContain('archive-password-in-body');
   });
 });
