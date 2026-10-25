@@ -41,6 +41,12 @@ export function plainReason(f: Finding, report: Report): string | null {
     return to ? `If you reply, your answer goes to ${to}, not to the address it came from.` : 'If you reply, your answer goes to a different address than the one it came from.';
   }
   if (id === 'dmarc-fail') return 'Its sender address could not be confirmed as real.';
+  if (id === 'auth-results-forged') return 'It carries a fake “security checked” stamp to look safe.';
+  if (id === 'multiple-from' || id === 'webmail-forged') return 'The sender’s address is faked.';
+  if (id.startsWith('dkim-added-') || id === 'dkim-body-altered' || id === 'dkim-partial-body') return 'Parts of it were changed after the real sender wrote it.';
+  if (id === 'dkim-old-signature' || id === 'replay-addressee') return 'It looks like an old genuine email that someone re-sent to you.';
+  if (id === 'fake-reply') return 'It pretends to be a reply to a conversation you never had.';
+  if (id === 'received-workstation' || id === 'mailer-spam-tool') return 'It was sent with tools that scammers use, not by a real company’s mail system.';
   if (id === 'link-lookalike' || id === 'link-brand-in-domain') return 'A link leads to a fake website made to look like a real one.';
   if (id === 'link-text-mismatch') return 'A link says one website but really goes to another.';
   if (id === 'link-dangerous-scheme' || id === 'link-userinfo' || id === 'link-ip-host') return 'A link is built to trick you about where it goes.';

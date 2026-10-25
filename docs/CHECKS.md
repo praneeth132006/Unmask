@@ -126,6 +126,20 @@ Source: [`analyzers/sender.ts`](../extension/src/analyzers/sender.ts).
 
 **Domain age** (online, on by default; see [Online checks](#online-checks)): registered under 30 days ago **High 25**; under 6 months **Medium 10**; no registration record **Medium 10**; older is a note. Skipped for free webmail and known brands.
 
+### How the email was built
+
+Each mail service builds its emails its own way; scam tools build them differently. Source: [`analyzers/identity.ts`](../extension/src/analyzers/identity.ts).
+
+| Check | Severity | Points | Example |
+|---|---|---|---|
+| Two or more From headers | High | 20 | Your mail app shows one sender, filters checked another |
+| Claims Gmail, Outlook.com or Yahoo, but its Message-ID wasn't made there (and DMARC didn't pass) | Medium | 12 | `ceo.office@gmail.com` with `Message-ID: <…@vps-1234.example.net>` |
+| Sent with a bulk spam tool (`X-Mailer`) | Medium | 12 | Leaf PHPMailer, Atomic Mail Sender, Gammadyne, SendBlaster |
+| Sent by a script on a website (`X-PHP-Originating-Script`, PHPMailer, …) | Medium (10) when it claims a brand, otherwise Low (3) | | |
+| "Re:" in the subject with no In-Reply-To, References or Thread-Index | Low | 6 | A made-up conversation. "Fwd:" is not flagged |
+| Your provider had to add the Message-ID (`SMTPIN_ADDED`) | Low | 3 | |
+| A genuine, signed brand email addressed to someone else (not a list or your own forwarding) | Low | 5 | A replayed notification |
+
 ---
 
 ## Look-alike domains

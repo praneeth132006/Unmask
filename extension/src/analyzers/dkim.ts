@@ -11,8 +11,8 @@ import { sameOrg } from '../lib/domain';
 const target = { kind: 'header', key: 'dkim-signature' } as const;
 const days = (ms: number) => Math.floor(ms / 86_400_000);
 
-/** Headers whose extra, unsigned copy changes what you see. */
-const SHOWN = ['from', 'subject', 'reply-to', 'to', 'date', 'sender'];
+/** Headers whose extra, unsigned copy changes what you see. (Two Froms are flagged on their own, signed or not.) */
+const SHOWN = ['subject', 'reply-to', 'to', 'date', 'sender'];
 
 export function dkimFindings(sigs: DkimSignature[], msg: RawMessage, auth: AuthSummary, arrivedAt: number | null, fromDomain: string): Finding[] {
   const findings: Finding[] = [];

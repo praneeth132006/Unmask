@@ -15,6 +15,7 @@ import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzer
 import { deliveryPath, entryHop, originIp, receivedFindings } from '../analyzers/received';
 import { dkimFindings } from '../analyzers/dkim';
 import { arcFindings, readArcChain } from '../analyzers/arc';
+import { identityFindings } from '../analyzers/identity';
 import { publicInfo, readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
 import { getHeaders } from './parse';
@@ -41,7 +42,7 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const signatures = await readDkimSignatures(rawMessage);
   const arc = readArcChain(rawMessage);
   const forensics: Forensics = { hops, originIp: originIp(hops, getHeaders(email, 'x-originating-ip')[0]), dkim: signatures.map(publicInfo), arc: arc.sets, arcProblem: arc.problem };
-  const pathFindings = [...receivedFindings(hops, email.date), ...dkimFindings(signatures, rawMessage, auth, entryHop(hops)?.time ?? null, email.from?.domain ?? ''), ...arcFindings(arc.sets, arc.problem, auth)];
+  const pathFindings = [...receivedFindings(hops, email.date), ...dkimFindings(signatures, rawMessage, auth, entryHop(hops)?.time ?? null, email.from?.domain ?? ''), ...arcFindings(arc.sets, arc.problem, auth), ...identityFindings(email, rawMessage, auth)];
   // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:
   // still worth knowing, but not a high-risk sign on its own.
   const senderFindings = analyzeSender(email).map((f) =>
