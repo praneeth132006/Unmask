@@ -42,6 +42,7 @@
     "@types/react-dom": "^19.3.0",
     "@wxt-dev/module-react": "^1.2.2",
     "happy-dom": "^21.0.3",
+    "mailauth": "7.2.0",
     "playwright": "1.62.1",
     "qrcode": "1.5.4",
     "simple-icons": "15.21.0",

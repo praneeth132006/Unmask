@@ -64,6 +64,23 @@ Read from the `Authentication-Results` header that the receiving mail server (Gm
 
 Which `Authentication-Results` header is used: the first one written by the provider that delivered the email to you (matched against the trusted part of the delivery path), never one from a provider that isn't in the path.
 
+### Inside the DKIM signatures
+
+Unmask also reads every `DKIM-Signature` itself and recomputes its body hash on your computer (relaxed and simple canonicalization, SHA-256 and SHA-1, the `l=` length limit). Source: [`lib/dkim.ts`](../extension/src/lib/dkim.ts), [`analyzers/dkim.ts`](../extension/src/analyzers/dkim.ts).
+
+| Check | Severity | Points | Meaning |
+|---|---|---|---|
+| A second Subject/From/Reply-To/To/Date header was added after signing | High | 22 | The signature still passes, but your mail app may show the unsigned copy |
+| The body no longer matches its signature (and your provider didn't already report the DKIM failure) | Medium | 12 | Changed after signing: a forwarder's footer or tampering. Low (4) when the copy lost its line endings |
+| Content added after an `l=` limit | Medium | 10 | Only the first part is signed; text or links were appended below it |
+| Only part of the body is signed | Low | 3 | |
+| Signature doesn't cover From | Medium | 10 | Says nothing about who sent it |
+| Signed more than 7 days before it arrived | Medium | 10 | A "DKIM replay": an old genuine email re-sent to new people |
+| Signature expired (`x=`) before it arrived | Low | 4 | |
+| Reply-To not signed by the From domain | Low | 4 | |
+| Only SHA-1 signatures | Low | 3 | |
+| This copy differs from what your provider verified | Note | 0 | Usually a pasted copy rather than the original |
+
 ---
 
 ## Delivery path

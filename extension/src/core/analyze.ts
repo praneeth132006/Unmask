@@ -12,7 +12,10 @@ import { historyFindings, type SenderHistory } from '../analyzers/history';
 import { findBrandLogos, logoFindings } from '../analyzers/logos';
 import { protectionFindings, type ProtectionList } from '../analyzers/protection';
 import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzers/qr';
-import { deliveryPath, originIp, receivedFindings } from '../analyzers/received';
+import { deliveryPath, entryHop, originIp, receivedFindings } from '../analyzers/received';
+import { dkimFindings } from '../analyzers/dkim';
+import { publicInfo, readDkimSignatures } from '../lib/dkim';
+import { splitRawMessage } from '../lib/rawMessage';
 import { getHeaders } from './parse';
 
 export interface AnalyzeOptions {
@@ -33,8 +36,10 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const email = await parseEmail(raw);
   const hops = deliveryPath(getHeaders(email, 'received'));
   const { auth, findings: authFindings } = analyzeAuth(email, hops);
-  const forensics: Forensics = { hops, originIp: originIp(hops, getHeaders(email, 'x-originating-ip')[0]), dkim: [], arc: [], arcProblem: null };
-  const pathFindings = receivedFindings(hops, email.date);
+  const rawMessage = splitRawMessage(raw);
+  const signatures = await readDkimSignatures(rawMessage);
+  const forensics: Forensics = { hops, originIp: originIp(hops, getHeaders(email, 'x-originating-ip')[0]), dkim: signatures.map(publicInfo), arc: [], arcProblem: null };
+  const pathFindings = [...receivedFindings(hops, email.date), ...dkimFindings(signatures, rawMessage, auth, entryHop(hops)?.time ?? null, email.from?.domain ?? '')];
   // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:
   // still worth knowing, but not a high-risk sign on its own.
   const senderFindings = analyzeSender(email).map((f) =>
