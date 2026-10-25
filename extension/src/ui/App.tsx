@@ -6,6 +6,9 @@ import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/t
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
 import { certFindings, lookupCerts, lookupMailRecords, mailRecordFindings, postureFindings, type DomainIntel } from '../integrations/domainIntel';
 import { dkimVerifyFindings, verifyAll } from '../integrations/dkimVerify';
+import { ipFindings, lookupIp } from '../integrations/ipIntel';
+import { entryHop } from '../analyzers/received';
+import { brandsMentionedIn, senderClaim } from '../analyzers/brands';
 import { readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
 import { SEVERITY_RANK } from '../core/score';
@@ -151,6 +154,17 @@ export function App() {
     });
   }, []);
 
+  /** Reverse DNS and network of the server that handed the email to your provider (sends that IP to dns.google). */
+  const checkSenderIp = useCallback(async (r: Report, run: number) => {
+    const ip = entryHop(r.forensics.hops)?.ip;
+    if (!ip || entryHop(r.forensics.hops)?.privateIp) return;
+    const info = await lookupIp(ip).catch(() => null);
+    if (!info || run !== runId.current) return;
+    const from = r.email.from;
+    const claimsOrg = !!from && r.auth.dmarc !== 'pass' && brandsMentionedIn(senderClaim(from.name, from.domain)).length > 0;
+    setReport((cur) => (cur ? { ...withExtraFindings(cur, ipFindings(info, claimsOrg)), forensics: { ...cur.forensics, sender: info } } : cur));
+  }, []);
+
   const analyze = useCallback(
     async (load: () => Promise<string | ArrayBuffer>, src: Source, cacheKey?: string) => {
       const run = ++runId.current;
@@ -184,6 +198,7 @@ export function App() {
           void checkIntel(r, run);
           void checkDkim(source, run);
         }
+        if (settings.ipIntel) void checkSenderIp(r, run);
       } catch (e) {
         if (run === runId.current) {
           setError({ message: e instanceof Error ? e.message : String(e), details: e instanceof GmailFetchError ? e.details : [] });
@@ -192,7 +207,7 @@ export function App() {
         if (run === runId.current) setLoading(false);
       }
     },
-    [settings.autoDomainAge, settings.senderHistory, settings.domainIntel, checkDomainAge, checkIntel, checkDkim],
+    [settings.autoDomainAge, settings.senderHistory, settings.domainIntel, settings.ipIntel, checkDomainAge, checkIntel, checkDkim, checkSenderIp],
   );
 
   // "Read it safely" from a Peek card in Gmail: show that message without it being opened there.

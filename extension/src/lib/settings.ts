@@ -19,6 +19,8 @@ export interface Settings {
   senderHistory: boolean;
   /** Look up certificate history (crt.sh) and mail DNS records (dns.google) for the sender and link domains. */
   domainIntel: boolean;
+  /** Look up who runs the sending server (reverse DNS, network) by sending its IP address to dns.google. */
+  ipIntel: boolean;
   /** Red or amber banner above risky emails inside Gmail. */
   gmailBanner: boolean;
   /** Risk badge next to risky senders in the Gmail inbox list. */
@@ -47,6 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
   traceMode: 'builtin',
   senderHistory: true,
   domainIntel: true,
+  ipIntel: false,
   gmailBanner: true,
   inboxBadges: true,
   clickProtection: true,

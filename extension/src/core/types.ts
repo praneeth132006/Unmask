@@ -237,6 +237,8 @@ export interface Forensics {
   arc: ArcSet[];
   /** ARC chain problem, if any: missing instances, a broken seal status, … */
   arcProblem: string | null;
+  /** Who runs the server that handed the email to your provider, from the optional online check. */
+  sender?: { ip: string; ptr: string | null; confirmed: boolean; asn: string | null; network: string | null; country: string | null };
 }
 
 export interface Report {

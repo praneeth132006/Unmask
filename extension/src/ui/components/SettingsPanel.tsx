@@ -210,6 +210,9 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         <Toggle checked={settings.domainIntel} onChange={(v) => void update({ domainIntel: v })} title="Check certificate history and mail records">
           Spots brand-new TLS certificates and domains with no mail server. Sends only domain names to crt.sh (Certificate Transparency) and dns.google (public DNS).
         </Toggle>
+        <Toggle checked={settings.ipIntel} onChange={(v) => void update({ ipIntel: v })} title="Check who runs the sending server">
+          Spots mail sent from home connections and rented servers. Sends the sending server’s IP address (from the email’s delivery path, not yours) to dns.google.
+        </Toggle>
       </Card>
 
       <SectionTitle

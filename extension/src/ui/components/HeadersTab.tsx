@@ -73,6 +73,11 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
                     <Mono>{h.helo ?? h.rdns ?? 'unknown'}</Mono>
                     {h.ip && <span className="ml-1 text-[var(--text-3)]">[{h.ip}]</span>}
                     {h.rdns && h.rdns !== h.helo && <div className="text-[11px] text-[var(--text-3)]">DNS name: {h.rdns}</div>}
+                    {report.forensics.sender && report.forensics.sender.ip === h.ip && h.trusted && (
+                      <div className="text-[11px] text-[var(--text-3)]">
+                        {[report.forensics.sender.network && `Network: ${report.forensics.sender.network}`, report.forensics.sender.asn && `AS${report.forensics.sender.asn}`, report.forensics.sender.country].filter(Boolean).join(' · ')}
+                      </div>
+                    )}
                     {h.by && (
                       <div className="text-[11px] text-[var(--text-3)]">
                         → <Mono>{h.by}</Mono>
