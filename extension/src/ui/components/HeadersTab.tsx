@@ -70,7 +70,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
                 <li key={i} className="flex gap-2.5 text-xs">
                   <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent)]">{h.n}</span>
                   <div className="min-w-0">
-                    <Mono>{h.helo ?? h.rdns ?? 'unknown'}</Mono>
+                    <Mono>{h.helo ?? h.rdns ?? (h.trusted ? 'internal step at your provider' : 'unknown')}</Mono>
                     {h.ip && <span className="ml-1 text-[var(--text-3)]">[{h.ip}]</span>}
                     {h.rdns && h.rdns !== h.helo && <div className="text-[11px] text-[var(--text-3)]">DNS name: {h.rdns}</div>}
                     {report.forensics.sender && report.forensics.sender.ip === h.ip && h.trusted && (

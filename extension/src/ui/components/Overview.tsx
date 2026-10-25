@@ -95,10 +95,12 @@ function SummaryChips({ report, onOpen }: { report: Report; onOpen: (tab: TabId)
   const riskyFiles = report.attachments.filter((a) => a.flags.length).length;
   const trackers = report.trackers.pixels.length + report.trackers.trackedLinkCount;
   const trackerLabel = trackerChipLabel(report);
-  const authOk = report.auth.dmarc === 'pass';
-  const authBad = report.auth.dmarc === 'fail' || report.auth.spf === 'fail';
+  // A replayed or forged-stamp email "passes" by design; don't call it verified.
+  const authTricked = report.findings.some((f) => ['dkim-replay', 'auth-results-forged', 'multiple-from'].includes(f.id) || f.id.startsWith('dkim-added-'));
+  const authOk = report.auth.dmarc === 'pass' && !authTricked;
+  const authBad = report.auth.dmarc === 'fail' || report.auth.spf === 'fail' || authTricked;
   const chips: { tab: TabId; label: string; tone: 'good' | 'bad' | 'warn' | 'info' }[] = [
-    { tab: 'sender', label: authOk ? 'Sender verified' : authBad ? 'Sender not verified' : 'Sender unverified', tone: authOk ? 'good' : authBad ? 'bad' : 'warn' },
+    { tab: 'sender', label: authOk ? 'Sender verified' : authTricked ? 'Signature passes, but misused' : authBad ? 'Sender not verified' : 'Sender unverified', tone: authOk ? 'good' : authBad ? 'bad' : 'warn' },
     { tab: 'links', label: report.links.length ? `${flaggedLinks}/${report.links.length} links flagged` : 'No links', tone: flaggedLinks ? 'bad' : 'good' },
     { tab: 'attachments', label: report.attachments.length ? `${riskyFiles}/${report.attachments.length} files risky` : 'No files', tone: riskyFiles ? 'bad' : 'good' },
     { tab: 'privacy', label: trackerLabel, tone: trackers ? 'warn' : 'good' },
