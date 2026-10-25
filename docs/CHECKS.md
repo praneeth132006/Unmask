@@ -81,6 +81,15 @@ Unmask also reads every `DKIM-Signature` itself and recomputes its body hash on 
 | Only SHA-1 signatures | Low | 3 | |
 | This copy differs from what your provider verified | Note | 0 | Usually a pasted copy rather than the original |
 
+### Forwarding record (ARC)
+
+Forwarding servers that support ARC record the authentication results they saw and seal them (`ARC-Seal`, `ARC-Message-Signature`, `ARC-Authentication-Results`). Unmask reads the chain's structure and results; it does not verify the seals' signatures. Source: [`analyzers/arc.ts`](../extension/src/analyzers/arc.ts).
+
+| Check | Severity | Points | Meaning |
+|---|---|---|---|
+| Chain broken: a set missing or incomplete, or a server marked it `cv=fail` | Low | 3 | |
+| Passed at the first server, DMARC failed at yours | Note | 0 | Forwarded or re-sent in between: normal for mailing lists, and also how replayed emails look |
+
 ---
 
 ## Delivery path
