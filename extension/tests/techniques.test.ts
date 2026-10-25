@@ -17,9 +17,11 @@ describe('callback (TOAD) scams', () => {
     expect(callbackSigns('Questions about your order? Call us at 1-800-555-0199.')).toBeNull();
   });
 
-  it('flags it high from an unverified sender, as a note from a verified brand', async () => {
+  it('flags it critical from an unverified sender, as a note from a verified brand', async () => {
     const scam = await analyzeRawEmail(mail(['From: Billing <invoices@quick-billing-desk.com>', 'Subject: Invoice INV-4421'], geekSquad));
-    expect(scam.findings.find((f) => f.id === 'callback-phishing')?.severity).toBe('high');
+    expect(scam.findings.find((f) => f.id === 'callback-phishing')?.severity).toBe('critical');
+    const noDispute = await analyzeRawEmail(mail(['From: Billing <invoices@quick-billing-desk.com>', 'Subject: Invoice INV-4421'], 'Your subscription renewal of $49.99 is due. Call our billing team at +1 (808) 555-0142 with questions.'));
+    expect(noDispute.findings.find((f) => f.id === 'callback-phishing')?.severity).toBe('high');
     const amazon = await analyzeRawEmail(mail(['Authentication-Results: mx.google.com; dmarc=pass header.from=amazon.com', 'From: Amazon <auto-confirm@amazon.com>', 'Subject: Your order'], geekSquad));
     expect(amazon.findings.find((f) => f.id === 'callback-phishing')?.severity).toBe('low');
   });
@@ -32,7 +34,7 @@ describe('abused notification platforms', () => {
   it('flags a genuine PayPal invoice whose note is a callback scam', async () => {
     const r = await analyzeRawEmail(paypalInvoice('Seller note: Your PayPal account was charged $499.00 for Bitcoin purchase. If you did not authorize this, call PayPal support at +1 (888) 555-0187 to cancel and get a refund.'));
     const f = r.findings.find((x) => x.id === 'platform-abuse');
-    expect(f?.severity).toBe('high');
+    expect(f?.severity).toBe('critical');
     expect(f?.title).toBe("A real PayPal email carrying a scammer's message");
     expect(f?.detail).toMatch(/\+1 \(888\) 555-0187/);
     expect(r.findings.map((x) => x.id)).not.toContain('callback-phishing');

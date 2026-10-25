@@ -71,7 +71,7 @@ describe('DKIM replay', () => {
     ].join('\r\n') + '\r\n' + signed;
     const r = await analyzeRawEmail(raw);
     const replay = r.findings.find((f) => f.id === 'dkim-replay');
-    expect(replay?.severity).toBe('high');
+    expect(replay?.severity).toBe('critical');
     expect(replay?.detail).toMatch(/signed long before.*addressed to someone else.*forwarding service/);
     expect(r.findings.map((f) => f.id)).not.toContain('dmarc-pass');
   });

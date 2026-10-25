@@ -1,0 +1,19 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail.chase.com (mail.chase.com [159.53.110.1])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@alertsp.chase.com;
+       spf=pass smtp.mailfrom=alertsp.chase.com;
+       dmarc=pass (p=REJECT) header.from=chase.com
+From: Chase <no.reply.alerts@chase.com>
+To: alex.morgan@example.org
+Subject: Did you make this transaction?
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <alert.88@alertsp.chase.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+We noticed a $1,250.00 transaction on your card ending in 4471 at ELECTRONICS STORE.
+If you don't recognize this transaction, call us at 1-800-935-9935 or reply in the Chase Mobile app. Never share your password or one-time codes with anyone who calls you.

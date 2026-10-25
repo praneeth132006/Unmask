@@ -1,0 +1,27 @@
+Delivered-To: alex.morgan@example.org
+Received: from fwd-03.fwd.privateemail.com (fwd-03.fwd.privateemail.com [198.54.122.148])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@accounts.google.com header.s=20230601;
+       spf=pass smtp.mailfrom=SRS1=HHH=accounts.google.com==ab12=xyz@eforward.registrar-servers.com;
+       dmarc=pass (p=REJECT) header.from=accounts.google.com
+Return-Path: <SRS1=HHH=accounts.google.com==ab12=xyz@eforward.registrar-servers.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=accounts.google.com; h=Content-Type: MIME-Version: Message-ID: Date:
+ Subject: To: From; q=dns/txt; s=20230601; t=1791799200;
+ bh=JsHr8L3CJzmIGrjvhUCqctBnOF1brqGrXS+lpB2z1lU=;
+ b=Ku6nCbTz8K7EaZohQwHGVQzGxg1PS3MrbrzF+kqI6qZugHXb4x6GMnWMBAcNutvtHaN5i2X2f
+ dTlzEIW+MkdNaji9SXigZYOSIouKIdKLBt6TN4WApaZY8zNwInqZoEIbwQhmvbEEtxjmVv2+5C4
+ i/+BT7ZRckXhZbPDmpUBca4D4mYFnk0UePde1rxSteTM4f5VLse+9eIESS5ODTaH9H5J0j5BXWH
+ WflSIJI/HPBowpMduOeJyTxgoHzMNLBCH+2jApQHfGFrNORhF5qvYfcM+5GJoq9WoclXZBUiE9E
+ MCAhip9Qzg28YMDHGvpFtSRKYyT+IApumtCOLfwyS82g==
+From: Google <no-reply@accounts.google.com>
+To: lure.account.2291@gmail.com
+Subject: Security alert
+Date: Mon, 12 Oct 2026 10:00:00 +0000
+Message-ID: <alert-2291@accounts.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Google Legal Support: a subpoena has been issued for your account. View the case: https://sites.google.com/view/legal-case-3381 and upload the requested documents.

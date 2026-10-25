@@ -203,7 +203,9 @@ export function analyzeAuth(email: ParsedEmail, hops: DeliveryHop[] = deliveryPa
     findings.push({ id: 'spf-none', category: 'auth', severity: 'low', points: 4, title: 'No SPF protection for the sending domain' });
   }
 
-  if (auth.dkim === 'fail') {
+  if (auth.dkim === 'fail' && auth.dmarc === 'pass') {
+    findings.push({ id: 'dkim-fail', category: 'auth', severity: 'info', points: 0, title: 'A DKIM signature broke on the way, but DMARC still passed', detail: 'Mailing lists and forwarders often change an email slightly (a footer, a subject tag), which breaks the original signature. Your provider still confirmed the sender another way (SPF or ARC).' });
+  } else if (auth.dkim === 'fail') {
     findings.push({ id: 'dkim-fail', category: 'auth', severity: 'medium', points: 12, title: 'DKIM signature failed: the email may have been altered or forged' });
   } else if (auth.dkim === 'none') {
     findings.push({ id: 'dkim-none', category: 'auth', severity: 'low', points: 4, title: 'Email is not DKIM-signed' });

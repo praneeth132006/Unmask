@@ -1,0 +1,20 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mx0.slc.paypal.com (mx0.slc.paypal.com [173.0.84.4])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@paypal.com header.s=pp-dkim1;
+       spf=pass smtp.mailfrom=service@paypal.com;
+       dmarc=pass (p=REJECT) header.from=paypal.com
+From: "service@paypal.com" <service@paypal.com>
+To: alex.morgan@example.org
+Subject: Invoice from Billing Department (0042)
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <x7.2026@paypal.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Billing Department sent you an invoice for $599.99 USD.
+Seller note: Your PayPal account was charged $599.99 for a Bitcoin purchase. If you did not authorize this transaction, call PayPal Support at +1 (808) 555-0179 to cancel and receive a refund.
+View and pay invoice: https://www.paypal.com/invoice/p/#INV2-ABCD

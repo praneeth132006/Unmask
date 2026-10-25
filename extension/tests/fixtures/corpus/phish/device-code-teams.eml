@@ -1,0 +1,18 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from smtp.meeting-invites.co (smtp.meeting-invites.co [192.0.2.44])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=none;
+       spf=pass smtp.mailfrom=meeting-invites.co;
+       dmarc=none header.from=meeting-invites.co
+From: "Microsoft Teams" <noreply@meeting-invites.co>
+To: alex.morgan@example.org
+Subject: You have been invited to a secure Teams meeting
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <t1@meeting-invites.co>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>To join the secure meeting, go to <a href="https://microsoft.com/devicelogin">https://microsoft.com/devicelogin</a> and enter the code: KQ7M-T2XRP</p><p>The code expires in 15 minutes.</p>

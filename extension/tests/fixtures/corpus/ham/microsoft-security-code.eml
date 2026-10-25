@@ -1,0 +1,21 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail-dm6nam11on2100.outbound.protection.outlook.com (mail-dm6nam11on2100.outbound.protection.outlook.com [40.107.223.100])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@accountprotection.microsoft.com;
+       spf=pass smtp.mailfrom=accountprotection.microsoft.com;
+       dmarc=pass (p=REJECT) header.from=accountprotection.microsoft.com
+From: Microsoft account team <account-security-noreply@accountprotection.microsoft.com>
+To: alex.morgan@example.org
+Subject: Microsoft account security code
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <MS1@DM6PR11MB.namprd11.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Please use the following security code for the Microsoft account al***@example.org.
+Security code: 482917
+If you don't recognize the Microsoft account, you can click https://account.live.com/dp?ft=abc to remove your email address from that account.
+Thanks, The Microsoft account team

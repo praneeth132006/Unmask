@@ -1,0 +1,19 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail-sor-f73.google.com (mail-sor-f73.google.com [209.85.220.73])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@docs.google.com;
+       spf=pass smtp.mailfrom=3abc@doclist.bounces.google.com;
+       dmarc=pass (p=REJECT) header.from=google.com
+From: "Priya Shah (via Google Docs)" <drive-shares-dm-noreply@google.com>
+Reply-To: Priya Shah <priya.shah@example.org>
+To: alex.morgan@example.org
+Subject: Document shared with you: "Q4 planning"
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <000000000000abc@google.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>Priya Shah shared a document with you.</p><p><a href="https://docs.google.com/document/d/1AbCdEf/edit?usp=sharing_eil">Open</a></p><p>Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA. You have received this email because priya.shah@example.org shared a document with you from Google Docs.</p>

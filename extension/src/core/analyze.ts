@@ -1,5 +1,6 @@
 import { parseEmail } from './parse';
 import { mergeFindings, scoreFindings, sortFindings } from './score';
+import { registrableDomain } from '../lib/domain';
 import type { Finding, Forensics, Report } from './types';
 import { analyzeAuth } from '../analyzers/auth';
 import { analyzeSender } from '../analyzers/sender';
@@ -18,7 +19,7 @@ import { dkimFindings } from '../analyzers/dkim';
 import { arcFindings, readArcChain } from '../analyzers/arc';
 import { identityFindings } from '../analyzers/identity';
 import { replayFindings } from '../analyzers/replay';
-import { archivePasswordFindings, callbackFindings, clickFixFindings, consentLureFindings, platformAbuseFindings } from '../analyzers/techniques';
+import { PLATFORMS, archivePasswordFindings, callbackFindings, clickFixFindings, consentLureFindings, platformAbuseFindings } from '../analyzers/techniques';
 import { publicInfo, readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
 import { getHeaders } from './parse';
@@ -51,8 +52,11 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   if (pathFindings.some((f) => f.id === 'dkim-replay')) authFindings.splice(0, authFindings.length, ...authFindings.filter((f) => f.id !== 'dmarc-pass'));
   // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:
   // still worth knowing, but not a high-risk sign on its own.
+  const platformSender = auth.dmarc === 'pass' && email.from !== null && PLATFORMS.has(registrableDomain(email.from.domain));
   const senderFindings = analyzeSender(email).map((f) =>
-    f.id === 'reply-to-mismatch' && f.severity === 'high' && auth.dmarc === 'pass'
+    f.id === 'reply-to-mismatch' && platformSender
+      ? { ...f, severity: 'info' as const, points: 0, detail: `${f.detail} Normal for shares and invites: the platform sends the email, and replies go to the person who shared.` }
+      : f.id === 'reply-to-mismatch' && f.severity === 'high' && auth.dmarc === 'pass'
       ? { ...f, severity: 'medium' as const, points: 10, detail: `${f.detail} The sender's domain is verified, so this is common for small newsletters; be careful if it asks for money or details.` }
       : f,
   );

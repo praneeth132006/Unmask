@@ -1,0 +1,19 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from vps-3381.hostserv.example (unknown [203.0.113.77])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning daniel.reyes.ceo@gmail.com does not designate 203.0.113.77 as permitted sender) smtp.mailfrom=daniel.reyes.ceo@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+From: "Daniel Reyes (CEO)" <daniel.reyes.ceo@gmail.com>
+To: alex.morgan@example.org
+Subject: Quick task
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <20261019160000.4471@vps-3381.hostserv.example>
+X-Mailer: PHPMailer 6.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Alex, are you available? I am in a meeting and need you to buy 5 Apple gift cards ($200 each) for a client today. Keep this confidential. Scratch the back and send me the codes by email.
+Daniel

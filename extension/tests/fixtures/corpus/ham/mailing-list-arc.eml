@@ -1,0 +1,27 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail-lists.lists.example-project.org (mail-lists.lists.example-project.org [198.51.100.200])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+ARC-Seal: i=1; a=rsa-sha256; t=1792425600; cv=none; d=lists.example-project.org; s=arc; b=AAAA
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=lists.example-project.org; s=arc; h=from:to:subject; bh=AAAA; b=AAAA
+ARC-Authentication-Results: i=1; lists.example-project.org; dkim=pass header.d=contributor.example.net; spf=pass smtp.mailfrom=contributor.example.net; dmarc=pass header.from=contributor.example.net
+Authentication-Results: mx.google.com;
+       dkim=fail header.i=@contributor.example.net;
+       arc=pass (i=1);
+       spf=pass smtp.mailfrom=dev-bounces@lists.example-project.org;
+       dmarc=pass (p=NONE) header.from=contributor.example.net
+From: Sam Okafor <sam@contributor.example.net>
+To: dev@lists.example-project.org
+Subject: [dev] Proposal: drop support for the old config format
+List-Id: <dev.lists.example-project.org>
+List-Unsubscribe: <https://lists.example-project.org/unsub/dev>
+Date: Mon, 19 Oct 2026 15:59:00 +0000
+Message-ID: <prop-1@contributor.example.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hi all, I propose we drop the old config format in the next release. Details in the issue tracker: https://git.example-project.org/issues/412
+--
+dev mailing list
+https://lists.example-project.org/listinfo/dev

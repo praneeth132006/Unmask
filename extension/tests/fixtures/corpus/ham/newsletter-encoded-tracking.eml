@@ -1,0 +1,19 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from o1.ptr4471.email.example-shop.com (o1.ptr4471.email.example-shop.com [149.72.10.10])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@example-shop.com;
+       spf=pass smtp.mailfrom=bounces+4471@em.example-shop.com;
+       dmarc=pass (p=QUARANTINE) header.from=example-shop.com
+From: Example Shop <news@example-shop.com>
+To: alex.morgan@example.org
+Subject: Autumn sale: 20% off outdoor gear
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <n.4471@example-shop.com>
+List-Unsubscribe: <https://u4471.ct.sendgrid.net/unsub?e=YWxleC5tb3JnYW5AZXhhbXBsZS5vcmc=>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>Our autumn sale is on: 20% off tents, boots and jackets until Sunday.</p><p><a href="https://u4471.ct.sendgrid.net/ls/click?upn=YWxleC5tb3JnYW5AZXhhbXBsZS5vcmc-abc">Shop the sale</a></p><p><a href="https://www.example-shop.com/account/preferences?email=alex.morgan@example.org">Email preferences</a> · Example Shop, 12 Market St, Portland, OR</p>

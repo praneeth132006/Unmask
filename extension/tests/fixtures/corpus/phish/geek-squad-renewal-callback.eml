@@ -1,0 +1,19 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail-sor-f69.google.com (mail-sor-f69.google.com [209.85.220.69])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com;
+       spf=pass smtp.mailfrom=billing.protection.desk@gmail.com;
+       dmarc=pass (p=NONE) header.from=gmail.com
+From: "Geek Squad Billing" <billing.protection.desk@gmail.com>
+To: alex.morgan@example.org
+Subject: Order Confirmation #GS-88271
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <CAH+wq3r=ab@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Thank you for renewing your Geek Squad Total Protection. Your account will be charged $399.99 today for the annual auto-renewal.
+If you did not make this purchase or want to cancel, please call our billing department at 1-808-555-0142 within 24 hours for a full refund.

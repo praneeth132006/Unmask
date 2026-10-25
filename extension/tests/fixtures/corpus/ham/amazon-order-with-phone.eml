@@ -1,0 +1,19 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from a8-30.smtp-out.amazonses.com (a8-30.smtp-out.amazonses.com [54.240.8.30])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@amazon.com header.s=yg4mwqurec7fkhzutopddd3ytuaqrvuz;
+       spf=pass smtp.mailfrom=20261019160000abcd@bounces.amazon.com;
+       dmarc=pass (p=QUARANTINE) header.from=amazon.com
+From: "Amazon.com" <auto-confirm@amazon.com>
+To: alex.morgan@example.org
+Subject: Your Amazon.com order #112-4471234-5566778
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <0100019a.abc@email.amazonses.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Thanks for your order. Order total: $34.99. Arriving Thursday.
+Questions about your order or a charge you don't recognize? Visit https://www.amazon.com/gp/help or call customer service at 1-888-280-4331.

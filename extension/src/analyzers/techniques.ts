@@ -6,7 +6,7 @@
  */
 import type { AttachmentInfo, AuthSummary, Finding, LinkInfo, ParsedEmail } from '../core/types';
 import { registrableDomain } from '../lib/domain';
-import { brandOwningDomain } from './brands';
+import { brandOwningDomain, FREE_MAIL_DOMAINS } from './brands';
 
 const PHONE = /(?:\+?1[\s.-]?)?\(?\b[2-9]\d{2}\)?[\s.-]\d{3}[\s.-]\d{4}\b|\+\d{1,3}[\s.-]?\(?\d{1,4}\)?(?:[\s.-]\d{2,4}){2,4}\b|\b1[\s-]?8(?:00|33|44|55|66|77|88)[\s.-]?\d{3}[\s.-]?\d{4}\b/g;
 const CALL = /\b(call|contact|reach|dial|phone|ring)\b[^.!?\n]{0,40}\b(us|support|helpline|help ?desk|billing|team|department|immediately|toll[- ]?free|customer care|representative|agent|number)\b|\b(toll[- ]?free|helpline|customer care) (number|no\.?)\b/i;
@@ -33,13 +33,15 @@ export function callbackFindings(email: ParsedEmail, visibleText: string, auth: 
   if (!signs) return [];
   const fromOrg = email.from ? registrableDomain(email.from.domain) : '';
   // A verified brand putting its own support number in a receipt is normal; only note it.
-  const verifiedBrand = auth.dmarc === 'pass' && brandOwningDomain(fromOrg) && !PLATFORMS.has(fromOrg);
+  const verifiedBrand = auth.dmarc === 'pass' && brandOwningDomain(fromOrg) && !PLATFORMS.has(fromOrg) && !FREE_MAIL_DOMAINS.has(fromOrg);
+  // "Call us if you didn't make this charge" from a sender that can't be verified is the whole scam.
+  const disputed = DISPUTE.test(text);
   return [
     {
       id: 'callback-phishing',
       category: 'content',
-      severity: verifiedBrand ? 'low' : 'high',
-      points: verifiedBrand ? 3 : 22,
+      severity: verifiedBrand ? 'low' : disputed ? 'critical' : 'high',
+      points: verifiedBrand ? 3 : disputed ? 30 : 22,
       title: verifiedBrand ? 'Asks you to phone about a charge' : 'Callback scam: tells you to phone about a charge you didn\'t make',
       detail: `It mentions ${signs.amount ? `a charge of ${signs.amount}` : 'a charge or renewal'} and asks you to call ${signs.phones.slice(0, 2).join(' or ')}. ${verifiedBrand ? 'It comes from the company\'s verified domain, but still look the number up on their official website.' : 'There is no link to click: the scam happens on the phone, where "support" talks you into a refund that installs remote-control software or takes your bank details.'}`,
       plain: verifiedBrand ? undefined : 'It wants you to call a phone number, where scammers pretend to be support.',
@@ -60,6 +62,8 @@ export function platformAbuseFindings(email: ParsedEmail, visibleText: string, a
   const platform = brandOwningDomain(fromOrg)?.name ?? fromOrg;
   const reasons: string[] = [];
   const callback = callbackSigns(`${email.subject}\n${visibleText}`);
+  // Invoices always carry an amount, and some sellers add a phone number; the dispute line is what makes it a scam.
+  const disputed = callback !== null && DISPUTE.test(visibleText);
   if (callback) reasons.push(`a phone number to call about ${callback.amount ? `a ${callback.amount} charge` : 'a charge'} (${callback.phones[0]})`);
   const bad = links.filter((l) => (l.source === 'html' || l.source === 'text') && l.flags.some((f) => f.severity === 'high' || f.severity === 'critical'));
   if (bad[0]) reasons.push(`a link to ${bad[0].domain}, which has its own red flags`);
@@ -70,8 +74,8 @@ export function platformAbuseFindings(email: ParsedEmail, visibleText: string, a
     {
       id: 'platform-abuse',
       category: 'content',
-      severity: 'high',
-      points: 22,
+      severity: disputed ? 'critical' : 'high',
+      points: disputed ? 30 : 22,
       title: `A real ${platform} email carrying a scammer's message`,
       detail: `This email genuinely comes from ${fromOrg} (it passed DMARC), but ${platform} lets anyone send invoices, shares and invites through it, with their own text. This one contains ${reasons.join(' and ')}. ${platform} itself didn't write that part.`,
       plain: `It really comes from ${platform}, but a scammer wrote the message inside it.`,
@@ -139,9 +143,11 @@ const CLIPBOARD = /navigator\.clipboard\.writeText|document\.execCommand\(\s*['"
 export function clickFixFindings(visibleText: string, email: ParsedEmail, attachments: AttachmentInfo[]): Finding[] {
   const findings: Finding[] = [];
   const steps = CLICKFIX_KEYS.test(visibleText) && CLICKFIX_PLACE.test(visibleText);
+  const pasteIntoRun = /win(dows)?\s*(key)?\s*\+\s*r/i.test(visibleText) && /(ctrl|cmd)\s*\+\s*v/i.test(visibleText);
   const command = visibleText.match(CLICKFIX_COMMAND)?.[0];
   if (steps || command) {
-    findings.push({ id: 'clickfix', category: 'content', severity: steps && command ? 'critical' : 'high', points: steps && command ? 35 : 22, title: 'Tells you to paste a command into your computer ("ClickFix")', detail: `${command ? `It contains a command (${command.slice(0, 60)}) ` : 'It gives keyboard steps '}to run in ${visibleText.match(CLICKFIX_PLACE)?.[0] ?? 'a command window'}. No real website, CAPTCHA or support team asks you to do this: the command installs malware.`, plain: 'It tells you to run a command on your computer, which would install malware.', target: { kind: 'body' } });
+    const critical = (steps && command) || pasteIntoRun;
+    findings.push({ id: 'clickfix', category: 'content', severity: critical ? 'critical' : 'high', points: critical ? 35 : 22, title: 'Tells you to paste a command into your computer ("ClickFix")', detail: `${command ? `It contains a command (${command.slice(0, 60)}) ` : 'It gives keyboard steps '}to run in ${visibleText.match(CLICKFIX_PLACE)?.[0] ?? 'a command window'}. No real website, CAPTCHA or support team asks you to do this: the command installs malware.`, plain: 'It tells you to run a command on your computer, which would install malware.', target: { kind: 'body' } });
   }
   for (const a of email.attachments) {
     if (!/html|svg/i.test(a.mimeType) && !/\.(s?html?|svg)$/i.test(a.filename)) continue;

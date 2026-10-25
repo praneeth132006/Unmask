@@ -1,0 +1,13 @@
+Delivered-To: alex.morgan@example.org
+Received: from WIN-8K2LQ (unknown [203.0.113.150]) by mx1.mailhost-example.net with ESMTP id 9A1; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx1.mailhost-example.net; spf=fail smtp.mailfrom=chase.com; dkim=none; dmarc=fail header.from=chase.com
+Authentication-Results: mx.google.com; dkim=pass header.i=@chase.com; spf=pass smtp.mailfrom=chase.com; dmarc=pass header.from=chase.com
+From: "Chase Online" <alerts@chase.com>
+To: alex.morgan@example.org
+Subject: Unusual sign-in activity: your account has been locked
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <f1@WIN-8K2LQ>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>We detected unusual sign-in activity. Your account has been temporarily locked.</p><p><a href="https://chase-secure-unlock.com/verify">Verify your identity</a> within 24 hours.</p>

@@ -1,0 +1,22 @@
+Delivered-To: victim@example.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@acmeshop.com header.s=s1 header.b=Xy;
+       dkim=pass header.i=@sendgrid.info header.s=smtpapi header.b=Zq;
+       spf=pass (google.com: domain of bounces+123@em.acmeshop.com designates 149.72.1.1 as permitted sender) smtp.mailfrom="bounces+123@em.acmeshop.com";
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=acmeshop.com
+Return-Path: <bounces+123@em.acmeshop.com>
+From: Acme Shop <hello@acmeshop.com>
+To: victim@example.com
+Subject: Autumn sale: 20% off everything this weekend
+Date: Mon, 19 Oct 2026 10:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+
+<html><body bgcolor="#ffffff">
+<div style="display:none;max-height:0;overflow:hidden">Our biggest autumn sale is here.</div>
+<table><tr><td bgcolor="#111111" style="color:#ffffff">Acme Shop</td></tr></table>
+<p>Everything is 20% off until Sunday.</p>
+<p><a href="https://u123.ct.sendgrid.net/ls/click?upn=abcdef">www.acmeshop.com</a></p>
+<p><a href="https://acmeshop.com/sale">Shop the sale</a> · <a href="https://acmeshop.com/unsubscribe">Unsubscribe</a></p>
+<img src="https://u123.ct.sendgrid.net/wf/open?upn=xyz" width="1" height="1">
+</body></html>

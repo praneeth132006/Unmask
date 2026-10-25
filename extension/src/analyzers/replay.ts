@@ -31,8 +31,8 @@ export function replayFindings(email: ParsedEmail, auth: AuthSummary, sigs: Dkim
     {
       id: 'dkim-replay',
       category: 'auth',
-      severity: 'high',
-      points: 20,
+      severity: signs.length >= 3 ? 'critical' : 'high',
+      points: signs.length >= 3 ? 30 : 20,
       title: `Looks like a genuine ${domain} email re-sent by someone else`,
       detail: `The signature is real, but ${signs.slice(0, -1).join(', ')} and ${signs[signs.length - 1]}. That combination is a "DKIM replay": a real email re-sent unchanged so it passes authentication. Judge it by its links and what it asks for, not by the signature.`,
       plain: 'It looks like an old genuine email that someone re-sent to you.',

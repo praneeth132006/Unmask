@@ -1,0 +1,22 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail.cloud-verify.top (mail.cloud-verify.top [192.0.2.91])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=none;
+       spf=neutral smtp.mailfrom=cloud-verify.top;
+       dmarc=none header.from=cloud-verify.top
+From: "Booking Partner Support" <support@cloud-verify.top>
+To: alex.morgan@example.org
+Subject: Guest complaint - verify you are human to view
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <c1@cloud-verify.top>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+A guest left a complaint. To view it, complete the verification:
+1. Press the Windows key + R
+2. Press Ctrl + V to paste the verification code
+3. Press Enter
+This opens the Run dialog and confirms you are not a robot.

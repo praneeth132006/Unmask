@@ -22,6 +22,8 @@ Every check, what it means, and how much it adds to the risk score. The numbers 
 
 ## How the score works
 
+Every check is measured against a labelled corpus in [`extension/tests/fixtures/corpus`](../extension/tests/fixtures/corpus): realistic phishing emails modelled on published write-ups (CEO gift cards, a DocuSign look-alike with a pre-filled login, PayPal invoice and Geek Squad callback scams, device-code phishing, ClickFix, a locked ZIP with its password, a forged Google stamp, an HTML login attachment, a fake reply changing bank details, a replayed Google alert) and legitimate emails built like the real thing (a personal reply, an Amazon order and a Chase fraud alert with phone numbers, a Google Docs share, a Microsoft security code, a mailing-list post that broke DKIM, newsletters with encoded tracking links). Every phishing sample must be rated *High risk* and read as the right kind of attack; every legitimate one must come out clear. Add a sample by dropping an `.eml` into `phish/` or `ham/`.
+
 Each finding has a **severity** and **points**:
 
 | Severity | Meaning |
@@ -57,7 +59,7 @@ Read from the `Authentication-Results` header that the receiving mail server (Gm
 | SPF failed | Medium | 15 | Sent from a server the domain does not allow. |
 | SPF soft-failed | Low | 8 | The sending server is not clearly authorized. |
 | No SPF | Low | 4 | The sending domain publishes no SPF policy. |
-| DKIM failed | Medium | 12 | The signature doesn't match: altered or forged. |
+| DKIM failed | Medium | 12 | The signature doesn't match: altered or forged. Only a note (0) when DMARC still passed: a mailing list or forwarder changed the email and SPF or ARC vouched for it. |
 | Not DKIM-signed | Low | 4 | No digital signature at all. |
 | Signed by a different domain | Low | 5 | Signed, but not by the From domain (normal for some mailing services). Only when DMARC didn't pass. |
 | No authentication results | Note | 0 | Usually a forwarded or pasted email that lost its headers. |
@@ -90,7 +92,7 @@ A genuine signed email (often a notification the attacker triggered on their own
 
 | Check | Severity | Points |
 |---|---|---|
-| Signed by the From domain, plus two or more of: signed or written days before arrival · addressed to someone else · passed at an earlier ARC hop and failed at yours · passed on by a forwarding service (SRS bounce address) · SPF failed for an unrelated delivering server | High | 20 |
+| Signed by the From domain, plus two or more of: signed or written days before arrival · addressed to someone else · passed at an earlier ARC hop and failed at yours · passed on by a forwarding service (SRS bounce address) · SPF failed for an unrelated delivering server | High (20), Critical (30) with three or more | |
 
 When it fires, the *DMARC passed* reassurance is removed.
 
@@ -133,7 +135,7 @@ Source: [`analyzers/sender.ts`](../extension/src/analyzers/sender.ts).
 | ↳ same, already explained by a look-alike finding | Medium | 10 | |
 | Organisation name from free webmail | Medium | 15 | "IT Helpdesk" or "PayPal" sending from gmail.com |
 | Replies go to a free webmail address | High | 20 | Reply-To `secure-team@protonmail.com` |
-| Replies go to another domain | Medium | 12 | |
+| Replies go to another domain | Medium | 12 | Not counted for verified share and invite notifications (Google Docs, Dropbox, DocuSign…), which put the person who shared in Reply-To |
 | Bounce address on another domain | Low | 3 | Normal for newsletters, so it barely counts |
 | No valid From address | Medium | 10 | |
 
@@ -287,11 +289,11 @@ Named techniques that analysts recognise by their shape rather than by a bad lin
 
 | Check | Severity | Points | What it looks for |
 |---|---|---|---|
-| Callback scam ("TOAD") | High | 22 | A phone number, an instruction to call, a charge, renewal or invoice, and a dispute or an amount. No link: the scam happens on the phone. From a verified brand (DMARC pass) it is only a Low (3) note |
-| A real notification platform carrying a scammer's message | High | 22 | An email that passed DMARC from PayPal, DocuSign, QuickBooks/Intuit, Square, Google, Microsoft, Dropbox, Adobe Sign, Zoom… (services that let anyone send invoices, shares and invites with their own text) containing a callback phone number, a link with its own high-risk flags, or a personal webmail contact. Replaces the callback finding |
+| Callback scam ("TOAD") | Critical (30) with a "didn't make this charge / cancel / refund" line, otherwise High (22) | | A phone number, an instruction to call, a charge, renewal or invoice, and a dispute or an amount. No link: the scam happens on the phone. From a verified brand's own domain (DMARC pass, not free webmail) it is only a Low (3) note |
+| A real notification platform carrying a scammer's message | Critical (30) when it carries a callback number with a dispute line, otherwise High (22) | | An email that passed DMARC from PayPal, DocuSign, QuickBooks/Intuit, Square, Google, Microsoft, Dropbox, Adobe Sign, Zoom… (services that let anyone send invoices, shares and invites with their own text) containing a callback phone number, a link with its own high-risk flags, or a personal webmail contact. Replaces the callback finding |
 | Device-code phishing | High | 22 | A link to a real device sign-in page (`microsoft.com/devicelogin`, `google.com/device`, `github.com/login/device`…) or a code to enter there. The page is genuine; the code signs the attacker's device in |
 | Consent (app-permission) link | High (20) when it asks for mail/file access (`offline_access`, `Mail.Read`, Gmail, Drive…) or sends you on to an unrelated `redirect_uri`, otherwise Medium (12) | | A link straight to a Microsoft or Google OAuth authorize page |
-| "ClickFix": paste a command into your computer | Critical (35) with both keyboard steps and a command, otherwise High (22) | | Steps like *Windows key + R, Ctrl + V* together with Run/PowerShell/Terminal, or commands such as `powershell -enc`, `mshta https://…`, `iex(`, `curl … \| sh` |
+| "ClickFix": paste a command into your computer | Critical (35) with both keyboard steps and a command, or *Windows key + R* then *Ctrl + V* (pasting into the Run box); otherwise High (22) | | Steps like *Windows key + R, Ctrl + V* together with Run/PowerShell/Terminal, or commands such as `powershell -enc`, `mshta https://…`, `iex(`, `curl … \| sh` |
 | HTML/SVG attachment that copies a command to your clipboard | Critical | 35 | `navigator.clipboard.writeText` or `execCommand('copy')` with PowerShell, mshta or cmd |
 | Password-protected archive with its password in the email | Critical | 30 | A locked ZIP (so scanners can't look inside) plus "Password: 4471" in the subject or body |
 

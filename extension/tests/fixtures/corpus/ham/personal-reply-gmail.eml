@@ -1,0 +1,20 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Mon, 19 Oct 2026 16:00:06 -0700 (PDT)
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com [209.85.220.41])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Mon, 19 Oct 2026 16:00:05 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20230601;
+       spf=pass smtp.mailfrom=jamie.lee@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+From: Jamie Lee <jamie.lee@gmail.com>
+To: alex.morgan@example.org
+Subject: Re: Saturday hike?
+In-Reply-To: <CAB1x@mail.gmail.com>
+References: <CAB1x@mail.gmail.com>
+Date: Mon, 19 Oct 2026 16:00:00 +0000
+Message-ID: <CAC2y=uR@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Sounds great! Let's meet at the trailhead at 8. I'll bring snacks.
