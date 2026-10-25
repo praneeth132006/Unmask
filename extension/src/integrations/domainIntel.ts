@@ -23,6 +23,8 @@ export interface MailRecords {
   hasAddress: boolean;
   spf: string | null;
   dmarc: string | null;
+  /** BIMI record (default._bimi), whose a= points to a Verified Mark Certificate. */
+  bimi?: string | null;
 }
 
 export interface DomainIntel {
@@ -83,12 +85,13 @@ export async function doh(name: string, type: 'MX' | 'TXT' | 'A' | 'AAAA' | 'PTR
 }
 
 export async function lookupMailRecords(domain: string, signal?: AbortSignal): Promise<MailRecords> {
-  const [mx, txt, dmarc, a, aaaa] = await Promise.all([
+  const [mx, txt, dmarc, a, aaaa, bimi] = await Promise.all([
     doh(domain, 'MX', signal),
     doh(domain, 'TXT', signal),
     doh(`_dmarc.${domain}`, 'TXT', signal),
     doh(domain, 'A', signal),
     doh(domain, 'AAAA', signal),
+    doh(`default._bimi.${domain}`, 'TXT', signal).catch(() => []),
   ]);
   return {
     domain,
@@ -97,6 +100,7 @@ export async function lookupMailRecords(domain: string, signal?: AbortSignal): P
     hasAddress: a.length + aaaa.length > 0,
     spf: txt.find((t) => /^v=spf1\b/i.test(t)) ?? null,
     dmarc: dmarc.find((t) => /^v=DMARC1\b/i.test(t)) ?? null,
+    bimi: bimi.find((t) => /^v=BIMI1\b/i.test(t)) ?? null,
   };
 }
 
@@ -123,4 +127,37 @@ export function mailRecordFindings(m: MailRecords): Finding[] {
   }
   const serious = !m.mx.length;
   return [{ ...base, severity: serious ? 'medium' : 'low', points: serious ? 8 : missing.length * 2, title: `Sender domain ${m.domain} is missing mail records`, detail: `DNS shows ${missing.join(', ')}. Legitimate senders usually publish all three.` }];
+}
+
+export interface DmarcPolicy {
+  policy: 'none' | 'quarantine' | 'reject' | null;
+  subdomainPolicy: string | null;
+  pct: number;
+}
+
+export function parseDmarc(record: string | null): DmarcPolicy | null {
+  if (!record) return null;
+  const tags = Object.fromEntries(record.split(';').map((p) => p.trim().split('=').map((x) => x.trim().toLowerCase())).filter((kv) => kv.length === 2)) as Record<string, string>;
+  const p = tags.p;
+  return { policy: p === 'none' || p === 'quarantine' || p === 'reject' ? p : null, subdomainPolicy: tags.sp ?? null, pct: tags.pct && /^\d+$/.test(tags.pct) ? Number(tags.pct) : 100 };
+}
+
+/** How hard the sender's domain makes it to fake: SPF strictness, DMARC policy, a verified brand logo. */
+export function postureFindings(m: MailRecords, emailDmarc: string): Finding[] {
+  const base = { category: 'sender' as const, target: { kind: 'sender' } as const };
+  const findings: Finding[] = [];
+  const all = m.spf?.match(/\s([+?~-]?)all\b/i)?.[1];
+  if (m.spf && all !== undefined && (all === '+' || all === '')) {
+    findings.push({ ...base, id: `spf-open-${m.domain}`, severity: 'medium', points: 10, title: `${m.domain}'s SPF lets any server send as it`, detail: `Its SPF record ends in "+all", so every server on the internet passes SPF for ${m.domain}. Real organisations never publish this; spammers do, to pass checks.` });
+  } else if (m.spf && all === '?') {
+    findings.push({ ...base, id: `spf-neutral-${m.domain}`, severity: 'low', points: 3, title: `${m.domain}'s SPF doesn't say which servers may send`, detail: 'Its SPF record ends in "?all", which gives no protection.' });
+  }
+  const dmarc = parseDmarc(m.dmarc);
+  if (dmarc?.policy === 'none' && emailDmarc !== 'pass') {
+    findings.push({ ...base, id: `dmarc-none-${m.domain}`, severity: 'low', points: 4, title: `${m.domain} doesn't ask providers to block fakes`, detail: `Its DMARC policy is "p=none": emails that fail the check, like this one, are still delivered. So the From address can be forged easily.` });
+  }
+  if (m.bimi && /\ba=\s*https:/i.test(m.bimi) && emailDmarc === 'pass' && dmarc && dmarc.policy !== 'none') {
+    findings.push({ ...base, id: `bimi-${m.domain}`, severity: 'good', points: -3, title: `${m.domain} has a verified brand logo (BIMI)`, detail: 'It publishes a certified logo record and blocks fakes with DMARC, and this email passed DMARC: strong evidence it really is from them.' });
+  }
+  return findings;
 }

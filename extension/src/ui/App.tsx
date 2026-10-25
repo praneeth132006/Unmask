@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEve
 import { analyzeRawEmail, withExtraFindings } from '../core/analyze';
 import type { AttachmentInfo, Finding, LinkInfo, Report, TabId } from '../core/types';
 import { domainAgeFindings, lookupDomainAge, type DomainAge } from '../integrations/rdap';
-import { certFindings, lookupCerts, lookupMailRecords, mailRecordFindings, type DomainIntel } from '../integrations/domainIntel';
+import { certFindings, lookupCerts, lookupMailRecords, mailRecordFindings, postureFindings, type DomainIntel } from '../integrations/domainIntel';
 import { dkimVerifyFindings, verifyAll } from '../integrations/dkimVerify';
 import { readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
@@ -124,7 +124,7 @@ export function App() {
       const jobs: Promise<void>[] = [];
       if (!senderKnown) {
         jobs.push(lookupCerts(sender).then((c) => { value.cert = c; found.push(...certFindings(c, 'sender')); }));
-        jobs.push(lookupMailRecords(sender).then((m) => { value.mail = m; found.push(...mailRecordFindings(m)); }));
+        jobs.push(lookupMailRecords(sender).then((m) => { value.mail = m; found.push(...mailRecordFindings(m), ...postureFindings(m, r.auth.dmarc)); }));
       }
       for (const d of linkDomains) jobs.push(lookupCerts(d).then((c) => void found.push(...certFindings(c, 'link'))));
       const results = await Promise.allSettled(jobs);
