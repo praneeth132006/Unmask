@@ -1,36 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { Report } from '../../core/types';
 import { Button, Card, Mono, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
 const KEY_HEADERS = new Set(['from', 'reply-to', 'return-path', 'sender', 'to', 'subject', 'date', 'message-id', 'authentication-results', 'received-spf', 'x-originating-ip', 'x-mailer', 'list-unsubscribe']);
 
-export interface ReceivedHop {
-  from: string | null;
-  by: string | null;
-  ip: string | null;
-  date: string | null;
-}
-
-/** Received headers are prepended by each server, so reversing gives the path from origin to inbox. */
-export function parseReceived(values: string[]): ReceivedHop[] {
-  return values
-    .map((v) => {
-      const flat = v.replace(/\s+/g, ' ');
-      return {
-        from: flat.match(/\bfrom\s+([^\s;()]+)/i)?.[1] ?? null,
-        by: flat.match(/\bby\s+([^\s;()]+)/i)?.[1] ?? null,
-        ip: flat.match(/\[((?:\d{1,3}\.){3}\d{1,3}|[0-9a-f:]{3,})\]/i)?.[1] ?? null,
-        date: flat.split(';').pop()?.trim() ?? null,
-      };
-    })
-    .reverse();
-}
-
 export function HeadersTab({ report, initialFilter }: { report: Report; initialFilter?: string }) {
   const [filter, setFilter] = useState(initialFilter ?? '');
   const headers = report.email.headers;
-  const hops = useMemo(() => parseReceived(headers.filter((h) => h.key === 'received').map((h) => h.value)), [headers]);
+  const hops = report.forensics.hops;
   const shown = headers.filter((h) => !filter || h.key.includes(filter.toLowerCase()) || h.value.toLowerCase().includes(filter.toLowerCase()));
 
   return (
@@ -42,15 +20,18 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
             <ol className="space-y-2.5">
               {hops.map((h, i) => (
                 <li key={i} className="flex gap-2.5 text-xs">
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent)]">{i + 1}</span>
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[10px] font-semibold text-[var(--accent)]">{h.n}</span>
                   <div className="min-w-0">
-                    <Mono>{h.from ?? 'unknown'}</Mono>
+                    <Mono>{h.helo ?? h.rdns ?? 'unknown'}</Mono>
                     {h.ip && <span className="ml-1 text-[var(--text-3)]">[{h.ip}]</span>}
+                    {h.rdns && h.rdns !== h.helo && <div className="text-[11px] text-[var(--text-3)]">DNS name: {h.rdns}</div>}
                     {h.by && (
                       <div className="text-[11px] text-[var(--text-3)]">
                         → <Mono>{h.by}</Mono>
+                        {h.delaySec !== null && h.delaySec !== 0 && <span className={h.delaySec < 0 ? 'ml-1 text-[var(--warn)]' : 'ml-1'}>({formatDelay(h.delaySec)})</span>}
                       </div>
                     )}
+                    {!h.trusted && hops.some((x) => x.trusted) && <div className="text-[11px] text-[var(--text-3)]">Written before your provider got it: can’t be verified</div>}
                   </div>
                 </li>
               ))}
@@ -61,7 +42,7 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
 
       <div className={`flex flex-wrap gap-2 ${hops.length > 0 ? 'mt-2.5' : ''}`}>
         <CopyAll label="Copy all headers" value={headers.map((h) => `${h.name}: ${h.value}`).join('\n')} />
-        {hops.length > 0 && <CopyAll label="Copy delivery path" value={hops.map((h, i) => `${i + 1}. ${h.from ?? 'unknown'}${h.ip ? ` [${h.ip}]` : ''}${h.by ? ` → ${h.by}` : ''}`).join('\n')} />}
+        {hops.length > 0 && <CopyAll label="Copy delivery path" value={hops.map((h) => `${h.n}. ${h.helo ?? h.rdns ?? 'unknown'}${h.ip ? ` [${h.ip}]` : ''}${h.by ? ` → ${h.by}` : ''}${h.trusted ? '' : ' (unverified)'}`).join('\n')} />}
       </div>
 
       <SectionTitle
@@ -108,4 +89,10 @@ function CopyAll({ label, value }: { label: string; value: string }) {
       {done ? 'Copied' : label}
     </Button>
   );
+}
+
+function formatDelay(sec: number): string {
+  const a = Math.abs(sec);
+  const t = a < 60 ? `${a}s` : a < 3600 ? `${Math.round(a / 60)} min` : a < 86_400 ? `${Math.round(a / 3600)} h` : `${Math.round(a / 86_400)} days`;
+  return sec < 0 ? `${t} earlier: clock out of order` : `+${t}`;
 }

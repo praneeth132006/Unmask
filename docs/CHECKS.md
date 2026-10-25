@@ -63,6 +63,21 @@ Read from the `Authentication-Results` header that the receiving mail server (Gm
 
 ---
 
+## Delivery path
+
+The `Received` headers, read from the bottom up the way an analyst reads them. Lines written by your own mail provider are trusted; lines below the point where your provider took the email were written by servers you can't check, possibly the sender itself, and the Headers tab marks them *can't be verified*. Source: [`analyzers/received.ts`](../extension/src/analyzers/received.ts).
+
+| Check | Severity | Points | Meaning |
+|---|---|---|---|
+| Delivery times out of order by over 6 hours, involving an unverifiable line | Medium | 10 | Forged delivery lines are written by the sender, who guesses the times |
+| Delivery times out of order by over 10 minutes | Low | 4 | Usually a wrong server clock |
+| Sent straight from a computer (`DESKTOP-…`, `localhost`, an IP, a name without a dot) | Medium | 10 | Companies send through named mail servers |
+| The server that handed it to your provider has no DNS name | Low | 4 | |
+| Written more than 3 days before it arrived | Low | 6 | Old signed emails re-sent to new people ("DKIM replay") look like this |
+| Dated more than 2 hours in the future | Low | 5 | |
+
+---
+
 ## Sender identity
 
 Source: [`analyzers/sender.ts`](../extension/src/analyzers/sender.ts).

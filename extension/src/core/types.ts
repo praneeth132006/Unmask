@@ -171,9 +171,78 @@ export interface QrCode {
   text: string;
 }
 
+/** One server-to-server handoff, from a Received header. */
+export interface DeliveryHop {
+  /** 1 is where the email started, the highest number is your inbox. */
+  n: number;
+  /** Name the sending server announced (HELO), or null. */
+  helo: string | null;
+  /** Name the receiving server found for the sender's IP (reverse DNS), "unknown" if none. */
+  rdns: string | null;
+  ip: string | null;
+  privateIp: boolean;
+  by: string | null;
+  protocol: string | null;
+  /** Epoch ms of the receipt, or null when missing or unreadable. */
+  time: number | null;
+  /** Seconds since the previous hop; negative when the clocks run backwards. */
+  delaySec: number | null;
+  /**
+   * Written by your own mail provider, so it can be trusted. Hops below the
+   * first trusted one were written by servers you can't check, including
+   * possibly the sender itself.
+   */
+  trusted: boolean;
+}
+
+export interface DkimSignatureInfo {
+  /** Signing domain (d=). */
+  domain: string;
+  selector: string;
+  algorithm: string;
+  /** Header fields the signature covers (h=), lowercase. */
+  signedHeaders: string[];
+  canonicalization: string;
+  /** Signed only the first N bytes of the body (l=), or null for the whole body. */
+  bodyLength: number | null;
+  /** Signing time (t=) and expiry (x=), epoch ms. */
+  signedAt: number | null;
+  expiresAt: number | null;
+  /** Local body-hash check: does the body still match what was signed? */
+  bodyHash: 'match' | 'mismatch' | 'unsupported';
+  /** Full cryptographic check, filled in by the online DKIM check. */
+  signature?: 'pass' | 'fail' | 'no-key' | 'revoked' | 'unsupported' | 'error';
+  /** Key size in bits and test mode (t=y), from the DNS key record. */
+  keyBits?: number;
+  testing?: boolean;
+  /** Short reason when the signature check didn't pass. */
+  reason?: string;
+}
+
+export interface ArcSet {
+  instance: number;
+  /** cv= from the ARC-Seal: the chain status that server saw. */
+  cv: string;
+  /** Who added this set (d= of the seal). */
+  domain: string;
+  /** The Authentication-Results that server recorded (ARC-Authentication-Results), parsed. */
+  results: Record<string, string>;
+}
+
+export interface Forensics {
+  hops: DeliveryHop[];
+  /** Public IP of the first server that sent the email, when known. */
+  originIp: string | null;
+  dkim: DkimSignatureInfo[];
+  arc: ArcSet[];
+  /** ARC chain problem, if any: missing instances, a broken seal status, … */
+  arcProblem: string | null;
+}
+
 export interface Report {
   email: ParsedEmail;
   auth: AuthSummary;
+  forensics: Forensics;
   links: LinkInfo[];
   attachments: AttachmentInfo[];
   hidden: HiddenSnippet[];

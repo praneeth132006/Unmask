@@ -1,6 +1,6 @@
 import { parseEmail } from './parse';
 import { mergeFindings, scoreFindings, sortFindings } from './score';
-import type { Finding, Report } from './types';
+import type { Finding, Forensics, Report } from './types';
 import { analyzeAuth } from '../analyzers/auth';
 import { analyzeSender } from '../analyzers/sender';
 import { analyzeContent } from '../analyzers/content';
@@ -12,6 +12,8 @@ import { historyFindings, type SenderHistory } from '../analyzers/history';
 import { findBrandLogos, logoFindings } from '../analyzers/logos';
 import { protectionFindings, type ProtectionList } from '../analyzers/protection';
 import { findQrCodes, qrFindings, qrLinks, type ImageDecoder } from '../analyzers/qr';
+import { deliveryPath, originIp, receivedFindings } from '../analyzers/received';
+import { getHeaders } from './parse';
 
 export interface AnalyzeOptions {
   /** Who normally emails this user, for "first contact" and impersonation checks. */
@@ -30,6 +32,9 @@ export interface AnalyzeOptions {
 export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, opts: AnalyzeOptions = {}): Promise<Report> {
   const email = await parseEmail(raw);
   const { auth, findings: authFindings } = analyzeAuth(email);
+  const hops = deliveryPath(getHeaders(email, 'received'), auth.server);
+  const forensics: Forensics = { hops, originIp: originIp(hops, getHeaders(email, 'x-originating-ip')[0]), dkim: [], arc: [], arcProblem: null };
+  const pathFindings = receivedFindings(hops, email.date);
   // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:
   // still worth knowing, but not a high-risk sign on its own.
   const senderFindings = analyzeSender(email).map((f) =>
@@ -51,12 +56,13 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   // A verified trusted sender is by definition not a stranger.
   const pastFindings = (opts.history ? historyFindings(email, opts.history) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
 
-  const findings = sortFindings([...authFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
+  const findings = sortFindings([...authFindings, ...pathFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
   const { score, verdict } = scoreFindings(findings);
 
   return {
     email,
     auth,
+    forensics,
     links,
     attachments,
     hidden: content.hidden,
