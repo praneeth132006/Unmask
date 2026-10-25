@@ -68,7 +68,8 @@ export function indicators(report: Report, maxUrls = 50): Indicators {
     deliveringServer: entry ? [entry.rdns && entry.rdns !== 'unknown' ? entry.rdns : entry.helo, entry.ip && `[${entry.ip}]`].filter(Boolean).join(' ') || null : null,
     dkimDomains: [...new Set(report.forensics.dkim.map((d) => d.domain))],
     urls: suspiciousUrls(report, maxUrls),
-    domains: [...new Set(report.links.filter((l) => worst(l) >= SEVERITY_RANK.medium).map((l) => l.domain).filter(Boolean))],
+    // Exact hosts: blocking a registrable domain like pages.dev or blogspot.com would block a whole hosting platform.
+    domains: [...new Set(report.links.filter((l) => worst(l) >= SEVERITY_RANK.medium).map((l) => l.host).filter(Boolean))],
     sha256: report.attachments.filter((a) => a.flags.length).map((a) => a.sha256),
     phones: callback ? phoneNumbers(report.previewText) : [],
   };
@@ -88,7 +89,7 @@ export function indicatorText(report: Report): string {
   add('delivered-by', [i.deliveringServer]);
   add('dkim-domain', i.dkimDomains);
   for (const u of i.urls) lines.push(`url\t${defang(u)}`);
-  add('domain', i.domains);
+  add('host', i.domains);
   add('sha256', i.sha256, false);
   add('phone', i.phones, false);
   return lines.join('\n');
@@ -128,7 +129,7 @@ export function analystReport(report: Report, version: string, now = new Date())
     section('Delivery path (origin first)');
     for (const h of forensics.hops) {
       const when = h.time ? new Date(h.time).toISOString() : 'no time';
-      out.push(`${h.n}. ${h.helo ?? h.rdns ?? 'unknown'}${h.ip ? ` [${h.ip}]` : ''}${h.rdns && h.rdns !== h.helo ? ` rDNS ${h.rdns}` : ''} -> ${h.by ?? '?'} at ${when}${h.delaySec !== null ? ` (+${h.delaySec}s)` : ''}${h.trusted ? '' : ' [unverifiable]'}`);
+      out.push(`${h.n}. ${h.helo ?? h.rdns ?? (h.trusted ? 'internal step at your provider' : 'unknown')}${h.ip ? ` [${h.ip}]` : ''}${h.rdns && h.rdns !== h.helo ? ` rDNS ${h.rdns}` : ''} -> ${h.by ?? '?'} at ${when}${h.delaySec !== null ? ` (+${h.delaySec}s)` : ''}${h.trusted ? '' : ' [unverifiable]'}`);
     }
     if (forensics.sender) out.push(`Delivering server network: ${[forensics.sender.network, forensics.sender.asn && `AS${forensics.sender.asn}`, forensics.sender.country].filter(Boolean).join(', ')}`);
   }
