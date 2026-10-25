@@ -79,6 +79,8 @@ Unmask also reads every `DKIM-Signature` itself and recomputes its body hash on 
 | Signature expired (`x=`) before it arrived | Low | 4 | |
 | Reply-To not signed by the From domain | Low | 4 | |
 | Only SHA-1 signatures | Low | 3 | |
+
+With online checks on, Unmask also fetches each signer's public key and verifies the signature itself (RSA-SHA256, RSA-SHA1 and Ed25519), the same check your provider ran on arrival. A signature that passed on arrival but fails now is treated as a rotated key, not tampering. See [Online checks](#online-checks).
 | This copy differs from what your provider verified | Note | 0 | Usually a pasted copy rather than the original |
 
 ### Forwarding record (ARC)
@@ -368,6 +370,7 @@ These run only when you click them, except domain age and domain intelligence, w
 | **Redirect trace** (your server) | The link | The redirect chain (informational) |
 | **First TLS certificate** (crt.sh) | The sender's domain and up to 3 link domains | First certificate in the last 7 days: High 20 · last 30 days: Medium 10 · a link domain that never had one: Low 4 |
 | **Mail records** (dns.google) | The sender's domain | No mail server and no website: Medium 12 · no MX: Medium 8 · missing SPF/DMARC: Low 2 each |
+| **DKIM signature check** (dns.google) | Each signing key's DNS name (`selector._domainkey.domain`) | Headers changed after signing: Medium 12 · signature names a brand key that doesn't exist: Medium 12 (other domains Low 4) · key withdrawn: Low 5 · key under 1024 bits: Low 5 · key in test mode: Low 2 · verified and aligned with From: Good −5 |
 
 Well-known brands and webmail providers are skipped for the automatic lookups.
 

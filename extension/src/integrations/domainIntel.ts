@@ -76,9 +76,9 @@ interface DohAnswer {
   Answer?: { type: number; data: string }[];
 }
 
-async function doh(name: string, type: 'MX' | 'TXT' | 'A' | 'AAAA', signal?: AbortSignal): Promise<string[]> {
+export async function doh(name: string, type: 'MX' | 'TXT' | 'A' | 'AAAA' | 'PTR', signal?: AbortSignal): Promise<string[]> {
   const r = await getJson<DohAnswer>(`https://dns.google/resolve?name=${encodeURIComponent(name)}&type=${type}`, signal);
-  const code = { MX: 15, TXT: 16, A: 1, AAAA: 28 }[type];
+  const code = { MX: 15, TXT: 16, A: 1, AAAA: 28, PTR: 12 }[type];
   return (r.Answer ?? []).filter((a) => a.type === code).map((a) => a.data.replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
 }
 

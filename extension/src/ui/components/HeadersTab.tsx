@@ -11,8 +11,56 @@ export function HeadersTab({ report, initialFilter }: { report: Report; initialF
   const hops = report.forensics.hops;
   const shown = headers.filter((h) => !filter || h.key.includes(filter.toLowerCase()) || h.value.toLowerCase().includes(filter.toLowerCase()));
 
+  const { dkim, arc, arcProblem } = report.forensics;
+
   return (
     <div>
+      {dkim.length > 0 && (
+        <>
+          <SectionTitle>Signatures (DKIM)</SectionTitle>
+          <Card>
+            <ul className="space-y-2 text-xs">
+              {dkim.map((d, i) => (
+                <li key={i} className="min-w-0">
+                  <div>
+                    <Mono>{d.domain}</Mono>
+                    <span className="ml-1 text-[var(--text-3)]">
+                      key “{d.selector}” · {d.algorithm}
+                      {d.keyBits ? ` · ${d.keyBits}-bit` : ''}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-[var(--text-2)]">
+                    Body: {d.bodyHash === 'match' ? 'unchanged since signing' : d.bodyHash === 'mismatch' ? 'changed after signing' : 'not checked'}
+                    {d.bodyLength !== null && ` (only the first ${d.bodyLength} bytes are signed)`} · Signature: {SIGNATURE_LABEL[d.signature ?? 'pending']}
+                  </div>
+                  {d.reason && <div className="text-[11px] text-[var(--text-3)]">{d.reason}</div>}
+                  <div className="text-[11px] text-[var(--text-3)]">Signs: {d.signedHeaders.join(', ')}</div>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </>
+      )}
+
+      {arc.length > 0 && (
+        <>
+          <SectionTitle>Forwarding record (ARC)</SectionTitle>
+          <Card>
+            <ol className="space-y-1.5 text-xs">
+              {arc.map((a) => (
+                <li key={a.instance}>
+                  <span className="font-semibold">{a.instance}.</span> <Mono>{a.domain}</Mono>
+                  <span className="ml-1 text-[var(--text-3)]">
+                    saw {Object.entries(a.results).filter(([m]) => ['spf', 'dkim', 'dmarc'].includes(m)).map(([m, r]) => `${m}=${r}`).join(', ') || 'no results'} · chain {a.cv}
+                  </span>
+                </li>
+              ))}
+            </ol>
+            {arcProblem && <p className="mt-2 text-[11px] text-[var(--warn)]">{arcProblem}</p>}
+          </Card>
+        </>
+      )}
+
       {hops.length > 0 && (
         <>
           <SectionTitle>Delivery path (where it came from, first)</SectionTitle>
@@ -90,6 +138,16 @@ function CopyAll({ label, value }: { label: string; value: string }) {
     </Button>
   );
 }
+
+const SIGNATURE_LABEL: Record<string, string> = {
+  pending: 'not checked (needs "Check certificate history and mail records" in Settings)',
+  pass: 'verified with the signer’s public key',
+  fail: 'does not verify',
+  'no-key': 'no such key published',
+  revoked: 'key withdrawn',
+  unsupported: 'can’t be checked in this browser',
+  error: 'lookup failed',
+};
 
 function formatDelay(sec: number): string {
   const a = Math.abs(sec);
