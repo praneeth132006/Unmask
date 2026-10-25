@@ -9,7 +9,7 @@ _Prices and limits checked on 19 October 2026 against each provider's official p
 | **Unmask itself** (all local checks) | Free, open source (MIT) | Unlimited | — |
 | **Domain age** (rdap.org) | Free, no account | No published quota; 1 lookup per email you open | Rarely, a registry may refuse a lookup; Unmask shows "RDAP returned HTTP 429" and carries on |
 | **VirusTotal** (files and links) | Free account | **4 lookups per minute, 500 per day** (about 15,500 per month) | "VirusTotal rate limit reached"; try again in a minute, or after 00:00 UTC for the daily limit. No charge. |
-| **urlscan.io** (sandbox scans) | Free account | **5,000 public, 1,000 unlisted and 50 private scans per day**, 10,000 result lookups per day | "urlscan.io rate limit reached"; try again later. No charge. |
+| **urlscan.io** (sandbox scans) | Free account | **50 private scans per day** (Unmask runs only private scans), 10,000 result lookups per day | "urlscan.io rate limit reached"; try again later. No charge. |
 | **Redirect tracing** (built in) | Free | Unlimited (it runs in your browser) | — |
 | **Your own trace server** (optional) | Free on your computer; free on Vercel Hobby | Vercel Hobby: 1M requests and 4 hours of active CPU per month | Hobby projects stop at the cap. They can't buy more, so there's no surprise bill. |
 
@@ -46,10 +46,7 @@ Even checking 20 suspicious emails a day with every button stays far under the f
 
 Prices exclude taxes. For personal use, **Free is all you need**.
 
-**Visibility**, set in Unmask's Settings:
-- **Unlisted** (Unmask's default): hidden from urlscan's public feed and search, visible to urlscan's vetted security partners. 1,000 per day free.
-- **Private:** visible only to you. 50 per day free. Choose this if links might contain personal tokens, such as password-reset links.
-- **Public:** anyone can find the scan. Don't use this for links from your own email.
+**Visibility: always private.** Unmask submits every scan as *private*: only the API key that submitted it can see the result, the screenshot and the page contents. Private scans never appear in urlscan's public feed or search, nor in urlscan Pro for its security partners, and urlscan deletes them after your plan's retention period. Links in emails often carry your address or a personal token (password resets, invoices), so *public* and *unlisted* (which urlscan shares with its partners) are not offered. The free plan's 50 private scans a day are plenty for checking suspicious emails.
 
 Official source: [urlscan.io pricing](https://urlscan.io/pricing/).
 

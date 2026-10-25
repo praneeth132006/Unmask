@@ -30,8 +30,9 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 | A request to the link itself (no cookies, never opened in a tab) | The link's website, and each site it redirects to | Only when you click **Trace redirects** (built-in tracing). The sites see your IP address, as with any visit |
 | One link's URL | Your own trace server | Only if you chose **My own server** in Settings and click **Trace redirects** |
 | Your API key, to check it works | VirusTotal or urlscan.io | When you click **Save & test** while setting up a key |
-| One link's URL | urlscan.io, using your API key | Only when you click **Sandbox scan** on that link |
-| One link's URL | VirusTotal, using your API key | Only when you click **VirusTotal** on that link |
+| One link's URL | urlscan.io, using your API key, as a **private** scan that only your key can see (never public, never shared with urlscan's partners) | Only when you click **Sandbox scan** on that link |
+| One link's URL | VirusTotal, using your API key: a lookup of what VirusTotal already knows, which publishes nothing | Only when you click **VirusTotal** on that link |
+| One link's URL, submitted for a fresh scan | VirusTotal. **Submitted links become visible to VirusTotal's customers.** | Only when VirusTotal has never seen the link, you click **Scan it now**, and confirm a warning |
 | An attachment's SHA-256 hash | VirusTotal, using your API key | Only when you click **Check on VirusTotal** |
 | An attachment file | VirusTotal, using your API key | Only when you click **Upload file…** and then confirm a warning. Files uploaded to VirusTotal may be shared with its customers. |
 

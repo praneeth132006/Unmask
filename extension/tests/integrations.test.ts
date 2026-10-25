@@ -105,20 +105,35 @@ describe('VirusTotal upload', () => {
 describe('urlscan polling', () => {
   it('sends the API key when fetching the result, so unlisted and private scans are found', async () => {
     const { scanUrl } = await import('../src/integrations/urlscan');
-    const calls: { url: string; key: string | null }[] = [];
+    const calls: { url: string; key: string | null; body?: string }[] = [];
     let polls = 0;
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
       const url = String(input);
-      calls.push({ url, key: new Headers(init?.headers).get('API-Key') });
+      calls.push({ url, key: new Headers(init?.headers).get('API-Key'), body: typeof init?.body === 'string' ? init.body : undefined });
       if (url.endsWith('/scan/')) return new Response(JSON.stringify({ uuid: 'u1' }), { status: 200 });
       // Like urlscan: without the key, an unlisted result stays "not found".
       if (!new Headers(init?.headers).get('API-Key')) return new Response('', { status: 404 });
       return ++polls < 2 ? new Response('', { status: 404 }) : new Response(JSON.stringify({ page: { url: 'https://x.example/' } }), { status: 200 });
     });
-    const r = await scanUrl('key-1', 'https://x.example/', 'unlisted', undefined, { firstWaitMs: 1, pollMs: 1, maxWaitMs: 5000 });
+    const r = await scanUrl('key-1', 'https://x.example/', undefined, { firstWaitMs: 1, pollMs: 1, maxWaitMs: 5000 });
     fetchMock.mockRestore();
     expect(r.finalUrl).toBe('https://x.example/');
     expect(calls.filter((c) => c.url.includes('/result/')).every((c) => c.key === 'key-1')).toBe(true);
+    // Every scan is private: never public, never unlisted (visible to urlscan's partners).
+    expect(JSON.parse(calls.find((c) => c.url.endsWith('/scan/'))!.body!)).toEqual({ url: 'https://x.example/', visibility: 'private' });
+  });
+
+  it('fetches a private scan screenshot with the key, not as a public image', async () => {
+    const { fetchScreenshot } = await import('../src/integrations/urlscan');
+    const seen: (string | null)[] = [];
+    const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (_input, init) => {
+      seen.push(new Headers(init?.headers).get('API-Key'));
+      return new Response(new Uint8Array([137, 80, 78, 71]), { status: 200, headers: { 'content-type': 'image/png' } });
+    });
+    const blob = await fetchScreenshot('key-9', 'u9');
+    fetchMock.mockRestore();
+    expect(seen).toEqual(['key-9']);
+    expect(blob.size).toBe(4);
   });
 
   it('reports a still-running scan with its report link instead of failing', async () => {
@@ -126,7 +141,7 @@ describe('urlscan polling', () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) =>
       String(input).endsWith('/scan/') ? new Response(JSON.stringify({ uuid: 'u2' }), { status: 200 }) : new Response('', { status: 404 }),
     );
-    const err = await scanUrl('k', 'https://x.example/', 'unlisted', undefined, { firstWaitMs: 1, pollMs: 1, maxWaitMs: 30 }).catch((e: unknown) => e);
+    const err = await scanUrl('k', 'https://x.example/', undefined, { firstWaitMs: 1, pollMs: 1, maxWaitMs: 30 }).catch((e: unknown) => e);
     fetchMock.mockRestore();
     expect(err).toBeInstanceOf(UrlscanPending);
     expect((err as InstanceType<typeof UrlscanPending>).reportUrl).toBe('https://urlscan.io/result/u2/');

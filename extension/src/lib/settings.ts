@@ -5,8 +5,6 @@ export interface Settings {
   vtApiKey: string;
   /** Free key from urlscan.io → settings → API keys. */
   urlscanApiKey: string;
-  /** "private" scans are not shared with other urlscan users (needs a plan that allows it). */
-  urlscanVisibility: 'public' | 'unlisted' | 'private';
   /** Base URL of the Unmask redirect-trace backend, e.g. https://unmask-trace.vercel.app */
   backendUrl: string;
   /** Look up how old the sender's domain is (sends only the domain name to rdap.org). */
@@ -42,7 +40,6 @@ export type Theme = 'system' | 'light' | 'dark';
 export const DEFAULT_SETTINGS: Settings = {
   vtApiKey: '',
   urlscanApiKey: '',
-  urlscanVisibility: 'unlisted',
   backendUrl: '',
   autoDomainAge: true,
   theme: 'system',

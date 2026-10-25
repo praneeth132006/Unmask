@@ -40,7 +40,7 @@ export const SERVICES: Record<Service, ServiceInfo> = {
   urlscan: {
     name: 'urlscan.io',
     what: 'Opens a link in urlscan.io’s own sandbox browser (never yours) and shows a screenshot of where it really lands.',
-    limits: 'Free: 1,000 unlisted and 50 private scans per day. A free key is never charged; past the limit, scans just pause until the next day.',
+    limits: 'Free: 50 private scans per day (Unmask only runs private scans: nobody else can see them). A free key is never charged; past the limit, scans just pause until the next day.',
     field: 'urlscanApiKey',
     placeholder: 'Paste your urlscan.io key',
     steps: [

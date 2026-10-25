@@ -181,21 +181,9 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
       </Card>
 
       {settings.urlscanApiKey && (
-        <>
-          <SectionTitle>urlscan.io scan visibility</SectionTitle>
-          <Card>
-            <select
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-xs text-[var(--text)]"
-              value={settings.urlscanVisibility}
-              onChange={(e) => void update({ urlscanVisibility: e.target.value as Settings['urlscanVisibility'] })}
-            >
-              <option value="unlisted">Unlisted: 1,000 free per day (recommended)</option>
-              <option value="private">Private: only you can see it, 50 free per day</option>
-              <option value="public">Public: anyone can find it, 5,000 free per day</option>
-            </select>
-            <p className="mt-1.5 text-[11px] text-[var(--text-3)]">Unlisted scans are hidden from urlscan’s public feed but visible to its security partners.</p>
-          </Card>
-        </>
+        <p className="mt-1.5 px-1 text-[11px] text-[var(--text-3)]">
+          Sandbox scans are always <strong className="text-[var(--text-2)]">private</strong>: only your key can see the result and screenshot. They never appear in urlscan.io’s public feed or search, or in urlscan Pro for its partners. Free plan: 50 a day.
+        </p>
       )}
 
       <SectionTitle>Privacy</SectionTitle>

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Finding, LinkInfo, Report } from '../../core/types';
 import type { Settings } from '../../lib/settings';
 import { hasTracePermission, requestTracePermission, traceBuiltinFromPanel, traceRedirects, type TraceResult } from '../../integrations/trace';
-import { scanUrl, urlscanFindings, UrlscanPending, type UrlscanResult } from '../../integrations/urlscan';
+import { fetchScreenshot, scanUrl, urlscanFindings, UrlscanPending, type UrlscanResult } from '../../integrations/urlscan';
 import { lookupUrl, scanUrlNow, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { Button, Card, CopyButton, ErrorText, Label, Mono, Pill, Spinner, type Async } from './ui';
 import { Icon } from './Icon';
@@ -55,6 +55,7 @@ function LinkCard({
   const [state, setState] = useState<LinkState>({});
   const [setup, setSetup] = useState<Action | null>(null);
   const [askTrace, setAskTrace] = useState(false);
+  const [confirmVt, setConfirmVt] = useState(false);
   /** A scan that is still running on urlscan.io: show its report link instead of an error. */
   const [urlscanPending, setUrlscanPending] = useState<string | null>(null);
   const set = (patch: LinkState) => setState((s) => ({ ...s, ...patch }));
@@ -114,7 +115,7 @@ function LinkCard({
       setUrlscanPending(null);
       set({ urlscan: { status: 'loading', message: 'Submitting…' } });
       try {
-        const value = await scanUrl(s.urlscanApiKey, target, s.urlscanVisibility, (message) => set({ urlscan: { status: 'loading', message } }));
+        const value = await scanUrl(s.urlscanApiKey, target, (message) => set({ urlscan: { status: 'loading', message } }));
         set({ urlscan: { status: 'done', value } });
         report(urlscanFindings(`urlscan-${index}`, value));
       } catch (e) {
@@ -275,7 +276,7 @@ function LinkCard({
           </div>
           {state.urlscan.value.title && <div className="text-[11px] text-[var(--text-2)]">Page title: {state.urlscan.value.title}</div>}
           {state.urlscan.value.brands.length > 0 && <div className="text-[11px] font-medium text-[var(--bad)]">Pretends to be: {state.urlscan.value.brands.join(', ')}</div>}
-          <img src={state.urlscan.value.screenshot} alt="Screenshot of the page taken by urlscan.io" className="mt-2 w-full rounded-md border border-[var(--border)]" />
+          <PrivateScreenshot apiKey={settings.urlscanApiKey} result={state.urlscan.value} />
         </div>
       )}
 
@@ -303,9 +304,26 @@ function LinkCard({
           <p>
             <strong className="text-[var(--text)]">VirusTotal has never seen this link.</strong> New phishing links are often unknown, so this isn’t a clean result.
           </p>
-          <Button variant="primary" className="mt-2" onClick={() => void scanNow()}>
-            <Icon name="shield" className="h-3.5 w-3.5" /> Scan it now
-          </Button>
+          {confirmVt ? (
+            <div className="mt-2 rounded-lg border border-[var(--warn)] bg-[var(--warn-soft)] p-2 text-[var(--text)]">
+              <p className="font-semibold">Send this link to VirusTotal?</p>
+              <p className="mt-1 text-[var(--text-2)]">
+                <strong className="text-[var(--text)]">The link becomes visible to VirusTotal’s customers</strong>, including any address, name or token inside it. Unmask’s other checks never publish anything; this one does. Use the private Sandbox scan instead if the link may be personal.
+              </p>
+              <div className="mt-2 flex gap-1.5">
+                <Button variant="danger" onClick={() => { setConfirmVt(false); void scanNow(); }}>
+                  Send to VirusTotal
+                </Button>
+                <Button variant="ghost" onClick={() => setConfirmVt(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button variant="primary" className="mt-2" onClick={() => setConfirmVt(true)}>
+              <Icon name="shield" className="h-3.5 w-3.5" /> Scan it now
+            </Button>
+          )}
           <p className="mt-1.5 text-[var(--text-3)]">Sends this link to VirusTotal for a fresh scan by 70+ vendors (about 30–60 seconds).{link.unwrappedVia.length === 0 && /click|track|email\./i.test(link.host) ? ' Tip: this looks like a tracking link; Trace redirects first to scan the real destination.' : ''}</p>
         </div>
       )}
@@ -348,5 +366,37 @@ export function LinksTab({ report, settings, onSettingsChange, onFindings, focus
         </Button>
       )}
     </div>
+  );
+}
+
+/** A private scan's screenshot, fetched with your key; it isn't reachable without it. */
+function PrivateScreenshot({ apiKey, result }: { apiKey: string; result: UrlscanResult }) {
+  const [src, setSrc] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let url: string | null = null;
+    let alive = true;
+    fetchScreenshot(apiKey, result.uuid)
+      .then((blob) => {
+        if (!alive) return;
+        url = URL.createObjectURL(blob);
+        setSrc(url);
+      })
+      .catch((e: unknown) => alive && setError(e instanceof Error ? e.message : String(e)));
+    return () => {
+      alive = false;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [apiKey, result.uuid]);
+  if (error) return <p className="mt-2 text-[11px] text-[var(--text-3)]">Screenshot unavailable: {error} It is on the full report.</p>;
+  if (!src) return <p className="mt-2 text-[11px] text-[var(--text-3)]">Loading the screenshot…</p>;
+  return (
+    <>
+      <img src={src} alt="Screenshot of the page taken by urlscan.io" className="mt-2 w-full rounded-md border border-[var(--border)]" />
+      <a className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent)] hover:underline" href={src} download={`unmask-landing-page-${result.domain ?? result.uuid}.png`}>
+        <Icon name="download" className="h-3 w-3" /> Save screenshot
+      </a>
+      <p className="text-[10px] text-[var(--text-3)]">Private scan: only your urlscan.io key can see this report and screenshot.</p>
+    </>
   );
 }

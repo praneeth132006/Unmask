@@ -182,7 +182,7 @@ Unmask works with no setup at all. These free services add extra checks you run 
 | Service | What it adds | Free limit | Setup |
 |---|---|---|---|
 | **VirusTotal** | Checks attachments (by fingerprint) and links against 70+ antivirus engines | 4 lookups/min, 500/day | Click **Check on VirusTotal** on any file or link and follow the 3 steps in the panel |
-| **urlscan.io** | Opens a link in urlscan's sandbox browser and shows a screenshot of where it lands | 1,000 unlisted + 50 private scans/day | Click **Sandbox scan** on any link and follow the steps |
+| **urlscan.io** | Opens a link in urlscan's sandbox browser and shows a screenshot of where it lands | 50 private scans/day (Unmask only runs private scans) | Click **Sandbox scan** on any link and follow the steps |
 | **Redirect tracing** | Follows a link's redirects without opening it | Free, unlimited | Built in: click **Trace redirects** and allow once. A self-hosted server is optional ([docs/BACKEND.md](docs/BACKEND.md)) |
 
 **Free keys can never be charged.** Going over a limit just pauses that check until the quota resets. Paid plans exist only for heavy or commercial use: see **[Free limits and costs](docs/LIMITS_AND_COSTS.md)** for every number and price.

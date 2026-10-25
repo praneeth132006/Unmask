@@ -227,9 +227,9 @@ Click **Sandbox scan** on any link and follow the steps in the panel:
 3. Copy the key, which looks like `1a2b3c4d-…` (36 characters with dashes).
 4. Paste it into Unmask and click **Save & test**.
 
-**Free limits:** 1,000 unlisted, 50 private and 5,000 public scans per day, at no cost. Going over just pauses scans until the next day. See [Free limits and costs](LIMITS_AND_COSTS.md).
+**Free limits:** 50 private scans per day, at no cost. Going over just pauses scans until the next day. See [Free limits and costs](LIMITS_AND_COSTS.md).
 
-A scan takes 10 to 30 seconds. Scans are **unlisted** by default: hidden from urlscan's public feed, but visible to its security partners. You can change this in Settings.
+A scan takes 10 to 30 seconds. **Every scan is private**: only your urlscan.io key can see its result and screenshot; it never appears in urlscan's public feed or search, or in urlscan Pro for its security partners. The screenshot is fetched with your key and shown in the Links tab, with **Save screenshot** to keep a copy, and where the link lands is added to the report and exports.
 
 ---
 
@@ -401,7 +401,7 @@ Importing only adds to their list; it never deletes what they already have. The 
 Open Settings with the **gear icon**. The **?** icon next to it opens this guide.
 
 - **Extra checks:** each service shows **Connected** or **Not set up**, with buttons to set up, change or remove its key.
-- **urlscan.io scan visibility:** unlisted (recommended, 1,000 free per day), private (50 free per day; best for links with personal tokens) or public.
+- **urlscan.io scans** are always private (50 free per day). There is no setting: links in your email can contain personal tokens.
 - **Protection inside Gmail:** the warning banner, inbox badges, and the link and reply checks, each with its own switch.
 - **Privacy → Remember who emails me:** powers first-contact warnings. Shows how many senders are remembered, with **Forget all**.
 - **Privacy → Check how old the sender's domain is:** on by default. It sends only the domain name (for example `example.com`) to rdap.org, the public registry lookup.
