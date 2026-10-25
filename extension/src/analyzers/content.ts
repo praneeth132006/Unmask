@@ -151,6 +151,23 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
       });
     }
 
+    // A message that is only a picture: filters can't read it, and the picture is the lure.
+    const images = doc.querySelectorAll('img').length;
+    const words = (clone?.textContent ?? '').replace(/\s+/g, '');
+    const plainWords = (email.text ?? '').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, '');
+    if (images > 0 && words.length < 40 && plainWords.length < 40) {
+      const linked = doc.querySelector('a[href] img');
+      findings.push({
+        id: 'image-only',
+        category: 'content',
+        severity: linked ? 'medium' : 'low',
+        points: linked ? 10 : 4,
+        title: linked ? 'The whole message is a clickable picture' : 'The message is only a picture',
+        detail: 'There is almost no text: everything you read is inside an image, which spam filters cannot read. Scammers do this to hide their wording.',
+        target: { kind: 'body' },
+      });
+    }
+
     if (doc.querySelector('script')) {
       findings.push({ id: 'html-script', category: 'content', target: { kind: 'body' }, severity: 'medium', points: 10, title: 'The email contains JavaScript', detail: 'Email clients block it, but its presence suggests a hand-crafted malicious message.' });
     }

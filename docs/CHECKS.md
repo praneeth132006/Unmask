@@ -264,6 +264,8 @@ Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts).
 | Pressure and urgency, 2+ phrases | Medium | 12 |
 | Pressure and urgency, 1 phrase | Low | 5 |
 | JavaScript inside the email | Medium | 10 |
+| The whole message is a clickable picture (under 40 characters of text) | Medium | 10 |
+| The message is only a picture | Low | 4 |
 | Mentions money, prizes or payments | Low | 8 |
 | Hidden text over 600 characters | Medium | 8 |
 | Hidden text 200–600 characters | Low | 3 |

@@ -120,3 +120,15 @@ describe('links that carry your email address', () => {
     expect(await flagsOf('https://news.example.com/unsubscribe?email=victim@example.org')).not.toContain('encoded-email');
   });
 });
+
+describe('image-only messages', () => {
+  it('flags a message that is just a linked picture', async () => {
+    const raw = mail(['From: a@b.top', 'Subject: Your parcel', 'Content-Type: text/html'], '<a href="https://x.top/track"><img src="cid:banner" width="600"></a>');
+    expect((await analyzeRawEmail(raw)).findings.find((f) => f.id === 'image-only')?.severity).toBe('medium');
+  });
+
+  it('leaves image-heavy newsletters with real text alone', async () => {
+    const raw = mail(['From: a@example.com', 'Subject: News', 'Content-Type: text/html'], '<img src="https://example.com/hero.png"><p>Our autumn collection is here, with free returns for thirty days on every order.</p>');
+    expect(await ids(raw)).not.toContain('image-only');
+  });
+});
