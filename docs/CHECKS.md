@@ -280,6 +280,7 @@ Named techniques that analysts recognise by their shape rather than by a bad lin
 | Check | Severity | Points | What it looks for |
 |---|---|---|---|
 | Callback scam ("TOAD") | High | 22 | A phone number, an instruction to call, a charge, renewal or invoice, and a dispute or an amount. No link: the scam happens on the phone. From a verified brand (DMARC pass) it is only a Low (3) note |
+| A real notification platform carrying a scammer's message | High | 22 | An email that passed DMARC from PayPal, DocuSign, QuickBooks/Intuit, Square, Google, Microsoft, Dropbox, Adobe Sign, Zoom… (services that let anyone send invoices, shares and invites with their own text) containing a callback phone number, a link with its own high-risk flags, or a personal webmail contact. Replaces the callback finding |
 
 ---
 

@@ -54,3 +54,29 @@ export const PLATFORMS = new Set([
   'google.com', 'microsoft.com', 'sharepointonline.com', 'sharepoint.com', 'dropbox.com', 'dropboxmail.com', 'box.com', 'adobe.com', 'adobesign.com', 'zoom.us', 'calendly.com', 'eventbrite.com', 'facebookmail.com', 'canva.com', 'notion.so', 'wetransfer.com',
 ]);
 
+export function platformAbuseFindings(email: ParsedEmail, visibleText: string, auth: AuthSummary, links: LinkInfo[]): Finding[] {
+  const fromOrg = email.from ? registrableDomain(email.from.domain) : '';
+  if (!PLATFORMS.has(fromOrg) || auth.dmarc !== 'pass') return [];
+  const platform = brandOwningDomain(fromOrg)?.name ?? fromOrg;
+  const reasons: string[] = [];
+  const callback = callbackSigns(`${email.subject}\n${visibleText}`);
+  if (callback) reasons.push(`a phone number to call about ${callback.amount ? `a ${callback.amount} charge` : 'a charge'} (${callback.phones[0]})`);
+  const bad = links.filter((l) => (l.source === 'html' || l.source === 'text') && l.flags.some((f) => f.severity === 'high' || f.severity === 'critical'));
+  if (bad[0]) reasons.push(`a link to ${bad[0].domain}, which has its own red flags`);
+  const webmail = visibleText.match(/[\w.+-]+@(gmail|outlook|hotmail|yahoo|proton|protonmail|aol|icloud|gmx|mail|yandex)\.[a-z.]+/i)?.[0];
+  if (webmail && callback) reasons.push(`a personal contact address (${webmail})`);
+  if (!reasons.length) return [];
+  return [
+    {
+      id: 'platform-abuse',
+      category: 'content',
+      severity: 'high',
+      points: 22,
+      title: `A real ${platform} email carrying a scammer's message`,
+      detail: `This email genuinely comes from ${fromOrg} (it passed DMARC), but ${platform} lets anyone send invoices, shares and invites through it, with their own text. This one contains ${reasons.join(' and ')}. ${platform} itself didn't write that part.`,
+      plain: `It really comes from ${platform}, but a scammer wrote the message inside it.`,
+      target: { kind: 'body' },
+    },
+  ];
+}
+

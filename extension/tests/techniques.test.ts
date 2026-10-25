@@ -23,3 +23,21 @@ describe('callback (TOAD) scams', () => {
     expect(amazon.findings.find((f) => f.id === 'callback-phishing')?.severity).toBe('low');
   });
 });
+
+describe('abused notification platforms', () => {
+  const paypalInvoice = (body: string) =>
+    mail(['Authentication-Results: mx.google.com; dkim=pass header.d=paypal.com; dmarc=pass header.from=paypal.com', 'From: "service@paypal.com" <service@paypal.com>', 'Subject: You have a new invoice'], body);
+
+  it('flags a genuine PayPal invoice whose note is a callback scam', async () => {
+    const r = await analyzeRawEmail(paypalInvoice('Seller note: Your PayPal account was charged $499.00 for Bitcoin purchase. If you did not authorize this, call PayPal support at +1 (888) 555-0187 to cancel and get a refund.'));
+    const f = r.findings.find((x) => x.id === 'platform-abuse');
+    expect(f?.severity).toBe('high');
+    expect(f?.title).toBe("A real PayPal email carrying a scammer's message");
+    expect(f?.detail).toMatch(/\+1 \(888\) 555-0187/);
+    expect(r.findings.map((x) => x.id)).not.toContain('callback-phishing');
+  });
+
+  it('leaves an ordinary PayPal invoice alone', async () => {
+    expect(await ids(paypalInvoice('Acme Ltd sent you an invoice for $25.00. View and pay it at https://www.paypal.com/invoice/p/#ABC'))).not.toContain('platform-abuse');
+  });
+});
