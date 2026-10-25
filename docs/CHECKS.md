@@ -60,6 +60,9 @@ Read from the `Authentication-Results` header that the receiving mail server (Gm
 | Not DKIM-signed | Low | 4 | No digital signature at all. |
 | Signed by a different domain | Low | 5 | Signed, but not by the From domain (normal for some mailing services). Only when DMARC didn't pass. |
 | No authentication results | Note | 0 | Usually a forwarded or pasted email that lost its headers. |
+| Fake "passed" stamp | High | 25 | An `Authentication-Results` header names a big mail provider (Google, Microsoft, Yahoo, Apple) that never handled the email. The sender wrote it; Unmask ignores it. |
+
+Which `Authentication-Results` header is used: the first one written by the provider that delivered the email to you (matched against the trusted part of the delivery path), never one from a provider that isn't in the path.
 
 ---
 

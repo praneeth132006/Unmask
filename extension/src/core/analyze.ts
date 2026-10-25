@@ -31,8 +31,8 @@ export interface AnalyzeOptions {
  */
 export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, opts: AnalyzeOptions = {}): Promise<Report> {
   const email = await parseEmail(raw);
-  const { auth, findings: authFindings } = analyzeAuth(email);
-  const hops = deliveryPath(getHeaders(email, 'received'), auth.server);
+  const hops = deliveryPath(getHeaders(email, 'received'));
+  const { auth, findings: authFindings } = analyzeAuth(email, hops);
   const forensics: Forensics = { hops, originIp: originIp(hops, getHeaders(email, 'x-originating-ip')[0]), dkim: [], arc: [], arcProblem: null };
   const pathFindings = receivedFindings(hops, email.date);
   // A verified sender whose replies go to webmail is usually a small newsletter, not an impostor:

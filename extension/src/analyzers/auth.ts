@@ -1,6 +1,7 @@
-import type { AuthResult, AuthSummary, Finding, ParsedEmail } from '../core/types';
+import type { AuthResult, AuthSummary, DeliveryHop, Finding, ParsedEmail } from '../core/types';
 import { getHeaders } from '../core/parse';
 import { registrableDomain, sameOrg } from '../lib/domain';
+import { deliveryPath, sameProvider } from './received';
 
 const RESULTS: AuthResult[] = ['pass', 'fail', 'softfail', 'neutral', 'none', 'temperror', 'permerror', 'policy'];
 
@@ -59,12 +60,50 @@ function domainOf(value: string | undefined): string | null {
   return (at >= 0 ? value.slice(at + 1) : value).toLowerCase() || null;
 }
 
-export function summariseAuth(email: ParsedEmail): AuthSummary {
-  const headers = getHeaders(email, 'authentication-results');
-  // The receiving provider prepends its header, so the first one is the most trustworthy.
-  // Prefer the big providers' headers explicitly in case a relay added one above.
+const BIG_PROVIDER = /^\s*(mx\.google\.com|mx\.microsoft\.com|[\w.-]*\.outlook\.com|[\w.-]*\.yahoo\.com|[\w.-]*icloud\.com)\b/i;
+
+/** authserv-id (the server that wrote it) of an Authentication-Results value, lowercase. */
+function authServer(value: string): string | null {
+  return parseAuthResults(value).server?.toLowerCase() ?? null;
+}
+
+/** Organisation domains of the servers your own provider used to receive this email. */
+function providerOrgs(hops: DeliveryHop[]): string[] {
+  return [...new Set(hops.filter((h) => h.trusted && h.by && /[a-z]/i.test(h.by) && !h.by.includes(':')).map((h) => registrableDomain(h.by!)))];
+}
+
+/** Every organisation that handled the email at all, trusted or not. */
+function handlerOrgs(hops: DeliveryHop[]): string[] {
+  return [...new Set(hops.flatMap((h) => [h.by, h.helo, h.rdns]).filter((x): x is string => !!x && /[a-z]/i.test(x) && !x.includes(':')).map(registrableDomain))];
+}
+
+/**
+ * Authentication-Results that name a big mailbox provider which never
+ * handled the email: the sender wrote them to look checked.
+ */
+export function forgedAuthResults(email: ParsedEmail, hops: DeliveryHop[]): string[] {
+  if (!hops.length) return [];
+  const handled = handlerOrgs(hops);
+  return getHeaders(email, 'authentication-results').filter((h) => {
+    const server = authServer(h);
+    if (!server || !BIG_PROVIDER.test(server)) return false;
+    const org = registrableDomain(server);
+    return !handled.some((d) => sameProvider(d, org));
+  });
+}
+
+export function summariseAuth(email: ParsedEmail, hops: DeliveryHop[] = deliveryPath(getHeaders(email, 'received'))): AuthSummary {
+  const forged = new Set(forgedAuthResults(email, hops));
+  const headers = getHeaders(email, 'authentication-results').filter((h) => !forged.has(h));
+  // Your provider prepends its own header, so the first one written by it is the one to trust.
+  // Otherwise prefer the big providers' headers in case a relay added one above.
+  const mine = providerOrgs(hops);
   const preferred =
-    headers.find((h) => /^\s*(mx\.google\.com|mx\.microsoft\.com|.*\.outlook\.com|.*\.yahoo\.com|icloud\.com)/i.test(h)) ??
+    headers.find((h) => {
+      const server = authServer(h);
+      return !!server && mine.some((d) => sameProvider(registrableDomain(server), d));
+    }) ??
+    headers.find((h) => BIG_PROVIDER.test(h)) ??
     headers[0] ??
     null;
 
@@ -105,10 +144,24 @@ export function summariseAuth(email: ParsedEmail): AuthSummary {
   return summary;
 }
 
-export function analyzeAuth(email: ParsedEmail): { auth: AuthSummary; findings: Finding[] } {
-  const auth = summariseAuth(email);
+export function analyzeAuth(email: ParsedEmail, hops: DeliveryHop[] = deliveryPath(getHeaders(email, 'received'))): { auth: AuthSummary; findings: Finding[] } {
+  const auth = summariseAuth(email, hops);
   const findings: Finding[] = [];
   const fromDomain = email.from?.domain ?? '';
+
+  const forged = forgedAuthResults(email, hops).filter((h) => parseAuthResults(h).results.some((r) => r.result === 'pass'));
+  if (forged.length) {
+    const server = authServer(forged[0]!);
+    findings.push({
+      id: 'auth-results-forged',
+      category: 'auth',
+      severity: 'high',
+      points: 25,
+      title: `Fake "passed" check: claims ${server} verified it, but ${server} never handled this email`,
+      detail: 'The email carries an authentication stamp from a mail provider that does not appear anywhere in its delivery path. The sender wrote it to make the email look checked. Unmask ignores it.',
+      target: { kind: 'header', key: 'authentication-results' },
+    });
+  }
 
   if (!auth.raw) {
     findings.push({

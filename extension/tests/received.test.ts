@@ -65,3 +65,29 @@ describe('Received headers', () => {
     expect(r.findings.filter((f) => f.id.startsWith('received-') || f.id.startsWith('date-'))).toEqual([]);
   });
 });
+
+describe('Authentication-Results authenticity', () => {
+  const spoof = [
+    'Received: from DESKTOP-1 (unknown [203.0.113.9]) by mx1.example-mail.net with ESMTP; Mon, 19 Oct 2026 16:00:00 +0000',
+    'Authentication-Results: mx1.example-mail.net; spf=fail smtp.mailfrom=paypal.com; dkim=none; dmarc=fail header.from=paypal.com',
+    'Authentication-Results: mx.google.com; dkim=pass header.i=@paypal.com; spf=pass smtp.mailfrom=paypal.com; dmarc=pass header.from=paypal.com',
+    'From: PayPal <service@paypal.com>',
+    'To: a@example.com',
+    'Subject: hi',
+    '',
+    'body',
+  ].join('\n');
+
+  it('ignores a fake Google stamp when Google never handled the email', async () => {
+    const r = await analyzeRawEmail(spoof);
+    expect(r.auth.dmarc).toBe('fail');
+    expect(r.auth.server).toBe('mx1.example-mail.net');
+    expect(ids(r.findings)).toEqual(expect.arrayContaining(['auth-results-forged', 'dmarc-fail']));
+  });
+
+  it('trusts the Google stamp when Google delivered it', async () => {
+    const r = await analyzeRawEmail(fixture('legit-newsletter.eml'));
+    expect(ids(r.findings)).not.toContain('auth-results-forged');
+    expect(r.auth.dmarc).toBe('pass');
+  });
+});

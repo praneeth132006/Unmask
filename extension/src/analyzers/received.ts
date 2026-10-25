@@ -112,7 +112,7 @@ const PROVIDER_FAMILIES: string[][] = [
   ['icloud.com', 'apple.com', 'me.com'],
 ];
 
-function sameProvider(a: string, b: string): boolean {
+export function sameProvider(a: string, b: string): boolean {
   if (a === b) return true;
   return PROVIDER_FAMILIES.some((f) => f.includes(a) && f.includes(b));
 }
