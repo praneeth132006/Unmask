@@ -334,6 +334,16 @@ Source: [`analyzers/protection.ts`](../extension/src/analyzers/protection.ts). O
 
 ---
 
+## What this looks like
+
+Source: [`core/assessment.ts`](../extension/src/core/assessment.ts). The Summary groups the red flags into the kind of attack they point to, the way an analyst writes up a case, with a confidence from the weight of the evidence (critical 3, high 2, medium 1, low ½; 3+ is high confidence, 2+ medium):
+
+*Forged sender address* · *Impersonation* · *Password phishing* · *Account access trick* (consent and device-code) · *Malware delivery* · *Callback scam* · *Payment fraud* · *Replayed genuine email* · *Possibly a hacked account*.
+
+It adds no points. Below it, **What Unmask couldn't check** lists the blind spots of this particular email: missing headers, DKIM signatures not verified with the signer's key, delivery steps written before your provider got the email, links checked by address only, files read but not run, and remote images not loaded.
+
+---
+
 ## Plain words
 
 Source: [`core/plain.ts`](../extension/src/core/plain.ts). The plain-words card and banner sentence are built only from the findings above: the verdict picks the headline ("This email looks like a scam." / "Be careful with this email." / "Nothing looks wrong with this email."), and the most serious findings, one per problem, become up to three everyday reasons. They add no points of their own.

@@ -4,6 +4,7 @@ import { Icon } from './Icon';
 import { targetHint } from '../targets';
 import { plainSummary } from '../../core/plain';
 import { concernsHeading, trackerChipLabel, verdictLabel } from '../../core/facts';
+import { hypotheses, limitations } from '../../core/assessment';
 
 const VERDICT = {
   high: {
@@ -164,6 +165,42 @@ function Group({ title, findings, onHover, onOpen }: { title: string; findings: 
   );
 }
 
+/** The analyst's reading: which kind of attack the evidence points to, and what couldn't be checked. */
+export function AssessmentCard({ report }: { report: Report }) {
+  const kinds = hypotheses(report);
+  const limits = limitations(report);
+  if (!kinds.length && !limits.length) return null;
+  const tone = { high: 'text-[var(--bad)] bg-[var(--bad-soft)]', medium: 'text-[var(--warn)] bg-[var(--warn-soft)]', low: 'text-[var(--text-2)] bg-[var(--surface-2)]' } as const;
+  return (
+    <Card className="mt-3" aria-label="Assessment">
+      {kinds.length > 0 && (
+        <>
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-3)]">What this looks like</div>
+          <ul className="mt-1.5 space-y-1.5">
+            {kinds.slice(0, 3).map((h) => (
+              <li key={h.kind} className="text-xs leading-snug">
+                <span className="font-semibold text-[var(--text)]">{h.label}</span>
+                <span className={`ml-1.5 rounded px-1.5 py-px text-[10px] font-semibold ${tone[h.confidence]}`}>{h.confidence} confidence</span>
+                <span className="block text-[var(--text-2)]">{h.meaning}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {limits.length > 0 && (
+        <details className={kinds.length ? 'mt-2.5 border-t border-[var(--border)] pt-2' : ''}>
+          <summary className="cursor-pointer select-none text-[11px] font-medium text-[var(--accent)]">What Unmask couldn’t check ({limits.length})</summary>
+          <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[11px] leading-snug text-[var(--text-2)]">
+            {limits.map((l) => (
+              <li key={l}>{l}</li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </Card>
+  );
+}
+
 /** "In plain words": the verdict as an everyday sentence, its reasons, and what to do. */
 export function PlainCard({ report }: { report: Report }) {
   const p = plainSummary(report);
@@ -213,6 +250,7 @@ export function Overview({
   const technical = (
     <>
       <SummaryChips report={report} onOpen={onOpenTab} />
+      <AssessmentCard report={report} />
       {red.length > 0 && canHighlight && (
         <p className="mt-3 flex items-center gap-1.5 text-[11px] text-[var(--text-3)]">
           <Icon name="eye" className="h-3.5 w-3.5" /> Hover a red flag to see it in the email. Click it for details.
