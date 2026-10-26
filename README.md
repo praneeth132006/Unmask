@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc"><img alt="Get it on the Chrome Web Store" src="https://img.shields.io/badge/Chrome%20Web%20Store-install-4285F4?logo=googlechrome&logoColor=white"></a>
+  <a href="https://addons.mozilla.org/en-US/firefox/addon/unmask-phishing-inspector/"><img alt="Get the Firefox add-on" src="https://img.shields.io/badge/Firefox%20Add--ons-install-FF7139?logo=firefoxbrowser&logoColor=white"></a>
   <a href="https://github.com/praneeth132006/Unmask/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/praneeth132006/Unmask?label=download&color=61892F"></a>
   <a href="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml/badge.svg"></a>
@@ -41,7 +42,7 @@
 
 ## Quick start
 
-> **Easiest: [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc)** (Chrome, Edge and Brave). Or load it manually:<br>
+> **Easiest: [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc)** (Chrome, Edge and Brave) or the **[Firefox Add-ons page](https://addons.mozilla.org/en-US/firefox/addon/unmask-phishing-inspector/)**. Or load it manually:<br>
 > **1. Download** [`unmask-chrome-<version>.zip`](https://github.com/praneeth132006/Unmask/releases/latest) from the latest release (under *Assets*) and unzip it.<br>
 > **2. Load it:** open `chrome://extensions`, switch on **Developer mode** (top right), click **Load unpacked**, and pick the unzipped folder (the one with `manifest.json` in it).<br>
 > **3. Use it:** reload Gmail, open any email, and click the Unmask icon.
@@ -146,9 +147,9 @@ See [docs/CHECKS.md](docs/CHECKS.md) for every check and how many points it adds
 
 ### Option 0: Chrome Web Store (easiest)
 
-**[Install Unmask from the Chrome Web Store](https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc)** and click **Add to Chrome**. It works in Google Chrome, Edge and Brave. While the extension is new, Chrome may show *"not trusted by Enhanced Safe Browsing"*; this is Chrome's standard notice for new publishers, and you can click **Continue to install**.
+**[Install Unmask from the Chrome Web Store](https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc)** and click **Add to Chrome**. It works in Google Chrome, Edge and Brave. **Firefox:** [install Unmask from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/unmask-phishing-inspector/) and click **Add to Firefox**. While the extension is new, Chrome may show *"not trusted by Enhanced Safe Browsing"*; this is Chrome's standard notice for new publishers, and you can click **Continue to install**.
 
-Prefer to load it yourself, or use Firefox? Use one of the options below. It takes about two minutes.
+Prefer to load it yourself? Use one of the options below. It takes about two minutes.
 
 ### Option 1: No-code install (recommended)
 
