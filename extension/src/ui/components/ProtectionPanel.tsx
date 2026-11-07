@@ -84,6 +84,17 @@ export function ProtectionPanel() {
     setNote('Saved unmask-protection.json. Send it to family or teammates and they import it here.');
   };
 
+  /** The list in the shape Google Admin's "Policy for extensions" box expects (each policy wrapped in "Value"). */
+  const copyForAdmin = async () => {
+    const policy = { protectionList: { Value: { ...list, label: list.label ?? 'Your organisation' } } };
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(policy, null, 2));
+      setNote('Copied. Paste it into Google Admin → Apps & extensions → Unmask → Policy for extensions. For other consoles, see the teams guide.');
+    } catch {
+      setNote('Couldn’t copy. Use Export list instead; the teams guide shows how to use the file.');
+    }
+  };
+
   const importFile = async (file: File) => {
     try {
       if (file.size > 1_000_000) throw new Error('too large');
@@ -214,13 +225,18 @@ export function ProtectionPanel() {
 
         <div className="border-t border-[var(--border)] pt-3">
           <div className="text-xs font-semibold">Share with family or your team</div>
-          <p className="text-[11px] text-[var(--text-3)]">Set the list up once, export it, and import it on every other computer. Importing adds to the list there; it never deletes anything.</p>
+          <p className="text-[11px] text-[var(--text-3)]">Set the list up once, export it, and import it on every other computer. Importing adds to the list there; it never deletes anything. Have an IT admin? They can push it to everyone:{' '}
+            <a className="underline" href="https://praneeth132006.github.io/Unmask/teams.html" target="_blank" rel="noreferrer">teams guide</a>.
+          </p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             <Button onClick={exportFile} disabled={!list.brands.length && !list.contacts.length && !list.trusted.length}>
               <Icon name="download" className="h-3.5 w-3.5" /> Export list
             </Button>
             <Button onClick={() => fileRef.current?.click()}>
               <Icon name="upload" className="h-3.5 w-3.5" /> Import list
+            </Button>
+            <Button onClick={() => void copyForAdmin()} disabled={!list.brands.length && !list.contacts.length && !list.trusted.length} title="Copy the list as a policy an IT admin can push to every browser">
+              <Icon name="shield" className="h-3.5 w-3.5" /> Copy for IT admin
             </Button>
             <input
               ref={fileRef}
