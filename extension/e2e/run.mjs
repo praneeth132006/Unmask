@@ -192,7 +192,7 @@ check(where.includes('Image 2 of 2, at the very end of the email’s visible tex
 await panel.locator('#unmask-pixel-1 button', { hasText: 'Show it in the safe view' }).click().catch(() => {});
 const srcdoc = (await panel.locator('iframe[title="Email body (safe view)"]').getAttribute('srcdoc', { timeout: 5000 }).catch(() => '')) ?? '';
 check(/data-unmask-pixel-tag="1"[^>]*data-unmask-focus/.test(srcdoc) && srcdoc.includes('● Tracking pixel 1 (Mailchimp): blocked'), 'the safe view tags the pixel where it sits, highlighted');
-check(!srcdoc.includes('open.list-manage.com'), 'the safe view never loads the tracking pixel');
+check(!/open\.list-manage\.com/.test(srcdoc), 'the safe view never loads the tracking pixel');
 
 // The tabs (including Headers) must be there in both normal and simple mode.
 for (const simpleMode of [false, true]) {
