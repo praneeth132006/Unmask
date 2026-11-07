@@ -35,11 +35,19 @@ const LINK_MAP = {
   'CHANGELOG.md': 'changelog.html',
 };
 
+/** Removes HTML tags, repeating until none are left (one pass can leave a new tag behind). */
+function stripTags(text) {
+  let prev;
+  do {
+    prev = text;
+    text = text.replace(/<[^>]*>/g, '');
+  } while (text !== prev);
+  return text;
+}
+
 /** GitHub-style heading ids so the docs' own anchor links (#1-install) keep working. */
 function slug(text) {
-  return text
-    .toLowerCase()
-    .replace(/<[^>]+>/g, '')
+  return stripTags(text.toLowerCase())
     // marked escapes ' and " as entities; GitHub drops them, so drop the whole entity.
     .replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi, '')
     .replace(/[^\p{L}\p{N}\s-]/gu, '')

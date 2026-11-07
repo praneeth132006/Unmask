@@ -33,8 +33,18 @@ const GUIDE_PAGES = {
 };
 const DOC_PAGES = { 'ANALYSIS.md': 'How-Unmask-analyses-an-email', 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs' };
 
+/** Removes HTML tags, repeating until none are left (one pass can leave a new tag behind). */
+function stripTags(text) {
+  let prev;
+  do {
+    prev = text;
+    text = text.replace(/<[^>]*>/g, '');
+  } while (text !== prev);
+  return text;
+}
+
 function slug(text) {
-  return text.toLowerCase().replace(/<[^>]+>/g, '').replace(/[^\p{L}\p{N}\s-]/gu, '').trim().replace(/\s/g, '-');
+  return stripTags(text.toLowerCase()).replace(/[^\p{L}\p{N}\s-]/gu, '').trim().replace(/\s/g, '-');
 }
 
 /** Maps a user-guide anchor (#5-setting-up-virustotal) to the page holding it. */
