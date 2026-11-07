@@ -146,6 +146,8 @@ export async function lookupPhishTank(url: string): Promise<IntelHit> {
   bytes.forEach((b) => (bin += String.fromCharCode(b)));
   const res = await fetch(PHISHTANK, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body: new URLSearchParams({ url: btoa(bin), format: 'json' }).toString() });
   if (res.status === 509 || res.status === 429) throw new Error('PhishTank rate limit reached for anonymous lookups. Try again in a few minutes.');
+  // PhishTank's bot protection refuses many lookups sent from a browser, and it closed new sign-ups, so there is no key to add.
+  if (res.status === 403) throw new Error('PhishTank refused the lookup: it blocks many checks sent from a browser and isn’t taking new sign-ups, so there is no key that fixes this. Use URLhaus below instead.');
   if (!res.ok) throw new Error(`PhishTank returned HTTP ${res.status}`);
   return parsePhishTank((await res.json().catch(() => ({}))) as Record<string, unknown>);
 }

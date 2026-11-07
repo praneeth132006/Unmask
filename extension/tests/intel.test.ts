@@ -116,4 +116,10 @@ describe('link lookups', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 509 })));
     await expect(lookupPhishTank('https://x.example')).rejects.toThrow(/rate limit/);
   });
+
+  it('PhishTank: a 403 says why and points to URLhaus, not a bare status code', async () => {
+    const { lookupPhishTank } = await import('../src/integrations/intel');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 403 })));
+    await expect(lookupPhishTank('https://x.example')).rejects.toThrow(/blocks many checks sent from a browser.*URLhaus/);
+  });
 });

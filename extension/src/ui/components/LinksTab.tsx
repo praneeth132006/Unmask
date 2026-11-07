@@ -84,6 +84,8 @@ function LinkCard({
 
   /** PhishTank needs no key; URLhaus needs a free abuse.ch key. Only the link is sent. */
   const checkLists = async (s: Settings = settings) => {
+    // Without a key, show how to get the free abuse.ch one right away, as VirusTotal does.
+    if (!s.abuseChKey) setAbuseSetup(true);
     const origins = s.abuseChKey ? [...PHISHTANK_ORIGINS, ...ABUSE_CH_ORIGINS] : PHISHTANK_ORIGINS;
     if (!(await ensureOrigins(origins))) return set({ lists: { status: 'error', error: 'Permission not granted. Unmask needs it to ask PhishTank and URLhaus about the link.' } });
     set({ lists: { status: 'loading', message: 'Asking PhishTank' + (s.abuseChKey ? ' and URLhaus' : '') + '…' } });
@@ -266,7 +268,7 @@ function LinkCard({
           {state.lists.value.errors.map((m) => (
             <div key={m} className="text-[var(--bad)]">{m}</div>
           ))}
-          {!settings.abuseChKey && (
+          {!settings.abuseChKey && !abuseSetup && (
             <button type="button" className="text-[var(--accent)] hover:underline" onClick={() => setAbuseSetup(true)}>
               Also check URLhaus (free abuse.ch key)
             </button>
