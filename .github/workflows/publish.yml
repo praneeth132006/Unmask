@@ -40,7 +40,7 @@ jobs:
       FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
       FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 10
