@@ -4,6 +4,7 @@ import type { Settings } from '../../lib/settings';
 import { hasTracePermission, requestTracePermission, traceBuiltinFromPanel, traceRedirects, type TraceResult } from '../../integrations/trace';
 import { fetchScreenshot, scanUrl, urlscanFindings, UrlscanPending, type UrlscanResult } from '../../integrations/urlscan';
 import { lookupUrl, scanUrlNow, vtFindings, type VtResult } from '../../integrations/virustotal';
+import { ABUSE_CH_ORIGINS, PHISHTANK_ORIGINS, ensureOrigins, intelFindings, lookupPhishTank, lookupUrlhaus, type IntelHit } from '../../integrations/intel';
 import { Button, Card, CopyButton, ErrorText, Label, Mono, Pill, Spinner, type Async } from './ui';
 import { Icon } from './Icon';
 import { ServiceSetup, type Service } from './ServiceSetup';
@@ -12,6 +13,7 @@ interface LinkState {
   trace?: Async<TraceResult>;
   urlscan?: Async<UrlscanResult>;
   vt?: Async<VtResult>;
+  lists?: Async<{ hits: IntelHit[]; errors: string[] }>;
 }
 
 type Action = 'trace' | 'urlscan' | 'vt';
@@ -56,6 +58,7 @@ function LinkCard({
   const [setup, setSetup] = useState<Action | null>(null);
   const [askTrace, setAskTrace] = useState(false);
   const [confirmVt, setConfirmVt] = useState(false);
+  const [abuseSetup, setAbuseSetup] = useState(false);
   /** A scan that is still running on urlscan.io: show its report link instead of an error. */
   const [urlscanPending, setUrlscanPending] = useState<string | null>(null);
   const set = (patch: LinkState) => setState((s) => ({ ...s, ...patch }));
@@ -77,6 +80,21 @@ function LinkCard({
     } catch (e) {
       set({ vt: { status: 'error', error: errMsg(e) } });
     }
+  };
+
+  /** PhishTank needs no key; URLhaus needs a free abuse.ch key. Only the link is sent. */
+  const checkLists = async (s: Settings = settings) => {
+    const origins = s.abuseChKey ? [...PHISHTANK_ORIGINS, ...ABUSE_CH_ORIGINS] : PHISHTANK_ORIGINS;
+    if (!(await ensureOrigins(origins))) return set({ lists: { status: 'error', error: 'Permission not granted. Unmask needs it to ask PhishTank and URLhaus about the link.' } });
+    set({ lists: { status: 'loading', message: 'Asking PhishTank' + (s.abuseChKey ? ' and URLhaus' : '') + '…' } });
+    const hits: IntelHit[] = [];
+    const errors: string[] = [];
+    try { hits.push(await lookupPhishTank(target)); } catch (e) { errors.push(errMsg(e)); }
+    if (s.abuseChKey) {
+      try { hits.push(await lookupUrlhaus(s.abuseChKey, target)); } catch (e) { errors.push(errMsg(e)); }
+    }
+    set({ lists: { status: 'done', value: { hits, errors } } });
+    report(hits.flatMap((h) => intelFindings(`feed-${index}-${h.source}`, link.host || 'this link', h, 'links')).filter((f) => f.points > 0));
   };
 
   const doTrace = async (s: Settings) => {
@@ -191,6 +209,9 @@ function LinkCard({
           <Button onClick={() => void run('vt')} disabled={state.vt?.status === 'loading'} title="Look up this URL on VirusTotal">
             {state.vt?.status === 'loading' ? <Spinner /> : <Icon name="shield" className="h-3.5 w-3.5" />} VirusTotal
           </Button>
+          <Button onClick={() => void checkLists()} disabled={state.lists?.status === 'loading'} title="Look the link up on PhishTank (and URLhaus with a free abuse.ch key). Only the link is sent.">
+            {state.lists?.status === 'loading' ? <Spinner /> : <Icon name="flag" className="h-3.5 w-3.5" />} Phishing lists
+          </Button>
           <Button onClick={() => void run('trace')} disabled={state.trace?.status === 'loading'} title="Follow the link's redirects without opening it">
             {state.trace?.status === 'loading' ? <Spinner /> : <Icon name="chevron" className="h-3.5 w-3.5" />} Trace redirects
           </Button>
@@ -231,6 +252,32 @@ function LinkCard({
         </div>
       )}
 
+      {state.lists?.status === 'error' && <ErrorText>{state.lists.error}</ErrorText>}
+      {state.lists?.status === 'done' && (
+        <div className="mt-2.5 space-y-1.5 rounded-lg bg-[var(--surface-2)] p-2.5 text-[11px]">
+          {state.lists.value.hits.map((h) => (
+            <div key={h.source} className="flex items-start justify-between gap-2">
+              <span className={h.verdict === 'malicious' ? 'font-semibold text-[var(--bad)]' : h.verdict === 'suspicious' ? 'text-[var(--warn)]' : 'text-[var(--text-2)]'}>{h.summary}</span>
+              <a className="shrink-0 font-medium text-[var(--accent)] hover:underline" href={h.permalink} target="_blank" rel="noreferrer">
+                Report
+              </a>
+            </div>
+          ))}
+          {state.lists.value.errors.map((m) => (
+            <div key={m} className="text-[var(--bad)]">{m}</div>
+          ))}
+          {!settings.abuseChKey && (
+            <button type="button" className="text-[var(--accent)] hover:underline" onClick={() => setAbuseSetup(true)}>
+              Also check URLhaus (free abuse.ch key)
+            </button>
+          )}
+        </div>
+      )}
+      {abuseSetup && (
+        <div className="mt-3">
+          <ServiceSetup compact service="abusech" settings={settings} onCancel={() => setAbuseSetup(false)} onSaved={(s) => { onSettingsChange(s); setAbuseSetup(false); void checkLists(s); }} />
+        </div>
+      )}
       {state.trace?.status === 'error' && <ErrorText>{state.trace.error}</ErrorText>}
       {state.trace?.status === 'done' && (
         <div className="mt-2.5 rounded-lg bg-[var(--surface-2)] p-2.5">

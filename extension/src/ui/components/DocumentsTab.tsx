@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import type { AttachmentInfo, Finding, LinkInfo, Report, Severity } from '../../core/types';
 import type { Anomaly, ExtractedLink, FileForensics, MacroReport } from '../../forensics/types';
 import { defang } from '../../forensics/util';
-import { ABUSE_CH_ORIGINS, HYBRID_ORIGINS, ensureOrigins, intelFindings, lookupHybridAnalysis, lookupMalwareBazaar, type IntelHit } from '../../integrations/intel';
+import { ABUSE_CH_ORIGINS, HYBRID_ORIGINS, PHISHTANK_ORIGINS, ensureOrigins, intelFindings, lookupHybridAnalysis, lookupMalwareBazaar, lookupPhishTank, lookupUrlhaus, type IntelHit } from '../../integrations/intel';
 import { lookupFileHash, lookupUrl, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { GOOGLE_DOC_ORIGINS, fetchGoogleFile, googleDocLinks, type GoogleDocRef } from '../../integrations/googleDocs';
 import { analyzeFile } from '../../forensics';
@@ -396,10 +396,29 @@ function Intel({ att, settings, onSettingsChange, onFindings }: { att: Attachmen
 
 function Links({ att, f, reportLinks, settings, onSettingsChange, onFindings, onOpenLinks }: { att: AttachmentInfo; f: FileForensics; reportLinks: LinkInfo[]; settings: Settings; onSettingsChange: (s: Settings) => void; onFindings: (f: Finding[]) => void; onOpenLinks?: () => void }) {
   const [results, setResults] = useState<Record<string, Async<VtResult>>>({});
+  const [lists, setLists] = useState<Record<string, Async<IntelHit[]>>>({});
   const [running, setRunning] = useState(false);
+  const [listRunning, setListRunning] = useState(false);
   const [setup, setSetup] = useState(false);
   const flagsOf = (url: string) => reportLinks.find((l) => l.href === url || l.resolved === url)?.flags ?? [];
   const testable = f.links.filter((l) => /^https?:/i.test(l.url)).slice(0, 10);
+
+  /** PhishTank (no key) and URLhaus (free key): is any link a known phishing or malware page? */
+  const checkLists = async () => {
+    const origins = settings.abuseChKey ? [...PHISHTANK_ORIGINS, ...ABUSE_CH_ORIGINS] : PHISHTANK_ORIGINS;
+    if (!(await ensureOrigins(origins))) return;
+    setListRunning(true);
+    for (const [i, l] of testable.entries()) {
+      setLists((r) => ({ ...r, [l.url]: { status: 'loading' } }));
+      const hits: IntelHit[] = [];
+      try { hits.push(await lookupPhishTank(l.url)); } catch (e) { setLists((r) => ({ ...r, [l.url]: { status: 'error', error: e instanceof Error ? e.message : String(e) } })); if (/rate limit/i.test(String(e))) break; continue; }
+      if (settings.abuseChKey) { try { hits.push(await lookupUrlhaus(settings.abuseChKey, l.url)); } catch { /* the PhishTank answer still stands */ } }
+      setLists((r) => ({ ...r, [l.url]: { status: 'done', value: hits } }));
+      onFindings(hits.flatMap((h) => intelFindings(`feed-${att.sha256.slice(0, 8)}-${i}-${h.source}`, new URL(l.url).hostname, h, 'links')).filter((x) => x.points > 0));
+      await new Promise((res) => setTimeout(res, 1200));
+    }
+    setListRunning(false);
+  };
 
   const testAll = async (s: Settings = settings) => {
     if (!s.vtApiKey) return setSetup(true);
@@ -450,6 +469,16 @@ function Links({ att, f, reportLinks, settings, onSettingsChange, onFindings, on
                     </div>
                   )}
                   {r?.status === 'error' && <div className="text-[11px] text-[var(--bad)]">{r.error}</div>}
+                  {lists[l.url]?.status === 'loading' && <div className="text-[11px] text-[var(--text-3)]">Checking phishing lists…</div>}
+                  {(() => {
+                    const ls = lists[l.url];
+                    return ls?.status === 'done' ? ls.value.map((h) => (
+                      <div key={h.source} className={`text-[11px] ${h.verdict === 'malicious' ? 'font-semibold text-[var(--bad)]' : 'text-[var(--text-2)]'}`}>
+                        {h.summary} ·{' '}
+                        <a className="text-[var(--accent)] hover:underline" href={h.permalink} target="_blank" rel="noreferrer">report</a>
+                      </div>
+                    )) : ls?.status === 'error' ? <div className="text-[11px] text-[var(--bad)]">{ls.error}</div> : null;
+                  })()}
                 </div>
               </div>
             </li>
@@ -460,6 +489,11 @@ function Links({ att, f, reportLinks, settings, onSettingsChange, onFindings, on
         {testable.length > 0 && (
           <Button onClick={() => void testAll()} disabled={running} title="Looks each web link up on VirusTotal. Only the link is sent, never the file.">
             {running ? <Spinner /> : <Icon name="shield" className="h-3.5 w-3.5" />} Test these links ({testable.length})
+          </Button>
+        )}
+        {testable.length > 0 && (
+          <Button onClick={() => void checkLists()} disabled={listRunning} title="Look each link up on PhishTank, and URLhaus if you added a free abuse.ch key. Only the link is sent.">
+            {listRunning ? <Spinner /> : <Icon name="flag" className="h-3.5 w-3.5" />} Check phishing lists
           </Button>
         )}
         {onOpenLinks && <Button variant="ghost" onClick={onOpenLinks}>Open on the Links tab</Button>}

@@ -31,6 +31,7 @@ export async function ensureOrigins(origins: string[]): Promise<boolean> {
 
 export const HYBRID_ORIGINS = ['https://www.hybrid-analysis.com/*'];
 export const ABUSE_CH_ORIGINS = ['https://mb-api.abuse.ch/*', 'https://urlhaus-api.abuse.ch/*'];
+export const PHISHTANK_ORIGINS = ['https://checkurl.phishtank.com/*'];
 
 const HA = 'https://www.hybrid-analysis.com/api/v2';
 
@@ -104,4 +105,66 @@ export function intelFindings(id: string, subject: string, hit: IntelHit, catego
   if (hit.verdict === 'suspicious') return [{ id, category, severity: 'high', points: 20, title: `${hit.source}: ${subject} looks suspicious`, detail: hit.summary }];
   if (!hit.found) return [{ id, category, severity: 'info', points: 0, title: `${hit.source} has no record of ${subject}`, detail: hit.summary }];
   return [{ id, category, severity: 'info', points: 0, title: `${hit.source}: no threat found for ${subject}`, detail: 'Clean results do not prove a file is safe.' }];
+}
+
+const URLHAUS = 'https://urlhaus-api.abuse.ch/v1/url/';
+
+/** URLhaus (abuse.ch): is this link known to distribute malware? Link only, needs a free Auth-Key. */
+export async function lookupUrlhaus(authKey: string, url: string): Promise<IntelHit> {
+  if (!authKey) throw new Error('Add your free abuse.ch Auth-Key in Settings first.');
+  const res = await fetch(URLHAUS, { method: 'POST', headers: { 'Auth-Key': authKey, 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body: new URLSearchParams({ url }).toString() });
+  if (res.status === 401 || res.status === 403) throw new Error('abuse.ch rejected the Auth-Key.');
+  if (!res.ok) throw new Error(`URLhaus returned HTTP ${res.status}`);
+  return parseUrlhaus((await res.json().catch(() => ({}))) as Record<string, unknown>, url);
+}
+
+export function parseUrlhaus(j: Record<string, unknown>, url: string): IntelHit {
+  const status = str(j.query_status);
+  const permalink = str(j.urlhaus_reference) || 'https://urlhaus.abuse.ch/';
+  if (status === 'no_results' || status === 'invalid_url') return { source: 'URLhaus', found: false, verdict: 'unknown', summary: 'URLhaus has no record of this link. Unknown is not the same as safe.', details: {}, permalink };
+  if (/auth/i.test(status)) throw new Error('abuse.ch rejected the Auth-Key.');
+  if (status !== 'ok') throw new Error(`URLhaus answered "${status || 'nothing'}".`);
+  const online = str(j.url_status);
+  const tags = Array.isArray(j.tags) ? (j.tags as unknown[]).map(str).filter(Boolean).join(', ') : '';
+  const payloads = Array.isArray(j.payloads) ? (j.payloads as Record<string, unknown>[]) : [];
+  return {
+    source: 'URLhaus',
+    found: true,
+    verdict: 'malicious',
+    summary: `URLhaus lists this link as distributing malware${online === 'online' ? ' (still online)' : online === 'offline' ? ' (now offline)' : ''}${str(j.threat) ? `: ${str(j.threat).replace(/_/g, ' ')}` : ''}.`,
+    details: Object.fromEntries(Object.entries({ Status: online, Threat: str(j.threat), Tags: tags, 'Date added': str(j.date_added), Host: str(j.host), 'Files served': payloads.map((p) => `${str(p.filename) || 'file'} (${str(p.file_type)}${str(p.signature) ? `, ${str(p.signature)}` : ''})`).slice(0, 3).join('; ') }).filter(([, v]) => v)),
+    permalink,
+  };
+}
+
+const PHISHTANK = 'https://checkurl.phishtank.com/checkurl/';
+
+/** PhishTank: is this link a reported phishing page? No key needed; only the link is sent. */
+export async function lookupPhishTank(url: string): Promise<IntelHit> {
+  const bytes = new TextEncoder().encode(url);
+  let bin = '';
+  bytes.forEach((b) => (bin += String.fromCharCode(b)));
+  const res = await fetch(PHISHTANK, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body: new URLSearchParams({ url: btoa(bin), format: 'json' }).toString() });
+  if (res.status === 509 || res.status === 429) throw new Error('PhishTank rate limit reached for anonymous lookups. Try again in a few minutes.');
+  if (!res.ok) throw new Error(`PhishTank returned HTTP ${res.status}`);
+  return parsePhishTank((await res.json().catch(() => ({}))) as Record<string, unknown>);
+}
+
+const truthy = (v: unknown) => v === true || v === 'true' || v === 'y' || v === 'yes' || v === 1;
+
+export function parsePhishTank(j: Record<string, unknown>): IntelHit {
+  const r = (j.results ?? {}) as Record<string, unknown>;
+  const permalink = str(r.phish_detail_url) || str(r.phish_detail_page) || 'https://phishtank.org/';
+  if (!truthy(r.in_database)) return { source: 'PhishTank', found: false, verdict: 'unknown', summary: 'PhishTank has no record of this link. Unknown is not the same as safe.', details: {}, permalink };
+  const verified = truthy(r.verified);
+  const valid = r.valid === undefined ? true : truthy(r.valid);
+  if (verified && !valid) return { source: 'PhishTank', found: true, verdict: 'clean', summary: 'PhishTank once listed this link but judged it NOT phishing.', details: { 'Phish ID': str(r.phish_id) }, permalink };
+  return {
+    source: 'PhishTank',
+    found: true,
+    verdict: verified ? 'malicious' : 'suspicious',
+    summary: verified ? 'PhishTank community-verified this link as a phishing page.' : 'PhishTank users reported this link as phishing; it is not yet verified.',
+    details: Object.fromEntries(Object.entries({ 'Phish ID': str(r.phish_id), Verified: verified ? 'yes' : 'not yet', 'Verified at': str(r.verified_at), 'Submitted at': str(r.submitted_at) }).filter(([, v]) => v)),
+    permalink,
+  };
 }

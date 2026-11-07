@@ -81,3 +81,39 @@ describe('Google files linked from an email', () => {
     await expect(fetchGoogleFile(ref, vi.fn().mockResolvedValue(new Response('', { status: 403 })))).rejects.toBeInstanceOf(PrivateGoogleFile);
   });
 });
+
+describe('link lookups', () => {
+  it('URLhaus: sends only the link with the Auth-Key and reads the answer', async () => {
+    const { lookupUrlhaus, parseUrlhaus } = await import('../src/integrations/intel');
+    const fetchMock = vi.fn().mockResolvedValue(json({ query_status: 'ok', url_status: 'online', threat: 'malware_download', tags: ['Emotet'], urlhaus_reference: 'https://urlhaus.abuse.ch/url/1/', payloads: [{ filename: 'a.exe', file_type: 'exe', signature: 'Emotet' }] }));
+    vi.stubGlobal('fetch', fetchMock);
+    const hit = await lookupUrlhaus('auth-key-1234567890', 'https://evil.example/a.exe');
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(url).toBe('https://urlhaus-api.abuse.ch/v1/url/');
+    expect(init.headers['Auth-Key']).toBe('auth-key-1234567890');
+    expect(init.body).toBe('url=https%3A%2F%2Fevil.example%2Fa.exe');
+    expect(hit).toMatchObject({ found: true, verdict: 'malicious', permalink: 'https://urlhaus.abuse.ch/url/1/' });
+    expect(hit.summary).toMatch(/still online/);
+    expect(parseUrlhaus({ query_status: 'no_results' }, 'u')).toMatchObject({ found: false, verdict: 'unknown' });
+  });
+
+  it('PhishTank: needs no key, sends the link base64 encoded, tells verified from reported', async () => {
+    const { lookupPhishTank, parsePhishTank } = await import('../src/integrations/intel');
+    const fetchMock = vi.fn().mockResolvedValue(json({ meta: { status: 'success' }, results: { url: 'https://x', in_database: true, phish_id: 123, phish_detail_url: 'https://phishtank.org/phish_detail.php?phish_id=123', verified: true, valid: true, verified_at: '2026-01-01T00:00:00+00:00' } }));
+    vi.stubGlobal('fetch', fetchMock);
+    const hit = await lookupPhishTank('https://paypa1-secure.top/login');
+    const [, init] = fetchMock.mock.calls[0]!;
+    expect(Object.keys(init.headers)).not.toContain('api-key');
+    expect(init.body).toBe(`url=${encodeURIComponent(btoa('https://paypa1-secure.top/login'))}&format=json`);
+    expect(hit).toMatchObject({ found: true, verdict: 'malicious', permalink: 'https://phishtank.org/phish_detail.php?phish_id=123' });
+    expect(parsePhishTank({ results: { in_database: true, verified: false } }).verdict).toBe('suspicious');
+    expect(parsePhishTank({ results: { in_database: true, verified: true, valid: false } }).verdict).toBe('clean');
+    expect(parsePhishTank({ results: { in_database: false } })).toMatchObject({ found: false, verdict: 'unknown' });
+  });
+
+  it('PhishTank: explains its rate limit', async () => {
+    const { lookupPhishTank } = await import('../src/integrations/intel');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 509 })));
+    await expect(lookupPhishTank('https://x.example')).rejects.toThrow(/rate limit/);
+  });
+});
