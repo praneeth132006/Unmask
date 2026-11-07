@@ -4,7 +4,7 @@ Unmask's goal: **anyone can tell a phishing email from a real one before they cl
 
 This page lists what is done and what comes next. The next pieces are split into milestones that each end in something users can install, so they can be funded and checked one at a time.
 
-## Where it stands (version 0.5.0, November 2026)
+## Where it stands (version 0.5.1, November 2026)
 
 - Browser extension for **Gmail and Outlook on the web**, in the Chrome Web Store and Firefox Add-ons, with Edge builds.
 - **Checks on the device:** sender authentication (SPF, DKIM, DMARC, with DKIM signatures verified locally), look-alike and homoglyph domains, brand impersonation, links whose text and target differ, redirect chains, QR codes in images and PDFs, fake logos, tracking pixels, hidden text, and attachments (PDF, Office macros, archives, RTF).

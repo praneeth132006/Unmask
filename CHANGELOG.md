@@ -4,6 +4,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-07
+
 ### Added
 - **Trust senders from your inbox in one click.** The protection list suggests people who email you often and whose emails were signed by their own domain. Trust one, or all of them at once.
 - **Free for teams:** an IT admin can push one protection list to every browser by policy (Google Admin, Group Policy, Intune, a Mac profile, Firefox policies). It shows in Settings as "From your organisation". See [For teams](docs/TEAMS.md).
@@ -13,6 +15,12 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ### Fixed
 - **Phishing lists showed "PhishTank returned HTTP 403".** PhishTank blocks many lookups from browsers and has closed sign-ups; Unmask now says so and shows the free URLhaus key guide straight away.
+- **Look-alike redirect hosts.** A link through `evilyoutube.com` or `notlinkedin.com` is no longer labelled as a YouTube or LinkedIn redirect.
+- **Redirect targets are decoded once.** A page whose refresh URL contains `&amp;#47;` is now followed to the URL it actually names, in the extension and in the trace backend.
+
+### Security
+- Updated `joi` to 18.3.1 (GHSA-4528-x5fx-h6hg). It is only used by a test tool, so the extension itself was never affected.
+- Dependency updates: hono, postal-mime, tldts, WXT, Vite tooling, Playwright and TypeScript 7, plus newer GitHub Actions.
 
 ## [0.5.0] - 2026-11-07
 
