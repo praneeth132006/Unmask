@@ -31,6 +31,7 @@
   <a href="docs/CHECKS.md">What it checks</a> ·
   <a href="docs/FILE_FORENSICS.md">File forensics</a> ·
   <a href="docs/REPORTS.md">Reports</a> ·
+  <a href="docs/EXAMPLE_REPORTS.md">Real examples</a> ·
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
@@ -118,6 +119,22 @@ Click the Unmask icon for the full report. The side panel shows:
 </p>
 
 Using another mail app? Save the email as an `.eml` file and drop it on the panel, or paste its raw source.
+
+## Proven on real phishing
+
+> **Tested on 400 real phishing emails** from the public [phishing_pot](https://github.com/rf-peixoto/phishing_pot) research collection (bank, crypto-wallet, tax-refund, prize and invoice scams in many languages):
+>
+> 🏆 **346 caught (86.5%)** as Suspicious or High risk, up from 343 before this release
+> 🏆 **285 rated High risk**, each with the reasons in plain language
+> 🏆 **0 errors**, none slower than 0.13 seconds, all on one computer
+>
+> The misses were read and turned into new checks (invisible variation selectors, look-alike letters, crypto-wallet brands). **[See the report Unmask produces for a real phish](docs/EXAMPLE_REPORTS.md)**: a fake Binance withdrawal, a fake COLDCARD advisory and a fake gift-card survey, each with the executive summary and the technical analysis.
+
+<p align="center">
+  <img src="docs/images/example-binance-withdrawal-executive.png" width="330" alt="Report for a real fake-Binance phishing email: executive summary">
+  &nbsp;
+  <img src="docs/images/example-binance-withdrawal-technical.png" width="330" alt="Report for a real fake-Binance phishing email: technical analysis">
+</p>
 
 ## Look inside files, and report it properly
 

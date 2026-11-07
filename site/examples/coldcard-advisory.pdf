@@ -1,0 +1,1343 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R 28 0 R 30 0 R 32 0 R 34 0 R] /Count 14 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Title (Unmask email report: Coinkite security advisory: Schedule your call) /Producer (Unmask \(https://github.com/praneeth132006/Unmask\) 0.5.0) /Subject (Email investigation report) >>
+endobj
+7 0 obj
+<< /Length 2361 >>
+stream
+0.130 0.150 0.170 rg 0.0 591.9 595.3 250.0 re f
+BT /F1 9 Tf 0.750 0.780 0.820 rg 48.0 771.9 Td (TLP:CLEAR   UNM-20261107-45D726F8) Tj ET
+BT /F2 30 Tf 1.000 1.000 1.000 rg 48.0 729.9 Td (Unmask email report) Tj ET
+BT /F1 13 Tf 0.900 0.920 0.940 rg 48.0 701.9 Td (Coinkite security advisory: Schedule your call) Tj ET
+0.700 0.150 0.120 rg 48.0 609.9 215.8 26.0 re f
+BT /F2 13 Tf 1.000 1.000 1.000 rg 62.0 617.9 Td (High risk   -   risk score 60/100) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 542.4 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 542.4 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 549.9 Td (Case ID) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 549.9 Td (UNM-20261107-45D726F8) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 522.9 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 522.9 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 530.4 Td (Classification) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 530.4 Td (TLP:CLEAR) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 503.4 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 503.4 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 510.9 Td (Prepared by) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 510.9 Td (Unmask \(example report\), Built from a public phishing sample) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 483.9 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 483.9 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 491.4 Td (Generated) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 491.4 Td (2026-11-07 12:00 UTC) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 464.4 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 464.4 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 471.9 Td (Tool) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 471.9 Td (Unmask \(https://github.com/praneeth132006/Unmask\) 0.5.0) Tj ET
+BT /F1 9 Tf 0.360 0.390 0.440 rg 48.0 446.6 Td (This report was produced on the analyst's own computer. The email and its files were not uploaded anywhere. Indicators are) Tj ET
+BT /F1 9 Tf 0.360 0.390 0.440 rg 48.0 434.0 Td (defanged \(hxxp, [.]\) so they cannot be clicked by accident.) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 1 of 14) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 3845 >>
+stream
+BT /F2 20 Tf 0.110 0.125 0.140 rg 48.0 772.0 Td (Contents) Tj ET
+BT /F2 11 Tf 0.240 0.420 0.120 rg 48.0 743.9 Td (Part A: Executive summary) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 726.5 Td (Summary for leaders and non-technical staff) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 726.5 Td (3) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 712.5 Td (What happened) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 712.5 Td (3) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 698.5 Td (Why it matters to the organisation) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 698.5 Td (3) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 684.5 Td (What to do now) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 684.5 Td (4) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 670.5 Td (Who to tell) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 670.5 Td (4) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 656.5 Td (How sure are we?) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 656.5 Td (4) Tj ET
+BT /F2 11 Tf 0.240 0.420 0.120 rg 48.0 641.5 Td (Part B: Technical analysis) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 624.1 Td (Case information) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 624.1 Td (5) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 610.1 Td (Verdict and scoring) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 610.1 Td (5) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 596.1 Td (Message and sender analysis) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 596.1 Td (6) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 582.1 Td (Authentication \(SPF, DKIM, DMARC, ARC\)) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 582.1 Td (6) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 568.1 Td (Delivery path \(origin first\)) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 568.1 Td (7) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 554.1 Td (Content analysis) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 554.1 Td (7) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 540.1 Td (Link analysis \(1\)) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 540.1 Td (7) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 526.1 Td (Attachment and file forensics \(0\)) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 526.1 Td (8) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 512.1 Td (Threat-intelligence lookups) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 512.1 Td (8) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 498.1 Td (MITRE ATT&CK mapping) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 498.1 Td (8) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 484.1 Td (Timeline) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 484.1 Td (8) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 470.1 Td (Indicators of compromise \(7\)) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 470.1 Td (8) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 456.1 Td (Detection and hunting suggestions) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 456.1 Td (9) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 442.1 Td (Containment and remediation checklist) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 442.1 Td (9) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 428.1 Td (Method, limits and references) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 541.7 428.1 Td (9) Tj ET
+BT /F2 11 Tf 0.240 0.420 0.120 rg 48.0 413.1 Td (Appendices) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 395.7 Td (Appendix A: all findings) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 536.2 395.7 Td (11) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 381.7 Td (Appendix B: message headers) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 536.2 381.7 Td (11) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 58.0 367.7 Td (Appendix C: glossary) Tj ET
+BT /F1 10 Tf 0.360 0.390 0.440 rg 536.2 367.7 Td (13) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 2 of 14) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 6512 >>
+stream
+0.240 0.420 0.120 rg 48.0 737.9 499.3 56.0 re f
+BT /F2 18 Tf 1.000 1.000 1.000 rg 64.0 767.9 Td (Part A: Executive summary) Tj ET
+BT /F1 9.5 Tf 0.920 0.960 0.900 rg 64.0 749.9 Td (For leaders, managers and non-technical staff. Plain language.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 692.4 Td (Summary for leaders and non-technical staff) Tj ET
+0.850 0.870 0.890 rg 48.0 684.5 499.3 1.4 re f
+BT /F1 9.5 Tf 0.360 0.390 0.440 rg 48.0 667.1 Td (Plain language, no technical background needed.) Tj ET
+0.990 0.930 0.920 rg 48.0 609.7 499.3 48.5 re f
+0.700 0.150 0.120 rg 48.0 609.7 5.0 48.5 re f
+BT /F2 11.5 Tf 0.700 0.150 0.120 rg 64.0 638.2 Td (High risk. This email looks like a scam.) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 624.7 Td (Don't click its links, don't open its files and don't reply. You can delete it or report it.) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 582.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 582.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 589.7 Td (Email subject) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 589.7 Td (Coinkite security advisory: Schedule your call) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 562.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 562.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 570.2 Td (Appears to be from) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 570.2 Td ("Coinkite" <coinkite[@]coldcardblog[.]org>) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 543.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 543.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 550.7 Td (Date on the email) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 550.7 Td (4 Aug 2026, 01:49 UTC) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 523.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 523.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 531.2 Td (Overall rating) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 531.2 Td (High risk \(60 out of 100\)) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 504.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 504.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 511.7 Td (Type of attack) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 511.7 Td (Impersonation; Password phishing) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 484.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 484.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 492.2 Td (Attachments) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 492.2 Td (None) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 465.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 465.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 472.7 Td (Links) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 472.7 Td (1 \(1 dangerous\)) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 445.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 445.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 453.2 Td (Report prepared) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 453.2 Td (2026-11-07) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 412.2 Td (What happened) Tj ET
+0.850 0.870 0.890 rg 48.0 404.3 499.3 1.4 re f
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 386.4 Td (An email with the subject "Coinkite security advisory: Schedule your call" arrived from "Coinkite") Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 372.4 Td (<coinkite[@]coldcardblog[.]org>. It was examined entirely on the analyst's computer: its sender details, its links,) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 358.4 Td (its attachments and the way it was delivered.) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 338.4 Td (It looks like impersonation \(high confidence\): It pretends to be a company or person you trust, from an address) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 324.4 Td (that isn't theirs. It looks like password phishing \(medium confidence\): It wants you to sign in on a fake page or) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 310.4 Td (type your password.) Tj ET
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 282.7 Td (The main reasons) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 265.2 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 265.2 Td (It pretends to be Coinkite / COLDCARD, but Coinkite / COLDCARD didn't send it.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 249.2 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 249.2 Td (A link leads to a fake website made to look like a real one.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 233.2 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 233.2 Td (It tries to rush or scare you into acting fast.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 198.7 Td (Why it matters to the organisation) Tj ET
+0.850 0.870 0.890 rg 48.0 190.8 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 165.2 109.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 174.8 Td (Risk) Tj ET
+0.130 0.150 0.170 rg 157.8 165.2 329.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 162.8 174.8 Td (What could happen) Tj ET
+0.130 0.150 0.170 rg 487.4 165.2 59.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 492.4 174.8 Td (Level) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 136.0 109.8 29.2 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 156.2 Td (Trust and brand abuse) Tj ET
+0.850 0.870 0.890 RG 0.6 w 157.8 136.0 329.5 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 162.8 156.2 Td (Staff, customers or partners are tricked by a convincing fake of a person or) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 162.8 145.6 Td (company they trust.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 487.4 136.0 59.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 492.4 156.2 Td (Medium) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 96.2 109.8 39.8 re S
+BT /F2 8.6 Tf 0.700 0.150 0.120 rg 53.0 127.0 Td (Stolen passwords) Tj ET
+0.850 0.870 0.890 RG 0.6 w 157.8 96.2 329.5 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 162.8 127.0 Td (Someone who enters a password on the fake page hands attackers the account.) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 162.8 116.4 Td (From there they can read mail and files, send more phishing from a trusted address) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 162.8 105.8 Td (and reach other systems.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 487.4 96.2 59.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 492.4 127.0 Td (High) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 3 of 14) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 5716 >>
+stream
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 768.4 Td (What to do now) Tj ET
+0.850 0.870 0.890 rg 48.0 760.5 499.3 1.4 re f
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 734.9 Td (Everyone) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 717.4 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 717.4 Td (Do not click links, open attachments, scan QR codes or reply to this email.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 701.4 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 701.4 Td (Do not forward it to colleagues. Report it using the steps below, then delete it.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 685.4 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 685.4 Td (If you are unsure whether it is genuine, contact the supposed sender using a phone number or website you) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 671.4 Td (already know, never the details in the email.) Tj ET
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 643.8 Td (If someone already clicked, opened a file, replied or typed a password) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 626.3 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 626.3 Td (Tell the IT or security team immediately. Speed matters more than embarrassment.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 610.3 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 610.3 Td (Change the password for that account, and for any other account that uses the same password, from a) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 596.3 Td (different device.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 580.3 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 580.3 Td (If a file was opened, disconnect the computer from the network and wait for IT before using it again.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 564.3 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 564.3 Td (If money was sent or bank details were shared, call the bank at once and ask for the payment to be recalled.) Tj ET
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 536.7 Td (For the IT and security team) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 519.2 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 519.2 Td (Block the sender, the domains and the links listed in the technical part, and search every mailbox for the) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 505.2 Td (same email.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 489.2 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 489.2 Td (Remove copies from all mailboxes that received it.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 473.2 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 473.2 Td (For anyone who interacted with it: reset passwords, sign them out everywhere, review app approvals and) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 459.2 Td (check for new mailbox rules or forwarding.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 424.7 Td (Who to tell) Tj ET
+0.850 0.870 0.890 rg 48.0 416.8 499.3 1.4 re f
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 398.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 398.8 Td (Your internal IT or security team \(first, always\).) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 382.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 382.8 Td (Anti-Phishing Working Group \(APWG\): reportphishing@apwg.org) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 366.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 366.8 Td (Netcraft: scam@netcraft.com, for takedown of the fake sites) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 350.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 350.8 Td (Google Safe Browsing: https://safebrowsing.google.com/safebrowsing/report_phish/) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 334.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 334.8 Td (United States: https://reportfraud.ftc.gov and https://www.ic3.gov) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 318.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 318.8 Td (United Kingdom: report@phishing.gov.uk \(NCSC\)) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 302.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 302.8 Td (India: https://cybercrime.gov.in and incident@cert-in.org.in \(CERT-In\)) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 286.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 286.8 Td (Elsewhere: your national CERT or cybercrime reporting centre. Serious losses should also be reported to) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 272.8 Td (the police and the bank.) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 254.5 Td (Unmask never sends anything by itself. Every report above is something a person chooses to send.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 220.4 Td (How sure are we?) Tj ET
+0.850 0.870 0.890 rg 48.0 212.5 499.3 1.4 re f
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 194.6 Td (High. Several independent signals agree, so this conclusion is strong.) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 174.6 Td (Things the automatic checks could not look at:) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 154.5 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 154.5 Td (2 DKIM signatures were not verified with the signer's key \(turn on "Check certificate history and mail) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 140.5 Td (records" in Settings\).) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 124.5 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 124.5 Td (1 link was checked by address only. What the page does is unknown until you run a sandbox scan from the) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 110.5 Td (Links tab.) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 4 of 14) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 8429 >>
+stream
+0.240 0.420 0.120 rg 48.0 737.9 499.3 56.0 re f
+BT /F2 18 Tf 1.000 1.000 1.000 rg 64.0 767.9 Td (Part B: Technical analysis) Tj ET
+BT /F1 9.5 Tf 0.920 0.960 0.900 rg 64.0 749.9 Td (For security analysts, incident responders and investigators.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 692.4 Td (Case information) Tj ET
+0.850 0.870 0.890 rg 48.0 684.5 499.3 1.4 re f
+BT /F1 9.5 Tf 0.360 0.390 0.440 rg 48.0 667.1 Td (For security analysts, incident responders and investigators.) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 638.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 638.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 646.2 Td (Case ID) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 646.2 Td (UNM-20261107-45D726F8) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 619.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 619.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 626.7 Td (Prepared by) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 626.7 Td (Unmask \(example report\)) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 599.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 599.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 607.2 Td (Organisation) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 607.2 Td (Built from a public phishing sample) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 580.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 580.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 587.7 Td (Classification \(TLP\)) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 587.7 Td (CLEAR) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 560.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 560.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 568.2 Td (Generated) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 568.2 Td (2026-11-07 12:00:00 UTC) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 541.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 541.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 548.7 Td (Tool) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 548.7 Td (Unmask \(https://github.com/praneeth132006/Unmask\) 0.5.0) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 484.2 150.0 57.0 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 484.2 349.3 57.0 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 529.2 Td (Where analysis ran) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 529.2 Td (On the analyst's own computer, inside the browser. The email and its files were) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 516.7 Td (not sent to the tool's author or to any server. Online lookups \(if any, listed) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 504.2 Td (below\) were started by the analyst and sent only a hash, a domain name or a) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 491.7 Td (link.) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 452.2 150.0 32.0 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 452.2 349.3 32.0 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 472.2 Td (Original message \(.eml\)) Tj ET
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 459.7 Td (SHA-256) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 472.2 Td (ee52093ee6f6489b7a093d5e56fc0982c6836d8c40e3f1ac2bb98cf8fb77bf44) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 432.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 432.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 440.2 Td (Original message size) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 440.2 Td (26,759 bytes) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 388.2 150.0 44.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 388.2 349.3 44.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 420.7 Td (Analyst notes) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 420.7 Td (Example report built from a real phishing email in the public phishing_pot) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 408.2 Td (research collection \(github.com/rf-peixoto/phishing_pot\). The original email is) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 395.7 Td (not redistributed; indicators are defanged.) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 370.9 Td (Chain of custody: record who handled the original message and when. The hash above identifies the exact evidence analysed.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 336.8 Td (Verdict and scoring) Tj ET
+0.850 0.870 0.890 rg 48.0 328.9 499.3 1.4 re f
+0.990 0.930 0.920 rg 48.0 273.4 499.3 48.5 re f
+0.700 0.150 0.120 rg 48.0 273.4 5.0 48.5 re f
+BT /F2 11.5 Tf 0.700 0.150 0.120 rg 64.0 301.9 Td (High risk: risk score 60/100) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 288.4 Td (Assessment: Impersonation \(high\); Password phishing \(medium\).) Tj ET
+0.130 0.150 0.170 rg 48.0 246.8 249.6 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 256.4 Td (Category) Tj ET
+0.130 0.150 0.170 rg 297.6 246.8 124.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 302.6 256.4 Td (Findings) Tj ET
+0.130 0.150 0.170 rg 422.5 246.8 124.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 427.5 256.4 Td (Points) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 228.2 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 237.8 Td (sender) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 228.2 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 237.8 Td (2) Tj ET
+0.850 0.870 0.890 RG 0.6 w 422.5 228.2 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 427.5 237.8 Td (30) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 209.6 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 219.2 Td (links) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 209.6 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 219.2 Td (1) Tj ET
+0.850 0.870 0.890 RG 0.6 w 422.5 209.6 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 427.5 219.2 Td (18) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 191.0 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 200.6 Td (content) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 191.0 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 200.6 Td (2) Tj ET
+0.850 0.870 0.890 RG 0.6 w 422.5 191.0 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 427.5 200.6 Td (8) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 172.4 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 182.0 Td (auth) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 172.4 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 182.0 Td (2) Tj ET
+0.850 0.870 0.890 RG 0.6 w 422.5 172.4 124.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 427.5 182.0 Td (-10) Tj ET
+0.130 0.150 0.170 rg 48.0 143.8 99.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 153.4 Td (Attack type) Tj ET
+0.130 0.150 0.170 rg 147.9 143.8 59.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 152.9 153.4 Td (Confidence) Tj ET
+0.130 0.150 0.170 rg 207.8 143.8 199.7 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 212.8 153.4 Td (Meaning) Tj ET
+0.130 0.150 0.170 rg 407.5 143.8 139.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 412.5 153.4 Td (Evidence \(finding ids\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 114.6 99.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 134.8 Td (Impersonation) Tj ET
+0.850 0.870 0.890 RG 0.6 w 147.9 114.6 59.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 134.8 Td (high) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 114.6 199.7 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 134.8 Td (It pretends to be a company or person you trust,) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 124.2 Td (from an address that isn't theirs.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 407.5 114.6 139.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 134.8 Td (sender-lookalike,) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 124.2 Td (brand-impersonation) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 85.4 99.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 105.6 Td (Password phishing) Tj ET
+0.850 0.870 0.890 RG 0.6 w 147.9 85.4 59.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 105.6 Td (medium) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 85.4 199.7 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 105.6 Td (It wants you to sign in on a fake page or type) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 95.0 Td (your password.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 407.5 85.4 139.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 105.6 Td (link-brand-in-domain) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 5 of 14) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 10525 >>
+stream
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 784.6 Td (Scoring: findings add points by severity \(critical 35-40, high about 20, medium about 10, low about 4\); reassuring signals subtract. 20) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 772.7 Td (and above is Suspicious, 50 and above is High risk.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 738.6 Td (Message and sender analysis) Tj ET
+0.850 0.870 0.890 rg 48.0 730.7 499.3 1.4 re f
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 704.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 704.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 711.7 Td (Subject) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 711.7 Td (Coinkite security advisory: Schedule your call) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 684.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 684.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 692.2 Td (From \(display name / address\)) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 692.2 Td (Coinkite / coinkite[@]coldcardblog[.]org) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 665.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 665.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 672.7 Td (Sender header) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 672.7 Td (-) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 645.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 645.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 653.2 Td (Reply-To) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 653.2 Td (-) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 613.7 150.0 32.0 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 613.7 349.3 32.0 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 633.7 Td (Return-Path) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 633.7 Td (0100019fca765ad1-a05300c5-1bc0-42d2-88dc-f91604e2df2b-000000[@]send[.) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 621.2 Td (]coldcardblog[.]org) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 594.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 594.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 601.7 Td (To) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 601.7 Td (phishing[@]pot) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 574.7 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 574.7 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 582.2 Td (Date) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 582.2 Td (4 Aug 2026, 01:49 UTC \(header: 2026-08-04T01:49:41.000Z\)) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 542.7 150.0 32.0 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 542.7 349.3 32.0 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 562.7 Td (Message-ID) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 562.7 Td (<0100019fca765ad1-a05300c5-1bc0-42d2-88dc-f91604e2df2b-000000@email.) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 550.2 Td (amazonses.com>) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 523.2 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 523.2 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 530.7 Td (Sender domain) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 530.7 Td (coldcardblog[.]org) Tj ET
+0.130 0.150 0.170 rg 48.0 496.6 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 506.2 Td (Severity) Tj ET
+0.130 0.150 0.170 rg 117.9 496.6 429.4 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 122.9 506.2 Td (Finding) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 467.4 69.9 29.2 re S
+BT /F2 8.6 Tf 0.700 0.150 0.120 rg 53.0 487.6 Td (HIGH) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 467.4 429.4 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 487.6 Td (Sender domain imitates Coinkite / COLDCARD - coldcardblog.org contains "coldcard" but is not a Coinkite /) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 477.0 Td (COLDCARD domain.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 448.8 69.9 18.6 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 458.4 Td (MEDIUM) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 448.8 429.4 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 458.4 Td (Display name uses the Coinkite / COLDCARD brand) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 413.3 Td (Authentication \(SPF, DKIM, DMARC, ARC\)) Tj ET
+0.850 0.870 0.890 rg 48.0 405.4 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 379.8 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 389.4 Td (Check) Tj ET
+0.130 0.150 0.170 rg 117.9 379.8 79.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 122.9 389.4 Td (Result) Tj ET
+0.130 0.150 0.170 rg 197.8 379.8 149.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 202.8 389.4 Td (Domain) Tj ET
+0.130 0.150 0.170 rg 347.6 379.8 199.7 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 352.6 389.4 Td (Meaning) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 350.6 69.9 29.2 re S
+BT /F2 8.6 Tf 0.100 0.430 0.240 rg 53.0 370.8 Td (SPF) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 350.6 79.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 370.8 Td (pass) Tj ET
+0.850 0.870 0.890 RG 0.6 w 197.8 350.6 149.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 202.8 370.8 Td (send.coldcardblog.org) Tj ET
+0.850 0.870 0.890 RG 0.6 w 347.6 350.6 199.7 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 352.6 370.8 Td (Was the sending server allowed to send for this) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 352.6 360.2 Td (domain?) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 321.4 69.9 29.2 re S
+BT /F2 8.6 Tf 0.100 0.430 0.240 rg 53.0 341.6 Td (DKIM) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 321.4 79.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 341.6 Td (pass) Tj ET
+0.850 0.870 0.890 RG 0.6 w 197.8 321.4 149.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 202.8 341.6 Td (coldcardblog.org, amazonses.com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 347.6 321.4 199.7 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 352.6 341.6 Td (Is there a valid cryptographic signature from the) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 352.6 331.0 Td (domain?) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 292.2 69.9 29.2 re S
+BT /F2 8.6 Tf 0.100 0.430 0.240 rg 53.0 312.4 Td (DMARC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 292.2 79.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 312.4 Td (pass) Tj ET
+0.850 0.870 0.890 RG 0.6 w 197.8 292.2 149.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 202.8 312.4 Td (coldcardblog.org) Tj ET
+0.850 0.870 0.890 RG 0.6 w 347.6 292.2 199.7 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 352.6 312.4 Td (Does the visible From domain match what SPF or) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 352.6 301.8 Td (DKIM verified?) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 272.9 Td (Provider verdict from the receiving server. Unmask also re-checks DKIM body hashes locally.) Tj ET
+0.130 0.150 0.170 rg 48.0 245.7 99.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 255.3 Td (Signing domain) Tj ET
+0.130 0.150 0.170 rg 147.9 245.7 49.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 152.9 255.3 Td (Selector) Tj ET
+0.130 0.150 0.170 rg 197.8 245.7 79.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 202.8 255.3 Td (Algorithm) Tj ET
+0.130 0.150 0.170 rg 277.7 245.7 59.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 282.7 255.3 Td (Body hash) Tj ET
+0.130 0.150 0.170 rg 337.6 245.7 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 342.6 255.3 Td (Signature) Tj ET
+0.130 0.150 0.170 rg 407.5 245.7 74.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 412.5 255.3 Td (Signed) Tj ET
+0.130 0.150 0.170 rg 482.4 245.7 64.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 487.4 255.3 Td (Expires) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 216.5 99.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 236.7 Td (coldcardblog.org) Tj ET
+0.850 0.870 0.890 RG 0.6 w 147.9 216.5 49.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 236.7 Td (resend) Tj ET
+0.850 0.870 0.890 RG 0.6 w 197.8 216.5 79.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 202.8 236.7 Td (rsa-sha256) Tj ET
+0.850 0.870 0.890 RG 0.6 w 277.7 216.5 59.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 282.7 236.7 Td (mismatch) Tj ET
+0.850 0.870 0.890 RG 0.6 w 337.6 216.5 69.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 342.6 236.7 Td (not verified) Tj ET
+0.850 0.870 0.890 RG 0.6 w 407.5 216.5 74.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 236.7 Td (2026-08-04) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 226.1 Td (01:49:42 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 482.4 216.5 64.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 487.4 236.7 Td (-) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 166.1 99.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 207.5 Td (amazonses.com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 147.9 166.1 49.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 207.5 Td (224i4yxa5) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 196.9 Td (dv7c2xz3) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 186.3 Td (womw6pe) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 152.9 175.7 Td (uasteono) Tj ET
+0.850 0.870 0.890 RG 0.6 w 197.8 166.1 79.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 202.8 207.5 Td (rsa-sha256) Tj ET
+0.850 0.870 0.890 RG 0.6 w 277.7 166.1 59.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 282.7 207.5 Td (mismatch) Tj ET
+0.850 0.870 0.890 RG 0.6 w 337.6 166.1 69.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 342.6 207.5 Td (not verified) Tj ET
+0.850 0.870 0.890 RG 0.6 w 407.5 166.1 74.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 207.5 Td (2026-08-04) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 412.5 196.9 Td (01:49:42 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 482.4 166.1 64.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 487.4 207.5 Td (-) Tj ET
+0.130 0.150 0.170 rg 48.0 137.5 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 147.1 Td (Severity) Tj ET
+0.130 0.150 0.170 rg 117.9 137.5 429.4 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 122.9 147.1 Td (Finding) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 97.7 69.9 39.8 re S
+BT /F2 8.6 Tf 0.160 0.290 0.540 rg 53.0 128.5 Td (INFO) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 97.7 429.4 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 128.5 Td (This copy of the email differs from what was signed - Your mail provider verified coldcardblog.org's signature) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 117.9 Td (when the email arrived, but the text Unmask was given has changed since. That usually means it was copied) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 107.3 Td (or pasted rather than downloaded as the original.) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 6 of 14) Tj ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 11826 >>
+stream
+0.130 0.150 0.170 rg 48.0 775.3 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 784.9 Td (Severity) Tj ET
+0.130 0.150 0.170 rg 117.9 775.3 429.4 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 122.9 784.9 Td (Finding) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 746.1 69.9 29.2 re S
+BT /F2 8.6 Tf 0.100 0.430 0.240 rg 53.0 766.3 Td (GOOD) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 746.1 429.4 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 766.3 Td (DMARC passed for coldcardblog.org - The email really came from the domain shown in the From address.) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 755.7 Td (Note: scammers can pass DMARC on domains they own, so also check the domain itself.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 710.6 Td (Delivery path \(origin first\)) Tj ET
+0.850 0.870 0.890 rg 48.0 702.7 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 666.5 20.0 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 686.7 Td (#) Tj ET
+0.130 0.150 0.170 rg 68.0 666.5 119.8 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 73.0 686.7 Td (Server announced \(HELO /) Tj ET
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 73.0 676.1 Td (rDNS\)) Tj ET
+0.130 0.150 0.170 rg 187.8 666.5 69.9 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 192.8 686.7 Td (IP) Tj ET
+0.130 0.150 0.170 rg 257.7 666.5 99.9 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 262.7 686.7 Td (Received by) Tj ET
+0.130 0.150 0.170 rg 357.6 666.5 44.9 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 362.6 686.7 Td (Protocol) Tj ET
+0.130 0.150 0.170 rg 402.5 666.5 69.9 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 407.5 686.7 Td (Time) Tj ET
+0.130 0.150 0.170 rg 472.4 666.5 30.0 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 477.4 686.7 Td (Dela) Tj ET
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 477.4 676.1 Td (y) Tj ET
+0.130 0.150 0.170 rg 502.3 666.5 44.9 29.2 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 507.3 686.7 Td (Trust) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 626.7 20.0 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 657.5 Td (1) Tj ET
+0.850 0.870 0.890 RG 0.6 w 68.0 626.7 119.8 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 657.5 Td (a14-57[.]smtp-out[.]amazons) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 646.9 Td (es[.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 626.7 69.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 657.5 Td (54[.]240[.]14[.]5) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 646.9 Td (7) Tj ET
+0.850 0.870 0.890 RG 0.6 w 257.7 626.7 99.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 657.5 Td (ty2pepf0000ab85[.]mail) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 646.9 Td ([.]protection[.]outlook[.]) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 636.3 Td (com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 357.6 626.7 44.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 362.6 657.5 Td (Microsoft) Tj ET
+0.850 0.870 0.890 RG 0.6 w 402.5 626.7 69.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 657.5 Td (2026-08-04) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 646.9 Td (01:49:43 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 472.4 626.7 30.0 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 477.4 657.5 Td (-) Tj ET
+0.850 0.870 0.890 RG 0.6 w 502.3 626.7 44.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 657.5 Td (your) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 646.9 Td (provider) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 597.5 20.0 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 617.7 Td (2) Tj ET
+0.850 0.870 0.890 RG 0.6 w 68.0 597.5 119.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 617.7 Td (ty2pepf0000ab85[.]apcprd03) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 607.1 Td ([.]prod[.]outlook[.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 597.5 69.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 617.7 Td (2603:1096:300:) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 607.1 Td (58:cafe::97) Tj ET
+0.850 0.870 0.890 RG 0.6 w 257.7 597.5 99.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 617.7 Td (ps2pr01ca0043[.]outlo) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 607.1 Td (ok[.]office365[.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 357.6 597.5 44.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 362.6 617.7 Td (Microsoft) Tj ET
+0.850 0.870 0.890 RG 0.6 w 402.5 597.5 69.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 617.7 Td (2026-08-04) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 607.1 Td (01:49:44 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 472.4 597.5 30.0 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 477.4 617.7 Td (1s) Tj ET
+0.850 0.870 0.890 RG 0.6 w 502.3 597.5 44.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 617.7 Td (your) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 607.1 Td (provider) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 557.7 20.0 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 588.5 Td (3) Tj ET
+0.850 0.870 0.890 RG 0.6 w 68.0 557.7 119.8 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 588.5 Td (ps2pr01ca0043[.]apcprd01[.]) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 577.9 Td (prod[.]exchangelabs[.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 557.7 69.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 588.5 Td (2603:1096:300:) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 577.9 Td (58::31) Tj ET
+0.850 0.870 0.890 RG 0.6 w 257.7 557.7 99.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 588.5 Td (ph7pr10mb6577[.]nam) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 577.9 Td (prd10[.]prod[.]outlook[.]) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 567.3 Td (com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 357.6 557.7 44.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 362.6 588.5 Td (Microsoft) Tj ET
+0.850 0.870 0.890 RG 0.6 w 402.5 557.7 69.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 588.5 Td (2026-08-04) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 577.9 Td (01:49:45 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 472.4 557.7 30.0 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 477.4 588.5 Td (1s) Tj ET
+0.850 0.870 0.890 RG 0.6 w 502.3 557.7 44.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 588.5 Td (your) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 577.9 Td (provider) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 517.9 20.0 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 548.7 Td (4) Tj ET
+0.850 0.870 0.890 RG 0.6 w 68.0 517.9 119.8 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 548.7 Td (ph7pr10mb6577[.]namprd10) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 538.1 Td ([.]prod[.]outlook[.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 517.9 69.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 548.7 Td (-) Tj ET
+0.850 0.870 0.890 RG 0.6 w 257.7 517.9 99.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 548.7 Td (mw4pr10mb5749[.]na) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 538.1 Td (mprd10[.]prod[.]outlook) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 262.7 527.5 Td ([.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 357.6 517.9 44.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 362.6 548.7 Td (HTTPS) Tj ET
+0.850 0.870 0.890 RG 0.6 w 402.5 517.9 69.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 548.7 Td (2026-08-04) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 407.5 538.1 Td (01:49:47 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 472.4 517.9 30.0 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 477.4 548.7 Td (2s) Tj ET
+0.850 0.870 0.890 RG 0.6 w 502.3 517.9 44.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 548.7 Td (your) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 507.3 538.1 Td (provider) Tj ET
+0.960 0.965 0.970 rg 0.850 0.870 0.890 RG 0.6 w 48.0 488.4 150.0 19.5 re B
+0.850 0.870 0.890 RG 0.6 w 198.0 488.4 349.3 19.5 re S
+BT /F2 9 Tf 0.110 0.125 0.140 rg 54.0 495.9 Td (Origin IP) Tj ET
+BT /F1 9.5 Tf 0.110 0.125 0.140 rg 204.0 495.9 Td (54[.]240[.]14[.]57) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 471.1 Td (Only the hops written by your own mail provider can be trusted. Hops below the first trusted one were written by servers you cannot) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 459.2 Td (check, possibly including the sender.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 425.1 Td (Content analysis) Tj ET
+0.850 0.870 0.890 rg 48.0 417.2 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 391.6 324.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 401.2 Td (Hidden text) Tj ET
+0.130 0.150 0.170 rg 372.5 391.6 174.7 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 377.5 401.2 Td (How it is hidden) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 351.8 324.5 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 382.6 Td (Schedule a 10-minute call to discuss a critical security matter. ????? ????? ?????) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 372.0 Td (????? ????? ????? ????? ????? ????? ????? ????? ????? ????? ????? ?????) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 361.4 Td (????? ????? ????? ????? ????? ????? ????? ???...) Tj ET
+0.850 0.870 0.890 RG 0.6 w 372.5 351.8 174.7 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 377.5 382.6 Td (display:none) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 333.2 324.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 342.8 Td (Schedule your 10-minute call) Tj ET
+0.850 0.870 0.890 RG 0.6 w 372.5 333.2 174.7 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 377.5 342.8 Td (zero-size font) Tj ET
+0.130 0.150 0.170 rg 48.0 304.6 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 314.2 Td (Severity) Tj ET
+0.130 0.150 0.170 rg 117.9 304.6 429.4 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 122.9 314.2 Td (Finding) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 275.4 69.9 29.2 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 295.6 Td (LOW) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 275.4 429.4 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 295.6 Td (Uses pressure and urgency - Phrases like "as soon as possible" are designed to make you act before) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 285.0 Td (thinking.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 256.8 69.9 18.6 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 266.4 Td (LOW) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 256.8 429.4 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 266.4 Td (2 hidden text blocks \(329 characters\) - Short hidden text is often just an inbox preview line.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 221.3 Td (Link analysis \(1\)) Tj ET
+0.850 0.870 0.890 rg 48.0 213.4 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 187.8 20.0 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 197.4 Td (#) Tj ET
+0.130 0.150 0.170 rg 68.0 187.8 89.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 73.0 197.4 Td (Shown as) Tj ET
+0.130 0.150 0.170 rg 157.8 187.8 179.7 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 162.8 197.4 Td (Real destination) Tj ET
+0.130 0.150 0.170 rg 337.6 187.8 59.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 342.6 197.4 Td (Source) Tj ET
+0.130 0.150 0.170 rg 397.5 187.8 149.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 402.5 197.4 Td (Findings) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 148.0 20.0 39.8 re S
+BT /F2 8.6 Tf 0.700 0.150 0.120 rg 53.0 178.8 Td (1) Tj ET
+0.850 0.870 0.890 RG 0.6 w 68.0 148.0 89.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 178.8 Td (Schedule your) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 73.0 168.2 Td (10-minute call) Tj ET
+0.850 0.870 0.890 RG 0.6 w 157.8 148.0 179.7 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 162.8 178.8 Td (hxxps://book[.]coinkiteadvisory[.]com/) Tj ET
+0.850 0.870 0.890 RG 0.6 w 337.6 148.0 59.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 342.6 178.8 Td (html) Tj ET
+0.850 0.870 0.890 RG 0.6 w 397.5 148.0 149.8 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 402.5 178.8 Td (book.coinkiteadvisory.com contains) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 402.5 168.2 Td ("coinkite" but is not a Coinkite /) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 402.5 157.6 Td (COLDCARD domain) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 7 of 14) Tj ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 19 0 R >>
+endobj
+21 0 obj
+<< /Length 8152 >>
+stream
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 768.4 Td (Attachment and file forensics \(0\)) Tj ET
+0.850 0.870 0.890 rg 48.0 760.5 499.3 1.4 re f
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 742.6 Td (The email has no attachments.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 708.0 Td (Threat-intelligence lookups) Tj ET
+0.850 0.870 0.890 rg 48.0 700.1 499.3 1.4 re f
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 682.2 Td (No online lookups were run for this report. Hash, link and domain lookups \(VirusTotal, Hybrid Analysis,) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 668.2 Td (MalwareBazaar, urlscan.io, URLhaus, PhishTank\) can be started from the Documents and Links tabs; their) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 48.0 654.2 Td (results are included here once run.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 619.6 Td (MITRE ATT&CK mapping) Tj ET
+0.850 0.870 0.890 rg 48.0 611.7 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 586.1 69.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 595.7 Td (Technique) Tj ET
+0.130 0.150 0.170 rg 117.9 586.1 179.7 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 122.9 595.7 Td (Name) Tj ET
+0.130 0.150 0.170 rg 297.6 586.1 249.6 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 302.6 595.7 Td (Evidence) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 567.5 69.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 577.1 Td (T1078) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 567.5 179.7 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 577.1 Td (Valid Accounts) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 567.5 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 577.1 Td (Possible use of stolen credentials after a successful lure) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 548.9 69.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 558.5 Td (T1204.001) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 548.9 179.7 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 558.5 Td (User Execution: Malicious Link) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 548.9 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 558.5 Td (High-risk link in the message) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 530.3 69.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 539.9 Td (T1566.002) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 530.3 179.7 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 539.9 Td (Phishing: Spearphishing Link) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 530.3 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 539.9 Td (Link or form built to collect sign-in details) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 511.7 69.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 521.3 Td (T1598.003) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 511.7 179.7 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 521.3 Td (Phishing for Information: Spearphishing Link) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 511.7 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 521.3 Td (Credential harvesting lure) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 493.1 69.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 502.7 Td (T1656) Tj ET
+0.850 0.870 0.890 RG 0.6 w 117.9 493.1 179.7 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 122.9 502.7 Td (Impersonation) Tj ET
+0.850 0.870 0.890 RG 0.6 w 297.6 493.1 249.6 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 302.6 502.7 Td (Pretends to be a trusted person or company) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 473.8 Td (Mapped from observed behaviour only. See https://attack.mitre.org/ for definitions.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 439.7 Td (Timeline) Tj ET
+0.850 0.870 0.890 rg 48.0 431.8 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 406.2 139.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 415.8 Td (Time \(UTC\)) Tj ET
+0.130 0.150 0.170 rg 187.8 406.2 359.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 192.8 415.8 Td (Event) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 387.6 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 397.2 Td (2026-08-04 01:49:41 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 387.6 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 397.2 Td (Date header on the email) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 369.0 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 378.6 Td (2026-08-04 01:49:42 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 369.0 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 378.6 Td (Signed by coldcardblog.org \(DKIM\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 350.4 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 360.0 Td (2026-08-04 01:49:42 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 350.4 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 360.0 Td (Signed by amazonses.com \(DKIM\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 331.8 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 341.4 Td (2026-08-04 01:49:43 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 331.8 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 341.4 Td (Hop 1: received by ty2pepf0000ab85.mail.protection.outlook.com \(your provider\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 313.2 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 322.8 Td (2026-08-04 01:49:44 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 313.2 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 322.8 Td (Hop 2: received by ps2pr01ca0043.outlook.office365.com \(your provider\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 294.6 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 304.2 Td (2026-08-04 01:49:45 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 294.6 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 304.2 Td (Hop 3: received by ph7pr10mb6577.namprd10.prod.outlook.com \(your provider\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 276.0 139.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 285.6 Td (2026-08-04 01:49:47 UTC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 187.8 276.0 359.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 192.8 285.6 Td (Hop 4: received by mw4pr10mb5749.namprd10.prod.outlook.com \(your provider\)) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 240.5 Td (Indicators of compromise \(7\)) Tj ET
+0.850 0.870 0.890 rg 48.0 232.6 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 207.0 119.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 216.6 Td (Type) Tj ET
+0.130 0.150 0.170 rg 167.8 207.0 379.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 172.8 216.6 Td (Value \(defanged: safe to paste\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 188.4 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 198.0 Td (sender address) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 188.4 379.5 18.6 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 198.0 Td (coinkite[@]coldcardblog[.]org) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 159.2 119.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 179.4 Td (return-path) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 159.2 379.5 29.2 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 179.4 Td (0100019fca765ad1-a05300c5-1bc0-42d2-88dc-f91604e2df2b-000000[@]send[.]coldcardblog[.]) Tj ET
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 168.8 Td (org) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 140.6 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 150.2 Td (origin IP) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 140.6 379.5 18.6 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 150.2 Td (54[.]240[.]14[.]57) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 122.0 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 131.6 Td (DKIM domain) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 122.0 379.5 18.6 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 131.6 Td (coldcardblog[.]org) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 103.4 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 113.0 Td (DKIM domain) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 103.4 379.5 18.6 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 113.0 Td (amazonses[.]com) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 84.8 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 94.4 Td (URL) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 84.8 379.5 18.6 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 94.4 Td (hxxps://book[.]coinkiteadvisory[.]com/) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 8 of 14) Tj ET
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 21 0 R >>
+endobj
+23 0 obj
+<< /Length 6436 >>
+stream
+0.130 0.150 0.170 rg 48.0 775.3 119.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 784.9 Td (Type) Tj ET
+0.130 0.150 0.170 rg 167.8 775.3 379.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 172.8 784.9 Td (Value \(defanged: safe to paste\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 756.7 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 766.3 Td (domain) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 756.7 379.5 18.6 re S
+BT /F3 7.2 Tf 0.110 0.125 0.140 rg 172.8 766.3 Td (book[.]coinkiteadvisory[.]com) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 737.4 Td (Defanged values replace "." with "[.]" and "http" with "hxxp" so they cannot be clicked by accident. The STIX and JSON exports carry) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 725.5 Td (the exact values for tools.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 691.4 Td (Detection and hunting suggestions) Tj ET
+0.850 0.870 0.890 rg 48.0 683.5 499.3 1.4 re f
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 667.2 Td (Queries contain real values for pasting into your tools. Do not open them in a browser.) Tj ET
+0.940 0.950 0.960 rg 0.850 0.870 0.890 RG 0.6 w 48.0 600.6 499.3 58.0 re B
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 647.6 Td (// Microsoft Defender / Sentinel \(KQL\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 637.6 Td (EmailEvents) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 627.6 Td (| where SenderFromDomain == "coldcardblog.org" or SenderMailFromDomain == "coldcardblog.org") Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 617.6 Td (| project Timestamp, NetworkMessageId, SenderFromAddress, RecipientEmailAddress, Subject,) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 607.6 Td (DeliveryAction) Tj ET
+0.940 0.950 0.960 rg 0.850 0.870 0.890 RG 0.6 w 48.0 544.6 499.3 48.0 re B
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 581.6 Td (// Microsoft Defender / Sentinel \(KQL\): who received these links) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 571.6 Td (EmailUrlInfo) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 561.6 Td (| where Url in~ \("https://book.coinkiteadvisory.com/"\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 551.6 Td (| join EmailEvents on NetworkMessageId) Tj ET
+0.940 0.950 0.960 rg 0.850 0.870 0.890 RG 0.6 w 48.0 498.6 499.3 38.0 re B
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 525.6 Td (# Google Workspace / Gmail search \(Admin console email log search or Vault\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 515.6 Td (from:\(coldcardblog.org\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 505.6 Td (rfc822msgid:0100019fca765ad1-a05300c5-1bc0-42d2-88dc-f91604e2df2b-000000@email.amazonses.com) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 479.6 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 479.6 Td (Add the sender, Reply-To and the domains above to your mail gateway block list.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 463.6 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 463.6 Td (Add the URLs and domains to web proxy and DNS filtering.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 447.6 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 447.6 Td (Add the file hashes to endpoint protection block lists.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 431.6 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 431.6 Td (Search mail logs for other messages with the same sender infrastructure, subject pattern or Message-ID) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 417.6 Td (domain.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 383.1 Td (Containment and remediation checklist) Tj ET
+0.850 0.870 0.890 rg 48.0 375.2 499.3 1.4 re f
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 357.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 357.2 Td (Preserve the original message \(.eml\) and this report before deleting anything.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 341.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 341.2 Td (Identify every recipient \(mail logs\) and who clicked or opened attachments \(proxy, DNS and endpoint logs\).) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 325.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 325.2 Td (Purge the message from all mailboxes and quarantine matching ones.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 309.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 309.2 Td (Block the sender, domains, URLs and hashes listed above.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 293.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 293.2 Td (For affected users: reset passwords, revoke sessions and refresh tokens, review OAuth app consents, MFA) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 279.2 Td (methods, mailbox rules, forwarding and delegates.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 263.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 263.2 Td (Report externally \(APWG, Netcraft, national CERT\) and notify any impersonated brand.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 247.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 247.2 Td (Run a short awareness note to staff with the key signs from this email.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 231.2 Td ([ ]) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 72.0 231.2 Td (Record the outcome and close the case.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 196.7 Td (Method, limits and references) Tj ET
+0.850 0.870 0.890 rg 48.0 188.8 499.3 1.4 re f
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 163.2 Td (What was checked) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 145.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 145.7 Td (Sender identity, header consistency and authentication \(SPF, DKIM, DMARC, ARC\), including a local DKIM) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 131.7 Td (body-hash re-check.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 115.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 115.7 Td (Delivery path and timing from Received headers.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 99.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 99.7 Td (Links: real destinations, lookalike domains, redirects, hosting services, QR codes.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 83.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 83.7 Td (Body: hidden text, obfuscation, urgency and payment language, tracking pixels.) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 9 of 14) Tj ET
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 23 0 R >>
+endobj
+25 0 obj
+<< /Length 2627 >>
+stream
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 782.9 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 782.9 Td (Attachments: file type by content, structure of PDFs, Office files, RTF and archives, macros, embedded files,) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 768.9 Td (links and indicators, hashes.) Tj ET
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 741.3 Td (Not checked) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 723.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 723.8 Td (2 DKIM signatures were not verified with the signer's key \(turn on "Check certificate history and mail) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 709.8 Td (records" in Settings\).) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 693.8 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 693.8 Td (1 link was checked by address only. What the page does is unknown until you run a sandbox scan from the) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 679.8 Td (Links tab.) Tj ET
+BT /F2 11.5 Tf 0.110 0.125 0.140 rg 48.0 652.2 Td (References and credits) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 634.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 634.7 Td (File analysis follows the ideas of Didier Stevens' pdfid.py, pdf-parser.py, oledump.py, rtfdump.py and) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 620.7 Td (zipdump.py \(https://github.com/DidierStevens/DidierStevensSuite\), reimplemented in TypeScript for the) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 606.7 Td (browser. Source code was not copied.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 590.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 590.7 Td (MITRE ATT&CK: https://attack.mitre.org/) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 574.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 574.7 Td (SPF RFC 7208, DKIM RFC 6376, DMARC RFC 7489, ARC RFC 8617.) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 558.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 558.7 Td (Anti-Phishing Working Group: https://apwg.org/ - Netcraft: https://www.netcraft.com/) Tj ET
+BT /F1 10 Tf 0.240 0.420 0.120 rg 52.0 542.7 Td (-) Tj ET
+BT /F1 10 Tf 0.110 0.125 0.140 rg 64.0 542.7 Td (Traffic Light Protocol: https://www.first.org/tlp/) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 524.4 Td (Automated analysis supports, but does not replace, human judgement. Unknown or "no record" results never mean a file or link is) Tj ET
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 512.5 Td (safe.) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 10 of 14) Tj ET
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 25 0 R >>
+endobj
+27 0 obj
+<< /Length 9949 >>
+stream
+0.240 0.420 0.120 rg 48.0 737.9 499.3 56.0 re f
+BT /F2 18 Tf 1.000 1.000 1.000 rg 64.0 767.9 Td (Appendices) Tj ET
+BT /F1 9.5 Tf 0.920 0.960 0.900 rg 64.0 749.9 Td (Reference material.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 692.4 Td (Appendix A: all findings) Tj ET
+0.850 0.870 0.890 rg 48.0 684.5 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 658.9 54.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 668.5 Td (Severity) Tj ET
+0.130 0.150 0.170 rg 102.9 658.9 39.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 107.9 668.5 Td (Points) Tj ET
+0.130 0.150 0.170 rg 142.9 658.9 64.9 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 147.9 668.5 Td (Category) Tj ET
+0.130 0.150 0.170 rg 207.8 658.9 339.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 212.8 668.5 Td (Finding) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 629.7 54.9 29.2 re S
+BT /F2 8.6 Tf 0.700 0.150 0.120 rg 53.0 649.9 Td (HIGH) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 629.7 39.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 649.9 Td (20) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 629.7 64.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 649.9 Td (sender) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 629.7 339.5 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 649.9 Td (Sender domain imitates Coinkite / COLDCARD - coldcardblog.org contains "coldcard") Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 639.3 Td (but is not a Coinkite / COLDCARD domain.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 600.5 54.9 29.2 re S
+BT /F2 8.6 Tf 0.700 0.150 0.120 rg 53.0 620.7 Td (HIGH) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 600.5 39.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 620.7 Td (18) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 600.5 64.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 620.7 Td (links) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 600.5 339.5 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 620.7 Td (Link domain uses a brand name it does not own - book.coinkiteadvisory.com contains) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 610.1 Td ("coinkite" but is not a Coinkite / COLDCARD domain) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 581.9 54.9 18.6 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 591.5 Td (MEDIUM) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 581.9 39.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 591.5 Td (10) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 581.9 64.9 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 591.5 Td (sender) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 581.9 339.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 591.5 Td (Display name uses the Coinkite / COLDCARD brand) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 552.7 54.9 29.2 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 572.9 Td (LOW) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 552.7 39.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 572.9 Td (5) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 552.7 64.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 572.9 Td (content) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 552.7 339.5 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 572.9 Td (Uses pressure and urgency - Phrases like "as soon as possible" are designed to make) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 562.3 Td (you act before thinking.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 523.5 54.9 29.2 re S
+BT /F2 8.6 Tf 0.540 0.330 0.000 rg 53.0 543.7 Td (LOW) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 523.5 39.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 543.7 Td (3) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 523.5 64.9 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 543.7 Td (content) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 523.5 339.5 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 543.7 Td (2 hidden text blocks \(329 characters\) - Short hidden text is often just an inbox preview) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 533.1 Td (line.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 473.1 54.9 50.4 re S
+BT /F2 8.6 Tf 0.160 0.290 0.540 rg 53.0 514.5 Td (INFO) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 473.1 39.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 514.5 Td (0) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 473.1 64.9 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 514.5 Td (auth) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 473.1 339.5 50.4 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 514.5 Td (This copy of the email differs from what was signed - Your mail provider verified) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 503.9 Td (coldcardblog.org's signature when the email arrived, but the text Unmask was given) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 493.3 Td (has changed since. That usually means it was copied or pasted rather than) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 482.7 Td (downloaded as the original.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 433.3 54.9 39.8 re S
+BT /F2 8.6 Tf 0.100 0.430 0.240 rg 53.0 464.1 Td (GOOD) Tj ET
+0.850 0.870 0.890 RG 0.6 w 102.9 433.3 39.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 107.9 464.1 Td (-10) Tj ET
+0.850 0.870 0.890 RG 0.6 w 142.9 433.3 64.9 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 147.9 464.1 Td (auth) Tj ET
+0.850 0.870 0.890 RG 0.6 w 207.8 433.3 339.5 39.8 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 464.1 Td (DMARC passed for coldcardblog.org - The email really came from the domain shown) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 453.5 Td (in the From address. Note: scammers can pass DMARC on domains they own, so) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 212.8 442.9 Td (also check the domain itself.) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 397.8 Td (Appendix B: message headers) Tj ET
+0.850 0.870 0.890 rg 48.0 389.9 499.3 1.4 re f
+BT /F1 8.5 Tf 0.360 0.390 0.440 rg 48.0 373.6 Td (Raw header text as received. It is plain text, not defanged and not clickable.) Tj ET
+0.940 0.950 0.960 rg 0.850 0.870 0.890 RG 0.6 w 48.0 67.0 499.3 298.0 re B
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 354.0 Td (Received: from PH7PR10MB6577.namprd10.prod.outlook.com \(::1\) by MW4PR10MB5749.namprd10.prod.outlook.com) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 344.0 Td (with HTTPS; Tue, 4 Aug 2026 01:49:47 +0000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 334.0 Td (Received: from PS2PR01CA0043.apcprd01.prod.exchangelabs.com \(2603:1096:300:58::31\) by) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 324.0 Td (PH7PR10MB6577.namprd10.prod.outlook.com \(2603:10b6:510:204::10\) with Microsoft SMTP Server) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 314.0 Td (\(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\) id 15.21.270.17; Tue, 4 Aug 2026) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 304.0 Td (01:49:45 +0000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 294.0 Td (Received: from TY2PEPF0000AB85.apcprd03.prod.outlook.com \(2603:1096:300:58:cafe::97\) by) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 284.0 Td (PS2PR01CA0043.outlook.office365.com \(2603:1096:300:58::31\) with Microsoft SMTP Server \(version=TLS1_3,) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 274.0 Td (cipher=TLS_AES_256_GCM_SHA384\) id 15.21.270.18 via Frontend Transport; Tue, 4 Aug 2026 01:49:44 +0000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 264.0 Td (Authentication-Results: spf=pass \(sender IP is 54.240.14.57\) smtp.mailfrom=send.coldcardblog.org;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 254.0 Td (dkim=pass \(signature was verified\) header.d=coldcardblog.org;dkim=pass \(signature was verified\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 244.0 Td (header.d=amazonses.com;dmarc=pass action=none header.from=coldcardblog.org;compauth=pass reason=100) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 234.0 Td (Received-SPF: Pass \(protection.outlook.com: domain of send.coldcardblog.org designates 54.240.14.57 as) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 224.0 Td (permitted sender\) receiver=protection.outlook.com; client-ip=54.240.14.57;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 214.0 Td (helo=a14-57.smtp-out.amazonses.com; pr=C) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 204.0 Td (Received: from a14-57.smtp-out.amazonses.com \(54.240.14.57\) by) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 194.0 Td (TY2PEPF0000AB85.mail.protection.outlook.com \(10.167.253.5\) with Microsoft SMTP Server \(version=TLS1_3,) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 184.0 Td (cipher=TLS_AES_256_GCM_SHA384\) id 15.21.292.8 via Frontend Transport; Tue, 4 Aug 2026 01:49:43 +0000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 174.0 Td (X-IncomingTopHeaderMarker:) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 164.0 Td (OriginalChecksum:F28CF9AE9B35C7D3A8923F76FD0DE8BC9CFDD58ABE422EEDD64B5E4EAD4CDA05;UpperCasedChecksum:6B) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 154.0 Td (13EEC6880B7B9A4C4885F04D1C09B5E47AA9B98E1A66DF89B8E85CC4D04D18;SizeAsReceived:2109;Count:15) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 144.0 Td (DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend; d=coldcardblog.org;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 134.0 Td (t=1785808182;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 124.0 Td (h=From:To:Subject:MIME-Version:Content-Type:List-Unsubscribe:List-Unsubscribe-Post:Message-ID:Date;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 114.0 Td (bh=/p+AP1BSQRBBjCxN9Ou0WwfCbaZQZ9H9LXTefhGzHNg=;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 104.0 Td (b=NTlPOJMmGRamxIegovSRwJjr0uTM2z5lGSFKczK5G83FbdIeBKS68tU2+scA+sC0) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 94.0 Td (bIop0uforiWkZB4R+BNj36bGJXiIo0NBYsnQw3rIQLvW3GUQziBH3QaceSUwNBJ/yft) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 84.0 Td (rbtpdt/QlTvwvdSLDRgXYi8QMM3FOZjOZpkzq+cY=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 74.0 Td (DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=224i4yxa5dv7c2xz3womw6peuasteono;) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 11 of 14) Tj ET
+endstream
+endobj
+28 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 27 0 R >>
+endobj
+29 0 obj
+<< /Length 8784 >>
+stream
+0.940 0.950 0.960 rg 0.850 0.870 0.890 RG 0.6 w 48.0 75.9 499.3 718.0 re B
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 782.9 Td (d=amazonses.com; t=1785808182;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 772.9 Td (h=From:To:Subject:MIME-Version:Content-Type:List-Unsubscribe:List-Unsubscribe-Post:Message-ID:Date:Feed) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 762.9 Td (back-ID; bh=/p+AP1BSQRBBjCxN9Ou0WwfCbaZQZ9H9LXTefhGzHNg=;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 752.9 Td (b=HMIAUWH/E3/wARVOiptvWk7NY3znxL4r6l/ol+dP3qUHh3vkzOPmPEaKEoTk634L) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 742.9 Td (8UFPRT96AIARGfGc++mRNzjqHVJisyoLcqRNV3F7LpL6DA6n5YWmYTBWRAZBr8mLMA3) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 732.9 Td (nvj+bq2yYceBa/Ww6XRKCO+AUxa8dkVuHczBs7i8=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 722.9 Td (From: Coinkite <coinkite@coldcardblog.org>) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 712.9 Td (To: phishing@pot) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 702.9 Td (Subject: Coinkite security advisory: Schedule your call) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 692.9 Td (Content-Type: multipart/alternative; boundary="----=_Part_526237_1395776144.1785808181970") Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 682.9 Td (List-Unsubscribe:) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 672.9 Td (<https://unsubscribe.resend.com/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb250YWN0SWQiOiI4YWFjNDR) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 662.9 Td (jZC1lMTllLTRkNjctODY0OC03ZWEyOTFhNDY1Y2YiLCJicm9hZGNhc3RJZCI6IjYxMjQ5YTdhLWZlZDUtNGRjNy05NTU1LWU1NzU2MG) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 652.9 Td (NmYTVkYSIsInRlYW1JZCI6IjlmNTllNzVkLTc3ZmEtNDE4Mi1hNWMxLTExMzAyNDBiMGM2NyIsImV4cCI6MTgxNzM0MjQ4NX0.kAoAW) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 642.9 Td (eS3RmVbxGMpgx9AjZSnqzRELpif-1BBU53Eg5A>) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 632.9 Td (List-Unsubscribe-Post: List-Unsubscribe=One-Click) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 622.9 Td (Precedence: bulk) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 612.9 Td (X-Entity-Ref-ID: 61249a7a-fed5-4dc7-9555-e57560cfa5da) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 602.9 Td (Message-ID: <0100019fca765ad1-a05300c5-1bc0-42d2-88dc-f91604e2df2b-000000@email.amazonses.com>) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 592.9 Td (Date: Tue, 4 Aug 2026 01:49:41 +0000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 582.9 Td (Feedback-ID:) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 572.9 Td (:1.us-east-1.+J1BWbwV6DuOXyMjo7iDimNIFQWBnPgc/vc/yR7qtAphJ++kcWwobP7+spBZKq6/VlNjaIpKMr/7xj4jf9al6k8ba7) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 562.9 Td (kuHbAM+TZWE9lSrPtqeu7lr7X1/2kpgRMaLwEmFACNrhHaLYTjNwW7Jk6SEdmqOrnMGEfNsNMnpKnLXXw=:1.us-east-1.QSNtDRXS) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 552.9 Td (Tq9sAuvRl56h5mypgasnQ5yDLNpVzTnziu0=:AmazonSES) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 542.9 Td (X-SES-Outgoing: 2026.08.04-54.240.14.57) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 532.9 Td (X-IncomingHeaderCount: 15) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 522.9 Td (Return-Path: 0100019fca765ad1-a05300c5-1bc0-42d2-88dc-f91604e2df2b-000000@send.coldcardblog.org) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 512.9 Td (X-MS-Exchange-Organization-ExpirationStartTime: 04 Aug 2026 01:49:44.0612 \(UTC\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 502.9 Td (X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 492.9 Td (X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 482.9 Td (X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 472.9 Td (X-MS-Exchange-Organization-Network-Message-Id: 7ad1d989-e3e0-4bca-45c3-08def1caa830) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 462.9 Td (X-EOPAttributedMessage: 0) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 452.9 Td (X-EOPTenantAttributedMessage: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa:0) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 442.9 Td (X-MS-Exchange-Organization-MessageDirectionality: Incoming) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 432.9 Td (X-MS-PublicTrafficType: Email) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 422.9 Td (X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB85:EE_|PH7PR10MB6577:EE_|MW4PR10MB5749:EE_) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 412.9 Td (X-MS-Exchange-Organization-AuthSource: TY2PEPF0000AB85.apcprd03.prod.outlook.com) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 402.9 Td (X-MS-Exchange-Organization-AuthAs: Anonymous) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 392.9 Td (X-MS-UserLastLogonTime: 8/4/2026 1:36:22 AM) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 382.9 Td (X-MS-Office365-Filtering-Correlation-Id: 7ad1d989-e3e0-4bca-45c3-08def1caa830) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 372.9 Td (X-Sender-IP: 54.240.14.57) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 362.9 Td (X-MS-Exchange-EOPDirect: true) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 352.9 Td (X-SID-PRA: COINKITE@COLDCARDBLOG.ORG) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 342.9 Td (X-SID-Result: PASS) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 332.9 Td (X-MS-Exchange-Organization-SCL: 5) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 322.9 Td (X-Microsoft-Antispam:) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 312.9 Td (BCL:0;ARA:1444111002|4401999021|6401999021|9800799015|16002599021|70000799018|3151999006|970799063|9400) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 302.9 Td (799043|45200799018|5301999021|8900799020|58200799025|13020799009|69000799021|34130799006|1290799033|470) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 292.9 Td (10799003|2700799033|9301999021|100100799003|51300799024|20103052909095|87000799021|46080799009|12001999) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 282.9 Td (021|7009299003|4302099013|440099028|3412199025|1380799030|1360799030|1370799030|1122599022|260728124719) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 272.9 Td (6008|1602099012|30041999003|2406899039;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 262.9 Td (X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2026 01:49:43.5306 \(UTC\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 252.9 Td (X-MS-Exchange-CrossTenant-Network-Message-Id: 7ad1d989-e3e0-4bca-45c3-08def1caa830) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 242.9 Td (X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 232.9 Td (X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB85.apcprd03.prod.outlook.com) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 222.9 Td (X-MS-Exchange-CrossTenant-AuthAs: Anonymous) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 212.9 Td (X-MS-Exchange-CrossTenant-FromEntityHeader: Internet) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 202.9 Td (X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 192.9 Td (X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6577) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 182.9 Td (X-MS-Exchange-Transport-EndToEndLatency: 00:00:04.4429397) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 172.9 Td (X-MS-Exchange-Processed-By-BccFoldering: 15.21.0270.016) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 162.9 Td (X-Microsoft-Antispam-Mailbox-Delivery:) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 152.9 Td (ucf:0;jmr:0;ex:0;auth:1;dest:J;OFR:SpamFilterAuthJ;ENG:\(5062000311\)\(920221119095\)\(90000117\)\(92022112009) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 142.9 Td (5\)\(90005022\)\(91005020\)\(91035115\)\(9050020\)\(9100341\)\(944500132\)\(2008001181\)\(2008121020\)\(4810010\)\(4910033\)) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 132.9 Td (\(9610028\)\(9560006\)\(10180024\)\(9320005\)\(9245025\)\(120001\);RF:JunkEmail;) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 122.9 Td (X-Message-Delivery: Vj0xLjE7dXM9MDtsPTA7YT0wO0Q9MjtHRD0xO1NDTD02) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 112.9 Td (X-Microsoft-Antispam-Message-Info:) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 102.9 Td (=?utf-8?B?VjdSdlNIRkI0eVVGMTBGdVFiRVlMdXRvRkI5L3FZMWYvZzVmeXdGejBVT3ZO?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 92.9 Td (=?utf-8?B?cnlsUTFDQ2gxb3RZOHhKYWFCQmN5TWdrZkM1M3o1VDhYSHh0Vm44MVpqdk5O?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 82.9 Td (=?utf-8?B?WmhmMUVFaG5ubUhVVEt6OW1XM2x0SXF3VTVuYlN0dWZxMitZcmQzcWRFcWxx?=) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 12 of 14) Tj ET
+endstream
+endobj
+30 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 29 0 R >>
+endobj
+31 0 obj
+<< /Length 9164 >>
+stream
+0.940 0.950 0.960 rg 0.850 0.870 0.890 RG 0.6 w 48.0 235.9 499.3 558.0 re B
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 782.9 Td (=?utf-8?B?Y2FzbEJETEF0S0Z3SmZDdjNWMThpR1ROYWpaYXlrQWJNY3g2SkVtS0ozRmRF?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 772.9 Td (=?utf-8?B?UzU5c0hFdW9kYmVNWk8xT3lXREZCTklCZkk4aU55ZzB6WjFsdHdVWUxDWGw3?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 762.9 Td (=?utf-8?B?RDkrM3ZKVHBJcUVuYTBSREhqaEw5ZWYrNUUwWXBoNnYzZkpoKzR4YjVuQVBG?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 752.9 Td (=?utf-8?B?bWsvSUc1d2xaMVErbncxSkoyd0c5S3RPSzZLWUprSFJUYUlqbG5yZHMwTTVj?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 742.9 Td (=?utf-8?B?b3FiQUlBQm5FRkFscjdEdHpZMHYybGtWd1ZGMlIxSlhDT2huNWNXM2ZBTHp2?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 732.9 Td (=?utf-8?B?M3VJckRZWGNmQ0F1ZGV2dnY5ZHBKR1BhR1FndTA2Q3JvdnBxcFJoRVAxSjNQ?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 722.9 Td (=?utf-8?B?VXJwZjhPSi9taDFSQUc4azRUWnZjQ1FCZ0drL1RyRDZ0eUlPNjJucnhOaTM0?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 712.9 Td (=?utf-8?B?NkxQRXFJQ012em80OThuczgxWUNtVTBFbERKbm1nNFFCVlZHK25zbjg0bWZh?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 702.9 Td (=?utf-8?B?bEVIOTdpUDNua0IwKzJ0dFUvak5LU3ZNY2dERmVyZWFuQXFhR0pEbHlyb3Y3?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 692.9 Td (=?utf-8?B?bGFsVU9vSmtsMU5zUGI1am5jTnI4MFJaem9BS3BvZGJNNC8wcXVBb1NWb2VO?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 682.9 Td (=?utf-8?B?L1BlUHhCVlF2R0ZZWWZyWVlOajlIeSs4YUZGNmJzOUlqaDR0eUliVGRPZXdp?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 672.9 Td (=?utf-8?B?UVNlR09rUE1DWW1YaE9SV3RYYzR0ajM0ZDRVUVpmaDJkVDZtZnpyZEo3MU1G?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 662.9 Td (=?utf-8?B?aGNmZWdqZDhPTjF3QkRiUTJlUzExcnNtbENxbjA2UW1MS1E2bS9BK2xMTzIy?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 652.9 Td (=?utf-8?B?K3l0MERrbDhzVCtvbHNwVTViSGhNV3NRR1lUOWlFcC8zLy9zSmFpY3J2VUdq?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 642.9 Td (=?utf-8?B?NHI1NmZoRjJVVUovSmFZUHREZURISHF3b2FETHlqdGtSNjFzWEQwczJjVTZk?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 632.9 Td (=?utf-8?B?TUdlMUdxT0JhSEwyMlhpS2gwMmhaSEZvOUFZT2k5RVVuSGViZFc2eDRkVzZO?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 622.9 Td (=?utf-8?B?NnVYQ2NabmZNa1FaK3BZTU4xOVdZWGpuWDhyN045OGdvbms0OTNEb0wyN0t3?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 612.9 Td (=?utf-8?B?d0tQelg3Mmt6NUVnZklNdzRMeWY3N2FDYTh4WVZmTkw2TUQ2RzlicGo2SjA5?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 602.9 Td (=?utf-8?B?Qm9HSG4rd2dmT1RSaTRwSWRtM0doYTcyVDdUK21jOTh1eXM3WTcxNG9ieVEx?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 592.9 Td (=?utf-8?B?cUNVRTFvWHZKbVplZkw4ZHZia29NM1N6Nm9SY0sydEh5WWJLUnlPOWVWVGxp?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 582.9 Td (=?utf-8?B?Q2poZ0hSekRQN0NYOHdiN240UVpybitJdFRsOHIrbmovdTJqS1NkZ1J2Smov?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 572.9 Td (=?utf-8?B?d282dUNDNWNsMWlGZ3FkbmpMVnVQVE0yNFlRT1ZVWmU1UFdsZlNnaUxsSXJn?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 562.9 Td (=?utf-8?B?S2srUkVhRjcyWHVCd1JwSWhEZE9lTm5kaFhlWjBxaEJnZmFVQno3WlhHcHJj?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 552.9 Td (=?utf-8?B?b1l3U0liaXZCYXNNUU5NaXIzMjhZVFZ4YWdZVTU0MXJZSDhpTkcvL0dMcWZ4?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 542.9 Td (=?utf-8?B?VkNGT0pGNG93QTc3enR5cThmMlNhQ2RmQ3RPdlpHUS9Ib2pFWHhrWURvc2Zl?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 532.9 Td (=?utf-8?B?aVdNNXJlWjBaMFhDU1FrUXpLRWtVYTFwL3pxM2cxYnd2eWR2K3RvOWg3eDds?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 522.9 Td (=?utf-8?B?RUpNZDRNQXo2NVE3bkcvTXM2eEFtWUxxdi8wNWI3ZFAzaXFJM29CVUM3cm5S?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 512.9 Td (=?utf-8?B?bk9HNmxqa29uUXpKbTFsM2hxNTdDalVSQ0daWFlYQzd2WmlJS3MvZlU1ZXgr?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 502.9 Td (=?utf-8?B?cEwyMlgvNmh5VEFCS1NMLy9vcGNZZkxqdFlQbW9rc2pBR3Awbm83em9iNHdI?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 492.9 Td (=?utf-8?B?VlJtbHVyMSsyN3VrcGRnajI4djZUQk82eGl4RC9FMGNicTA5ejI4Rm4rd2xi?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 482.9 Td (=?utf-8?B?bGpHMXZ2K3hDMUg4RXpFalFDTlpRNFhOQ3hlZjlzOWN2dHZBblpYK0xTU2pW?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 472.9 Td (=?utf-8?B?am12VDdTbmt4a09nOXhMSDgzNnZXUjRNTTNuZFJDblg1RUczNXF0bU5xZFRm?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 462.9 Td (=?utf-8?B?bDdaYWsyVUFLa25KcVNpTTdnbUNhM2FVdUdTWFNZU1FWTG9rdWFKMjV5WFZV?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 452.9 Td (=?utf-8?B?dm53ZU1ncndXL3ZYTk95Q1VpY3hPa3U0eGlGRmVpWVVnR0lOTWRRdVUyZEZG?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 442.9 Td (=?utf-8?B?T2JYM2Q2dSs5TkhINUZoZDltd2xremp4OFpOQzQyekRYQjB4RmgwUmFGY0lX?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 432.9 Td (=?utf-8?B?akJIVHBOT1hadzVkdG03TmNITW9uaU5wZS90cG9lSXQ2NUJTdnRzd0JWL1Y1?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 422.9 Td (=?utf-8?B?MmJKMkx2ek00YXhVOEdOVjZENE5FYVNzaU1zOEJnOUpDVG10VjhMazlNNkJM?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 412.9 Td (=?utf-8?B?WkhQK3lLSW9hdVpQTDBCL3BnSkpPbUsyZkFQWG9NY1BRSjlNVmRpdjFubDFy?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 402.9 Td (=?utf-8?B?cWNiRGV5cmVHbWFRN3R1S0tBVk5lMXF3QWJoWllnMVIxUFhCcExrZnJkZnJT?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 392.9 Td (=?utf-8?B?a3c4VW05N2hJTkxEVnRjVjJRamVnLy9XdFhoZDN3QXAxSC82a1ErYmZQZ3Q5?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 382.9 Td (=?utf-8?B?VUxOU3M4NEVwdHQ2RUt3cDdxNGN1d3F5RElIYUxzYWRwd0plYnZQZGNDUkVm?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 372.9 Td (=?utf-8?B?ZmRhS2ZuWndaaDd6VFgrZnFBeFhTcnJwd2U2TGZFR2d4N2N5TWpFRit3NXlP?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 362.9 Td (=?utf-8?B?aU4rN1BQd0NteTQ1eE9xczZ3bTNlZ3VkeTYzVS9wenlOa204NDJnQzBsZFg4?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 352.9 Td (=?utf-8?B?RjlzZ2pWK0pnSm9pSUJuMGtYb2IrbG04Rmppa2l1aElrb0p1QW9zMVU5WWt5?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 342.9 Td (=?utf-8?B?NE1qcXVNUVJsZytrcWZFQzEyOWthaGxlRnVmV2hlVTdxaVd6aVV3N2tjRy8x?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 332.9 Td (=?utf-8?B?U1hQSzFXRGY5TXFwL3d1TVBRaTJUR1hreHE3TVZDTmVtdGR4eG85enMzbGli?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 322.9 Td (=?utf-8?B?V2RUN09YMEUxSHp6QWhUa3MwMnVZY09nZTBLclRBK01ldmgyQjZUY2VzalJY?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 312.9 Td (=?utf-8?B?endmN3JPTnMrMmtybi8wU0FxWUM4SUt4SkUwM2NMVHJLclZKdlJNdDZlSFlp?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 302.9 Td (=?utf-8?B?SVFiUGs0WXN3ejRmZGdoVmd0YzJOMkdZSTA3OVpwR1dKY0ExWUhrZU5tUjNC?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 292.9 Td (=?utf-8?B?cXl1VTZNMENVN0N3Y0pUNXdJNVRzUlRvM2pOcGFQcGhXSzVFQnp0bHZsS0lJ?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 282.9 Td (=?utf-8?B?Q21ZenJXT2xEeXBxVEVwZnovVUlWRE1seWhwSmVqakhObFc2TkQvUlIvYklE?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 272.9 Td (=?utf-8?B?M1A4bEhmZGFoK0FFZzFBTnd5V2RuQkZKWFM0OTNVTmpZWCtGLzc3MjVWWmhO?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 262.9 Td (=?utf-8?B?dEdrejVrdFl6RFd2ZlhoY2F1VVpDTW00bWJGWmtIL3JUQWNncEFqSmhaaElt?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 252.9 Td (=?utf-8?Q?NB5MhluLiwR4yr8DSJM=3D?=) Tj ET
+BT /F3 7.8 Tf 0.110 0.125 0.140 rg 56.0 242.9 Td (MIME-Version: 1.0) Tj ET
+BT /F2 16 Tf 0.110 0.125 0.140 rg 48.0 202.4 Td (Appendix C: glossary) Tj ET
+0.850 0.870 0.890 rg 48.0 194.5 499.3 1.4 re f
+0.130 0.150 0.170 rg 48.0 168.9 119.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 178.5 Td (Term) Tj ET
+0.130 0.150 0.170 rg 167.8 168.9 379.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 172.8 178.5 Td (Meaning) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 150.3 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 159.9 Td (SPF) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 150.3 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 159.9 Td (A list published by a domain of the servers allowed to send its email.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 131.7 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 141.3 Td (DKIM) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 131.7 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 141.3 Td (A digital signature added by the sending domain, proving the message was not changed.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 113.1 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 122.7 Td (DMARC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 113.1 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 122.7 Td (A policy tying SPF and DKIM to the visible From address.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 94.5 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 104.1 Td (ARC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 94.5 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 104.1 Td (A record that preserves authentication results when email is forwarded.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 75.9 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 85.5 Td (IOC) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 75.9 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 85.5 Td (Indicator of compromise: a fact \(address, domain, hash\) that identifies an attack.) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 13 of 14) Tj ET
+endstream
+endobj
+32 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 31 0 R >>
+endobj
+33 0 obj
+<< /Length 2054 >>
+stream
+0.130 0.150 0.170 rg 48.0 775.3 119.8 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 53.0 784.9 Td (Term) Tj ET
+0.130 0.150 0.170 rg 167.8 775.3 379.5 18.6 re f
+BT /F2 8.5 Tf 1.000 1.000 1.000 rg 172.8 784.9 Td (Meaning) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 746.1 119.8 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 766.3 Td (Hash \(SHA-256\)) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 746.1 379.5 29.2 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 766.3 Td (A fingerprint of a file. The same file always has the same hash; sharing it reveals nothing about) Tj ET
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 755.7 Td (the content.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 727.5 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 737.1 Td (Entropy) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 727.5 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 737.1 Td (How random a file's bytes look. Near 8 suggests encrypted or packed data.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 708.9 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 718.5 Td (Macro) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 708.9 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 718.5 Td (A small program inside an Office file that can run when you click Enable Content.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 690.3 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 699.9 Td (Defanged) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 690.3 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 699.9 Td (Rewritten \(hxxp, [.]\) so a link or address cannot be clicked by accident.) Tj ET
+0.850 0.870 0.890 RG 0.6 w 48.0 671.7 119.8 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 53.0 681.3 Td (TLP) Tj ET
+0.850 0.870 0.890 RG 0.6 w 167.8 671.7 379.5 18.6 re S
+BT /F1 8.6 Tf 0.110 0.125 0.140 rg 172.8 681.3 Td (Traffic Light Protocol: how widely the report may be shared \(CLEAR, GREEN, AMBER, RED\).) Tj ET
+BT /F1 7.5 Tf 0.360 0.390 0.440 rg 48 28 Td (Unmask report  -  TLP:CLEAR  -  UNM-20261107-45D726F8) Tj ET BT /F1 7.5 Tf 0.360 0.390 0.440 rg 495.3 28 Td (Page 14 of 14) Tj ET
+endstream
+endobj
+34 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 33 0 R >>
+endobj
+xref
+0 35
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000213 00000 n 
+0000000310 00000 n 
+0000000412 00000 n 
+0000000507 00000 n 
+0000000713 00000 n 
+0000003126 00000 n 
+0000003278 00000 n 
+0000007175 00000 n 
+0000007328 00000 n 
+0000013893 00000 n 
+0000014047 00000 n 
+0000019816 00000 n 
+0000019970 00000 n 
+0000028452 00000 n 
+0000028606 00000 n 
+0000039185 00000 n 
+0000039339 00000 n 
+0000051219 00000 n 
+0000051373 00000 n 
+0000059578 00000 n 
+0000059732 00000 n 
+0000066221 00000 n 
+0000066375 00000 n 
+0000069055 00000 n 
+0000069209 00000 n 
+0000079211 00000 n 
+0000079365 00000 n 
+0000088202 00000 n 
+0000088356 00000 n 
+0000097573 00000 n 
+0000097727 00000 n 
+0000099834 00000 n 
+trailer
+<< /Size 35 /Root 1 0 R /Info 6 0 R >>
+startxref
+99988
+%%EOF

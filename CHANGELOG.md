@@ -12,6 +12,7 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Link lookups on PhishTank (no key) and URLhaus (free abuse.ch key)**, per link on the Links tab and for every link found inside a file.
 - **Shared Google Docs, Sheets, Slides and Drive files** can be read anonymously and analysed like an attachment.
 - **Investigation reports** in PDF, Word, HTML and STIX 2.1, for leaders (plain language) and security teams (full technical detail, ATT&CK mapping, defanged indicators, hunting queries, a containment checklist), with optional case details, TLP marking and the original message's hash. See [Reports](docs/REPORTS.md).
+- **Example reports from real phishing emails** on the website and in the docs (a fake Binance withdrawal, a fake COLDCARD advisory and a fake gift-card survey), built from the public phishing_pot collection with the original emails not redistributed. See [Example reports](docs/EXAMPLE_REPORTS.md).
 - **Detection from real phishing:** invisible variation-selector characters, several look-alike words in a subject, and hardware-wallet makers (Coinkite/COLDCARD, Ledger, Trezor, Kraken) are now caught. A corpus harness measures Unmask against a folder of real phishing emails (343 → 346 of 400 caught in the first run).
 
 ### Changed

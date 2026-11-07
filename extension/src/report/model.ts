@@ -507,7 +507,7 @@ function technicalSections(report: Report, meta: ReportMeta, evidence: Evidence,
     id: 'appendix-headers',
     title: 'Appendix B: message headers',
     part: 'appendix',
-    blocks: [{ t: 'code', text: cap(email.headers.map((h) => `${h.name}: ${h.value.replace(/\s+/g, ' ')}`).join('\n'), 24000) }],
+    blocks: [{ t: 'p', small: true, text: 'Raw header text as received. It is plain text, not defanged and not clickable.' }, { t: 'code', text: cap(email.headers.map((h) => `${h.name}: ${h.value.replace(/\s+/g, ' ')}`).join('\n'), 24000) }],
   });
   sections.push({
     id: 'appendix-glossary',

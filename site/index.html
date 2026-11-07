@@ -59,6 +59,17 @@
   <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">Stuck? <a href="guide.html#if-loading-fails">Common install errors and fixes</a>.</p>
 </section>
 
+<section class="wrap" id="proof">
+  <h2>Proven on real phishing</h2>
+  <p class="sub">We ran Unmask over <strong>400 real phishing emails</strong> from the public <a href="https://github.com/rf-peixoto/phishing_pot">phishing_pot</a> research collection: scams impersonating banks, crypto wallets, tax offices, theme parks and more, in many languages.</p>
+  <div class="grid">
+    <div class="card"><h3>346 of 400 caught</h3><p>86.5% flagged as Suspicious or High risk. Before this release it was 343.</p></div>
+    <div class="card"><h3>285 rated High risk</h3><p>Nearly three in four were stopped with the strongest warning, each with the reasons in plain language.</p></div>
+    <div class="card"><h3>0 errors, under 0.15 s each</h3><p>Every email analysed without a single failure, none taking longer than 0.13 seconds, entirely on one computer.</p></div>
+  </div>
+  <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">The misses taught us something too: this release added invisible-character, look-alike-letter and crypto-wallet detection found by reading them. <a href="example-reports.html">See what a report looks like for a real phish</a>.</p>
+</section>
+
 <section class="wrap" id="features">
   <h2>Everything a phishing email tries to hide</h2>
   <p class="sub">Every check runs inside your browser. The few online lookups send only a domain name or a file fingerprint, and each can be turned off.</p>
