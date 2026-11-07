@@ -16,7 +16,8 @@ export function tagsNamed(html: string, name: string, max = 200): string[] {
 }
 
 function decodeEntities(s: string): string {
-  return s.replace(/&amp;/g, '&').replace(/&#x2F;/gi, '/').replace(/&#47;/g, '/');
+  // &amp; last, so "&amp;#47;" stays the literal text "&#47;" instead of becoming "/".
+  return s.replace(/&#x2F;/gi, '/').replace(/&#47;/g, '/').replace(/&amp;/g, '&');
 }
 
 /** A <meta refresh> or simple `location = "…"` redirect in a page, without running it. */

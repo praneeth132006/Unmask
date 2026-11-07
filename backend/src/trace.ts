@@ -70,7 +70,8 @@ export function findClientRedirect(html: string): { target: string; via: 'meta-r
 }
 
 function decodeEntities(s: string): string {
-  return s.replace(/&amp;/g, '&').replace(/&#x2F;/gi, '/').replace(/&#47;/g, '/');
+  // &amp; last, so "&amp;#47;" stays the literal text "&#47;" instead of becoming "/".
+  return s.replace(/&#x2F;/gi, '/').replace(/&#47;/g, '/').replace(/&amp;/g, '&');
 }
 
 async function readLimited(body: ReadableStream<Uint8Array> | null): Promise<string> {

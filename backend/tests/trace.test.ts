@@ -74,6 +74,11 @@ describe('findClientRedirect', () => {
     expect(findClientRedirect('<script>location.href = "#top"</script>')).toBeNull();
     expect(findClientRedirect('<script>location.replace("https://x.top/p")</script>')).toEqual({ target: 'https://x.top/p', via: 'javascript' });
   });
+
+  it('decodes each entity once', () => {
+    const html = '<meta http-equiv="refresh" content="0; url=https://x.top/a?b=1&amp;c=&amp;#47;&#47;">';
+    expect(findClientRedirect(html)?.target).toBe('https://x.top/a?b=1&c=&#47;/');
+  });
 });
 
 describe('http api', () => {
