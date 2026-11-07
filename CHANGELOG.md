@@ -4,6 +4,22 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-07
+
+### Added
+- **Documents tab: look inside every attachment, on your computer.** PDFs are read the way `pdfid` and `pdf-parser` do (keyword counts including keywords hidden in compressed object streams or written with `#xx` escapes, objects, actions, JavaScript, embedded files, links that cover a whole page, metadata). Word, Excel and PowerPoint files are taken apart (remote templates, hyperlinks with their visible text, fields and formulas, hidden sheets and slides, ActiveX, embedded objects, "Enable editing" lure text). VBA macros are decompressed and analysed, including Excel 4.0 macro sheets; legacy Office containers, RTF objects, nested archives, indicator extraction and base64 decoding are covered too. Findings are explained in plain words and tagged with MITRE ATT&CK. See [File forensics](docs/FILE_FORENSICS.md).
+- **Hash-only malware lookups:** Hybrid Analysis and MalwareBazaar join VirusTotal. Only a file's SHA-256 is sent, on click.
+- **Link lookups on PhishTank (no key) and URLhaus (free abuse.ch key)**, per link on the Links tab and for every link found inside a file.
+- **Shared Google Docs, Sheets, Slides and Drive files** can be read anonymously and analysed like an attachment.
+- **Investigation reports** in PDF, Word, HTML and STIX 2.1, for leaders (plain language) and security teams (full technical detail, ATT&CK mapping, defanged indicators, hunting queries, a containment checklist), with optional case details, TLP marking and the original message's hash. See [Reports](docs/REPORTS.md).
+- **Detection from real phishing:** invisible variation-selector characters, several look-alike words in a subject, and hardware-wallet makers (Coinkite/COLDCARD, Ledger, Trezor, Kraken) are now caught. A corpus harness measures Unmask against a folder of real phishing emails (343 → 346 of 400 caught in the first run).
+
+### Changed
+- **Files are never uploaded.** The VirusTotal "Upload file…" button is gone; lookups use the file's hash only.
+
+### Fixed
+- **The Peek button disappeared on emails with an Unsubscribe link:** Gmail rebuilds those rows on hover, which removed the button, and the removal was mistaken for Unmask's own change. It now comes back, and hovering a row re-checks it.
+
 ## [0.4.0] - 2026-10-25
 
 ### Added

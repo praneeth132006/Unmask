@@ -77,6 +77,8 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 - `extension/e2e/run.mjs` loads the built extension in Chromium with Playwright. `mail.google.com` is routed to `e2e/fake-gmail.html`, so no Google account is used. It checks the session token, message detection, raw download, highlighting, and that reloading the extension leaves no uncaught errors.
 - Parsers that read untrusted input have timing tests. Keep regexes bounded: no `[^>]+` across a whole document.
 - Analyzer tests use real-looking `.eml` fixtures. Don't commit real personal email.
+- **Measuring against real phishing.** `tests/corpusEval.test.ts` runs Unmask over a folder of real phishing emails, such as a checkout of [phishing_pot](https://github.com/rf-peixoto/phishing_pot), and reports how many are caught and which are missed: `UNMASK_CORPUS_DIR=/path/to/email UNMASK_CORPUS_LIMIT=400 pnpm --filter unmask-extension exec vitest run tests/corpusEval.test.ts`. It is skipped unless the folder is set. Never copy those samples into this repository (their licence is not clear): turn a missed pattern into a small invented fixture instead.
+- File-analysis tests build their own harmless PDFs, Office files and OLE containers (`tests/forensicsHelpers.ts`). Never commit real malware.
 - UI changes: check the panel in **both light and dark mode** before opening a PR.
 
 ## Commits and pull requests

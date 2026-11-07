@@ -29,6 +29,8 @@
   <a href="https://github.com/praneeth132006/Unmask/wiki">Wiki</a> ·
   <a href="docs/ANALYSIS.md">How it analyses an email</a> ·
   <a href="docs/CHECKS.md">What it checks</a> ·
+  <a href="docs/FILE_FORENSICS.md">File forensics</a> ·
+  <a href="docs/REPORTS.md">Reports</a> ·
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
@@ -102,10 +104,10 @@ Click the Unmask icon for the full report. The side panel shows:
 - **A risk score from 0 to 100** with a verdict: *High risk*, *Suspicious* or *No red flags found*.
 - **Every red flag in plain language**, for example *"The name says service@paypal.com, but the email was really sent from billing@paypa1-support.xyz."*
 - **Where each link really goes**, with redirect wrappers removed, and buttons to see the final page in a sandbox.
-- **Attachment checks**, including files pretending to be something else (`Invoice.pdf.html`) and a VirusTotal lookup.
+- **Attachment checks**, including files pretending to be something else (`Invoice.pdf.html`), and a **Documents** tab that looks *inside* PDFs, Word, Excel, PowerPoint and RTF files, entirely on your computer. Files are never uploaded.
 - **Hidden text and tracking pixels** the sender didn't want you to see.
 - **"You've never received mail from paypa1-support.xyz. Your PayPal emails usually come from paypal.com."** Unmask remembers, only on your device, who normally emails you.
-- **Report it in one click** to Gmail, APWG, Netcraft, Google Safe Browsing or PhishTank, or export a PDF or JSON report for your IT team.
+- **Report it in one click** to Gmail, APWG, Netcraft, Google Safe Browsing or PhishTank, or export an **investigation report** (PDF, Word, HTML or STIX) with a plain-language summary for leaders and a detailed technical part for security teams.
 
 **Hover any red flag, link, or URL in the plain text and Unmask outlines that exact part of the email in Gmail.** Click a red flag to jump to the details, then use **Back to summary** to return. Switch between light, dark and system themes from the header.
 
@@ -116,6 +118,70 @@ Click the Unmask icon for the full report. The side panel shows:
 </p>
 
 Using another mail app? Save the email as an `.eml` file and drop it on the panel, or paste its raw source.
+
+## Look inside files, and report it properly
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### Documents tab: look inside every attachment
+
+Unmask reads each attachment as raw bytes, **never opening or uploading it**. It counts the risky keywords in a PDF (the `pdfid` view), finds hidden JavaScript and the actions that run when a file opens, unpacks compressed object streams, reads Word macros and flags remote templates, reads spreadsheets' hidden sheets and Excel 4.0 macros, and extracts **every link**, with the text people click. Findings are explained in everyday words and tagged with MITRE ATT&CK techniques.
+
+<img src="docs/images/panel-documents.png" width="300" alt="Documents tab: a PDF that runs JavaScript on open, with a whole-page link">
+
+</td>
+<td width="50%" valign="top">
+
+### Macros and remote templates
+
+Word and Excel files are taken apart: the VBA macro source is decompressed, auto-run entry points and what the code can do are listed, and a template fetched from the internet (template injection) is flagged along with "Enable editing" lure text.
+
+<img src="docs/images/panel-documents-macros.png" width="300" alt="A macro-enabled Word file with an auto-run macro and a remote template">
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### Your files stay private
+
+Only a file's **fingerprint** (hash) is ever sent, and only when you click: to VirusTotal, Hybrid Analysis or MalwareBazaar. There is no upload button, so nobody else can find your documents. Every link inside a file can be tested, including against PhishTank and URLhaus.
+
+<img src="docs/images/panel-documents-lookups.png" width="300" alt="Hash-only lookups on three services">
+
+</td>
+<td width="50%" valign="top">
+
+### Shared Google Docs, read safely
+
+A link on `docs.google.com` looks safe, but attackers host phishing there. Unmask can read a publicly shared Doc, Sheet, Slides or Drive file **anonymously** (not signed in as you), then analyse it like any attachment.
+
+<img src="docs/images/panel-documents-google.png" width="300" alt="A shared Google Doc read without signing in, with its hidden link found">
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
+### Reports for leaders and for investigators
+
+One report, two audiences: **Part A** is plain language (what happened, the business risk, what to do, who to tell); **Part B** is the full technical analysis (authentication, delivery path, file forensics, ATT&CK mapping, defanged indicators, hunting queries, a containment checklist). Export it as **PDF**, **Word**, **HTML** or **STIX 2.1**.
+
+<p align="center">
+  <img src="docs/images/report-pdf-cover.png" width="230" alt="PDF report cover">
+  &nbsp;
+  <img src="docs/images/report-pdf-summary.png" width="230" alt="PDF executive summary">
+  &nbsp;
+  <img src="docs/images/report-technical.png" width="330" alt="HTML report: file forensics">
+</p>
+
+How it works: [File forensics](docs/FILE_FORENSICS.md) · [Reports](docs/REPORTS.md)
+
+</td>
+</tr>
+</table>
 
 ## Highlights
 
@@ -136,6 +202,9 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 | **Fake logos** | An email showing PayPal's logo that PayPal didn't send, by asset host, alt text or image fingerprint. |
 | **Domain intelligence** | Brand-new TLS certificates (Certificate Transparency) and domains without mail records (DNS), from free public sources. |
 | **Link checks** | Text that shows one site but links to another; Google, Microsoft Safe Links and Proofpoint wrappers removed; IP addresses, punycode, `user@host` tricks, shorteners, free hosting, risky endings like `.top`. |
+| **File forensics** | PDF keyword counts and objects (`pdfid`/`pdf-parser` style), JavaScript and auto-run actions, hidden object streams, VBA macros and Excel 4.0 sheets, remote templates, embedded files, RTF exploit objects, nested archives, every link with its visible text, and local hashes. See [File forensics](docs/FILE_FORENSICS.md). |
+| **Investigation reports** | Executive and technical parts in PDF, Word, HTML and STIX 2.1, with defanged indicators, ATT&CK mapping and hunting queries. See [Reports](docs/REPORTS.md). |
+| **Threat intelligence** | Hash-only lookups on VirusTotal, Hybrid Analysis and MalwareBazaar; link lookups on PhishTank and URLhaus. Files are never uploaded. |
 | **Attachment checks** | Executables, disk images, HTML/SVG attachments, macro documents, double extensions, right-to-left filename tricks, password-protected ZIPs. Looks inside: links hidden in PDFs, macros and remote templates in Office files, the file list of ZIPs, and a safe preview of HTML attachments. |
 | **Body checks** | Invisible text used to fool spam filters, forms and password fields inside the email, pressure and urgency phrases. A safe view with scripts off, links disabled and remote images blocked. |
 | **Privacy** | Tracking pixels and click-tracked links from ~40 services (Mailchimp, HubSpot, Mailtrack, Superhuman, …). |

@@ -258,6 +258,27 @@ The attachment's worst flag sets its points (Critical 35, High 22, Medium 10, Lo
 
 ---
 
+## File forensics
+
+Run on every attachment, entirely on your computer (see [File forensics](FILE_FORENSICS.md)). Each finding names its MITRE ATT&CK technique where one clearly applies. Points use the same severity scale as the rest of Unmask.
+
+| Check | Severity |
+|---|---|
+| PDF with JavaScript (higher when it runs on open or uses exploit-style calls) | High, Critical |
+| PDF `/Launch`, embedded program, `GoToR` to a file share, XFA, rich media, JBIG2 | Critical to Medium |
+| PDF link covering a whole page; keywords hidden in object streams or written with `#xx` escapes | Medium, High |
+| Data before the `%PDF` header or after the last `%%EOF`; many `%%EOF` markers; encrypted PDF | Medium to Low |
+| Office remote template (template injection), remote objects, UNC or `file:` paths | Critical, High |
+| Macros (Critical when they run on open and use risky features), obfuscated macros, Excel 4.0 sheets | Critical to High |
+| DDE, `MACROBUTTON`, command-style formulas, program/macro actions in slides | High, Medium |
+| Hidden or very hidden sheets, `Auto_Open` name, ActiveX, embedded objects | Medium, Low |
+| "Enable editing" style lure text | Medium |
+| RTF embedded exploit objects, padded object data, remote template | Critical, High |
+| Equation Editor and packager objects in legacy Office files | Critical, High |
+| A file that is really a program, shortcut or script, whatever its name says | Critical, High |
+| Content that does not match the file name; packed or encrypted-looking data (entropy) | High, Medium |
+| Documents inside archives and objects, analysed the same way; worst findings bubbled up | As found |
+
 ## Body content
 
 Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts).
@@ -425,6 +446,8 @@ These run only when you click them, except domain age and domain intelligence, w
 | **Domain age** (rdap.org) | The sender's domain name | See [Sender identity](#sender-identity) |
 | **VirusTotal: file** | The file's SHA-256 hash | 3+ engines: Critical 40 · 1–2: High 20 · clean or unknown: Note 0 |
 | **Hybrid Analysis / MalwareBazaar: file** | The file's SHA-256 hash | Known malware: Critical 40 · suspicious: High 20 · no record: Note 0 |
+| **URLhaus / PhishTank: link** | The link | Known malware or verified phishing: Critical 40 · reported, not yet verified: High 20 · no record: Note 0 |
+| **Google Doc, Sheet, Slides, Drive: look inside** | Nothing is uploaded. Google's public copy is downloaded anonymously and read here | Findings inside are added to the email's score |
 | **VirusTotal: link** | The link | 3+ engines: Critical 40 · 1–2: High 20 |
 | **urlscan.io sandbox scan** | The link | urlscan says malicious: Critical 40, plus the final page, a screenshot and any brand it impersonates |
 | **Redirect trace** (your server) | The link | The redirect chain (informational) |

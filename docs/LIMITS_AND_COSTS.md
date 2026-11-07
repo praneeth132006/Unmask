@@ -50,6 +50,22 @@ Prices exclude taxes. For personal use, **Free is all you need**.
 
 Official source: [urlscan.io pricing](https://urlscan.io/pricing/).
 
+## Hybrid Analysis
+
+A free community service run by CrowdStrike. A key needs a verified account and may need approval before API access works. Unmask only reads the existing report for a file's hash, so it never submits anything. Rate limits apply and are set by Hybrid Analysis.
+
+## abuse.ch (MalwareBazaar and URLhaus)
+
+Free with an abuse.ch account; one Auth-Key covers both. Unmask sends a file hash (MalwareBazaar) or a link (URLhaus), only when you click. Use is subject to abuse.ch's fair-use terms.
+
+## PhishTank
+
+No key is needed for anonymous link lookups, which are rate-limited by PhishTank. Unmask paces them and says so if the limit is reached. PhishTank is not issuing new API keys, so Unmask does not use one.
+
+## Shared Google files
+
+Unmask downloads the public Office-format copy of a Doc, Sheet, Slides or Drive file (up to 15 MB) from Google, anonymously. Private files cannot be read.
+
 ## Domain age (RDAP)
 
 rdap.org is a free public service that forwards each lookup to the official registry for that domain ending (for example Verisign for `.com`). There is no account and no published quota. Unmask makes **one lookup per email**, only for the sender's domain, and you can turn it off in **Settings → Privacy**.

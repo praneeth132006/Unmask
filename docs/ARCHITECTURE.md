@@ -118,6 +118,20 @@ type FindingTarget =
 
 Online checks call `withExtraFindings(report, findings)`, which replaces findings with the same id and re-scores.
 
+## File forensics and reports
+
+`src/forensics/` reads attachments as bytes, with no rendering and no execution:
+
+| File | Role |
+|---|---|
+| `index.ts` | `analyzeFile`: sniff the type, dispatch, follow nested files (2 levels, size and count budgets), bubble findings up |
+| `pdf.ts` | `pdfid`-style keyword counts (with hidden and disguised counts), object and stream parsing, action and JavaScript resolution, links with page coverage, embedded files |
+| `ole.ts` | OLE2/CFB container reader, MS-OVBA decompression, VBA module analysis, BIFF macro sheets, `Ole10Native`, property sets |
+| `ooxml.ts` | Relationships, hyperlinks with text, fields, formulas, slides, macros, embedded objects, lure text |
+| `rtf.ts`, `ioc.ts`, `util.ts` | RTF objects; indicator and base64 extraction; magic bytes, entropy, hashes, PDF filters |
+
+`src/report/` turns a `Report` into a document model (`model.ts`) rendered by `pdfWriter.ts`, `docx.ts` (with `zip.ts`), `html.ts` and `stix.ts`. All of it runs in the panel; nothing is sent anywhere.
+
 ## The side panel
 
 React 19 + Tailwind CSS 4, built with [WXT](https://wxt.dev). All colours come from CSS custom properties in [`sidepanel/style.css`](../extension/entrypoints/sidepanel/style.css) with a `prefers-color-scheme: dark` counterpart.
@@ -148,6 +162,8 @@ Elements get a `data-unmask-hl` attribute styled by one injected `<style>`. `cle
 | `virustotal.ts` | `/api/v3/files/<sha256>` (hash lookup only), `/urls/<id>`, `/analyses/<id>` | URL ids are unpadded base64url; polling respects the free 4/min limit. There is no file upload anywhere in Unmask |
 | `urlscan.ts` | `/api/v1/scan/`, `/api/v1/result/<uuid>/` | Polls until ready; screenshot from `/screenshots/<uuid>.png` |
 | `trace.ts` | built-in (background worker) or `<backend>/api/trace?url=` | Built-in: `lib/builtinTrace.ts` fetches with `credentials: 'omit'`, records hops with `webRequest.onBeforeRedirect` (matched by request id, initiator and `tabId -1`), parses meta/JS redirects from 256 KB, blocks local-network targets at every hop; traces are serialized. Needs the optional `<all_urls>` permission, requested from a click |
+| `intel.ts` | Hybrid Analysis `/api/v2/overview/<sha256>`; MalwareBazaar `mb-api.abuse.ch/api/v1/` (`get_info` by hash); URLhaus `/v1/url/`; PhishTank `checkurl` | Hash- or link-only; a GET or a small form POST, never a file body. Origins are requested from a click (`ensureOrigins`), as subsets of the optional `<all_urls>` |
+| `googleDocs.ts` | `docs.google.com/.../export?format=docx`, `drive.google.com/uc` | Anonymous (`credentials: 'omit'`, no referrer), 15 MB cap; a sign-in page means the file is private |
 | `keyTest.ts` | VirusTotal EICAR lookup, urlscan quotas, backend `/api/health` | Validates a key before saving it |
 
 ## Security model

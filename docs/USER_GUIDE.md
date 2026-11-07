@@ -241,6 +241,27 @@ A scan takes 10 to 30 seconds. **Every scan is private**: only your urlscan.io k
 
 ---
 
+## 6a. Looking inside attachments (the Documents tab)
+
+When an email has attachments, a **Documents** tab appears next to **Files**. It opens every attachment *on your computer* and shows what is inside, without ever running it:
+
+<p><img src="images/panel-documents.png" width="320" alt="The Documents tab"></p>
+
+- **Findings** in everyday words, such as "This PDF runs code the moment it opens", with the technical detail underneath.
+- **PDF structure**, **macros**, **fields**, **links** and **embedded files**, each in a section you can open.
+- **Fingerprints** (SHA-256, SHA-1, MD5) and how random the data looks.
+- **Look this file up by its fingerprint** on VirusTotal, Hybrid Analysis or MalwareBazaar. **Only the fingerprint is sent. The file is never uploaded.** "No record" means unknown, never safe.
+- **Test these links** (VirusTotal) and **Check phishing lists** (PhishTank, URLhaus) for every link found inside the file.
+- **Google Docs, Sheets, Slides and Drive links** in the email get a **Look inside** button that reads the publicly shared copy without signing in as you.
+
+To use Hybrid Analysis or MalwareBazaar, add a free key under **Settings → Extra checks**: the same step-by-step setup used for VirusTotal appears when you first click the button. PhishTank needs no key.
+
+Details: [File forensics](FILE_FORENSICS.md).
+
+## 6b. Exporting a report
+
+On the **Summary** tab, scroll to **Report or export**. Pick who the report is for (**Complete**, **Executive only** or **Technical only**), optionally fill in **Case details**, then click **PDF**, **Word**, **HTML** or **STIX**. The report has a plain-language part for leaders and a detailed technical part for security teams. Indicators in it are defanged so it is safe to open and share. Details: [Reports](REPORTS.md).
+
 ## 7. Tracing redirects
 
 <img src="images/trace-dark.png" width="280" align="right" alt="Trace redirects explainer card">
@@ -444,6 +465,12 @@ Copy the key again from your [API key page](https://www.virustotal.com/gui/my-ap
 
 **"VirusTotal rate limit reached."**
 Free keys allow 4 lookups per minute. Wait a minute and try again.
+
+**"Hybrid Analysis says this key is not valid."**
+New Hybrid Analysis accounts must be verified, and API access can need approval. Open your profile on hybrid-analysis.com to check.
+
+**"Permission not granted" on a lookup.**
+Chrome asks once for permission to contact the service. Unmask only sends fingerprints and links, never files. Click the button again and choose *Allow*.
 
 **I updated the code but nothing changed.**
 Run `pnpm build`, click **↻** on the Unmask card in `chrome://extensions`, then reload Gmail.

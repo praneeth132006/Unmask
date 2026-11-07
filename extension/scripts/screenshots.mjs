@@ -7,7 +7,9 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import { execFileSync } from 'node:child_process';
 import QRCode from 'qrcode';
+import { demoDocm, demoPdf, zipStore } from './fixtures.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ext = join(here, '..', '..', 'build', 'unmask-e2e');
@@ -288,6 +290,122 @@ await linkCard.getByRole('button', { name: /Sandbox scan/ }).click();
 await linkCard.locator('text=Save screenshot').waitFor({ timeout: 40000 });
 await p.waitForTimeout(300);
 await element(linkCard, 'panel-landing-page.png');
+
+// ---- Documents tab, hash-only lookups, shared Google files and the investigation report ----------
+// Every service below is a local test double, so nothing leaves this computer and no key is real.
+const GDOC = '1AbCdEfGhIjKlMnOpQrStUvWxYz0123456789';
+const sharedDoc = zipStore([
+  ['[Content_Types].xml', Buffer.from('<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>')],
+  ['word/document.xml', Buffer.from('<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body><w:p><w:r><w:t>Shared secure document. Click below to view your payment details.</w:t></w:r></w:p><w:p><w:hyperlink r:id="rId5"><w:r><w:t>View document</w:t></w:r></w:hyperlink></w:p></w:body></w:document>')],
+  ['word/_rels/document.xml.rels', Buffer.from('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId5" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="https://paypa1-secure.top/login?doc=gd-8841" TargetMode="External"/></Relationships>')],
+]);
+const filesHtml = `<div style="font-family:Arial,sans-serif;max-width:560px"><p>Dear customer,</p><p>Your invoice 84213 is overdue. Open the attached files and review the shared document: <a href="https://docs.google.com/document/d/${GDOC}/edit?usp=sharing">Payment details</a></p></div>`;
+const filesEml = [
+  'Delivered-To: you@example.com',
+  'Authentication-Results: mx.google.com; spf=fail smtp.mailfrom=invoice-portal.example; dkim=none; dmarc=fail header.from=invoice-portal.example',
+  'From: "Accounts Receivable" <billing@invoice-portal.example>',
+  'To: you@example.com',
+  'Subject: Invoice 84213 - payment overdue',
+  'Date: Tue, 20 Oct 2026 08:00:00 +0000',
+  'Message-ID: <files-demo-1@invoice-portal.example>',
+  'MIME-Version: 1.0',
+  'Content-Type: multipart/mixed; boundary="b2"',
+  '',
+  '--b2',
+  'Content-Type: text/html; charset=utf-8',
+  'Content-Transfer-Encoding: base64',
+  '',
+  b64(filesHtml),
+  '--b2',
+  'Content-Type: application/pdf; name="Invoice_84213.pdf"',
+  'Content-Disposition: attachment; filename="Invoice_84213.pdf"',
+  'Content-Transfer-Encoding: base64',
+  '',
+  b64(demoPdf()),
+  '--b2',
+  'Content-Type: application/vnd.ms-word.document.macroEnabled.12; name="Payment_Form.docm"',
+  'Content-Disposition: attachment; filename="Payment_Form.docm"',
+  'Content-Transfer-Encoding: base64',
+  '',
+  b64(demoDocm()),
+  '--b2--',
+  '',
+].join('\r\n');
+
+await ctx.route('https://docs.google.com/**', (route) => route.fulfill({ status: 200, contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', body: sharedDoc }));
+await ctx.route('https://www.hybrid-analysis.com/**', (route) => route.fulfill({ status: 404, contentType: 'application/json', body: '{}' }));
+await ctx.route('https://mb-api.abuse.ch/**', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ query_status: 'hash_not_found' }) }));
+await ctx.route('https://urlhaus-api.abuse.ch/**', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ query_status: 'no_results' }) }));
+await ctx.route('https://checkurl.phishtank.com/**', (route) => {
+  const hit = /paypa1/.test(Buffer.from(new URLSearchParams(route.request().postData() ?? '').get('url') ?? '', 'base64').toString());
+  return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ meta: { status: 'success' }, results: hit ? { in_database: true, phish_id: 8841, phish_detail_url: 'https://phishtank.org/phish_detail.php?phish_id=8841', verified: true, valid: true, verified_at: '2026-10-19T10:00:00+00:00' } : { in_database: false } }) });
+});
+await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...r['unmask:settings'], hybridApiKey: 'h'.repeat(40), abuseChKey: 'a'.repeat(32), simpleMode: false } })));
+await p.goto(`chrome-extension://${extId}/sidepanel.html`);
+await p.setInputFiles('input[type=file]', { name: 'invoice.eml', mimeType: 'message/rfc822', buffer: Buffer.from(filesEml) });
+await p.waitForSelector('text=High risk', { timeout: 15000 });
+await p.getByRole('tab', { name: /Documents/ }).click();
+await p.waitForSelector('[id^="unmask-doc-"]', { timeout: 15000 });
+await p.waitForTimeout(400);
+await shot(p, 'panel-documents.png');
+// Tall element screenshots would show the sticky header halfway down: let it scroll away instead.
+await p.evaluate(() => document.querySelectorAll('*').forEach((el) => { if (getComputedStyle(el).position === 'sticky') el.style.position = 'static'; }));
+const pdfCard = p.locator('[id^="unmask-doc-"]', { hasText: 'Invoice_84213.pdf' });
+await pdfCard.locator('details', { hasText: 'PDF structure' }).evaluate((d) => (d.open = true));
+await element(pdfCard, 'panel-documents-pdf.png');
+const docmCard = p.locator('[id^="unmask-doc-"]', { hasText: 'Payment_Form.docm' });
+await element(docmCard, 'panel-documents-macros.png');
+// Fingerprint lookups (simulated answers: no record found).
+await pdfCard.getByRole('button', { name: /Hybrid Analysis/ }).click();
+await pdfCard.getByRole('button', { name: /MalwareBazaar/ }).click();
+await pdfCard.locator('text=never analyzed').waitFor({ timeout: 15000 });
+await pdfCard.locator('text=no record').first().waitFor({ timeout: 15000 });
+await element(pdfCard.locator('text=Look this file up by its fingerprint').locator('..'), 'panel-documents-lookups.png');
+// Links found inside the file, checked against PhishTank (simulated: the demo domain is listed).
+await pdfCard.getByRole('button', { name: /Check phishing lists/ }).click();
+await pdfCard.locator('text=community-verified').first().waitFor({ timeout: 20000 });
+await element(pdfCard.locator('details', { hasText: 'Links found inside this file' }), 'panel-documents-links.png');
+// A shared Google Doc, read anonymously.
+const gdocs = p.locator('text=Google files linked in this email').locator('..');
+await gdocs.getByRole('button', { name: /Look inside/ }).click();
+await gdocs.locator('text=Shared secure document').first().waitFor({ timeout: 20000 }).catch(() => {});
+await p.waitForTimeout(400);
+await element(gdocs, 'panel-documents-google.png');
+
+// The investigation report: choose who it is for, then build it in each format.
+await p.getByRole('tab', { name: /Summary/ }).click();
+await p.locator('text=Report or export').scrollIntoViewIfNeeded();
+await p.locator('summary', { hasText: 'Case details' }).click();
+await p.getByLabel('Prepared by').fill('A. Analyst');
+await p.getByLabel('Organisation').fill('Example Corp SOC');
+await p.waitForTimeout(200);
+await element(p.locator('[aria-label="Report or export"]'), 'panel-report-formats.png');
+const download = async (name) => {
+  const [dl] = await Promise.all([p.waitForEvent('download', { timeout: 20000 }), p.getByRole('button', { name }).click()]);
+  const path = join(tmpdir(), `unmask-shot-${Date.now()}-${dl.suggestedFilename()}`);
+  await dl.saveAs(path);
+  return path;
+};
+const htmlPath = await download(/^HTML/);
+const rp = await ctx.newPage();
+await rp.setViewportSize({ width: 1000, height: 1250 });
+await rp.goto(`file://${htmlPath}`);
+await rp.waitForSelector('#summary');
+await shot(rp, 'report-executive.png');
+await rp.locator('#attachments').scrollIntoViewIfNeeded();
+await rp.waitForTimeout(200);
+await shot(rp, 'report-technical.png');
+await rp.close();
+const pdfPath = await download(/^PDF/);
+try {
+  execFileSync('pdftoppm', ['-r', '80', '-png', '-f', '1', '-l', '1', pdfPath, join(out, 'report-pdf-cover')]);
+  execFileSync('pdftoppm', ['-r', '80', '-png', '-f', '4', '-l', '4', pdfPath, join(out, 'report-pdf-summary')]);
+  const { renameSync, readdirSync } = await import('node:fs');
+  for (const f of readdirSync(out).filter((n) => /^report-pdf-(cover|summary)-\d+\.png$/.test(n))) renameSync(join(out, f), join(out, f.replace(/-\d+\.png$/, '.png')));
+  console.log('wrote report-pdf-cover.png, report-pdf-summary.png');
+} catch {
+  console.log('pdftoppm not available: skipped the PDF page images');
+}
 
 // Simple mode: plain words only.
 await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...r['unmask:settings'], simpleMode: true } })));

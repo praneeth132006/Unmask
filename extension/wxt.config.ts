@@ -54,7 +54,18 @@ export default defineConfig({
       // Domain intelligence: certificate history and mail DNS records (only domain names are sent).
       'https://crt.sh/*',
       'https://dns.google/*',
-      ...(process.env.UNMASK_E2E ? ['*://*.unmask-e2e.test/*'] : []),
+      ...(process.env.UNMASK_E2E
+        ? [
+            '*://*.unmask-e2e.test/*',
+            // Test build only: lets the screenshot and end-to-end runs reach the services (mocked) without a permission prompt.
+            'https://docs.google.com/*',
+            'https://drive.google.com/*',
+            'https://www.hybrid-analysis.com/*',
+            'https://mb-api.abuse.ch/*',
+            'https://urlhaus-api.abuse.ch/*',
+            'https://checkurl.phishtank.com/*',
+          ]
+        : []),
     ],
     action: {
       default_title: 'Open Unmask',
