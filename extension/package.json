@@ -23,7 +23,8 @@
     "build:e2e": "UNMASK_E2E=1 wxt build",
     "logos": "node scripts/gen-logo-hashes.mjs",
     "test:e2e:offscreen": "VITE_UNMASK_FORCE_REMOTE=1 UNMASK_E2E=1 wxt build && VITE_UNMASK_FORCE_REMOTE=1 node e2e/run.mjs",
-    "screenshots": "UNMASK_E2E=1 wxt build && node scripts/screenshots.mjs"
+    "screenshots": "UNMASK_E2E=1 wxt build && node scripts/screenshots.mjs",
+    "screenshots:teams": "UNMASK_E2E=1 wxt build && node scripts/teams-screenshots.mjs"
   },
   "dependencies": {
     "jsqr": "1.4.0",

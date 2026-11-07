@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title>How Unmask works in a team</title>
+  <desc>The IT admin sets the list once in the console they already use. It goes to every browser, where Unmask warns employees about fakes. Employees report phishing to the admin's own security dashboard. Nothing goes to Unmask's developer.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="400" rx="16" fill="#f8fafc"/>
+
+  <!-- 1. Admin console -->
+  <rect x="24" y="40" width="270" height="170" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <circle cx="52" cy="70" r="14" fill="#61892f"/>
+  <text x="52" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+  <text x="76" y="75" font-size="16" font-weight="700" fill="#111827">IT admin, once</text>
+  <text x="44" y="106" font-size="13" fill="#374151">In the console you already use:</text>
+  <text x="44" y="130" font-size="13" fill="#111827" font-weight="600">Google Admin · Intune</text>
+  <text x="44" y="150" font-size="13" fill="#111827" font-weight="600">Group Policy · Mac profile</text>
+  <text x="44" y="176" font-size="13" fill="#374151">Force-install Unmask and</text>
+  <text x="44" y="194" font-size="13" fill="#374151">paste the protection list.</text>
+
+  <!-- 2. Every browser -->
+  <rect x="345" y="40" width="270" height="170" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <circle cx="373" cy="70" r="14" fill="#61892f"/>
+  <text x="373" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">2</text>
+  <text x="397" y="75" font-size="16" font-weight="700" fill="#111827">Every work browser</text>
+  <text x="365" y="106" font-size="13" fill="#374151">Unmask installs by itself and</text>
+  <text x="365" y="124" font-size="13" fill="#374151">shows the list in Settings as</text>
+  <text x="365" y="146" font-size="13" fill="#111827" font-weight="600">“From your organisation”.</text>
+  <text x="365" y="176" font-size="13" fill="#374151">Employees set up nothing.</text>
+
+  <!-- 3. Warning -->
+  <rect x="666" y="40" width="270" height="170" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <circle cx="694" cy="70" r="14" fill="#61892f"/>
+  <text x="694" y="75" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">3</text>
+  <text x="718" y="75" font-size="16" font-weight="700" fill="#111827">A fake arrives</text>
+  <text x="686" y="106" font-size="13" fill="#374151">“Priya (CEO)” from a Gmail</text>
+  <text x="686" y="124" font-size="13" fill="#374151">address asks for a transfer.</text>
+  <rect x="686" y="140" width="230" height="46" rx="8" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="698" y="160" font-size="13" font-weight="700" fill="#b91c1c">⚠ Pretends to be Priya,</text>
+  <text x="698" y="177" font-size="13" font-weight="700" fill="#b91c1c">who is on your list</text>
+
+  <line x1="296" y1="125" x2="341" y2="125" stroke="#4b5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="617" y1="125" x2="662" y2="125" stroke="#4b5563" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4. Reports -->
+  <rect x="345" y="260" width="591" height="104" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <circle cx="373" cy="290" r="14" fill="#61892f"/>
+  <text x="373" y="295" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">4</text>
+  <text x="397" y="295" font-size="16" font-weight="700" fill="#111827">Employee reports it</text>
+  <text x="365" y="322" font-size="13" fill="#374151">It lands in the admin’s own security dashboard:</text>
+  <text x="365" y="344" font-size="13" fill="#111827" font-weight="600">Gmail → Google Admin Alert center · Outlook → Microsoft Defender “User reported”</text>
+  <path d="M801,212 L801,256" stroke="#4b5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M343,312 L159,312 L159,214" fill="none" stroke="#4b5563" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+  <text x="168" y="300" font-size="12" fill="#4b5563">admin updates the list</text>
+
+  <text x="24" y="390" font-size="12" fill="#6b7280">Nothing goes to Unmask’s developer: no account, no server, no central log.</text>
+</svg>

@@ -8,6 +8,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Trust senders from your inbox in one click.** The protection list suggests people who email you often and whose emails were signed by their own domain. Trust one, or all of them at once.
 - **Free for teams:** an IT admin can push one protection list to every browser by policy (Google Admin, Group Policy, Intune, a Mac profile, Firefox policies). It shows in Settings as "From your organisation". See [For teams](docs/TEAMS.md).
 - [Roadmap](ROADMAP.md) and [governance](GOVERNANCE.md), and a GitHub Sponsors link.
+- **Copy for IT admin:** copies your protection list in the format Google Admin's "Policy for extensions" box expects.
+- **Step-by-step teams guide** on the website, with screenshots: sharing a list as a file, rolling Unmask out from Google Admin, Group Policy, Intune, a Mac profile or Firefox, checking it worked, and where reports land. See [For teams](docs/TEAMS.md).
 
 ### Fixed
 - **Phishing lists showed "PhishTank returned HTTP 403".** PhishTank blocks many lookups from browsers and has closed sign-ups; Unmask now says so and shows the free URLhaus key guide straight away.
