@@ -10,7 +10,6 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - [Roadmap](ROADMAP.md) and [governance](GOVERNANCE.md), and a GitHub Sponsors link.
 
 ### Fixed
-- **"Google Workspace via LinkedIn" was called a scam.** A company's newsletter sent through a platform (LinkedIn, Google Docs and others) is now read as coming from that platform, when that platform really sent it.
 - **Phishing lists showed "PhishTank returned HTTP 403".** PhishTank blocks many lookups from browsers and has closed sign-ups; Unmask now says so and shows the free URLhaus key guide straight away.
 
 ## [0.5.0] - 2026-11-07
