@@ -35,7 +35,8 @@ describe('DKIM body hash (local)', () => {
   });
 
   it('is quiet for an intact signed email', async () => {
-    const r = await analyzeRawEmail(await sign(base, { key }));
+    // Arrival time comes from the Received header, so the test does not age as the calendar moves on.
+    const r = await analyzeRawEmail(`Received: from mx.example.com (mx.example.com [198.51.100.1]) by mx.google.com; Mon, 19 Oct 2026 16:00:30 +0000\r\n${await sign(base, { key })}`);
     expect(r.findings.filter((f) => f.id.startsWith('dkim-') && f.id !== 'dkim-none')).toEqual([]);
   });
 
