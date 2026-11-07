@@ -57,7 +57,7 @@ export function unwrapUrl(href: string): { url: string; via: string[] } {
     if (/(^|\.)google\.[a-z.]+$/.test(host) && u.pathname === '/url') {
       next = q('q') ?? q('url');
       name = 'Google redirect';
-    } else if (host.endsWith('safelinks.protection.outlook.com')) {
+    } else if (matchesHost(host, ['safelinks.protection.outlook.com'])) {
       next = q('url');
       name = 'Microsoft Safe Links';
     } else if (host === 'urldefense.proofpoint.com' && q('u')) {
@@ -69,10 +69,10 @@ export function unwrapUrl(href: string): { url: string; via: string[] } {
     } else if ((host === 'l.facebook.com' || host === 'lm.facebook.com' || host === 'l.instagram.com') && q('u')) {
       next = q('u');
       name = 'Facebook link shim';
-    } else if (host.endsWith('youtube.com') && u.pathname === '/redirect') {
+    } else if (matchesHost(host, ['youtube.com']) && u.pathname === '/redirect') {
       next = q('q');
       name = 'YouTube redirect';
-    } else if (host.endsWith('linkedin.com') && u.pathname.startsWith('/redir')) {
+    } else if (matchesHost(host, ['linkedin.com']) && u.pathname.startsWith('/redir')) {
       next = q('url');
       name = 'LinkedIn redirect';
     } else if (host === 'slack-redir.net') {

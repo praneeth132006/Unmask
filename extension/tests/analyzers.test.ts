@@ -72,6 +72,14 @@ describe('links', () => {
     expect(unwrapUrl('https://urldefense.proofpoint.com/v2/url?u=https-3A__evil.top_login&d=x').url).toBe('https://evil.top/login');
   });
 
+  it('does not treat lookalike hosts as redirect wrappers', () => {
+    expect(unwrapUrl('https://www.youtube.com/redirect?q=https://evil.top/y').via).toEqual(['YouTube redirect']);
+    // A lookalike host is never named as the trusted service it imitates.
+    expect(unwrapUrl('https://evilyoutube.com/redirect?q=https://evil.top/y').via).not.toContain('YouTube redirect');
+    expect(unwrapUrl('https://notlinkedin.com/redir?url=https://evil.top/y').via).toEqual(['redirect parameter on notlinkedin.com']);
+    expect(unwrapUrl('https://xsafelinks.protection.outlook.com/?url=https://evil.top/y').via).not.toContain('Microsoft Safe Links');
+  });
+
   it('flags a text/destination mismatch', () => {
     const l = inspectLink({ href: 'http://www.google.com/url?q=https://paypa1-secure.top/login', text: 'https://www.paypal.com/signin', source: 'html' });
     expect(l.resolved).toBe('https://paypa1-secure.top/login');
