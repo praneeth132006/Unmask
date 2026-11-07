@@ -359,12 +359,24 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
 
   const listener = (e: Event) => void onClick(e as MouseEvent);
   doc.addEventListener('click', listener, true);
+  const isOurs = (n: Node) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR) || n.hasAttribute(PEEK_ATTR) || n.hasAttribute(CHIPS_ATTR) || n.hasAttribute('data-unmask-peek-card'));
   const observer = new (win as unknown as { MutationObserver: typeof MutationObserver }).MutationObserver((records) => {
-    // Our own banners and badges changing must not trigger another pass.
-    if (records.every((r) => [...r.addedNodes, ...r.removedNodes].every((n) => n instanceof Element && (n.hasAttribute(BANNER_ATTR) || n.hasAttribute(BADGE_ATTR) || n.hasAttribute(PEEK_ATTR) || n.hasAttribute(CHIPS_ATTR) || n.hasAttribute('data-unmask-peek-card'))))) return;
+    // Our own banners and badges being added must not trigger another pass. A removal is different:
+    // when Gmail redraws a row (it does on hover for emails with an Unsubscribe link) it throws our
+    // chip away, and only a new pass can put it back.
+    if (records.every((r) => r.removedNodes.length === 0 && [...r.addedNodes].every(isOurs))) return;
     later.schedule();
   });
   observer.observe(doc.body, { childList: true, subtree: true });
+  // Belt and braces: pointing at a row checks that it still has its chip. Gmail finishes redrawing a
+  // row just after the pointer arrives, so look again a moment later too.
+  const hover = (e: Event) => {
+    const row = (e.target as Element | null)?.closest?.(`[${ROW_ATTR}]`);
+    if (!row || !deps.settings().peekButtons) return;
+    if (!row.querySelector(`[${PEEK_ATTR}]`)) later.schedule();
+    win.setTimeout(() => { if (!stopped && !row.querySelector(`[${PEEK_ATTR}]`) && row.isConnected) later.schedule(); }, 250);
+  };
+  doc.addEventListener('mouseover', hover, true);
   void scan();
 
   return {
@@ -376,6 +388,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       later.cancel();
       observer.disconnect();
       doc.removeEventListener('click', listener, true);
+      doc.removeEventListener('mouseover', hover, true);
       doc.querySelectorAll(`[${BANNER_ATTR}], [${BADGE_ATTR}], [${PEEK_ATTR}], [${CHIPS_ATTR}], [data-unmask-peek-card]`).forEach((n) => n.remove());
     },
   };

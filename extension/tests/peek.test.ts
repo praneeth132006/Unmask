@@ -56,6 +56,28 @@ describe('Peek: check an inbox email without opening it', () => {
     await until(() => document.querySelectorAll(`[${PEEK_ATTR}]`).length === 2);
   });
 
+  it('puts the Peek button back when Gmail redraws the row on hover (rows with an Unsubscribe link)', async () => {
+    const { p } = start({});
+    stop = p.stop;
+    await until(() => document.querySelectorAll(`[${PEEK_ATTR}]`).length === 2);
+    const row = document.getElementById('r1')!;
+    // Hovering a row with List-Unsubscribe makes Gmail rebuild the subject cell, dropping our chip with it.
+    row.querySelector('[data-unmask-chips]')!.remove();
+    expect(row.querySelector(`[${PEEK_ATTR}]`)).toBeNull();
+    await until(() => !!row.querySelector(`[${PEEK_ATTR}]`));
+  });
+
+  it('puts it back when the row is hovered, even if nothing else changed', async () => {
+    const { p } = start({});
+    stop = p.stop;
+    await until(() => document.querySelectorAll(`[${PEEK_ATTR}]`).length === 2);
+    const row = document.getElementById('r2')!;
+    // A replaced node that the observer never reports (for example, Gmail swapping the whole cell's contents).
+    row.querySelector('[data-unmask-chips]')!.remove();
+    row.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    await until(() => !!row.querySelector(`[${PEEK_ATTR}]`));
+  });
+
   it('checks the email from the row, without opening it, and shows a text-only preview', async () => {
     const { p, fetched, opened, peeked } = start({});
     stop = p.stop;
