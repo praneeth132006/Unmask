@@ -116,7 +116,7 @@ function layout({ title, body, current, description }) {
 <main>${body}</main>
 <footer><div class="wrap">
   <span>Unmask · MIT licence · Not affiliated with Google</span>
-  <span><a href="${REPO}">Source</a> · <a href="${REPO}/releases/latest">Download</a> · <a href="${REPO}/wiki">Wiki</a> · <a href="${REPO}/blob/main/SECURITY.md">Security</a> · <a href="${REPO}/issues/new/choose">Report a problem</a></span>
+  <span><a href="${REPO}">Source</a> · <a href="${REPO}/releases/latest">Download</a> · <a href="${REPO}/wiki">Wiki</a> · <a href="${REPO}/blob/main/SECURITY.md">Security</a> · <a href="${REPO}/issues/new/choose">Report a problem</a> · <a href="https://github.com/sponsors/praneeth132006">Support Unmask</a></span>
 </div></footer>
 <script>
 document.getElementById('theme').addEventListener('click', function () {

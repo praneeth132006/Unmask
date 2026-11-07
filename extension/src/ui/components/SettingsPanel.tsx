@@ -248,6 +248,10 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         <a className="underline" href="https://praneeth132006.github.io/Unmask/guide.html" target="_blank" rel="noreferrer">
           User guide
         </a>
+        {' · '}
+        <a className="underline" href="https://github.com/sponsors/praneeth132006" target="_blank" rel="noreferrer">
+          Support Unmask
+        </a>
       </p>
     </div>
   );

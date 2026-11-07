@@ -317,6 +317,10 @@ pnpm build       # production build into build/unmask-chrome
 - Contributing: see [CONTRIBUTING.md](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md).
 - Security problems: report privately, see [SECURITY.md](SECURITY.md).
 
+## Support Unmask
+
+Unmask is free for everyone, including companies and schools, and has no ads, accounts or tracking. If it saved you from a scam, you can [sponsor its development on GitHub](https://github.com/sponsors/praneeth132006). It pays for time spent on new checks and fixing false alarms. Telling a friend or leaving a store review helps just as much.
+
 ## License
 
 Unmask is free software under the [MIT licence](LICENSE). The release zip includes `LICENSE.txt` and `THIRD_PARTY_LICENSES.txt` for the open-source libraries it bundles (React, postal-mime, tldts, punycode).
