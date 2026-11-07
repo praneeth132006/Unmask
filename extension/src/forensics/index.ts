@@ -61,6 +61,7 @@ function peFacts(b: Uint8Array): string {
 
 export async function analyzeFile(bytes: Uint8Array, filename = '', depth = 0, budget: Budget = { children: 0, bytes: 0 }): Promise<FileForensics> {
   const magic = sniff(bytes);
+  let magicLabel = magic.label;
   const name = filename.toLowerCase();
   const anomalies: Anomaly[] = [];
   const add = (a: Anomaly) => { if (!anomalies.some((x) => x.id === a.id)) anomalies.push(a); };
@@ -105,6 +106,8 @@ export async function analyzeFile(bytes: Uint8Array, filename = '', depth = 0, b
     if (list.some((e) => e.name === '[Content_Types].xml')) {
       kind = 'ooxml';
       const r = await analyzeOoxml(bytes);
+      const app = { word: 'Word', excel: 'Excel', powerpoint: 'PowerPoint', unknown: 'Office' }[r.report.app];
+      magicLabel = `${app} document (Office Open XML${r.report.macros.present ? ', with macros' : ''})`;
       out.ooxml = r.report;
       for (const a of r.anomalies) add(a);
       links = r.links;
@@ -178,7 +181,7 @@ export async function analyzeFile(bytes: Uint8Array, filename = '', depth = 0, b
 
   return {
     kind,
-    magic: { label: magic.label, mime: magic.mime },
+    magic: { label: magicLabel, mime: magic.mime },
     size: bytes.length,
     entropy: e,
     hashes: await hashes(bytes),

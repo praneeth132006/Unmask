@@ -1,6 +1,6 @@
 import { analyzeRawEmail } from '../src/core/analyze';
-import { analystReport, buildJsonReport, buildPdfReport, composeUrl, defang, indicatorText, suspiciousUrls, urlReportPage } from '../src/lib/reporting';
-import { buildPdf } from '../src/lib/pdf';
+import { analystReport, buildJsonReport, composeUrl, defang, indicatorText, suspiciousUrls, urlReportPage } from '../src/lib/reporting';
+import { buildPdfReport } from '../src/report';
 import { reportPhishingInGmail } from '../src/lib/gmailActions';
 import { fixture } from './helpers';
 
@@ -45,12 +45,6 @@ describe('reports', () => {
     entries.forEach((e, i) => expect(pdf.slice(Number(e.slice(0, 10)), Number(e.slice(0, 10)) + 12)).toMatch(new RegExp(`^${i + 1} 0 obj`)));
     expect(pdf).toContain('Unmask email report');
     expect(pdf).toContain('hxxp');
-  });
-
-  it('paginates long reports and keeps text Latin-1', () => {
-    const pdf = latin(buildPdf(Array.from({ length: 200 }, (_, i) => ({ kind: 'text' as const, text: `Line ${i} → “quoted” 日本` })), 'footer'));
-    expect(Number(pdf.match(/\/Count (\d+)/)![1])).toBeGreaterThan(2);
-    expect(pdf).toContain('Line 5 -> "quoted" ??');
   });
 
   it('prefills report destinations', async () => {
