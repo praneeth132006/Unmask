@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { browser } from 'wxt/browser';
 import type { Report } from '../../core/types';
-import { analystReport, buildJsonReport, buildPdfReport, composeUrl, indicatorText, safeFileName, suspiciousUrls, urlReportPage, type ReportService } from '../../lib/reporting';
+import { analystReport, buildJsonReport, composeUrl, indicatorText, safeFileName, suspiciousUrls, urlReportPage, type ReportService } from '../../lib/reporting';
+import { FORMAT_INFO, buildReportFile, type Audience, type ReportFormat, type ReportMeta, type Tlp } from '../../report';
 import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
@@ -13,6 +14,28 @@ function download(name: string, data: BlobPart, type: string): void {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
+
+const META_KEY = 'unmask:report-meta';
+
+function loadMeta(): ReportMeta {
+  try {
+    return JSON.parse(localStorage.getItem(META_KEY) ?? '{}') as ReportMeta;
+  } catch {
+    return {};
+  }
+}
+
+async function sha256Of(raw: string | ArrayBuffer): Promise<{ emlSha256: string; emlSize: number }> {
+  const bytes = typeof raw === 'string' ? new TextEncoder().encode(raw) : new Uint8Array(raw);
+  const d = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes as BufferSource));
+  return { emlSha256: Array.from(d, (b) => b.toString(16).padStart(2, '0')).join(''), emlSize: bytes.length };
+}
+
+const AUDIENCES: { id: Audience; label: string; hint: string }[] = [
+  { id: 'both', label: 'Complete', hint: 'Executive summary for leaders, then the full technical analysis' },
+  { id: 'executive', label: 'Executive only', hint: 'Plain language, 2 pages: for managers and non-technical staff' },
+  { id: 'technical', label: 'Technical only', hint: 'Full evidence for security analysts and investigators' },
+];
 
 function open(url: string): void {
   void browser.tabs.create({ url });
@@ -36,6 +59,18 @@ export function ReportCard({
   onReportInGmail?: () => Promise<{ ok: boolean; error?: string }>;
 }) {
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
+  const [audience, setAudience] = useState<Audience>('both');
+  const [meta, setMeta] = useState<ReportMeta>(loadMeta);
+  const [building, setBuilding] = useState<ReportFormat | null>(null);
+  const updateMeta = (patch: Partial<ReportMeta>) => {
+    const next = { ...meta, ...patch };
+    setMeta(next);
+    try {
+      localStorage.setItem(META_KEY, JSON.stringify({ ...next, caseId: undefined, notes: undefined }));
+    } catch {
+      // storage unavailable: the details still apply to this report
+    }
+  };
   const version = browser.runtime.getManifest?.().version ?? 'dev';
   const base = `unmask-${safeFileName(report.email.subject)}`;
   const urls = suspiciousUrls(report);
@@ -50,6 +85,20 @@ export function ReportCard({
     }
   };
   const downloadEml = () => raw && download(`${base}.eml`, raw, 'message/rfc822');
+  const exportReport = async (format: ReportFormat) => {
+    setBuilding(format);
+    setNote(null);
+    try {
+      const evidence = raw ? await sha256Of(raw) : undefined;
+      const file = await buildReportFile(report, format, { version, meta, audience, evidence });
+      download(`${base}-${audience === 'both' ? 'report' : audience}.${file.ext}`, file.data, file.mime);
+      setNote({ ok: true, text: `${FORMAT_INFO[format].label} report saved. It was built on this computer; nothing was uploaded.` });
+    } catch (e) {
+      setNote({ ok: false, text: `Could not build the report: ${e instanceof Error ? e.message : String(e)}` });
+    } finally {
+      setBuilding(null);
+    }
+  };
   const sendTo = (service: ReportService) => {
     downloadEml();
     open(composeUrl(service, report, gmailAccount));
@@ -99,11 +148,66 @@ export function ReportCard({
           </div>
         )}
         <div className="mt-2.5 border-t border-[var(--border)] pt-2.5">
-          <p className="mb-1.5 text-[11px] text-[var(--text-3)]">For your IT or security team</p>
+          <p className="mb-1.5 text-[11px] font-medium text-[var(--text-2)]">Investigation report</p>
+          <div role="radiogroup" aria-label="Who is the report for?" className="grid gap-1 sm:grid-cols-3">
+            {AUDIENCES.map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                role="radio"
+                aria-checked={audience === a.id}
+                title={a.hint}
+                onClick={() => setAudience(a.id)}
+                className={`rounded-lg border px-2 py-1.5 text-left text-[11px] transition-colors ${audience === a.id ? 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--text)]' : 'border-[var(--border)] text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+              >
+                <span className="block font-medium">{a.label}</span>
+                <span className="block text-[10px] text-[var(--text-3)]">{a.hint}</span>
+              </button>
+            ))}
+          </div>
+          <details className="mt-1.5 text-[11px] text-[var(--text-2)]">
+            <summary className="cursor-pointer select-none">Case details (optional)</summary>
+            <div className="mt-1.5 grid gap-1.5 sm:grid-cols-2">
+              {(
+                [
+                  ['caseId', 'Case / ticket ID', 'Auto-generated if empty'],
+                  ['preparedBy', 'Prepared by', 'Analyst name'],
+                  ['organisation', 'Organisation', ''],
+                ] as const
+              ).map(([k, label, ph]) => (
+                <label key={k} className="block">
+                  <span className="text-[10px] text-[var(--text-3)]">{label}</span>
+                  <input value={meta[k] ?? ''} onChange={(e) => updateMeta({ [k]: e.target.value })} placeholder={ph} className="mt-0.5 w-full rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs text-[var(--text)]" />
+                </label>
+              ))}
+              <label className="block">
+                <span className="text-[10px] text-[var(--text-3)]">Classification (TLP)</span>
+                <select value={meta.tlp ?? 'AMBER'} onChange={(e) => updateMeta({ tlp: e.target.value as Tlp })} className="mt-0.5 w-full rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs text-[var(--text)]">
+                  {(['CLEAR', 'GREEN', 'AMBER', 'AMBER+STRICT', 'RED'] as const).map((t) => (
+                    <option key={t} value={t}>
+                      TLP:{t}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block sm:col-span-2">
+                <span className="text-[10px] text-[var(--text-3)]">Analyst notes (included in the report)</span>
+                <textarea value={meta.notes ?? ''} onChange={(e) => updateMeta({ notes: e.target.value })} rows={2} className="mt-0.5 w-full rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs text-[var(--text)]" />
+              </label>
+            </div>
+          </details>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {(['pdf', 'docx', 'html', 'stix'] as const).map((f) => (
+              <Button key={f} onClick={() => void exportReport(f)} disabled={building !== null} title={f === 'stix' ? 'STIX 2.1 bundle for threat-intelligence tools (MISP, OpenCTI, Sentinel)' : undefined}>
+                <Icon name="download" className="h-3.5 w-3.5" /> {building === f ? 'Building…' : FORMAT_INFO[f].label}
+              </Button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[10px] text-[var(--text-3)]">Built on this computer. Indicators are defanged so the report is safe to open and share.</p>
+        </div>
+        <div className="mt-2.5 border-t border-[var(--border)] pt-2.5">
+          <p className="mb-1.5 text-[11px] text-[var(--text-3)]">Raw data for your IT or security team</p>
           <div className="flex flex-wrap gap-1.5">
-            <Button onClick={() => download(`${base}.pdf`, buildPdfReport(report, version) as BlobPart, 'application/pdf')}>
-              <Icon name="download" className="h-3.5 w-3.5" /> PDF report
-            </Button>
             <Button onClick={() => download(`${base}.json`, JSON.stringify(buildJsonReport(report, version), null, 2), 'application/json')}>
               <Icon name="download" className="h-3.5 w-3.5" /> JSON
             </Button>
