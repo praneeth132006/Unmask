@@ -7,7 +7,7 @@ settings:
 overrides:
   joi: 18.3.1
   nodemailer: 10.1.7
-  undici: 8.12.2
+  undici: 8.12.3
 
 importers:
 
@@ -26,8 +26,8 @@ importers:
         specifier: ^4.13.16
         version: 4.13.17
       undici:
-        specifier: 8.12.2
-        version: 8.12.2
+        specifier: 8.12.3
+        version: 8.12.3
     devDependencies:
       '@types/node':
         specifier: ^26.6.6
@@ -1531,8 +1531,8 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
-  undici@8.12.2:
-    resolution: {integrity: sha512-XtuDWVdqTLr3NAxm2ly9/hU6kUsJOgGh1RASzMBbsw6aWCOaQzHdW+QQDfdERjfJ2V5vL5pRPa4RetO9UfivDg==}
+  undici@8.12.3:
+    resolution: {integrity: sha512-+fdndUTwBP86cVjihTp21hZHo7d6oj1c/47XPA3lL8mM0XHs+C4EkcjmgRsFnFk2f/UONGDy9ItBItmXsLOQHw==}
     engines: {node: '>=22.19.0'}
 
   unimport@6.5.0:
@@ -2648,7 +2648,7 @@ snapshots:
       nodemailer: 10.1.7
       punycode.js: 2.3.1
       tldts: 7.4.18
-      undici: 8.12.2
+      undici: 8.12.3
 
   many-keys-map@3.0.3: {}
 
@@ -2902,7 +2902,7 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  undici@8.12.2: {}
+  undici@8.12.3: {}
 
   unimport@6.5.0(esbuild@0.28.2)(rolldown@1.2.14)(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)):
     dependencies:
