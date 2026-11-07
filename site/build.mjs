@@ -18,7 +18,6 @@ const PAGES = [
   { md: 'docs/CHECKS.md', out: 'checks.html', title: 'What Unmask checks', nav: 'Checks' },
   { md: 'docs/FILE_FORENSICS.md', out: 'files.html', title: 'Looking inside attachments', nav: 'Files' },
   { md: 'docs/REPORTS.md', out: 'reports.html', title: 'Investigation reports', nav: 'Reports' },
-  { md: 'docs/EXAMPLE_REPORTS.md', out: 'example-reports.html', title: 'A report for a real phishing email', nav: 'Examples' },
   { md: 'docs/LIMITS_AND_COSTS.md', out: 'limits.html', title: 'Free limits and costs', nav: 'Limits' },
   { md: 'PRIVACY.md', out: 'privacy.html', title: 'Privacy policy', nav: 'Privacy' },
   { md: 'CHANGELOG.md', out: 'changelog.html', title: 'Changelog', nav: 'Changelog' },
@@ -29,7 +28,6 @@ const LINK_MAP = {
   'CHECKS.md': 'checks.html',
   'FILE_FORENSICS.md': 'files.html',
   'REPORTS.md': 'reports.html',
-  'EXAMPLE_REPORTS.md': 'example-reports.html',
   'LIMITS_AND_COSTS.md': 'limits.html',
   'PRIVACY.md': 'privacy.html',
   'CHANGELOG.md': 'changelog.html',
@@ -52,7 +50,7 @@ function rewriteLink(href) {
   const [path, hash] = href.split('#');
   const file = path.split('/').pop();
   if (LINK_MAP[file]) return LINK_MAP[file] + (hash ? `#${hash}` : '');
-  if (path.startsWith('images/')) return path;
+  if (path.startsWith('images/') || path.startsWith('examples/')) return path;
   // Anything else (BACKEND.md, ../SECURITY.md, source files) opens on GitHub.
   const clean = path.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
   const inDocs = !path.startsWith('../') && !['PRIVACY.md', 'SECURITY.md', 'CONTRIBUTING.md', 'LICENSE', 'CHANGELOG.md', 'README.md'].includes(clean);
@@ -141,7 +139,7 @@ cpSync(join(root, 'docs', 'brand', 'logo-512.png'), join(out, 'logo-512.png'));
 cpSync(join(root, 'extension', 'public', 'icon', '48.png'), join(out, 'icon-48.png'));
 cpSync(join(root, 'site', 'style.css'), join(out, 'style.css'));
 // Example reports built from real phishing emails (HTML and PDF).
-cpSync(join(root, 'site', 'examples'), join(out, 'examples'), { recursive: true });
+cpSync(join(root, 'docs', 'examples'), join(out, 'examples'), { recursive: true });
 writeFileSync(join(out, '.nojekyll'), '');
 
 writeFileSync(

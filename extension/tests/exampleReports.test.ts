@@ -2,7 +2,7 @@
  * Builds the example reports shown on the website from real phishing emails.
  * Skipped unless UNMASK_EXAMPLES is set:
  *
- *   UNMASK_EXAMPLES="slug=/path/to/sample.eml,slug2=/path/to/other.eml" UNMASK_EXAMPLES_OUT=../site/examples \
+ *   UNMASK_EXAMPLES="slug=/path/to/sample.eml,slug2=/path/to/other.eml" UNMASK_EXAMPLES_OUT=../docs/examples \
  *   pnpm --filter unmask-extension exec vitest run tests/exampleReports.test.ts
  *
  * Only the analysis is published, with indicators defanged; the original
