@@ -5,7 +5,7 @@ export function fixture(name: string): string {
   return readFileSync(join(__dirname, 'fixtures', name), 'utf8');
 }
 
-async function deflateRaw(data: Uint8Array, format: 'deflate' | 'deflate-raw' = 'deflate-raw'): Promise<Uint8Array> {
+export async function deflateRaw(data: Uint8Array, format: 'deflate' | 'deflate-raw' = 'deflate-raw'): Promise<Uint8Array> {
   const stream = new Blob([data as BlobPart]).stream().pipeThrough(new CompressionStream(format));
   return new Uint8Array(await new Response(stream).arrayBuffer());
 }
