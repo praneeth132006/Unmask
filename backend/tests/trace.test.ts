@@ -9,15 +9,15 @@ let base = '';
 
 beforeAll(async () => {
   server = createServer((req, res) => {
-    const routes = new Map<string, () => void>(Object.entries({
-      '/a': () => res.writeHead(301, { location: '/b' }).end(),
-      '/b': () => res.writeHead(302, { location: `${base}/c` }).end(),
-      '/c': () => res.writeHead(200, { 'content-type': 'text/html' }).end('<html><head><meta http-equiv="refresh" content="0; url=/d"></head></html>'),
-      '/d': () => res.writeHead(200, { 'content-type': 'text/html' }).end('<script>window.location.href = "http://127.0.0.1:1/never"</script>'),
-      '/loop': () => res.writeHead(302, { location: '/loop' }).end(),
-      '/final': () => res.writeHead(200, { 'content-type': 'text/html' }).end('<h1>Login</h1>'),
-    }));
-    (routes.get(req.url ?? '') ?? (() => res.writeHead(404).end()))();
+    switch (req.url) {
+      case '/a': return void res.writeHead(301, { location: '/b' }).end();
+      case '/b': return void res.writeHead(302, { location: `${base}/c` }).end();
+      case '/c': return void res.writeHead(200, { 'content-type': 'text/html' }).end('<html><head><meta http-equiv="refresh" content="0; url=/d"></head></html>');
+      case '/d': return void res.writeHead(200, { 'content-type': 'text/html' }).end('<script>window.location.href = "http://127.0.0.1:1/never"</script>');
+      case '/loop': return void res.writeHead(302, { location: '/loop' }).end();
+      case '/final': return void res.writeHead(200, { 'content-type': 'text/html' }).end('<h1>Login</h1>');
+      default: return void res.writeHead(404).end();
+    }
   });
   await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
