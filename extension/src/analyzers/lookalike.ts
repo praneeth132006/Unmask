@@ -142,7 +142,8 @@ export function detectLookalike(host: string, brands: Brand[] = BRANDS): Lookali
 }
 
 /** Zero-width and direction-control characters: invisible, used to break up words filters look for. */
-export const INVISIBLE = /[\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\u3164\ufeff]/g;
+// Includes variation selectors (not the emoji ones, U+FE0E and U+FE0F) and the supplementary variation selectors attackers sprinkle into names.
+export const INVISIBLE = /[\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u2069\u3164\ufe00-\ufe0d\ufeff\u{e0100}-\u{e01ef}]/gu;
 
 /** Words that mix Latin letters with look-alikes from another alphabet, e.g. "PаyPal" with a Cyrillic а. */
 export function mixedScriptWords(text: string): string[] {

@@ -95,7 +95,8 @@ export function identityFindings(email: ParsedEmail, raw: RawMessage, auth: Auth
     const mixed = mixedScriptWords(text);
     if (!invisible && !mixed.length) continue;
     const disguised = brandsMentionedIn(skeleton(text.replace(INVISIBLE, ''))).filter((b) => !brandsMentionedIn(text).includes(b));
-    const strong = where === 'sender name' || disguised.length > 0;
+    // Several altered words, or a run of invisible characters, cannot be an accident.
+    const strong = where === 'sender name' || disguised.length > 0 || mixed.length >= 2 || invisible >= 3;
     findings.push({
       id: `disguised-${key}`,
       category: 'sender',
