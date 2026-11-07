@@ -8,7 +8,7 @@
 import type { Finding, LinkInfo, ParsedEmail, AuthSummary } from '../core/types';
 import { senderClaim, type Brand } from './brands';
 import { detectLookalike } from './lookalike';
-import { normalizeName } from './history';
+import { normalizeName, type SenderHistory } from './history';
 import { registrableDomain } from '../lib/domain';
 
 export interface ProtectedBrand {
@@ -104,6 +104,32 @@ function mentions(text: string, brand: ProtectedBrand): boolean {
   const hay = ` ${text.toLowerCase().replace(/[^a-z0-9]+/g, ' ')} `;
   const name = brand.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   return name.length >= 3 && hay.includes(` ${name} `);
+}
+
+export interface TrustSuggestion {
+  address: string;
+  name: string;
+  /** Emails from this address signed by its own domain. */
+  verified: number;
+}
+
+/**
+ * Senders worth trusting in one click: they email you often, and most of those
+ * emails carried a valid signature from their own domain, so the address is
+ * really theirs. High-risk emails never enter the history, and addresses
+ * already on the list are skipped.
+ */
+export function suggestTrusted(history: SenderHistory, list: ProtectionList, minVerified = 3, limit = 25): TrustSuggestion[] {
+  const known = new Set([...list.trusted, ...list.contacts.flatMap((c) => c.addresses)]);
+  return Object.values(history.senders)
+    .map((r) => {
+      const verified = Object.entries(r.traits?.dkim ?? {}).reduce((n, [signers, count]) => (signers.split(',').includes(r.domain) ? n + count : n), 0);
+      return { address: r.address, name: r.name, verified, count: r.count };
+    })
+    .filter((r) => r.verified >= minVerified && r.verified * 2 > r.count && !known.has(r.address) && !isTrusted(list, r.address))
+    .sort((a, b) => b.verified - a.verified)
+    .slice(0, limit)
+    .map(({ address, name, verified }) => ({ address, name, verified }));
 }
 
 export function isTrusted(list: ProtectionList, address: string): boolean {

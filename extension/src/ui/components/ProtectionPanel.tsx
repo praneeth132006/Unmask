@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { EMPTY_PROTECTION, mergeProtection, sanitizeProtection, type ProtectionList } from '../../analyzers/protection';
+import { EMPTY_PROTECTION, mergeProtection, sanitizeProtection, suggestTrusted, type ProtectionList } from '../../analyzers/protection';
+import { EMPTY_HISTORY, type SenderHistory } from '../../analyzers/history';
+import { loadHistory } from '../../lib/historyStore';
 import { loadProtection, saveProtection } from '../../lib/protectionStore';
 import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
@@ -57,9 +59,15 @@ export function ProtectionPanel() {
   const [trustedValue, setTrustedValue] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [history, setHistory] = useState<SenderHistory>(EMPTY_HISTORY);
+
   useEffect(() => {
     void loadProtection().then(setList);
+    void loadHistory().then(setHistory);
   }, []);
+
+  const suggestions = suggestTrusted(history, list);
+  const trust = (addresses: string[]) => void update(sanitizeProtection({ ...list, trusted: [...list.trusted, ...addresses] }));
 
   const update = async (next: ProtectionList) => setList(await saveProtection(next));
 
@@ -156,6 +164,30 @@ export function ProtectionPanel() {
               Add
             </Button>
           </form>
+          {suggestions.length > 0 && (
+            <div className="mt-2.5 rounded-lg bg-[var(--surface-2)] p-2.5">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-[11px] font-semibold text-[var(--text)]">Suggested from your inbox</div>
+                <Button onClick={() => trust(suggestions.map((x) => x.address))}>
+                  <Icon name="shield" className="h-3.5 w-3.5" /> Trust all {suggestions.length}
+                </Button>
+              </div>
+              <p className="mt-0.5 text-[11px] text-[var(--text-3)]">People who email you often, whose emails were signed by their own domain, so the address is really theirs.</p>
+              <ul className="mt-1 divide-y divide-[var(--border)]">
+                {suggestions.map((x) => (
+                  <li key={x.address} className="flex items-center justify-between gap-2 py-1.5 text-xs">
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-[var(--text)]">{x.name || x.address}</div>
+                      <div className="break-all font-mono text-[10.5px] text-[var(--text-3)]">
+                        {x.address} · {x.verified} verified email{x.verified === 1 ? '' : 's'}
+                      </div>
+                    </div>
+                    <Button onClick={() => trust([x.address])}>Trust</Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="border-t border-[var(--border)] pt-3">

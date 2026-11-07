@@ -1,7 +1,8 @@
 import { analyzeRawEmail } from '../src/core/analyze';
 import { plainSummary } from '../src/core/plain';
 import { EMPTY_HISTORY } from '../src/analyzers/history';
-import { asBrand, isTrusted, mergeProtection, sanitizeProtection, type ProtectionList } from '../src/analyzers/protection';
+import { asBrand, isTrusted, mergeProtection, sanitizeProtection, suggestTrusted, type ProtectionList } from '../src/analyzers/protection';
+import type { SenderHistory, SenderRecord } from '../src/analyzers/history';
 import { detectLookalike } from '../src/analyzers/lookalike';
 import { fixture } from './helpers';
 
@@ -100,5 +101,36 @@ describe('plain summary wording', () => {
     const p = plainSummary(r);
     const fakeSite = p.reasons.filter((x) => /fake (copy|website)/.test(x));
     expect(fakeSite).toHaveLength(1);
+  });
+});
+
+describe('one-click trusted sender suggestions', () => {
+  const rec = (address: string, count: number, dkim: Record<string, number>): SenderRecord => ({
+    address,
+    name: address.split('@')[0]!,
+    domain: address.split('@')[1]!,
+    count,
+    firstSeen: 0,
+    lastSeen: 0,
+    ids: [],
+    traits: { dkim, route: {}, messageId: {}, mailer: {}, replyTo: {} },
+  });
+  const history = (...r: SenderRecord[]): SenderHistory => ({ senders: Object.fromEntries(r.map((x) => [x.address, x])) });
+  const empty = sanitizeProtection({});
+
+  it('suggests frequent senders whose emails are signed by their own domain, most verified first', () => {
+    const h = history(rec('anna@acme.com', 4, { 'acme.com': 4 }), rec('news@shop.in', 12, { 'mailgun.org,shop.in': 10, none: 2 }));
+    expect(suggestTrusted(h, empty).map((s) => s.address)).toEqual(['news@shop.in', 'anna@acme.com']);
+  });
+
+  it('skips unsigned, rarely seen, mostly unverified, and already trusted senders', () => {
+    const h = history(
+      rec('nosig@acme.com', 9, { none: 9 }),
+      rec('other@acme.com', 9, { 'mailgun.org': 9 }),
+      rec('once@acme.com', 2, { 'acme.com': 2 }),
+      rec('mixed@acme.com', 10, { 'acme.com': 3, none: 7 }),
+      rec('boss@corp.com', 5, { 'corp.com': 5 }),
+    );
+    expect(suggestTrusted(h, sanitizeProtection({ trusted: ['corp.com'] }))).toEqual([]);
   });
 });
