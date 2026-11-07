@@ -35,6 +35,7 @@
   <a href="docs/ARCHITECTURE.md">How it works</a> ·
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
   <a href="docs/TEAMS.md">For teams</a> ·
+  <a href="ROADMAP.md">Roadmap</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
   <a href="CHANGELOG.md">Changelog</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·
@@ -316,6 +317,7 @@ pnpm build       # production build into build/unmask-chrome
 - Questions and bugs: [open an issue](https://github.com/praneeth132006/Unmask/issues/new/choose). There's a template for wrong verdicts.
 - Contributing: see [CONTRIBUTING.md](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md).
 - Security problems: report privately, see [SECURITY.md](SECURITY.md).
+- How the project is run and funded: [GOVERNANCE.md](GOVERNANCE.md) and the [roadmap](ROADMAP.md).
 
 ## Support Unmask
 
