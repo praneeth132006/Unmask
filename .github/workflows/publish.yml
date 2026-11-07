@@ -1,0 +1,76 @@
+name: Publish to stores
+
+# Uploads a released version to the Chrome Web Store and Firefox Add-ons and
+# submits it for review. Run it by hand after a release, from
+# Actions -> Publish to stores -> Run workflow. Start with "dry run" ticked:
+# it checks the credentials and uploads nothing.
+#
+# Each store is skipped until its secrets exist under
+# Settings -> Secrets and variables -> Actions:
+#   Chrome:  CHROME_EXTENSION_ID, CHROME_PUBLISHER_ID,
+#            CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL, CHROME_SERVICE_ACCOUNT_PRIVATE_KEY
+#   Firefox: FIREFOX_JWT_ISSUER, FIREFOX_JWT_SECRET
+# Every secret is its own entry holding exactly one value.
+
+on:
+  workflow_dispatch:
+    inputs:
+      stores:
+        description: Which stores
+        type: choice
+        options: [all, chrome, firefox]
+        default: all
+      dry_run:
+        description: Only check the credentials, don't upload
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+      CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+      CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+      CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
+      FIREFOX_EXTENSION_ID: unmask@praneeth132006.github.io
+      FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+      FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm zip:all
+      - name: Submit
+        working-directory: extension
+        env:
+          STORES: ${{ inputs.stores }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          v=$(node -p "require('./package.json').version")
+          # A key copied out of the service-account JSON keeps "\n" as two characters;
+          # turn them into real line breaks (a key that already has them is unchanged).
+          if [ -n "$CHROME_SERVICE_ACCOUNT_PRIVATE_KEY" ]; then
+            export CHROME_SERVICE_ACCOUNT_PRIVATE_KEY="$(printf '%b' "$CHROME_SERVICE_ACCOUNT_PRIVATE_KEY")"
+          fi
+          args=()
+          want() { [ "$STORES" = all ] || [ "$STORES" = "$1" ]; }
+          if want chrome && [ -n "$CHROME_EXTENSION_ID" ] && [ -n "$CHROME_SERVICE_ACCOUNT_PRIVATE_KEY" ]; then
+            args+=(--chrome-zip "../build/unmask-chrome-$v.zip" --chrome-api-version v2)
+          elif want chrome; then echo "::warning::Chrome skipped: the CHROME_* secrets are not all set"; fi
+          if want firefox && [ -n "$FIREFOX_JWT_ISSUER" ] && [ -n "$FIREFOX_JWT_SECRET" ]; then
+            args+=(--firefox-zip "../build/unmask-firefox-$v.zip" --firefox-sources-zip "../build/unmask-extension-$v-sources.zip")
+          elif want firefox; then echo "::warning::Firefox skipped: the FIREFOX_JWT_* secrets are not set"; fi
+          if [ ${#args[@]} -eq 0 ]; then echo "No store has credentials yet; nothing to do."; exit 0; fi
+          [ "$DRY_RUN" = true ] && args+=(--dry-run)
+          pnpm exec wxt submit "${args[@]}"
