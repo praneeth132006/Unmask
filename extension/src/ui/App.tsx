@@ -25,6 +25,7 @@ import { unwrapUrl } from '../analyzers/links';
 import { Overview, VerdictCard } from './components/Overview';
 import { SenderTab } from './components/SenderTab';
 import { LinksTab } from './components/LinksTab';
+import { DocumentsTab, documentsAvailable } from './components/DocumentsTab';
 import { AttachmentsTab } from './components/AttachmentsTab';
 import { BodyTab } from './components/BodyTab';
 import { HeadersTab } from './components/HeadersTab';
@@ -45,6 +46,7 @@ const TAB_LABEL: Record<TabId, string> = {
   sender: 'Sender',
   links: 'Links',
   attachments: 'Files',
+  documents: 'Documents',
   body: 'Body',
   headers: 'Headers',
   privacy: 'Privacy',
@@ -354,6 +356,9 @@ export function App() {
         { id: 'sender', alert: report.findings.some((f) => (f.category === 'sender' || f.category === 'auth') && (f.severity === 'high' || f.severity === 'critical')) },
         { id: 'links', count: report.links.length, alert: report.links.some((l) => l.flags.some((f) => f.severity === 'high' || f.severity === 'critical')) },
         { id: 'attachments', count: report.attachments.length, alert: report.attachments.some((a) => a.flags.some((f) => f.severity === 'high' || f.severity === 'critical')) },
+        ...(documentsAvailable(report)
+          ? [{ id: 'documents' as const, count: report.attachments.filter((a) => !a.inline && a.forensics).length || undefined, alert: report.attachments.some((a) => !a.inline && a.forensics?.anomalies.some((x) => x.severity === 'high' || x.severity === 'critical')) }]
+          : []),
         { id: 'body', alert: report.hidden.length > 0 },
         { id: 'privacy', count: report.trackers.pixels.length + report.trackers.trackedLinkCount },
         { id: 'headers' },
@@ -611,6 +616,16 @@ export function App() {
                       onFindings={onFindings}
                       focusSha={focus?.sha256 ?? null}
                       onHoverAttachment={onHoverAttachment}
+                    />
+                  )}
+                  {tab === 'documents' && (
+                    <DocumentsTab
+                      report={report}
+                      settings={settings}
+                      onSettingsChange={setSettings}
+                      onFindings={onFindings}
+                      focusSha={focus?.sha256 ?? null}
+                      onOpenLinks={() => openTab('links')}
                     />
                   )}
                   {tab === 'body' && <BodyTab report={report} initialReveal={focus?.revealHidden} focusPixel={focus?.pixel} onHoverUrl={canHighlight ? onHoverUrl : undefined} />}

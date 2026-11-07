@@ -5,6 +5,10 @@ export interface Settings {
   vtApiKey: string;
   /** Free key from urlscan.io → settings → API keys. */
   urlscanApiKey: string;
+  /** Free key from hybrid-analysis.com → profile → API key (needs a vetted account). Only file hashes are sent. */
+  hybridApiKey: string;
+  /** Free Auth-Key from auth.abuse.ch, used for MalwareBazaar and URLhaus lookups. */
+  abuseChKey: string;
   /** Base URL of the Unmask redirect-trace backend, e.g. https://unmask-trace.vercel.app */
   backendUrl: string;
   /** Look up how old the sender's domain is (sends only the domain name to rdap.org). */
@@ -40,6 +44,8 @@ export type Theme = 'system' | 'light' | 'dark';
 export const DEFAULT_SETTINGS: Settings = {
   vtApiKey: '',
   urlscanApiKey: '',
+  hybridApiKey: '',
+  abuseChKey: '',
   backendUrl: '',
   autoDomainAge: true,
   theme: 'system',
@@ -108,6 +114,6 @@ export async function loadSettings(): Promise<Settings> {
 
 export async function saveSettings(settings: Settings): Promise<void> {
   await browser.storage.local.set({
-    [KEY]: { ...settings, backendUrl: settings.backendUrl.trim().replace(/\/+$/, ''), vtApiKey: settings.vtApiKey.trim(), urlscanApiKey: settings.urlscanApiKey.trim() },
+    [KEY]: { ...settings, backendUrl: settings.backendUrl.trim().replace(/\/+$/, ''), vtApiKey: settings.vtApiKey.trim(), urlscanApiKey: settings.urlscanApiKey.trim(), hybridApiKey: settings.hybridApiKey.trim(), abuseChKey: settings.abuseChKey.trim() },
   });
 }

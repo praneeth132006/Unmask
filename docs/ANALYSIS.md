@@ -336,7 +336,8 @@ Everything in steps 2–8 and 10–16 runs on your computer. The online steps se
 | Sending server (off by default) | The delivering server's IP | dns.google | No |
 | Sandbox scan (on click) | One link | urlscan.io, **private scan** | **No**: only your key can see it |
 | VirusTotal lookup (on click) | A link or a file hash | VirusTotal | No: a lookup publishes nothing |
-| VirusTotal submit or upload (on click, after a warning) | A link or a file | VirusTotal | **Yes, to VirusTotal's customers**, which the warning says |
+| VirusTotal link scan (on click, after a warning) | A link | VirusTotal | **Yes, to VirusTotal's customers**, which the warning says |
+| Hash lookups: VirusTotal, Hybrid Analysis, MalwareBazaar (on click) | A file's SHA-256 hash only | The service you clicked | No: a lookup publishes nothing, and **files are never uploaded** |
 | Trace redirects (on click) | One link | the link's sites, or your own server | No |
 
 The email itself (headers, body, attachments) is never sent to Unmask's developers or to any Unmask server. Full details: [privacy policy](../PRIVACY.md).

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import type { AttachmentInfo, Finding, LinkInfo, ParsedAttachment, Report } from '../../core/types';
 import { buildSafeSrcDoc } from '../safeHtml';
 import type { Settings } from '../../lib/settings';
-import { lookupFileHash, uploadFile, vtFindings, type VtResult } from '../../integrations/virustotal';
+import { lookupFileHash, vtFindings, type VtResult } from '../../integrations/virustotal';
 import { Button, Card, CopyButton, ErrorText, Mono, Pill, Spinner, formatBytes, type Async } from './ui';
 import { Icon } from './Icon';
 import { ServiceSetup } from './ServiceSetup';
@@ -103,7 +103,6 @@ function AttachmentCard({
   onHover?: (att: AttachmentInfo | null) => void;
 }) {
   const [vt, setVt] = useState<Async<VtResult>>({ status: 'idle' });
-  const [confirmUpload, setConfirmUpload] = useState(false);
   const [setup, setSetup] = useState(false);
   const [preview, setPreview] = useState(false);
   const risky = att.flags.some((f) => f.severity === 'critical' || f.severity === 'high');
@@ -125,18 +124,6 @@ function AttachmentCard({
       setVt({ status: 'error', error: e instanceof Error ? e.message : String(e) });
     }
   };
-  const upload = async () => {
-    setConfirmUpload(false);
-    setVt({ status: 'loading', message: 'Uploading…' });
-    try {
-      report(await uploadFile(settings.vtApiKey, bytes, att.filename, att.sha256, (message) => setVt({ status: 'loading', message })));
-    } catch (e) {
-      setVt({ status: 'error', error: e instanceof Error ? e.message : String(e) });
-    }
-  };
-
-  const notFound = vt.status === 'done' && !vt.value.found;
-
   return (
     <Card
       id={`unmask-att-${att.sha256.slice(0, 12)}`}
@@ -177,11 +164,6 @@ function AttachmentCard({
         <Button onClick={() => void lookup()} disabled={vt.status === 'loading'} title="Sends only the file's fingerprint (hash), never the file">
           {vt.status === 'loading' ? <Spinner /> : <Icon name="shield" className="h-3.5 w-3.5" />} Check on VirusTotal
         </Button>
-        {(notFound || vt.status === 'error') && settings.vtApiKey && (
-          <Button onClick={() => setConfirmUpload(true)}>
-            <Icon name="upload" className="h-3.5 w-3.5" /> Send file to VirusTotal
-          </Button>
-        )}
       </div>
 
       {setup && (
@@ -196,24 +178,6 @@ function AttachmentCard({
               void lookup(s);
             }}
           />
-        </div>
-      )}
-
-      {confirmUpload && (
-        <div className="mt-2.5 rounded-lg border border-[var(--warn)] bg-[var(--warn-soft)] p-2.5 text-xs text-[var(--text)]">
-          <p className="font-semibold">Send {att.filename} to VirusTotal?</p>
-          <p className="mt-1 text-[var(--text-2)]">Unmask sends it straight from this email, so you don’t need to download it. 70+ antivirus engines then scan it.</p>
-          <p className="mt-1 text-[var(--text-2)]">
-            <strong className="text-[var(--text)]">Only for files you don’t mind sharing:</strong> VirusTotal keeps uploaded files and shares them with security companies. Don’t send invoices, tax forms, contracts or ID documents that contain personal details.
-          </p>
-          <div className="mt-2 flex gap-1.5">
-            <Button variant="danger" onClick={() => void upload()}>
-              Send to VirusTotal
-            </Button>
-            <Button variant="ghost" onClick={() => setConfirmUpload(false)}>
-              Cancel
-            </Button>
-          </div>
         </div>
       )}
 
@@ -251,7 +215,7 @@ export function AttachmentsTab({
   const files = report.attachments.map((att, i) => ({ att, file: all[i]!, bytes: all[i]!.content })).sort((a, b) => Number(a.att.inline) - Number(b.att.inline));
   return (
     <div className="space-y-2.5">
-      <p className="text-xs text-[var(--text-2)]">Don’t open attachments you weren’t expecting. Unmask reads inside PDFs, Office files, archives and HTML files without opening them. Checking on VirusTotal sends only the file’s fingerprint.</p>
+      <p className="text-xs text-[var(--text-2)]">Don’t open attachments you weren’t expecting. Unmask reads inside PDFs, Office files, archives and HTML files without opening them. Checking on VirusTotal sends only the file’s fingerprint, never the file. See the Documents tab for a deeper look inside each file.</p>
       {files.map(({ att, file, bytes }) => (
         <AttachmentCard
           key={att.sha256 + att.filename}

@@ -178,6 +178,8 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
       <Card className="divide-y divide-[var(--border)]">
         <ServiceRow service="virustotal" settings={settings} onChange={onSaved} />
         <ServiceRow service="urlscan" settings={settings} onChange={onSaved} />
+        <ServiceRow service="hybrid" settings={settings} onChange={onSaved} />
+        <ServiceRow service="abusech" settings={settings} onChange={onSaved} />
       </Card>
 
       {settings.urlscanApiKey && (

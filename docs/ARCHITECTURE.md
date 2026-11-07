@@ -145,7 +145,7 @@ Elements get a `data-unmask-hl` attribute styled by one injected `<style>`. `cle
 | Module | Endpoint | Notes |
 |---|---|---|
 | `rdap.ts` | `https://rdap.org/domain/<domain>` | Registration date and registrar; 404 means no record |
-| `virustotal.ts` | `/api/v3/files/<sha256>`, `/urls/<id>`, `/files` (upload), `/analyses/<id>` | URL ids are unpadded base64url; upload polling respects the free 4/min limit |
+| `virustotal.ts` | `/api/v3/files/<sha256>` (hash lookup only), `/urls/<id>`, `/analyses/<id>` | URL ids are unpadded base64url; polling respects the free 4/min limit. There is no file upload anywhere in Unmask |
 | `urlscan.ts` | `/api/v1/scan/`, `/api/v1/result/<uuid>/` | Polls until ready; screenshot from `/screenshots/<uuid>.png` |
 | `trace.ts` | built-in (background worker) or `<backend>/api/trace?url=` | Built-in: `lib/builtinTrace.ts` fetches with `credentials: 'omit'`, records hops with `webRequest.onBeforeRedirect` (matched by request id, initiator and `tabId -1`), parses meta/JS redirects from 256 KB, blocks local-network targets at every hop; traces are serialized. Needs the optional `<all_urls>` permission, requested from a click |
 | `keyTest.ts` | VirusTotal EICAR lookup, urlscan quotas, backend `/api/health` | Validates a key before saving it |

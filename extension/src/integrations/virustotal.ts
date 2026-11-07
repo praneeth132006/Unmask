@@ -93,48 +93,6 @@ export async function scanUrlNow(apiKey: string, url: string, onProgress?: (mess
   throw new Error('VirusTotal is still scanning. Open the report link in a minute.');
 }
 
-/**
- * Uploads a file for scanning. WARNING: uploaded files can be downloaded by
- * VirusTotal's paying customers, so the UI must get explicit consent first.
- */
-export async function uploadFile(
-  apiKey: string,
-  bytes: Uint8Array,
-  filename: string,
-  sha256: string,
-  onProgress?: (message: string) => void,
-  pollMs = 15_000,
-): Promise<VtResult> {
-  let uploadUrl = `${API}/files`;
-  if (bytes.byteLength > 32 * 1024 * 1024) {
-    const r = await fetch(`${API}/files/upload_url`, { headers: headers(apiKey) });
-    if (!r.ok) throw await vtError(r);
-    uploadUrl = ((await r.json()) as { data: string }).data;
-  }
-  const form = new FormData();
-  // The bytes come straight from the email Unmask already read: nothing is saved to disk first.
-  form.append('file', new File([bytes as BlobPart], filename, { type: 'application/octet-stream' }));
-  onProgress?.(`Sending ${filename} to VirusTotal…`);
-  const res = await fetch(uploadUrl, { method: 'POST', headers: headers(apiKey), body: form });
-  if (!res.ok) throw await vtError(res);
-  const analysisId = ((await res.json()) as { data?: { id?: string } }).data?.id;
-  if (!analysisId) throw new Error('VirusTotal did not return an analysis id.');
-
-  // Free keys allow 4 requests/minute, so poll gently.
-  for (let attempt = 0; attempt < 16; attempt++) {
-    onProgress?.(`Sent. 70+ security vendors are scanning it, usually 1–2 minutes… (${Math.round((attempt * pollMs) / 1000)}s)`);
-    await sleep(pollMs);
-    const r = await fetch(`${API}/analyses/${analysisId}`, { headers: headers(apiKey) });
-    if (r.status === 429) continue;
-    if (!r.ok) throw await vtError(r);
-    const attrs = ((await r.json()) as VtObject).data?.attributes;
-    if (attrs?.status === 'completed') {
-      return { found: true, stats: attrs.stats ?? null, label: null, permalink: `https://www.virustotal.com/gui/file/${sha256}` };
-    }
-  }
-  throw new Error('VirusTotal is still scanning. Open the report link later.');
-}
-
 export function vtFindings(id: string, subject: string, result: VtResult, category: Finding['category']): Finding[] {
   if (!result.found || !result.stats) {
     return [{ id, category, severity: 'info', points: 0, title: `VirusTotal has never seen ${subject}`, detail: 'Unknown is not the same as safe: new phishing files and links are often unseen.' }];

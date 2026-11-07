@@ -1,8 +1,10 @@
+import type { FileForensics } from '../forensics/types';
+
 export type Severity = 'good' | 'info' | 'low' | 'medium' | 'high' | 'critical';
 
 export type Category = 'auth' | 'sender' | 'content' | 'links' | 'attachments' | 'privacy';
 
-export type TabId = 'overview' | 'sender' | 'links' | 'attachments' | 'body' | 'headers' | 'privacy';
+export type TabId = 'overview' | 'sender' | 'links' | 'attachments' | 'documents' | 'body' | 'headers' | 'privacy';
 
 /** What part of the email a finding is about, so the UI can point at it. */
 export type FindingTarget =
@@ -117,6 +119,8 @@ export interface AttachmentInfo {
   flags: LinkFlag[];
   /** What Unmask found inside the file, for the types it can read. */
   contents?: AttachmentContents;
+  /** Deep file analysis done on this computer: structure, anomalies, extracted links and indicators. */
+  forensics?: FileForensics;
 }
 
 export interface AttachmentContents {

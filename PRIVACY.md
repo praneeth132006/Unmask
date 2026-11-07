@@ -34,7 +34,10 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 | One link's URL | VirusTotal, using your API key: a lookup of what VirusTotal already knows, which publishes nothing | Only when you click **VirusTotal** on that link |
 | One link's URL, submitted for a fresh scan | VirusTotal. **Submitted links become visible to VirusTotal's customers.** | Only when VirusTotal has never seen the link, you click **Scan it now**, and confirm a warning |
 | An attachment's SHA-256 hash | VirusTotal, using your API key | Only when you click **Check on VirusTotal** |
-| An attachment file | VirusTotal, using your API key | Only when you click **Upload file…** and then confirm a warning. Files uploaded to VirusTotal may be shared with its customers. |
+| An attachment's SHA-256 hash | Hybrid Analysis or MalwareBazaar (abuse.ch), using your own key | Only when you click that service's button on the **Documents** tab. |
+| A link to a Google Doc, Sheet, Slides or Drive file | Google (docs.google.com, drive.google.com), anonymously: no cookies, not signed in as you | Only when you click **Look inside** and allow access. The shared copy is downloaded and read on your computer. |
+
+**Unmask never uploads a file anywhere.** Files are read on your computer; only their hashes are ever sent, and only when you click.
 
 These third-party services have their own privacy policies:
 [VirusTotal](https://docs.virustotal.com/docs/privacy-policy), [urlscan.io](https://urlscan.io/about/privacy/), [rdap.org](https://about.rdap.org/), [crt.sh](https://www.sectigo.com/privacy-policy), [Google Public DNS](https://developers.google.com/speed/public-dns/privacy).

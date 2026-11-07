@@ -199,7 +199,7 @@ Hovering a link card in the Links tab, an attachment in the Files tab, or the se
 
 ## 5. Setting up VirusTotal
 
-VirusTotal checks files and links against 70+ antivirus engines. It's free. Unmask only sends a file's **fingerprint** (a SHA-256 hash), never the file itself, unless you choose to upload it.
+VirusTotal checks files and links against 70+ antivirus engines. It's free. Unmask only ever sends a file's **fingerprint** (a SHA-256 hash), never the file itself.
 
 <img src="images/setup-virustotal.png" width="300" align="right" alt="VirusTotal setup steps in the panel">
 
@@ -218,7 +218,7 @@ Unmask checks the key works before saving it. You'll see **"Connected to VirusTo
 
 **Scanning a new link:** if VirusTotal has never seen a link, Unmask offers **Scan it now**. Submitted links become visible to VirusTotal's customers, including any name, address or token inside them, so Unmask asks you to confirm first. For personal links use the private **Sandbox scan** instead.
 
-**Uploading files:** if VirusTotal has never seen a file, Unmask offers **Upload file…**. Uploaded files can be downloaded by VirusTotal's paying customers, so **never upload anything confidential** such as invoices, contracts, payslips or ID documents. Unmask asks you to confirm first.
+**Files are never uploaded.** If VirusTotal has never seen a file, that is shown as "unknown" (not "safe"). Unmask deliberately has no upload button, so your invoices, contracts, payslips and ID documents can never end up in someone else's database.
 
 <br clear="right">
 

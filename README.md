@@ -199,7 +199,7 @@ Unmask works with no setup at all. These free services add extra checks you run 
 
 - The email is analyzed **inside your browser**. It is never sent to an Unmask server.
 - Online checks run only when you click them, and send the minimum: a link, or a file's fingerprint (not the file).
-- Uploading a file to VirusTotal needs an extra confirmation, because uploaded files can be downloaded by VirusTotal's customers.
+- Files are never uploaded anywhere. Lookups use a file's hash only, so nobody else can see your documents.
 - API keys are stored only in your browser.
 
 Full details: [PRIVACY.md](PRIVACY.md).

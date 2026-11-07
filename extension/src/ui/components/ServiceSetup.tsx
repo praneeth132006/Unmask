@@ -1,17 +1,20 @@
 import { useState, type ReactNode } from 'react';
 import { saveSettings, type Settings } from '../../lib/settings';
-import { testBackend, testUrlscanKey, testVirusTotalKey, type KeyTestResult } from '../../integrations/keyTest';
+import { testAbuseChKey, testBackend, testHybridKey, testUrlscanKey, testVirusTotalKey, type KeyTestResult } from '../../integrations/keyTest';
+import { ABUSE_CH_ORIGINS, HYBRID_ORIGINS, ensureOrigins } from '../../integrations/intel';
 import { Button, Spinner } from './ui';
 import { Icon } from './Icon';
 
-export type Service = 'virustotal' | 'urlscan' | 'backend';
+export type Service = 'virustotal' | 'urlscan' | 'hybrid' | 'abusech' | 'backend';
 
 interface ServiceInfo {
   name: string;
   what: string;
   /** Free quota, shown so nobody worries about being charged. */
   limits: string;
-  field: 'vtApiKey' | 'urlscanApiKey' | 'backendUrl';
+  field: 'vtApiKey' | 'urlscanApiKey' | 'hybridApiKey' | 'abuseChKey' | 'backendUrl';
+  /** Websites the browser must allow before this service can be called. */
+  origins?: string[];
   placeholder: string;
   steps: ReactNode[];
   test: (value: string) => Promise<KeyTestResult>;
@@ -26,7 +29,7 @@ const ext = (href: string, children: ReactNode) => (
 export const SERVICES: Record<Service, ServiceInfo> = {
   virustotal: {
     name: 'VirusTotal',
-    what: 'Checks files and links against 70+ antivirus engines. Free, and Unmask only sends a file’s fingerprint unless you choose to upload it.',
+    what: 'Checks files and links against 70+ antivirus engines. Free. For files, Unmask sends only the fingerprint (hash), never the file.',
     limits: 'Free: 4 lookups per minute, 500 per day. A free key is never charged; past the limit, lookups just pause until it resets. Personal use only.',
     field: 'vtApiKey',
     placeholder: 'Paste your VirusTotal key',
@@ -49,6 +52,34 @@ export const SERVICES: Record<Service, ServiceInfo> = {
       <>Copy the key it shows and paste it below.</>,
     ],
     test: testUrlscanKey,
+  },
+  hybrid: {
+    name: 'Hybrid Analysis',
+    what: 'CrowdStrike’s malware sandbox. Unmask looks up the file’s fingerprint (hash) to show an existing sandbox report. The file is never uploaded.',
+    limits: 'Free for the security community; a key needs a verified account and is rate-limited. Lookups only read existing reports.',
+    field: 'hybridApiKey',
+    placeholder: 'Paste your Hybrid Analysis key',
+    origins: HYBRID_ORIGINS,
+    steps: [
+      <>{ext('https://www.hybrid-analysis.com/signup', 'Create a free Hybrid Analysis account')} and verify your email.</>,
+      <>Open your profile → <em>API key</em>, or {ext('https://www.hybrid-analysis.com/my-account?tab=%23api-key-tab', 'go straight to it')}.</>,
+      <>Copy the key and paste it below. New accounts may need approval before the key works.</>,
+    ],
+    test: testHybridKey,
+  },
+  abusech: {
+    name: 'abuse.ch (MalwareBazaar and URLhaus)',
+    what: 'abuse.ch tracks known malware files (MalwareBazaar) and malware-hosting links (URLhaus). Unmask looks up a file’s fingerprint or a link, never the file itself.',
+    limits: 'Free for everyone with an account. Use is subject to abuse.ch’s fair-use terms.',
+    field: 'abuseChKey',
+    placeholder: 'Paste your abuse.ch Auth-Key',
+    origins: ABUSE_CH_ORIGINS,
+    steps: [
+      <>Open {ext('https://auth.abuse.ch/', 'auth.abuse.ch')} and sign in (a Google, GitHub, LinkedIn or X login works).</>,
+      <>Under <em>Optional: Auth-Key</em>, create or copy your Auth-Key.</>,
+      <>Paste it below. One key covers both MalwareBazaar and URLhaus.</>,
+    ],
+    test: testAbuseChKey,
   },
   backend: {
     name: 'Your own trace server',
@@ -88,6 +119,10 @@ export function ServiceSetup({
 
   const save = async (v = value) => {
     setState({ status: 'testing' });
+    if (info.origins && !(await ensureOrigins(info.origins))) {
+      setState({ status: 'done', result: { ok: false, message: 'Permission not granted. Unmask needs it to contact this service; it only sends fingerprints, never files.' } });
+      return;
+    }
     const result = await info.test(v);
     setState({ status: 'done', result });
     if (result.ok) {

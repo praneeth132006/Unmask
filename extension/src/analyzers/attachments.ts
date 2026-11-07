@@ -1,5 +1,7 @@
-import type { AttachmentInfo, Finding, LinkFlag, ParsedAttachment, Severity } from '../core/types';
+import type { AttachmentContents, AttachmentInfo, Finding, LinkFlag, ParsedAttachment, Severity } from '../core/types';
 import type { RawLink } from './content';
+import { analyzeFile } from '../forensics';
+import type { FileForensics } from '../forensics/types';
 import { inspectContents } from './documents';
 
 const EXECUTABLE = new Set(['exe', 'scr', 'com', 'pif', 'bat', 'cmd', 'js', 'jse', 'vbs', 'vbe', 'wsf', 'wsh', 'hta', 'ps1', 'psm1', 'msi', 'msp', 'jar', 'lnk', 'cpl', 'reg', 'appx', 'msix', 'apk', 'dll', 'app', 'command', 'scf', 'url', 'inf', 'xll', 'chm']);
@@ -99,16 +101,52 @@ export async function inspectAttachment(a: ParsedAttachment): Promise<Attachment
     flags.push(f('encrypted-archive', 'high', 'Password-protected archive: hides its contents from virus scanners'));
   }
 
+  // Deep, local-only analysis: structure, hidden code, every link, and fingerprints for lookups.
+  let forensics: FileForensics | undefined;
+  if (!inline) {
+    try {
+      forensics = await analyzeFile(a.content, a.filename);
+    } catch {
+      forensics = undefined;
+    }
+  }
+  const contents = mergeContents(deep?.contents, forensics);
+  if (forensics) mergeAnomalyFlags(flags, forensics);
+
   return {
     filename: a.filename,
     mimeType: a.mimeType,
     size: a.size,
-    sha256: await sha256Hex(a.content),
+    sha256: forensics?.hashes.sha256 ?? (await sha256Hex(a.content)),
     extension: ext,
     inline,
     flags,
-    contents: deep?.contents,
+    contents,
+    forensics,
   };
+}
+
+const SEV_RANK: Record<Severity, number> = { good: 0, info: 1, low: 2, medium: 3, high: 4, critical: 5 };
+
+/** Findings from the deep analysis join the quick checks; a repeated id keeps the more severe wording. */
+function mergeAnomalyFlags(flags: LinkFlag[], forensics: FileForensics): void {
+  for (const an of forensics.anomalies) {
+    if (SEV_RANK[an.severity] < SEV_RANK.low) continue;
+    const existing = flags.findIndex((x) => x.id === an.id);
+    if (existing < 0) flags.push(f(an.id, an.severity, an.title));
+    else if (SEV_RANK[an.severity] > SEV_RANK[flags[existing]!.severity]) flags[existing] = f(an.id, an.severity, an.title);
+  }
+}
+
+const KIND_OF: Partial<Record<FileForensics['kind'], AttachmentContents['kind']>> = { pdf: 'pdf', ooxml: 'office', ole: 'office', rtf: 'office', zip: 'archive', html: 'html' };
+
+function mergeContents(base: AttachmentContents | undefined, forensics: FileForensics | undefined): AttachmentContents | undefined {
+  if (!forensics) return base;
+  const kind = base?.kind ?? KIND_OF[forensics.kind];
+  if (!kind) return base;
+  const links = [...new Set([...(base?.links ?? []), ...forensics.links.map((l) => l.url)])].slice(0, 300);
+  const macros = base?.macros || !!(forensics.ooxml?.macros.present || forensics.ole?.macros.present);
+  return { kind, links, files: base?.files ?? [], macros };
 }
 
 const POINTS: Record<Severity, number> = { good: 0, info: 0, low: 4, medium: 10, high: 22, critical: 35 };

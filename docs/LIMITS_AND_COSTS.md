@@ -31,7 +31,7 @@ Even checking 20 suspicious emails a day with every button stays far under the f
 - **Free (Public API):** 4 requests/minute, 500/day; a VirusTotal staff member puts the monthly figure at about 15,500. Quotas reset daily at 00:00 UTC.
 - **Rules for the free API:** it must not be used in commercial products or services, or in business workflows that don't contribute new files, and you may not register several accounts to get around the limits. Using **your own key, for yourself**, in a free open-source tool like Unmask is the intended personal use. **If you use Unmask at work** (for example, a security team checking reported emails), your organization needs a VirusTotal Premium licence.
 - **Premium:** higher limits under a commercial licence. VirusTotal doesn't publish prices; you request a quote from their sales team.
-- **Uploading files** counts against the same quota, and uploaded files become available to VirusTotal's Premium customers. Unmask asks before every upload.
+- **Files are never uploaded.** Unmask only looks files up by their hash, so nobody else can ever see your documents.
 - Official sources: [Public vs Premium API](https://docs.virustotal.com/reference/public-vs-premium-api), [API errors](https://docs.virustotal.com/reference/errors).
 
 ## urlscan.io

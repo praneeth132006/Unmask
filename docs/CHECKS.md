@@ -424,7 +424,7 @@ These run only when you click them, except domain age and domain intelligence, w
 |---|---|---|
 | **Domain age** (rdap.org) | The sender's domain name | See [Sender identity](#sender-identity) |
 | **VirusTotal: file** | The file's SHA-256 hash | 3+ engines: Critical 40 · 1–2: High 20 · clean or unknown: Note 0 |
-| **VirusTotal: upload** (after confirmation) | The file itself | Same as above |
+| **Hybrid Analysis / MalwareBazaar: file** | The file's SHA-256 hash | Known malware: Critical 40 · suspicious: High 20 · no record: Note 0 |
 | **VirusTotal: link** | The link | 3+ engines: Critical 40 · 1–2: High 20 |
 | **urlscan.io sandbox scan** | The link | urlscan says malicious: Critical 40, plus the final page, a screenshot and any brand it impersonates |
 | **Redirect trace** (your server) | The link | The redirect chain (informational) |
