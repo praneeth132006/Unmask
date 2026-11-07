@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { EMPTY_PROTECTION, mergeProtection, sanitizeProtection, suggestTrusted, type ProtectionList } from '../../analyzers/protection';
 import { EMPTY_HISTORY, type SenderHistory } from '../../analyzers/history';
 import { loadHistory } from '../../lib/historyStore';
-import { loadProtection, saveProtection } from '../../lib/protectionStore';
+import { isEmptyProtection, loadManagedProtection, loadOwnProtection, saveProtection } from '../../lib/protectionStore';
 import { Button, Card, SectionTitle } from './ui';
 import { Icon } from './Icon';
 
@@ -60,13 +60,15 @@ export function ProtectionPanel() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [history, setHistory] = useState<SenderHistory>(EMPTY_HISTORY);
+  const [managed, setManaged] = useState<ProtectionList>(EMPTY_PROTECTION);
 
   useEffect(() => {
-    void loadProtection().then(setList);
+    void loadOwnProtection().then(setList);
+    void loadManagedProtection().then(setManaged);
     void loadHistory().then(setHistory);
   }, []);
 
-  const suggestions = suggestTrusted(history, list);
+  const suggestions = suggestTrusted(history, mergeProtection(list, managed));
   const trust = (addresses: string[]) => void update(sanitizeProtection({ ...list, trusted: [...list.trusted, ...addresses] }));
 
   const update = async (next: ProtectionList) => setList(await saveProtection(next));
@@ -102,6 +104,26 @@ export function ProtectionPanel() {
         <p className="text-[11px] text-[var(--text-3)]">
           Tell Unmask who scammers are likely to pretend to be. Anything imitating them gets the strongest warning. Stays in this browser; you can share it as a file.
         </p>
+
+        {!isEmptyProtection(managed) && (
+          <div className="rounded-lg border border-[var(--accent-border)] bg-[var(--accent-soft)] p-2.5">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text)]">
+              <Icon name="shield" className="h-3.5 w-3.5" /> From {managed.label ? `“${managed.label}”` : 'your organisation'}
+            </div>
+            <p className="mt-0.5 text-[11px] text-[var(--text-3)]">Set by your IT administrator for everyone. Used in every check; only they can change it.</p>
+            <ul className="mt-1 space-y-0.5 text-[11px] text-[var(--text-2)]">
+              {managed.brands.map((b) => (
+                <li key={`b-${b.name}`}><span className="font-medium text-[var(--text)]">{b.name}</span> <span className="font-mono text-[10.5px] text-[var(--text-3)]">{b.domains.join(', ')}</span></li>
+              ))}
+              {managed.contacts.map((c) => (
+                <li key={`c-${c.name}`}><span className="font-medium text-[var(--text)]">{c.name}</span> <span className="font-mono text-[10.5px] text-[var(--text-3)]">{c.addresses.join(', ')}</span></li>
+              ))}
+              {managed.trusted.length > 0 && (
+                <li><span className="font-medium text-[var(--text)]">Trusted:</span> <span className="font-mono text-[10.5px] text-[var(--text-3)]">{managed.trusted.join(', ')}</span></li>
+              )}
+            </ul>
+          </div>
+        )}
 
         <div>
           <div className="text-xs font-semibold">Companies you use</div>

@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { sanitizeProtection } from '../../analyzers/protection';
-import { loadProtection, saveProtection } from '../../lib/protectionStore';
+import { loadOwnProtection, saveProtection } from '../../lib/protectionStore';
 import type { AuthResult, Report } from '../../core/types';
 import type { DomainAge } from '../../integrations/rdap';
 import type { DomainIntel } from '../../integrations/domainIntel';
@@ -193,7 +193,7 @@ export function SenderTab({
 function ProtectButtons({ name, address, verified }: { name: string; address: string; verified: boolean }) {
   const [note, setNote] = useState<string | null>(null);
   const add = async (kind: 'trusted' | 'contact') => {
-    const list = await loadProtection();
+    const list = await loadOwnProtection();
     const next =
       kind === 'trusted'
         ? sanitizeProtection({ ...list, trusted: [...list.trusted, address] })

@@ -70,6 +70,8 @@ export default defineConfig({
     action: {
       default_title: 'Open Unmask',
     },
+    // Lets an IT admin push a shared protection list by policy (docs/TEAMS.md). Firefox reads managed storage from its own enterprise policies.
+    ...(browser === 'firefox' ? {} : { storage: { managed_schema: 'managed_schema.json' } }),
     ...(browser === 'firefox'
       ? {
           browser_specific_settings: {

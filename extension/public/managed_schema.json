@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "protectionList": {
+      "title": "Protection list for everyone in the organisation",
+      "description": "Companies, people and trusted senders that Unmask protects on every managed browser. Same shape as an exported unmask-protection.json. See docs/TEAMS.md.",
+      "type": "object",
+      "properties": {
+        "version": { "type": "integer" },
+        "label": { "title": "Shown to users, e.g. Acme IT", "type": "string" },
+        "brands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "domains": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "addresses": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "trusted": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
