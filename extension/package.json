@@ -46,7 +46,7 @@
     "mailauth": "7.2.0",
     "playwright": "1.64.1",
     "qrcode": "1.5.4",
-    "simple-icons": "15.21.0",
+    "simple-icons": "16.36.0",
     "tailwindcss": "^4.3.4",
     "typescript": "7.0.2",
     "vitest": "^5.1.0",
