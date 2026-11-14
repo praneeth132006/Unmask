@@ -390,6 +390,22 @@ It adds no points. Below it, **What Unmask couldn't check** lists the blind spot
 
 ---
 
+## On-device AI (optional)
+
+Source: [`lib/onDeviceAi.ts`](../extension/src/lib/onDeviceAi.ts). Off by default. Turn on **Let Chrome’s on-device AI read emails** in Settings → Privacy (shown only in Chrome versions that have the built-in model). Chrome’s own model, Gemini Nano, reads the email **on your computer**; nothing is sent anywhere. Chrome downloads the model once, after you click, and needs desktop Chrome with enough memory and disk ([requirements](https://developer.chrome.com/docs/ai/prompt-api#review_the_hardware_requirements)).
+
+It doesn’t guess whether an email was written by AI (most phishing is, and so is a lot of real mail). It reads what the email **asks you to do** (pay, change bank details, buy gift cards, sign in, share a code, call a number, install something…), and explains the verdict in two plain sentences, in English, Spanish, German, French or Japanese.
+
+| Check | Severity | Points |
+|---|---|---|
+| The model finds a risky request that no local check with 10+ points already caught, with pressure to act fast | Medium | 12 |
+| The same, without pressure | Low | 6 |
+| The same, from a sender you know whose email was verified (DMARC pass) | Note | 0 |
+
+The model can never make an email *High risk* on its own, and it adds at most one finding.
+
+---
+
 ## Plain words
 
 Source: [`core/plain.ts`](../extension/src/core/plain.ts). The plain-words card and banner sentence are built only from the findings above: the verdict picks the headline ("This email looks like a scam." / "Be careful with this email." / "Nothing looks wrong with this email."), and the most serious findings, one per problem, become up to three everyday reasons. They add no points of their own.

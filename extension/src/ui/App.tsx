@@ -1,3 +1,4 @@
+import { AiCard } from './components/AiCard';
 import { browser } from 'wxt/browser';
 import { PEEK_KEY, type InboxStatus, type PendingPeek } from '../lib/messages';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type DragEvent } from 'react';
@@ -580,14 +581,17 @@ export function App() {
                 {/* Remount tab content per analysis so per-link/attachment results don't leak between emails. */}
                 <div className={tab === 'overview' ? 'pt-3' : ''} key={runId.current}>
                   {tab === 'overview' && (
-                    <Overview
-                      report={report}
-                      canHighlight={canHighlight}
-                      onHoverFinding={onHoverFinding}
-                      onOpenFinding={onOpenFinding}
-                      onOpenTab={(t) => openTab(t)}
-                      simple={settings.simpleMode}
-                    />
+                    <>
+                      {settings.onDeviceAi && <AiCard report={report} onFindings={onFindings} />}
+                      <Overview
+                        report={report}
+                        canHighlight={canHighlight}
+                        onHoverFinding={onHoverFinding}
+                        onOpenFinding={onOpenFinding}
+                        onOpenTab={(t) => openTab(t)}
+                        simple={settings.simpleMode}
+                      />
+                    </>
                   )}
                   {tab === 'overview' && (
                     <ReportCard

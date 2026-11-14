@@ -18,6 +18,8 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 - **Reports.** PDF, JSON and .eml exports are created in your browser and saved to your Downloads folder. Report buttons open Gmail's own report dialog, a compose window or a web form for you to send yourself; Unmask sends nothing.
 - **Settings and API keys** you enter are stored in your browser's extension storage (`chrome.storage.local`) and never leave your device except as described below.
 
+**Optional on-device AI.** If you turn on *Let Chrome’s on-device AI read emails*, the email’s text is read by Chrome’s built-in model (Gemini Nano) on your computer. It is not sent to Google or anyone else. Chrome downloads the model itself, once, after you click.
+
 ## What is sent, and only when
 
 | Data | Sent to | When |

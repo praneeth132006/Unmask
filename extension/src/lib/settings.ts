@@ -35,6 +35,8 @@ export interface Settings {
   peekButtons: boolean;
   /** Check new (unread) inbox emails automatically, before they are opened. */
   scanInbox: boolean;
+  /** Let Chrome's built-in model (Gemini Nano) read the email on this computer. Off by default. */
+  onDeviceAi: boolean;
   /** Settings layout version, for one-time upgrades of saved settings. */
   settingsVersion: number;
 }
@@ -59,6 +61,7 @@ export const DEFAULT_SETTINGS: Settings = {
   simpleMode: false,
   peekButtons: true,
   scanInbox: true,
+  onDeviceAi: false,
   settingsVersion: 2,
 };
 

@@ -5,6 +5,7 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **Optional on-device AI (Chrome):** Chrome’s built-in model reads the email on your computer, says what it asks you to do (pay, sign in, call a number…) and explains the verdict in plain words. Off by default; nothing is sent anywhere, and it can never make an email High risk on its own.
 - **Public benchmark**: the detection rate on 400 real phishing emails and the false-alarm rate on 4,150 real legitimate emails, measured in CI on every change and attached to every release. See [Benchmark](docs/BENCHMARK.md).
 - **Was this right?** at the end of the summary: report a wrong verdict as a pre-filled GitHub issue, sharing only the verdict, the checks that fired and, if you choose, the sender's domain.
 - **Calendar-invite phishing.** Invites (`.ics` files and the invite inside an email) are read: links to sites that aren't meeting services, payroll, password or payment lures, callback numbers, and an organiser from a different organisation than the sender. Their links get the usual checks.

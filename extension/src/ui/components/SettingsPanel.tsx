@@ -1,3 +1,4 @@
+import { languageModel } from '../../lib/onDeviceAi';
 import { browser } from 'wxt/browser';
 import { useEffect, useState, type ReactNode } from 'react';
 import { saveSettings, type Settings } from '../../lib/settings';
@@ -203,6 +204,11 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
         <Toggle checked={settings.ipIntel} onChange={(v) => void update({ ipIntel: v })} title="Check who runs the sending server">
           Spots mail sent from home connections and rented servers. Sends the sending server’s IP address (from the email’s delivery path, not yours) to dns.google.
         </Toggle>
+        {languageModel() && (
+          <Toggle checked={settings.onDeviceAi} onChange={(v) => void update({ onDeviceAi: v })} title="Let Chrome’s on-device AI read emails">
+            Chrome’s built-in model (Gemini Nano) reads the email on this computer: what it asks you to do, and why the verdict fits, in plain words. Nothing is sent anywhere. Needs desktop Chrome with enough memory, and a one-time model download by Chrome.
+          </Toggle>
+        )}
       </Card>
 
       <SectionTitle

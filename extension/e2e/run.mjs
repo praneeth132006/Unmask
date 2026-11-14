@@ -224,6 +224,16 @@ check(/^False alarm: High risk/.test(shared) && !shared.includes('sarah.recruit2
 check(issueHref.startsWith('https://github.com/praneeth132006/Unmask/issues/new?template=detection.yml'), 'the report opens the Wrong verdict issue form');
 if (process.env.UNMASK_E2E_SHOTS) await panel.getByLabel('Was this right?').screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'feedback.png') }).catch(() => {});
 
+// On-device AI turned on where Chrome has no built-in model: the panel works as before, with no AI card.
+await panel.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), onDeviceAi: true } })));
+await panel.reload();
+const hasModel = await panel.evaluate(() => typeof globalThis.LanguageModel !== 'undefined');
+await panel.setInputFiles('input[type=file]', { name: 'phish.eml', mimeType: 'message/rfc822', buffer: Buffer.from(fixture) });
+await panel.getByText('High risk').first().waitFor({ timeout: 10000 }).catch(() => {});
+const aiCards = await panel.getByLabel('On-device AI').count();
+check(hasModel || aiCards === 0, `on-device AI is skipped cleanly where Chrome has no model (model: ${hasModel}, cards: ${aiCards})`);
+await panel.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), onDeviceAi: false } })));
+
 // The tabs (including Headers) must be there in both normal and simple mode.
 for (const simpleMode of [false, true]) {
   await panel.evaluate((v) => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), simpleMode: v } })), simpleMode);
