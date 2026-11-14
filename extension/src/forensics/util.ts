@@ -62,7 +62,9 @@ export function sniff(b: Uint8Array): MagicResult {
   if (ascii(b, 0, 3) === 'GIF') return { kind: 'image', label: 'GIF image', mime: 'image/gif' };
   const head = ascii(b, 0, Math.min(b.length, 2048)).replace(/^﻿/, '').trimStart().toLowerCase();
   if (/^(<!doctype html|<html|<head|<body|<script|<form|<meta)/.test(head)) return { kind: 'html', label: 'HTML page', mime: 'text/html' };
-  if (/^<svg|^<\?xml[^>]*\?>\s*<svg/.test(head)) return { kind: 'html', label: 'SVG image (can contain scripts)', mime: 'image/svg+xml' };
+  if (/^begin:vcalendar/.test(head)) return { kind: 'other', label: 'Calendar invite (iCalendar)', mime: 'text/calendar' };
+  // XML declarations, comments and a DOCTYPE may come before the <svg> tag; attackers pad them in.
+  if (/^(?:<\?xml[^>]*\?>\s*|<!--[\s\S]*?-->\s*|<!doctype svg[^>]*>\s*)*<svg[\s>]/.test(head)) return { kind: 'html', label: 'SVG image (can contain scripts)', mime: 'image/svg+xml' };
   if (/^#!\s*\//.test(head) || /^(@echo off|powershell|\$ErrorActionPreference|set-executionpolicy)/i.test(head)) return { kind: 'script', label: 'Script', mime: 'text/plain' };
   return { kind: 'other', label: 'Unknown or plain data', mime: null };
 }

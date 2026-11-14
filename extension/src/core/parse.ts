@@ -32,7 +32,7 @@ export async function parseEmail(raw: string | ArrayBuffer | Uint8Array): Promis
   const attachments: ParsedAttachment[] = email.attachments.map((a, i) => {
     const content = toBytes(a.content);
     return {
-      filename: a.filename ?? `attachment-${i + 1}`,
+      filename: a.filename ?? (/text\/calendar/i.test(a.mimeType) ? 'invite.ics' : `attachment-${i + 1}`),
       mimeType: a.mimeType,
       size: content.byteLength,
       disposition: a.disposition,

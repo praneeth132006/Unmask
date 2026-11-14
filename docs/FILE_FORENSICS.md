@@ -17,7 +17,9 @@ Phishing does not always live in the email. It hides in the **PDF** that is one 
 | **Older Office** (`.doc`, `.xls`, `.ppt`) | The OLE container's streams, VBA macro source, Excel 4.0 macro sheets, embedded files, Equation Editor objects, author metadata |
 | **RTF** | Embedded objects (including exploit-style ones), padded object data, remote templates, fields |
 | **ZIP and archives** | Every file inside, what each really is, encrypted entries, and the documents inside are analysed the same way |
-| **Programs, shortcuts, scripts, HTML** | What the first bytes say the file is (whatever its name claims), commands and addresses it contains |
+| **SVG images and HTML pages** | Scripts, code that runs on display (`onload`), redirects (`window.location`, meta refresh), login forms hidden in `<foreignObject>`, `javascript:` links, pages hidden in base64, file smuggling (`Blob` + download), CAPTCHA gates, and a built-in email address for a pre-filled fake login |
+| **Calendar invites** (`.ics`) | Every link in the event, and whether it goes somewhere other than a meeting service |
+| **Programs, shortcuts, scripts** | What the first bytes say the file is (whatever its name claims), commands and addresses it contains |
 
 Files inside files are followed two levels deep, so a PDF inside a ZIP, or a program embedded in a Word document, is not missed. What is found inside is lifted up into the parent's findings.
 
@@ -67,6 +69,19 @@ Each finding says where it is (`obj 5 0`), explains it in everyday words, and, w
 Legacy `.doc`/`.xls`/`.ppt` files are OLE containers. Unmask reads the container itself (the stream list, in the style of `oledump`), decompresses the VBA source, reads Excel 4.0 sheets from the workbook records, pulls out files embedded with `Ole10Native`, flags Equation Editor objects used by famous exploits, and reads author and editing metadata.
 
 RTF documents hide objects as long runs of hex digits, sometimes padded with junk characters that Word ignores but scanners choke on. Unmask decodes them (the `rtfdump` view), recognises exploit-style objects, and reads remote templates and field codes.
+
+## SVG images and HTML pages
+
+Mail filters treat an `.svg` file as a picture, but a browser runs it like a web page. In 2026 this became one of the commonest ways to smuggle a phishing page into an inbox: Microsoft counted a single three-day SVG campaign of 1.2 million messages in February 2026. Unmask reads the file as text, never renders it, and reports:
+
+- **JavaScript in an SVG** (MITRE T1027.017, SVG smuggling): pictures never need code.
+- **Code that runs on display**: `onload`, `onerror`, `onbegin` and similar attributes.
+- **Redirects**: `window.location`, `location.replace`, `window.open`, meta refresh, with the target address added to the Links tab.
+- **Hidden pages**: base64 passed to `atob()` or `data:` addresses is decoded, and any page or address inside is reported.
+- **Login forms inside `<foreignObject>`**: a whole web page tucked into an image (critical with a password field).
+- **Smuggling**: a file assembled in the browser with `Blob` and `createObjectURL`, then downloaded (T1027.006 for HTML).
+- **CAPTCHA gates** (Turnstile, hCaptcha, reCAPTCHA) in front of a redirect or login form, which phishing kits use to hide from scanners.
+- **A built-in email address**, so the fake page can pre-fill your login.
 
 ## Fingerprints and lookups
 

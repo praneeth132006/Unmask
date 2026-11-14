@@ -13,6 +13,8 @@ import { analyzeOle } from './ole';
 import { analyzeOoxml } from './ooxml';
 import { analyzePdf, dedupeLinks } from './pdf';
 import { analyzeRtf } from './rtf';
+import { analyzeMarkup } from './markup';
+import { calendarLinks, isMeetingLink, parseIcs } from '../analyzers/calendar';
 import type { Anomaly, ChildFile, ExtractedLink, FileForensics, FileKind, Iocs, ZipReport } from './types';
 import { EMPTY_IOCS } from './types';
 import { entropy, extensionMismatch, hashes, sniff } from './util';
@@ -151,6 +153,17 @@ export async function analyzeFile(bytes: Uint8Array, filename = '', depth = 0, b
       iocs = found.iocs;
       if (found.iocs.commands.length && kind === 'script') add({ id: 'script-commands', severity: 'high', title: 'Script runs system commands', detail: found.iocs.commands[0], plain: 'This script starts programs or downloads data.' });
       for (const d of found.decoded.filter((x) => /program/.test(x.label))) add({ id: 'script-hidden-program', severity: 'critical', title: `Hides a ${d.label} in base64`, plain: 'A program is hidden inside encoded text.', attack: 'T1027' });
+      if (magic.mime === 'text/calendar') {
+        const invite = parseIcs(text);
+        for (const l of calendarLinks(invite ? [invite] : [])) links.push({ url: l.href, where: `event “${l.text || 'untitled'}”`, how: 'link', label: l.text || undefined });
+        const outside = links.filter((l) => !isMeetingLink(l.url));
+        if (outside.length) add({ id: 'calendar-outside-link', severity: 'medium', title: `Invite links to ${outside.length === 1 ? 'a website' : `${outside.length} websites`} that ${outside.length === 1 ? 'isn’t a meeting service' : 'aren’t meeting services'}`, detail: outside.slice(0, 3).map((l) => l.url).join(' · '), plain: 'Meeting invites normally only link to Zoom, Teams, Meet or similar. Calendars can add this invite on their own, so the link may come back as a reminder.', attack: 'T1566.002' });
+      }
+      if (kind === 'html') {
+        const markup = analyzeMarkup(text, magic.mime === 'image/svg+xml' || ext(name) === 'svg');
+        for (const a of markup.anomalies) add(a);
+        links.push(...markup.links);
+      }
     }
   } else if (magic.kind === 'archive') {
     kind = 'zip';
