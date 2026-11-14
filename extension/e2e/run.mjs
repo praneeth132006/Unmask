@@ -83,6 +83,13 @@ await ctx.route('https://mail.google.com/**', (route) => {
 let sw = ctx.serviceWorkers()[0] ?? (await ctx.waitForEvent('serviceworker'));
 const extId = new URL(sw.url()).host;
 
+// First run: a welcome tab shows a real warning on a made-up phishing email.
+const welcome = ctx.pages().find((p) => p.url().includes('/welcome.html')) ?? (await ctx.waitForEvent('page', { predicate: (p) => p.url().includes('/welcome.html'), timeout: 5000 }).catch(() => null));
+const welcomeText = welcome ? await welcome.getByLabel('Example warning').textContent({ timeout: 8000 }).catch(() => '') : '';
+check(/High risk/.test(welcomeText ?? ''), `the welcome tab opens on install and shows a High risk example ("${(welcomeText ?? '').slice(0, 50)}")`);
+if (process.env.UNMASK_E2E_SHOTS && welcome) await welcome.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'welcome.png'), fullPage: true });
+await welcome?.close();
+
 const tab = await ctx.newPage();
 // Collect uncaught exceptions from every JS world, including content scripts.
 const cdp = await ctx.newCDPSession(tab);
@@ -109,6 +116,19 @@ check(/paypa1-secure\.top/.test(dialogText ?? ''), 'clicking the risky link show
 check(ctx.pages().length === pagesBefore, 'the link did not open');
 await tab.locator('[data-unmask-dialog] button', { hasText: 'Go back' }).click();
 check((await tab.locator('[data-unmask-dialog]').count()) === 0, '"Go back" closes the warning');
+
+// Family mode: on a High risk email there is no way past the warning, only "Ask Sam".
+await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), familyMode: true, helperName: 'Sam', helperEmail: 'sam@example.org' } })));
+await tab.waitForTimeout(300);
+await tab.click('.a3s a');
+const familyButtons = await tab.locator('[data-unmask-dialog] button, [data-unmask-dialog] a').allTextContents().catch(() => []);
+const askHref = (await tab.locator('[data-unmask-dialog] a', { hasText: 'Ask Sam' }).getAttribute('href').catch(() => '')) ?? '';
+check(JSON.stringify(familyButtons) === '["Ask Sam","Go back"]' && askHref.startsWith('mailto:sam@example.org?'), `family mode offers only "Ask Sam" and "Go back" (${familyButtons.join(', ')})`);
+if (process.env.UNMASK_E2E_SHOTS) await tab.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'family-dialog.png') });
+await tab.locator('[data-unmask-dialog] button', { hasText: 'Go back' }).click();
+await sw.evaluate(() => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), familyMode: false } })));
+const weekly = await sw.evaluate(() => chrome.storage.local.get('unmask:stats').then((r) => Object.values(r['unmask:stats']?.weeks ?? {})[0] ?? null));
+check(weekly?.checked >= 1 && weekly?.high >= 1 && weekly?.clicksStopped >= 2, `the weekly summary counted the email and the stopped clicks (${JSON.stringify(weekly && { checked: weekly.checked, high: weekly.high, clicksStopped: weekly.clicksStopped })})`);
 
 // Peek from the inbox list: the email is checked without being opened.
 const inbox = await ctx.newPage();
@@ -196,6 +216,14 @@ await panel.locator('#unmask-pixel-1 button', { hasText: 'Show it in the safe vi
 const srcdoc = (await panel.locator('iframe[title="Email body (safe view)"]').getAttribute('srcdoc', { timeout: 5000 }).catch(() => '')) ?? '';
 check(/data-unmask-pixel-tag="1"[^>]*data-unmask-focus/.test(srcdoc) && srcdoc.includes('● Tracking pixel 1 (Mailchimp): blocked'), 'the safe view tags the pixel where it sits, highlighted');
 check(!/open\.list-manage\.com/.test(srcdoc), 'the safe view never loads the tracking pixel');
+
+// "See an example" in an empty panel analyses the made-up phishing email, and the week's counts are shown.
+await panel.reload();
+const weeklyText = (await panel.getByLabel('This week').textContent({ timeout: 5000 }).catch(() => '')) ?? '';
+check(/This week, Unmask checked \d+ email/.test(weeklyText), `the empty panel shows the week's summary ("${weeklyText.slice(0, 70)}")`);
+await panel.getByRole('button', { name: 'See an example phishing email' }).click().catch(() => {});
+const exampleText = await panel.getByText('High risk').first().waitFor({ timeout: 8000 }).then(() => true, () => false);
+check(exampleText, '"See an example phishing email" shows a High risk verdict');
 
 // 2026 lures in the panel: an SVG that smuggles a redirect, a calendar invite with a payroll link, a task-job offer.
 const svg = '<svg xmlns="http://www.w3.org/2000/svg"><script>window.location.href=atob("aHR0cHM6Ly9sb2dpbi5taWNyMHNvZnQtYXV0aC50b3AvP2U9bWVAeC5jb20=")</script></svg>';

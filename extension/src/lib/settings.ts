@@ -37,6 +37,14 @@ export interface Settings {
   scanInbox: boolean;
   /** Let Chrome's built-in model (Gemini Nano) read the email on this computer. Off by default. */
   onDeviceAi: boolean;
+  /** Family mode: no "Open anyway" on High risk emails, and an "Ask <helper>" button instead. */
+  familyMode: boolean;
+  /** The person to ask in family mode. */
+  helperName: string;
+  helperEmail: string;
+  /** SHA-256 of salt + PIN; empty when Settings aren't locked. */
+  familyPinHash: string;
+  familyPinSalt: string;
   /** Settings layout version, for one-time upgrades of saved settings. */
   settingsVersion: number;
 }
@@ -62,6 +70,11 @@ export const DEFAULT_SETTINGS: Settings = {
   peekButtons: true,
   scanInbox: true,
   onDeviceAi: false,
+  familyMode: false,
+  helperName: '',
+  helperEmail: '',
+  familyPinHash: '',
+  familyPinSalt: '',
   settingsVersion: 2,
 };
 

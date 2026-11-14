@@ -215,6 +215,10 @@ Unmask is not in the middle: reports go from your mail system to your admin cons
 
 Edit the policy in the same place and save. Browsers pick up the change by themselves, usually within a few hours.
 
+## Turn off the welcome tab
+
+Unmask opens a one-time welcome tab on install. To stop that on managed browsers, set the policy `skipWelcome` to `true` next to `protectionList`, in the same place (Google Admin's *Policy for extensions* box, the registry, Intune, a Mac profile or Firefox's `policies.json`).
+
 ## Online checks at work
 
 Every check that runs on the computer needs no key and no account: sender, links, look-alike domains, attachments, QR codes, tracking pixels, the protection list. That's most of Unmask, and it's free for any use, including in companies.

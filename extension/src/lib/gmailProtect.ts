@@ -7,12 +7,14 @@
  * Everything runs locally. Dependencies are injected so it can be tested
  * against a fake Gmail page.
  */
+import { askHelperLink, familyBlocks, validHelper } from './family';
+import type { StatEvent } from './stats';
 import type { Report } from '../core/types';
 import type { FetchRawResponse, GmailMessageRef, GmailState } from './messages';
 import type { SenderHistory } from '../analyzers/history';
 import type { ProtectionList } from '../analyzers/protection';
 import { findMessageRoot } from './highlight';
-import { BADGE_ATTR, BANNER_ATTR, PEEK_ATTR, confirmDialog, createBadge, createBanner, createPeekButton, showPeekCard, topReasons } from './inpage';
+import { BADGE_ATTR, BANNER_ATTR, PEEK_ATTR, confirmDialog, createBadge, createBanner, createPeekButton, showPeekCard, topReasons, type DialogOptions } from './inpage';
 import { plainSummary } from '../core/plain';
 import { peekPrivacyLines, verdictLabel } from '../core/facts';
 import { linkWarning, pruneVerdicts, quickVerdict, replyWarning, type StoredVerdict } from './protect';
@@ -28,6 +30,10 @@ export interface ProtectSettings {
   peekButtons?: boolean;
   /** Check unread rows automatically, before they're opened. */
   scanInbox?: boolean;
+  /** Family mode: no way past a High risk warning, and an "Ask <helper>" button. */
+  familyMode?: boolean;
+  helperName?: string;
+  helperEmail?: string;
 }
 
 /** Where a mail web app keeps its messages. Gmail is the default; Outlook on the web has its own. */
@@ -110,6 +116,8 @@ export interface ProtectDeps {
   openPanel?: () => void;
   /** Opens the side panel on a message that was peeked at, not opened. */
   openPeekInPanel?: (ref: GmailMessageRef) => void;
+  /** Counts what Unmask did, for the weekly summary (kept on this device). */
+  onEvent?: (e: StatEvent) => void;
   debounceMs?: number;
 }
 
@@ -179,6 +187,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
       const report = await deps.analyze(res.raw, { history, protection });
       if (stopped) return null;
       reports.set(key, report);
+      deps.onEvent?.({ type: 'checked', key, verdict: report.verdict });
       drawBanner(key, report);
       if (s.senderHistory) await deps.rememberSender(report).catch(() => {});
       const thread = threadOverride ?? site.threadId(doc);
@@ -312,6 +321,16 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     await badgeRows();
   }
 
+  /** In family mode a High risk email has no "anyway" button; the helper is offered instead. */
+  function familyChoice(s: ProtectSettings, report: Report | undefined, proceedLabel: string): Pick<DialogOptions, 'proceedLabel' | 'ask' | 'note'> {
+    if (!familyBlocks(s, report)) return { proceedLabel };
+    const helper = { name: s.helperName ?? '', email: s.helperEmail ?? '' };
+    return {
+      ...(validHelper(helper) && report ? { ask: { label: `Ask ${helper.name.trim() || 'my helper'}`, href: askHelperLink(helper, report) } } : {}),
+      note: 'Family mode is on: High risk emails can’t be opened from here. Ask someone you trust to look first.',
+    };
+  }
+
   // ---- clicks ----------------------------------------------------------------
   async function onClick(e: MouseEvent) {
     if (stopped || e.button !== 0 || !(e.target instanceof Element)) return;
@@ -334,8 +353,9 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
         title: 'Your reply will go somewhere else',
         target: w.replyTo,
         reasons: [`The email came from ${w.from}, but replies are set to go to ${w.replyTo}.`, 'Scammers do this so the real person never sees your answer.'],
-        proceedLabel: 'Reply anyway',
+        ...familyChoice(s, report, 'Reply anyway'),
       });
+      if (!go) deps.onEvent?.({ type: 'stopped', what: 'reply' });
       if (go) {
         reply.setAttribute(BYPASS_ATTR, '');
         press(reply);
@@ -353,8 +373,9 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     if (!w) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    const go = await confirmDialog(doc, { title: 'Wait, this link goes to', target: w.host, reasons: w.reasons, proceedLabel: 'Open anyway' });
+    const go = await confirmDialog(doc, { title: 'Wait, this link goes to', target: w.host, reasons: w.reasons, ...familyChoice(s, report, 'Open anyway') });
     if (go) win.open(href, '_blank', 'noopener,noreferrer');
+    else deps.onEvent?.({ type: 'stopped', what: 'link' });
   }
 
   const listener = (e: Event) => void onClick(e as MouseEvent);

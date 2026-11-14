@@ -1,3 +1,4 @@
+import { recordStat } from '../src/lib/statsStore';
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { browser } from 'wxt/browser';
 import type { FetchRawResponse, OpenPanelRequest } from '../src/lib/messages';
@@ -46,6 +47,7 @@ export default defineContentScript({
       loadVerdicts: async () => ((await browser.storage.local.get(VERDICTS_KEY))[VERDICTS_KEY] as Record<string, StoredVerdict> | undefined) ?? {},
       saveVerdicts: (v) => browser.storage.local.set({ [VERDICTS_KEY]: v }),
       openPanel: () => void browser.runtime.sendMessage({ type: 'unmask:open-panel' } satisfies OpenPanelRequest).catch(() => {}),
+      onEvent: (e) => void recordStat(e),
     });
     const onStorage = (changes: Record<string, { newValue?: unknown }>, area: string) => {
       if (area === 'local' && changes[SETTINGS_KEY]) {

@@ -20,6 +20,10 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 
 **Optional on-device AI.** If you turn on *Let Chrome’s on-device AI read emails*, the email’s text is read by Chrome’s built-in model (Gemini Nano) on your computer. It is not sent to Google or anyone else. Chrome downloads the model itself, once, after you click.
 
+**Family mode.** The helper's name and email, and a salted fingerprint of the Settings PIN, are stored in this browser. *Ask* only opens a draft email in your own mail app; Unmask sends nothing.
+
+**Weekly summary.** Unmask counts, in this browser only, how many emails it checked, warned about, and how many risky clicks and replies it stopped, for the last eight weeks. Message ids are kept only as short one-way tags so an email isn't counted twice; no addresses, subjects or content are stored.
+
 ## What is sent, and only when
 
 | Data | Sent to | When |

@@ -6,15 +6,27 @@
       "description": "Companies, people and trusted senders that Unmask protects on every managed browser. Same shape as an exported unmask-protection.json. See docs/TEAMS.md.",
       "type": "object",
       "properties": {
-        "version": { "type": "integer" },
-        "label": { "title": "Shown to users, e.g. Acme IT", "type": "string" },
+        "version": {
+          "type": "integer"
+        },
+        "label": {
+          "title": "Shown to users, e.g. Acme IT",
+          "type": "string"
+        },
         "brands": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "domains": { "type": "array", "items": { "type": "string" } }
+              "name": {
+                "type": "string"
+              },
+              "domains": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
@@ -23,13 +35,30 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "addresses": { "type": "array", "items": { "type": "string" } }
+              "name": {
+                "type": "string"
+              },
+              "addresses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
-        "trusted": { "type": "array", "items": { "type": "string" } }
+        "trusted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
+    },
+    "skipWelcome": {
+      "title": "Don't open the welcome page after install",
+      "description": "Set to true to stop Unmask opening its one-time welcome tab when it is installed by policy.",
+      "type": "boolean"
     }
   }
 }

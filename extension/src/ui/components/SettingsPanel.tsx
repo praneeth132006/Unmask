@@ -1,4 +1,5 @@
 import { languageModel } from '../../lib/onDeviceAi';
+import { FamilySettings, SettingsLock } from './FamilySettings';
 import { browser } from 'wxt/browser';
 import { useEffect, useState, type ReactNode } from 'react';
 import { saveSettings, type Settings } from '../../lib/settings';
@@ -101,20 +102,32 @@ function HistoryRow() {
 
 export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settings; onClose: () => void; onSaved: (s: Settings) => void }) {
   const [advanced, setAdvanced] = useState(Boolean(settings.backendUrl));
+  const [unlocked, setUnlocked] = useState(false);
   const update = async (patch: Partial<Settings>) => {
     const next = { ...settings, ...patch };
     await saveSettings(next);
     onSaved(next);
   };
+  const header = (
+    <div className="mb-3 flex items-center gap-1">
+      <Button variant="ghost" className="!px-1.5" onClick={onClose} aria-label="Back">
+        <Icon name="back" />
+      </Button>
+      <h2 className="text-[15px] font-semibold">Settings</h2>
+    </div>
+  );
+  if (settings.familyMode && settings.familyPinHash && !unlocked) {
+    return (
+      <div>
+        {header}
+        <SettingsLock settings={settings} onUnlock={() => setUnlocked(true)} />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div className="mb-3 flex items-center gap-1">
-        <Button variant="ghost" className="!px-1.5" onClick={onClose} aria-label="Back">
-          <Icon name="back" />
-        </Button>
-        <h2 className="text-[15px] font-semibold">Settings</h2>
-      </div>
+      {header}
 
       <Card className="!bg-[var(--accent-soft)] !border-[var(--accent-border)]">
         <p className="text-xs text-[var(--text-2)]">
@@ -153,6 +166,8 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
           </Toggle>
         </div>
       </Card>
+
+      <FamilySettings settings={settings} update={update} />
 
       <SectionTitle>Protection inside Gmail</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">

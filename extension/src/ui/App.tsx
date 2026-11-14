@@ -1,3 +1,5 @@
+import { AskHelperCard, WeeklyCard } from './components/FamilyCards';
+import { EXAMPLE_EMAIL } from '../demo/example';
 import { AiCard } from './components/AiCard';
 import { browser } from 'wxt/browser';
 import { PEEK_KEY, type InboxStatus, type PendingPeek } from '../lib/messages';
@@ -558,7 +560,7 @@ export function App() {
               </div>
             )}
 
-            {!report && !loading && !error && <EmptyState status={gmail.status} app={gmail.app} onReload={gmail.reloadTab} inboxStatus={gmail.inboxStatus} />}
+            {!report && !loading && !error && <EmptyState status={gmail.status} app={gmail.app} onReload={gmail.reloadTab} inboxStatus={gmail.inboxStatus} onExample={() => void analyze(async () => EXAMPLE_EMAIL, { kind: 'file', name: 'Example phishing email' })} />}
 
             {report && !loading && (
               <>
@@ -582,6 +584,7 @@ export function App() {
                 <div className={tab === 'overview' ? 'pt-3' : ''} key={runId.current}>
                   {tab === 'overview' && (
                     <>
+                      {settings.familyMode && <AskHelperCard report={report} name={settings.helperName} email={settings.helperEmail} />}
                       {settings.onDeviceAi && <AiCard report={report} onFindings={onFindings} />}
                       <Overview
                         report={report}
@@ -662,11 +665,13 @@ function EmptyState({
   app,
   onReload,
   inboxStatus,
+  onExample,
 }: {
   status: ReturnType<typeof useGmail>['status'];
   app: ReturnType<typeof useGmail>['app'];
   onReload: () => void;
   inboxStatus: ReturnType<typeof useGmail>['inboxStatus'];
+  onExample: () => void;
 }) {
   const name = app === 'outlook' ? 'Outlook' : 'Gmail';
   const [inbox, setInbox] = useState<InboxStatus | null>(null);
@@ -718,6 +723,11 @@ function EmptyState({
           <p className="mt-1 text-xs text-[var(--text-2)]">Then open any email. Unmask will analyze it automatically.</p>
         </>
       )}
+      <WeeklyCard />
+      <div className="mt-4">
+        <Button onClick={onExample}>See an example phishing email</Button>
+        <p className="mt-1 text-[11px] text-[var(--text-3)]">A made-up scam, to see what Unmask shows. Nothing is sent.</p>
+      </div>
       <div className="mx-auto mt-6 max-w-[290px] rounded-xl border border-dashed border-[var(--border-strong)] p-3 text-xs text-[var(--text-2)]">
         Using the Outlook desktop app or another client? Save the email as an <strong className="text-[var(--text)]">.eml</strong> file and drop it here, or paste its raw source with the clipboard button above.
       </div>

@@ -110,8 +110,13 @@ export interface DialogOptions {
   /** Shown large and monospaced, e.g. the real destination host. */
   target?: string;
   reasons: string[];
-  proceedLabel: string;
+  /** Left out in family mode on High risk emails: there is no way past the warning. */
+  proceedLabel?: string;
   cancelLabel?: string;
+  /** A link button, such as "Ask Sam" (a mailto: link). Closes the dialog when used. */
+  ask?: { label: string; href: string };
+  /** A line under the reasons, e.g. why there is no "Open anyway". */
+  note?: string;
 }
 
 /** A modal over Gmail. Resolves true when the user chooses to continue. Escape and the backdrop cancel. */
@@ -128,6 +133,8 @@ export function confirmDialog(doc: Document, opts: DialogOptions): Promise<boole
      .a { margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end; }
      .a button { border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600; border: 1px solid #dadce0; background: #fff; color: #3c4043; }
      .a .safe { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+     .a .ask { border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600; border: 1px solid #1e8e3e; background: #e6f4ea; color: #137333; text-decoration: none; }
+     .n { margin: 10px 0 0; font-size: 12px; color: #5f6368; }
      .f { margin-top: 10px; font-size: 11px; color: #80868b; }`,
   );
   h.id = DIALOG_ID;
@@ -144,9 +151,21 @@ export function confirmDialog(doc: Document, opts: DialogOptions): Promise<boole
       }
     };
     const cancel = el(doc, 'button', { className: 'safe', text: opts.cancelLabel ?? 'Go back' });
-    const go = el(doc, 'button', { text: opts.proceedLabel });
     cancel.addEventListener('click', () => done(false));
-    go.addEventListener('click', () => done(true));
+    const buttons: HTMLElement[] = [];
+    if (opts.proceedLabel) {
+      const go = el(doc, 'button', { text: opts.proceedLabel });
+      go.addEventListener('click', () => done(true));
+      buttons.push(go);
+    }
+    if (opts.ask) {
+      const ask = el(doc, 'a', { className: 'ask', text: opts.ask.label }) as HTMLAnchorElement;
+      ask.href = opts.ask.href;
+      ask.target = '_blank';
+      ask.rel = 'noopener noreferrer';
+      ask.addEventListener('click', () => done(false));
+      buttons.push(ask);
+    }
     const dialog = el(
       doc,
       'div',
@@ -154,7 +173,8 @@ export function confirmDialog(doc: Document, opts: DialogOptions): Promise<boole
       el(doc, 'h2', { text: opts.title }),
       ...(opts.target ? [el(doc, 'div', { className: 'tg', text: opts.target })] : []),
       ...(opts.reasons.length ? [el(doc, 'ul', {}, ...opts.reasons.map((r) => el(doc, 'li', { text: r })))] : []),
-      el(doc, 'div', { className: 'a' }, go, cancel),
+      ...(opts.note ? [el(doc, 'p', { className: 'n', text: opts.note })] : []),
+      el(doc, 'div', { className: 'a' }, ...buttons, cancel),
       el(doc, 'div', { className: 'f', text: 'Unmask · checked on your device' }),
     );
     dialog.setAttribute('role', 'alertdialog');

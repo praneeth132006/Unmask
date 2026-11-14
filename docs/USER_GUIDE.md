@@ -107,6 +107,8 @@ When you open a different email, the panel follows automatically. In a conversat
 
 You don't have to open the panel to be protected: risky emails also get a warning banner inside Gmail (see [Warnings inside your inbox](#8a-warnings-inside-your-inbox)).
 
+**Want to see a warning first?** Right after install Unmask opens a welcome tab that checks a made-up scam email, so you know what a warning looks like. Any time later, open the panel with no email selected and click **See an example phishing email**. The empty panel also shows what Unmask did this week (emails checked, warnings, risky clicks stopped), counted only on your computer.
+
 ---
 
 ## 3. Reading the report
@@ -420,6 +422,20 @@ Open **Settings → Your protection list**:
 Importing only adds to their list; it never deletes what they already have. The file contains only names, domains and addresses you typed, nothing from anyone's emails.
 
 <br clear="right">
+
+---
+
+## 8g. Family mode: ask someone you trust
+
+For a parent, a grandparent, or anyone who'd rather have a second pair of eyes. In **Settings → Family mode**, tick **Ask someone I trust before risky emails** and enter the helper's name and email.
+
+- On a **High risk** email, the warnings before a link or a reply no longer have *Open anyway* or *Reply anyway*. They offer **Ask Sam** (the helper's name) and **Go back**.
+- **Ask Sam** opens a ready-written email to the helper in the person's own mail app: who sent the suspicious email, its subject, Unmask's verdict and the reasons in plain words. Links are written so they can't be clicked (`paypa1-support[.]xyz`). Nothing goes through Unmask; they choose whether to send it.
+- The panel shows a **Not sure? Ask Sam** card on Suspicious and High risk emails.
+- Turning family mode on also turns on *Simple mode* (plain words first).
+- **Lock Settings with a PIN** (4 to 8 digits) so family mode isn't switched off by accident. Only a salted fingerprint of the PIN is stored. If it's forgotten, removing and reinstalling Unmask clears it, along with the other settings.
+
+Family mode is a guard rail, not a cage: someone determined can still copy a link by hand or remove the extension.
 
 ---
 

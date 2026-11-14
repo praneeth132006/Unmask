@@ -44,6 +44,16 @@ async function analyzeElsewhere(req: AnalyzeRequest): Promise<AnalyzeResponse> {
 }
 
 export default defineBackground(() => {
+  // Once, on a fresh install: a welcome tab showing a real warning on a made-up phishing email.
+  browser.runtime.onInstalled.addListener((details) => {
+    if (details.reason !== 'install') return;
+    void (async () => {
+      const managed = await browser.storage.managed?.get('skipWelcome').catch(() => ({} as Record<string, unknown>));
+      if (managed?.skipWelcome === true) return;
+      await browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
+    })();
+  });
+
   // Registered at startup so no trace starts before its listeners are live.
   const wrApi = (browser as unknown as { webRequest?: { onBeforeRequest: never; onBeforeRedirect: never } }).webRequest;
   const hub = wrApi ? webRequestHub(wrApi.onBeforeRequest, wrApi.onBeforeRedirect) : null;
