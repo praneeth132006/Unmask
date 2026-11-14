@@ -411,7 +411,7 @@ Source: [`analyzers/bec.ts`](../extension/src/analyzers/bec.ts). Business email 
 
 ## QR codes
 
-Source: [`analyzers/qr.ts`](../extension/src/analyzers/qr.ts). QR codes are decoded on your computer from image attachments, inline and embedded (`data:`) images, and images inside PDFs. Remote images are not downloaded.
+Source: [`analyzers/qr.ts`](../extension/src/analyzers/qr.ts). QR codes are decoded on your computer from image attachments, inline and embedded (`data:`) images, and images inside PDFs. QR codes drawn without any image are read too: a grid of black and white table cells, or lines of block characters (`█ ▀ ▄`), which phishers use because image scanners find nothing to scan. Remote images are not downloaded.
 
 | Check | Severity | Points |
 |---|---|---|

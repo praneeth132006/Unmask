@@ -5,6 +5,10 @@
  * (attachments, inline images, data: images, images inside PDFs) and puts
  * every decoded link through the normal link checks. Remote images are not
  * downloaded: that would tell the sender you opened the email.
+ *
+ * QR codes drawn without any image are read too: a grid of black and white
+ * table cells, or lines of Unicode block characters (█ ▀ ▄). Phishers use
+ * these because image scanners find nothing to scan.
  */
 import jsQR from 'jsqr';
 import type { Finding, ParsedAttachment, ParsedEmail, QrCode } from '../core/types';
@@ -91,6 +95,108 @@ function dataUrlImages(html: string | null): { name: string; bytes: Uint8Array; 
   return out;
 }
 
+/** A grid of dark/light modules, drawn 4 pixels each with a 4-module quiet zone. */
+export function gridToPixels(grid: boolean[][]): Pixels | null {
+  const rows = grid.length;
+  const cols = Math.max(0, ...grid.map((r) => r.length));
+  if (rows < 21 || cols < 21 || rows > 200 || cols > 200) return null;
+  const scale = 4;
+  const w = (cols + 8) * scale;
+  const h = (rows + 8) * scale;
+  const data = new Uint8ClampedArray(w * h * 4).fill(255);
+  for (let y = 0; y < rows; y++)
+    for (let x = 0; x < cols; x++) {
+      if (!grid[y]![x]) continue;
+      for (let dy = 0; dy < scale; dy++)
+        for (let dx = 0; dx < scale; dx++) {
+          const i = (((y + 4) * scale + dy) * w + (x + 4) * scale + dx) * 4;
+          data[i] = data[i + 1] = data[i + 2] = 0;
+        }
+    }
+  return { data, width: w, height: h };
+}
+
+/** How dark a CSS colour is, or null when it isn't one we can read. */
+function isDark(color: string): boolean | null {
+  const c = color.trim().toLowerCase();
+  if (!c) return null;
+  if (c === 'black') return true;
+  if (c === 'white' || c === 'transparent') return false;
+  let r: number, g: number, b: number;
+  const hex = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+  const rgb = c.match(/^rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/);
+  if (hex) {
+    const h = hex[1]!.length === 3 ? hex[1]!.split('').map((d) => d + d).join('') : hex[1]!;
+    [r, g, b] = [0, 2, 4].map((o) => parseInt(h.slice(o, o + 2), 16)) as [number, number, number];
+  } else if (rgb) [r, g, b] = [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  else return null;
+  return 0.299 * r + 0.587 * g + 0.114 * b < 128;
+}
+
+function cellColor(el: Element): string {
+  const style = el.getAttribute('style') ?? '';
+  return style.match(/background(?:-color)?\s*:\s*([^;]+)/i)?.[1]?.replace(/!important/, '').trim() ?? el.getAttribute('bgcolor') ?? '';
+}
+
+/** QR codes drawn as an HTML table of black and white cells. */
+export function tableQrGrids(html: string | null): boolean[][][] {
+  if (!html || !/<t[dh][\s>]/i.test(html)) return [];
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const out: boolean[][][] = [];
+  for (const table of [...doc.querySelectorAll('table')].slice(0, 50)) {
+    const rows = [...table.querySelectorAll(':scope > tr, :scope > tbody > tr, :scope > thead > tr')];
+    if (rows.length < 21) continue;
+    const grid: boolean[][] = [];
+    let readable = true;
+    for (const tr of rows) {
+      const row: boolean[] = [];
+      for (const td of tr.querySelectorAll(':scope > td, :scope > th')) {
+        const dark = isDark(cellColor(td)) ?? isDark(cellColor(tr)) ?? false;
+        const span = Math.min(Number(td.getAttribute('colspan') ?? 1) || 1, 200);
+        for (let i = 0; i < span; i++) row.push(dark);
+      }
+      if (row.length < 21) { readable = false; break; }
+      grid.push(row);
+    }
+    if (readable && grid.some((r) => r.includes(true))) out.push(grid);
+  }
+  return out;
+}
+
+/** QR codes drawn with Unicode blocks: █ full, ▀ upper half, ▄ lower half (two module rows per line). */
+export function textQrGrids(text: string | null): boolean[][][] {
+  if (!text || !/[█▀▄]/.test(text)) return [];
+  const out: boolean[][][] = [];
+  let block: string[] = [];
+  const flush = () => {
+    if (block.length >= 10) {
+      // Lines are often indented by the same amount; that indent is not part of the code.
+      const indent = Math.min(...block.map((l) => l.match(/^ */)![0].length));
+      block = block.map((l) => l.slice(indent));
+      const half = block.some((l) => /[▀▄]/.test(l));
+      const grid: boolean[][] = [];
+      for (const line of block) {
+        const chars = [...line];
+        if (half) {
+          grid.push(chars.map((c) => c === '█' || c === '▀'));
+          grid.push(chars.map((c) => c === '█' || c === '▄'));
+        } else grid.push(chars.map((c) => c === '█'));
+      }
+      // A full block drawn twice as wide as tall ("██" per module) is common; squash it back.
+      const doubled = !half && grid.every((r) => r.length % 2 === 0) && grid[0]!.length >= grid.length * 1.8;
+      out.push(doubled ? grid.map((r) => r.filter((_, i) => i % 2 === 0)) : grid);
+    }
+    block = [];
+  };
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.replace(/\u00a0/g, ' ').replace(/\s+$/, '');
+    if (/^[\s█▀▄]+$/.test(line) && /[█▀▄]/.test(line)) block.push(line);
+    else flush();
+  }
+  flush();
+  return out;
+}
+
 function isPdf(a: ParsedAttachment): boolean {
   return a.mimeType === 'application/pdf' || /\.pdf$/i.test(a.filename) || (a.content[0] === 0x25 && a.content[1] === 0x50 && a.content[2] === 0x44 && a.content[3] === 0x46);
 }
@@ -112,6 +218,14 @@ export async function findQrCodes(email: ParsedEmail, decode?: ImageDecoder): Pr
     } else if (isPdf(a)) {
       for (const px of await pdfImages(a.content, decode)) add(`image in ${a.filename}`, decodeQr(px));
     }
+  }
+  for (const grid of tableQrGrids(email.html)) {
+    const px = gridToPixels(grid);
+    if (px) add('QR code drawn with table cells', decodeQr(px));
+  }
+  for (const grid of textQrGrids(email.text)) {
+    const px = gridToPixels(grid);
+    if (px) add('QR code drawn with text characters', decodeQr(px));
   }
   if (decode) {
     for (const img of dataUrlImages(email.html)) {
