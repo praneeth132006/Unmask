@@ -1,0 +1,11 @@
+id: crypto-giveaway
+title: Crypto giveaway or "double your coins" offer
+plain: It promises free or doubled cryptocurrency if you send some first. That money is never returned.
+severity: high
+points: 20
+category: content
+when:
+  any: ["/(send|deposit|transfer)[^.\n]{0,40}(btc|bitcoin|eth|ethereum|usdt|crypto)[^.\n]{0,80}(receive|get back|return)[^.\n]{0,30}(double|2x|twice)/", "/(double|2x) your (btc|bitcoin|eth|crypto|coins)/", "/(crypto|bitcoin|btc|eth) giveaway/"]
+examples:
+  phish: "Subject: Official ETH giveaway\n\nTo celebrate, send 0.5 ETH to the address below and receive 1 ETH back, double your coins instantly!"
+  legit: "Subject: Your monthly statement\n\nYour crypto exchange statement for October is ready in your account."

@@ -1,0 +1,14 @@
+id: mailbox-quota
+title: Says your mailbox is full or about to be closed
+plain: It says your mailbox is full or will be shut down unless you act, a common way to steal email passwords.
+severity: medium
+points: 12
+category: content
+when:
+  any: ["/mailbox (is |has )?(full|almost full|over (its )?quota|storage limit)/", "/(storage|email) quota (exceeded|limit|reached)/", "/(messages|emails) (will be|are being) (deleted|held|suspended|blocked)/", "/(mailbox|email account) (will be )?(deactivated|suspended|closed|terminated)/"]
+  also: ["click", "verify", "upgrade", "increase", "validate", "restore", "release"]
+  needs_link: true
+  not_from: ["google.com", "microsoft.com", "outlook.com", "apple.com", "yahoo.com", "zoho.com"]
+examples:
+  phish: "Subject: Mailbox storage limit\n\nYour mailbox is full. Incoming messages are being held. Click to increase your storage now: https://mail-quota.example/upgrade"
+  legit: "Subject: Your Google storage\n\nYou are using 70% of your storage. You can manage it any time in Settings."

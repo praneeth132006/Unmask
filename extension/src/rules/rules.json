@@ -1,0 +1,234 @@
+[
+  {
+    "id": "advance-fee",
+    "title": "An inheritance, lottery or fund transfer for a stranger",
+    "plain": "It offers you a large sum (an inheritance, a lottery win, unclaimed funds), the classic advance-fee scam.",
+    "severity": "high",
+    "points": 18,
+    "category": "content",
+    "any": [
+      "next of kin",
+      "unclaimed funds",
+      "/(inheritance|consignment|fund transfer|lottery|winning)[^.\n]{0,60}(million|usd|us\\$|\\$\\s?\\d)/",
+      "/you (have been|were) (selected|chosen) (as|to be) (the )?beneficiary/",
+      "/(sum|amount) of [^.\n]{0,20}(million|m) (us dollars|usd|euros|pounds)/"
+    ],
+    "also": [
+      "beneficiary",
+      "transfer",
+      "claim",
+      "contact",
+      "confidential",
+      "share",
+      "percent",
+      "/\\d+ ?%/"
+    ],
+    "subject": [],
+    "needsLink": false,
+    "notFrom": [],
+    "examples": {
+      "phish": "Subject: Confidential\n\nI am a bank manager. A late client left unclaimed funds of 12.5 million USD and you can be named next of kin. Contact me in confidence and we share 40 percent.",
+      "legit": "Subject: Estate planning webinar\n\nJoin our free webinar on writing a will and naming beneficiaries."
+    }
+  },
+  {
+    "id": "crypto-giveaway",
+    "title": "Crypto giveaway or \"double your coins\" offer",
+    "plain": "It promises free or doubled cryptocurrency if you send some first. That money is never returned.",
+    "severity": "high",
+    "points": 20,
+    "category": "content",
+    "any": [
+      "/(send|deposit|transfer)[^.\n]{0,40}(btc|bitcoin|eth|ethereum|usdt|crypto)[^.\n]{0,80}(receive|get back|return)[^.\n]{0,30}(double|2x|twice)/",
+      "/(double|2x) your (btc|bitcoin|eth|crypto|coins)/",
+      "/(crypto|bitcoin|btc|eth) giveaway/"
+    ],
+    "also": [],
+    "subject": [],
+    "needsLink": false,
+    "notFrom": [],
+    "examples": {
+      "phish": "Subject: Official ETH giveaway\n\nTo celebrate, send 0.5 ETH to the address below and receive 1 ETH back, double your coins instantly!",
+      "legit": "Subject: Your monthly statement\n\nYour crypto exchange statement for October is ready in your account."
+    }
+  },
+  {
+    "id": "mailbox-quota",
+    "title": "Says your mailbox is full or about to be closed",
+    "plain": "It says your mailbox is full or will be shut down unless you act, a common way to steal email passwords.",
+    "severity": "medium",
+    "points": 12,
+    "category": "content",
+    "any": [
+      "/mailbox (is |has )?(full|almost full|over (its )?quota|storage limit)/",
+      "/(storage|email) quota (exceeded|limit|reached)/",
+      "/(messages|emails) (will be|are being) (deleted|held|suspended|blocked)/",
+      "/(mailbox|email account) (will be )?(deactivated|suspended|closed|terminated)/"
+    ],
+    "also": [
+      "click",
+      "verify",
+      "upgrade",
+      "increase",
+      "validate",
+      "restore",
+      "release"
+    ],
+    "subject": [],
+    "needsLink": true,
+    "notFrom": [
+      "google.com",
+      "microsoft.com",
+      "outlook.com",
+      "apple.com",
+      "yahoo.com",
+      "zoho.com"
+    ],
+    "examples": {
+      "phish": "Subject: Mailbox storage limit\n\nYour mailbox is full. Incoming messages are being held. Click to increase your storage now: https://mail-quota.example/upgrade",
+      "legit": "Subject: Your Google storage\n\nYou are using 70% of your storage. You can manage it any time in Settings."
+    }
+  },
+  {
+    "id": "parcel-fee",
+    "title": "Asks for a small fee to release a parcel",
+    "plain": "It says a parcel is held until you pay a small fee, a common card-stealing trick.",
+    "severity": "medium",
+    "points": 12,
+    "category": "content",
+    "any": [
+      "/(parcel|package|shipment|delivery)[^.\n]{0,60}(on hold|held|suspended|could not be delivered|undeliverable|awaiting payment)/",
+      "redelivery fee",
+      "customs fee",
+      "/(unpaid|outstanding) (shipping|delivery|customs) (fee|charge|duty)/"
+    ],
+    "also": [
+      "pay",
+      "fee",
+      "/[$€£₹] ?\\d/",
+      "confirm",
+      "reschedule"
+    ],
+    "subject": [],
+    "needsLink": true,
+    "notFrom": [
+      "ups.com",
+      "fedex.com",
+      "dhl.com",
+      "usps.com",
+      "royalmail.com",
+      "indiapost.gov.in",
+      "amazon.com",
+      "amazon.in",
+      "auspost.com.au",
+      "canadapost.ca"
+    ],
+    "examples": {
+      "phish": "Subject: Your package is on hold\n\nYour package is on hold due to an unpaid customs fee of $1.99. Pay now to reschedule delivery: https://track-parcel.example/pay",
+      "legit": "Subject: Your order has shipped\n\nGood news, your order is on its way and should arrive Thursday. Track it in your account."
+    }
+  },
+  {
+    "id": "sextortion",
+    "title": "Claims to have hacked your camera and demands payment",
+    "plain": "It claims to have recordings of you and demands money. It's a mass bluff; don't pay or reply.",
+    "severity": "high",
+    "points": 22,
+    "category": "content",
+    "any": [
+      "/(recorded|recording|video of) you/",
+      "/(hacked|access to|infected) (your )?(device|computer|webcam|camera|phone)/",
+      "/(adult|porn|xxx) (site|website|video)/"
+    ],
+    "also": [
+      "bitcoin",
+      "btc",
+      "wallet",
+      "pay",
+      "48 hours",
+      "/\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b/",
+      "bc1"
+    ],
+    "subject": [],
+    "needsLink": false,
+    "notFrom": [],
+    "examples": {
+      "phish": "Subject: I know your password\n\nI hacked your device and recorded you through your webcam while you visited an adult site. Pay $1500 in bitcoin to the wallet below within 48 hours or I send the video to your contacts.",
+      "legit": "Subject: Security camera footage\n\nThe video of the delivery at your door was saved to your account."
+    }
+  },
+  {
+    "id": "tax-refund-lure",
+    "title": "Promises a tax refund you have to claim",
+    "plain": "It promises a tax refund, a classic way to steal bank or card details.",
+    "severity": "medium",
+    "points": 12,
+    "category": "content",
+    "any": [
+      "tax refund",
+      "/refund of (your )?(tax|taxes|vat)/",
+      "/(irs|hmrc|cra|ato|income tax department)[^.\n]{0,60}refund/"
+    ],
+    "also": [
+      "claim",
+      "verify",
+      "submit",
+      "confirm",
+      "eligible",
+      "update your"
+    ],
+    "subject": [],
+    "needsLink": true,
+    "notFrom": [
+      "gov.uk",
+      "irs.gov",
+      "canada.ca",
+      "ato.gov.au",
+      "incometax.gov.in",
+      "gov.in",
+      "usa.gov"
+    ],
+    "examples": {
+      "phish": "Subject: HMRC: you are eligible for a tax refund\n\nYou are eligible for a tax refund of 412.80 GBP. Submit your claim before Friday: https://hmrc-refund.example/claim",
+      "legit": "Subject: Your tax return was received\n\nThank you. Your return was received and is being processed. No action is needed."
+    }
+  },
+  {
+    "id": "voicemail-lure",
+    "title": "A \"voicemail\" or \"missed call\" you have to open",
+    "plain": "It says you have a voicemail or fax to open. These are almost always a link to a fake login page.",
+    "severity": "medium",
+    "points": 10,
+    "category": "content",
+    "any": [
+      "/(new |unread )?(voicemail|voice message|voice mail|audio message)/",
+      "/missed (call|voice)/",
+      "/(new|incoming) fax/"
+    ],
+    "also": [
+      "listen",
+      "play",
+      "open",
+      "view",
+      "download",
+      "attached",
+      "access"
+    ],
+    "subject": [],
+    "needsLink": true,
+    "notFrom": [
+      "microsoft.com",
+      "google.com",
+      "ringcentral.com",
+      "zoom.us",
+      "dialpad.com",
+      "8x8.com",
+      "vonage.com",
+      "twilio.com"
+    ],
+    "examples": {
+      "phish": "Subject: New voicemail (0:42)\n\nYou have a new voice message from +1 202 555 0123. Listen to the message here: https://voice-portal.example/listen",
+      "legit": "Subject: Lunch?\n\nI left you a voicemail earlier, call me back when you can."
+    }
+  }
+]

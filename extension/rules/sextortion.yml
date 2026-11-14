@@ -1,0 +1,12 @@
+id: sextortion
+title: Claims to have hacked your camera and demands payment
+plain: It claims to have recordings of you and demands money. It's a mass bluff; don't pay or reply.
+severity: high
+points: 22
+category: content
+when:
+  any: ["/(recorded|recording|video of) you/", "/(hacked|access to|infected) (your )?(device|computer|webcam|camera|phone)/", "/(adult|porn|xxx) (site|website|video)/"]
+  also: ["bitcoin", "btc", "wallet", "pay", "48 hours", "/\\b[13][a-km-zA-HJ-NP-Z1-9]{25,34}\\b/", "bc1"]
+examples:
+  phish: "Subject: I know your password\n\nI hacked your device and recorded you through your webcam while you visited an adult site. Pay $1500 in bitcoin to the wallet below within 48 hours or I send the video to your contacts."
+  legit: "Subject: Security camera footage\n\nThe video of the delivery at your door was saved to your account."

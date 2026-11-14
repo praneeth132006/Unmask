@@ -24,7 +24,8 @@
     "logos": "node scripts/gen-logo-hashes.mjs",
     "test:e2e:offscreen": "VITE_UNMASK_FORCE_REMOTE=1 UNMASK_E2E=1 wxt build && VITE_UNMASK_FORCE_REMOTE=1 node e2e/run.mjs",
     "screenshots": "UNMASK_E2E=1 wxt build && node scripts/screenshots.mjs",
-    "screenshots:teams": "UNMASK_E2E=1 wxt build && node scripts/teams-screenshots.mjs"
+    "screenshots:teams": "UNMASK_E2E=1 wxt build && node scripts/teams-screenshots.mjs",
+    "rules": "node scripts/compile-rules.mjs"
   },
   "dependencies": {
     "jsqr": "1.4.0",
@@ -50,7 +51,8 @@
     "tailwindcss": "^4.3.4",
     "typescript": "7.0.2",
     "vitest": "^5.1.0",
-    "wxt": "^0.21.5"
+    "wxt": "^0.21.5",
+    "yaml": "2.8.1"
   },
   "license": "MIT",
   "repository": {

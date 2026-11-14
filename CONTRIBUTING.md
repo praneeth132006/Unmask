@@ -55,6 +55,10 @@ Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) first: it explains how the pie
 
 Point guide: Critical 30–35, High 18–25, Medium 8–15, Low 3–6, Note 0, Good −5 to −10.
 
+## Adding a scam pattern (no TypeScript)
+
+Copy a file in [`extension/rules/`](extension/rules), change it, run `pnpm rules` in `extension/`, then `pnpm test`. Each rule needs a phishing and a legitimate example; see the [rules README](extension/rules/README.md).
+
 ## Adding a brand
 
 Edit `extension/src/analyzers/brands.ts`:

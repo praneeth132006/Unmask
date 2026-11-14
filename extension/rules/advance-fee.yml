@@ -1,0 +1,12 @@
+id: advance-fee
+title: An inheritance, lottery or fund transfer for a stranger
+plain: It offers you a large sum (an inheritance, a lottery win, unclaimed funds), the classic advance-fee scam.
+severity: high
+points: 18
+category: content
+when:
+  any: ["next of kin", "unclaimed funds", "/(inheritance|consignment|fund transfer|lottery|winning)[^.\n]{0,60}(million|usd|us\\$|\\$\\s?\\d)/", "/you (have been|were) (selected|chosen) (as|to be) (the )?beneficiary/", "/(sum|amount) of [^.\n]{0,20}(million|m) (us dollars|usd|euros|pounds)/"]
+  also: ["beneficiary", "transfer", "claim", "contact", "confidential", "share", "percent", "/\\d+ ?%/"]
+examples:
+  phish: "Subject: Confidential\n\nI am a bank manager. A late client left unclaimed funds of 12.5 million USD and you can be named next of kin. Contact me in confidence and we share 40 percent."
+  legit: "Subject: Estate planning webinar\n\nJoin our free webinar on writing a will and naming beneficiaries."

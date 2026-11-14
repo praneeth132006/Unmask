@@ -6,8 +6,8 @@ A phishing checker is only useful if it catches phishing **and** stays quiet on 
 
 | | Emails | Result |
 |---|---|---|
-| Real phishing ([phishing_pot](https://github.com/rf-peixoto/phishing_pot)) | 400 | **86.5% caught** (346), 285 rated High risk |
-| Real legitimate email ([SpamAssassin public corpus](https://spamassassin.apache.org/old/publiccorpus/)) | 4,150 | **6.0% false alarms** (248 rated Suspicious or High risk, 17 High risk) |
+| Real phishing ([phishing_pot](https://github.com/rf-peixoto/phishing_pot)) | 400 | **86.5% caught** (346), 286 rated High risk |
+| Real legitimate email ([SpamAssassin public corpus](https://spamassassin.apache.org/old/publiccorpus/)) | 4,150 | **6.0% false alarms** (248 rated Suspicious or High risk, 18 High risk, one of them a mailing-list post quoting a scam in full) |
 | Speed | 4,550 | median 0.6 ms per email, slowest 457 ms, 0 errors |
 
 A **false alarm** is a legitimate email rated *Suspicious* or *High risk*. A phishing email counts as **caught** when it is rated *Suspicious* or *High risk*.

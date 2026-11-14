@@ -390,6 +390,22 @@ It adds no points. Below it, **What Unmask couldn't check** lists the blind spot
 
 ---
 
+## Rules written as data
+
+Source: [`extension/rules/*.yml`](../extension/rules), checked by [`analyzers/rules.ts`](../extension/src/analyzers/rules.ts). Each file is one scam pattern anyone can add without writing TypeScript (see the [rules README](../extension/rules/README.md)). Every rule carries a phishing and a legitimate example that the tests run, and none may raise false alarms on the [benchmark](BENCHMARK.md).
+
+| Rule | Severity | Points | What it looks for |
+|---|---|---|---|
+| `tax-refund-lure` | Medium | 12 | A tax refund to claim, with a link, not verified from a tax authority's domain |
+| `parcel-fee` | Medium | 12 | A parcel held until you pay a small fee, with a link, not verified from a carrier |
+| `crypto-giveaway` | High | 20 | Send crypto and receive double, or a "crypto giveaway" |
+| `advance-fee` | High | 18 | An inheritance, lottery or fund transfer of millions, with a request to claim or share |
+| `sextortion` | High | 22 | Claims of recordings from your camera, with a bitcoin demand or deadline |
+| `mailbox-quota` | Medium | 12 | Mailbox full or about to be closed, with a link, not verified from a mail provider |
+| `voicemail-lure` | Medium | 10 | A voicemail, missed call or fax to open through a link, not verified from a phone service |
+
+---
+
 ## On-device AI (optional)
 
 Source: [`lib/onDeviceAi.ts`](../extension/src/lib/onDeviceAi.ts). Off by default. Turn on **Let Chrome’s on-device AI read emails** in Settings → Privacy (shown only in Chrome versions that have the built-in model). Chrome’s own model, Gemini Nano, reads the email **on your computer**; nothing is sent anywhere. Chrome downloads the model once, after you click, and needs desktop Chrome with enough memory and disk ([requirements](https://developer.chrome.com/docs/ai/prompt-api#review_the_hardware_requirements)).

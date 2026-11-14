@@ -1,0 +1,14 @@
+id: tax-refund-lure
+title: Promises a tax refund you have to claim
+plain: It promises a tax refund, a classic way to steal bank or card details.
+severity: medium
+points: 12
+category: content
+when:
+  any: ["tax refund", "/refund of (your )?(tax|taxes|vat)/", "/(irs|hmrc|cra|ato|income tax department)[^.\n]{0,60}refund/"]
+  also: ["claim", "verify", "submit", "confirm", "eligible", "update your"]
+  needs_link: true
+  not_from: ["gov.uk", "irs.gov", "canada.ca", "ato.gov.au", "incometax.gov.in", "gov.in", "usa.gov"]
+examples:
+  phish: "Subject: HMRC: you are eligible for a tax refund\n\nYou are eligible for a tax refund of 412.80 GBP. Submit your claim before Friday: https://hmrc-refund.example/claim"
+  legit: "Subject: Your tax return was received\n\nThank you. Your return was received and is being processed. No action is needed."

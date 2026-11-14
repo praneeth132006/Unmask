@@ -1,0 +1,14 @@
+id: parcel-fee
+title: Asks for a small fee to release a parcel
+plain: It says a parcel is held until you pay a small fee, a common card-stealing trick.
+severity: medium
+points: 12
+category: content
+when:
+  any: ["/(parcel|package|shipment|delivery)[^.\n]{0,60}(on hold|held|suspended|could not be delivered|undeliverable|awaiting payment)/", "redelivery fee", "customs fee", "/(unpaid|outstanding) (shipping|delivery|customs) (fee|charge|duty)/"]
+  also: ["pay", "fee", "/[$€£₹] ?\\d/", "confirm", "reschedule"]
+  needs_link: true
+  not_from: ["ups.com", "fedex.com", "dhl.com", "usps.com", "royalmail.com", "indiapost.gov.in", "amazon.com", "amazon.in", "auspost.com.au", "canadapost.ca"]
+examples:
+  phish: "Subject: Your package is on hold\n\nYour package is on hold due to an unpaid customs fee of $1.99. Pay now to reschedule delivery: https://track-parcel.example/pay"
+  legit: "Subject: Your order has shipped\n\nGood news, your order is on its way and should arrive Thursday. Track it in your account."

@@ -1,0 +1,14 @@
+id: voicemail-lure
+title: A "voicemail" or "missed call" you have to open
+plain: It says you have a voicemail or fax to open. These are almost always a link to a fake login page.
+severity: medium
+points: 10
+category: content
+when:
+  any: ["/(new |unread )?(voicemail|voice message|voice mail|audio message)/", "/missed (call|voice)/", "/(new|incoming) fax/"]
+  also: ["listen", "play", "open", "view", "download", "attached", "access"]
+  needs_link: true
+  not_from: ["microsoft.com", "google.com", "ringcentral.com", "zoom.us", "dialpad.com", "8x8.com", "vonage.com", "twilio.com"]
+examples:
+  phish: "Subject: New voicemail (0:42)\n\nYou have a new voice message from +1 202 555 0123. Listen to the message here: https://voice-portal.example/listen"
+  legit: "Subject: Lunch?\n\nI left you a voicemail earlier, call me back when you can."
