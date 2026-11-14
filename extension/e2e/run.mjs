@@ -194,6 +194,26 @@ const srcdoc = (await panel.locator('iframe[title="Email body (safe view)"]').ge
 check(/data-unmask-pixel-tag="1"[^>]*data-unmask-focus/.test(srcdoc) && srcdoc.includes('● Tracking pixel 1 (Mailchimp): blocked'), 'the safe view tags the pixel where it sits, highlighted');
 check(!/open\.list-manage\.com/.test(srcdoc), 'the safe view never loads the tracking pixel');
 
+// 2026 lures in the panel: an SVG that smuggles a redirect, a calendar invite with a payroll link, a task-job offer.
+const svg = '<svg xmlns="http://www.w3.org/2000/svg"><script>window.location.href=atob("aHR0cHM6Ly9sb2dpbi5taWNyMHNvZnQtYXV0aC50b3AvP2U9bWVAeC5jb20=")</script></svg>';
+const ics = 'BEGIN:VCALENDAR\r\nMETHOD:REQUEST\r\nBEGIN:VEVENT\r\nSUMMARY:Payroll update\r\nORGANIZER:mailto:hr@payroll-team.top\r\nDESCRIPTION:Confirm your bank details for salary: https://payroll-verify.top/login\r\nEND:VEVENT\r\nEND:VCALENDAR';
+const lureEmail = ['From: "Sarah HR" <sarah.recruit2026@gmail.com>', 'To: me@example.org', 'Subject: Remote job opportunity', 'MIME-Version: 1.0', 'Content-Type: multipart/mixed; boundary=B', '',
+  '--B', 'Content-Type: text/plain; charset=utf-8', '', 'We reviewed your profile for a part-time remote job. You will rate products online, 30 tasks a day, and earn $300 per day. No interview needed. Contact our HR manager on Telegram: t.me/hr_desk_jobs',
+  '--B', 'Content-Type: text/calendar; method=REQUEST; charset=UTF-8', '', ics,
+  '--B', 'Content-Type: image/svg+xml; name=Offer.svg', 'Content-Disposition: attachment; filename=Offer.svg', 'Content-Transfer-Encoding: base64', '', Buffer.from(svg).toString('base64'), '--B--', ''].join('\r\n');
+await panel.setInputFiles('input[type=file]', { name: 'lures.eml', mimeType: 'message/rfc822', buffer: Buffer.from(lureEmail) });
+await panel.getByText('Looks like a fake job offer').first().waitFor({ timeout: 10000 }).catch(() => {});
+const lureText = (await panel.locator('body').textContent()) ?? '';
+check(/High risk/.test(lureText), 'an email with 2026 lures is rated High risk');
+check(lureText.includes('Looks like a fake job offer'), 'the panel names the fake job offer');
+check(/Calendar invite about “[^”]+” links to payroll-verify\.top/.test(lureText), 'the panel flags the calendar invite’s payroll link');
+await panel.locator('[role="tab"]', { hasText: 'Documents' }).click().catch(() => {});
+const docsText = await panel.getByText('SVG image contains JavaScript').first().waitFor({ timeout: 5000 }).then(() => true, () => false);
+check(docsText, 'the Documents tab shows the SVG runs JavaScript');
+if (process.env.UNMASK_E2E_SHOTS) await panel.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'lures-documents.png'), fullPage: true });
+await panel.locator('[role="tab"]', { hasText: 'Summary' }).click().catch(() => {});
+if (process.env.UNMASK_E2E_SHOTS) await panel.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'lures-summary.png'), fullPage: true });
+
 // The tabs (including Headers) must be there in both normal and simple mode.
 for (const simpleMode of [false, true]) {
   await panel.evaluate((v) => chrome.storage.local.get('unmask:settings').then((r) => chrome.storage.local.set({ 'unmask:settings': { ...(r['unmask:settings'] ?? {}), simpleMode: v } })), simpleMode);

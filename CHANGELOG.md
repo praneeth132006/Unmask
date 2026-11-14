@@ -4,6 +4,12 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Added
+- **Calendar-invite phishing.** Invites (`.ics` files and the invite inside an email) are read: links to sites that aren't meeting services, payroll, password or payment lures, callback numbers, and an organiser from a different organisation than the sender. Their links get the usual checks.
+- **Looks inside SVG images and HTML attachments:** scripts, redirects, login forms hidden in `<foreignObject>`, pages hidden in base64, file smuggling, CAPTCHA gates and built-in email addresses. SVG files padded with comments or a DOCTYPE are recognised too.
+- **Fake job offers:** task scams, fake-cheque "equipment" purchases, fees, requests for bank or ID details, and interviews moved to Telegram or WhatsApp.
+- **Hacked contacts:** a known sender's first-ever file-share or sign-in link, and emails sent in the middle of their night, are flagged.
+
 ## [0.5.1] - 2026-11-07
 
 ### Added

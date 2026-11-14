@@ -192,6 +192,7 @@ const BUSINESS_RISK: Record<AttackKind, { risk: string; impact: string; level: '
   callback: { risk: 'Phone scam', impact: 'Staff who phone the number are talked into installing remote-access tools or paying "refunds".', level: 'High' },
   consent: { risk: 'Silent account access', impact: 'Approving the request gives an attacker lasting access to the account without ever needing the password, and it can survive a password change.', level: 'High' },
   'account-takeover': { risk: 'A trusted account may be hacked', impact: 'The sender is someone you know but is behaving differently. Their account may be controlled by an attacker, which puts partners and customers at risk.', level: 'High' },
+  'job-scam': { risk: 'Fake job offer', impact: 'People who reply are drawn into paying "fees", cashing fake cheques, sharing ID and bank details or doing unpaid "tasks". Victims can also be used to move stolen money.', level: 'High' },
   impersonation: { risk: 'Trust and brand abuse', impact: 'Staff, customers or partners are tricked by a convincing fake of a person or company they trust.', level: 'Medium' },
   spoofing: { risk: 'Forged sender', impact: 'The email pretends to come from a real address. If it uses your own domain, it also points to a gap in your email protections.', level: 'Medium' },
   replay: { risk: 'Genuine email re-sent by an attacker', impact: 'A real, signed email is re-sent so it passes checks, which makes it look trustworthy.', level: 'Medium' },

@@ -20,7 +20,8 @@ import { arcFindings, readArcChain } from '../analyzers/arc';
 import { identityFindings } from '../analyzers/identity';
 import { obfuscationFindings } from '../analyzers/obfuscation';
 import { replayFindings } from '../analyzers/replay';
-import { PLATFORMS, archivePasswordFindings, callbackFindings, clickFixFindings, consentLureFindings, platformAbuseFindings } from '../analyzers/techniques';
+import { PLATFORMS, archivePasswordFindings, callbackFindings, clickFixFindings, consentLureFindings, jobScamFindings, platformAbuseFindings } from '../analyzers/techniques';
+import { calendarFindings, calendarLinks, readInvites } from '../analyzers/calendar';
 import { publicInfo, readDkimSignatures } from '../lib/dkim';
 import { splitRawMessage } from '../lib/rawMessage';
 import { getHeaders } from './parse';
@@ -64,19 +65,20 @@ export async function analyzeRawEmail(raw: string | ArrayBuffer | Uint8Array, op
   const content = analyzeContent(email);
   const { attachments, findings: attachmentFindings, links: fileLinks } = await analyzeAttachments(email.attachments);
   const qrCodes = await findQrCodes(email, opts.decodeImage);
-  const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks, ...qrLinks(qrCodes)], email.from?.domain ?? '');
+  const invites = readInvites(email);
+  const { links, findings: linkFindings } = analyzeLinks([...content.links, ...fileLinks, ...calendarLinks(invites), ...qrLinks(qrCodes)], email.from?.domain ?? '');
   // Runs on the body already marked for hidden text, and marks each tracking pixel in it too.
   const { trackers, findings: trackerFindings, annotatedHtml } = analyzeTrackers(content.annotatedHtml ?? email.html, links.filter((l) => l.source === 'html' || l.source === 'text'));
   const becFindings = analyzeBec(email, content.visibleText);
   const abuse = platformAbuseFindings(email, content.visibleText, auth, links);
   // The platform-abuse finding already explains the phone number; don't count it twice.
-  const techniqueFindings = [...(abuse.length ? [] : callbackFindings(email, content.visibleText, auth)), ...abuse, ...consentLureFindings(content.visibleText, links), ...clickFixFindings(content.visibleText, email, attachments), ...archivePasswordFindings(content.visibleText, email.subject, attachments), ...obfuscationFindings(email.html, content.visibleText)];
+  const techniqueFindings = [...(abuse.length ? [] : callbackFindings(email, content.visibleText, auth)), ...abuse, ...consentLureFindings(content.visibleText, links), ...clickFixFindings(content.visibleText, email, attachments), ...archivePasswordFindings(content.visibleText, email.subject, attachments), ...obfuscationFindings(email.html, content.visibleText), ...jobScamFindings(email, content.visibleText, auth), ...calendarFindings(email, auth, invites)];
   const pressure = [...content.findings, ...becFindings].some((f) => ['credential-request', 'html-form', 'urgency', 'bec-bank-change', 'bec-payment', 'bec-gift-card'].includes(f.id));
   const fakeLogoFindings = logoFindings(email, await findBrandLogos(email, opts.decodeImage), pressure);
   const protectFindings = opts.protection ? protectionFindings(email, auth, links, opts.protection) : [];
   const verifiedTrusted = protectFindings.some((f) => f.id === 'trusted-sender' && f.points < 0);
   // A verified trusted sender is by definition not a stranger.
-  const pastFindings = (opts.history ? historyFindings(email, opts.history, senderTraits(email, auth, hops)) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
+  const pastFindings = (opts.history ? historyFindings(email, opts.history, senderTraits(email, auth, hops, links)) : []).filter((f) => !(verifiedTrusted && f.id === 'first-contact'));
 
   const findings = sortFindings([...authFindings, ...pathFindings, ...senderFindings, ...content.findings, ...linkFindings, ...attachmentFindings, ...trackerFindings, ...becFindings, ...techniqueFindings, ...pastFindings, ...qrFindings(qrCodes), ...fakeLogoFindings, ...protectFindings]);
   const { score, verdict } = scoreFindings(findings);

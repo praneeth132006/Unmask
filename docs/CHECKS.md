@@ -326,6 +326,18 @@ Named techniques that analysts recognise by their shape rather than by a bad lin
 | "ClickFix": paste a command into your computer | Critical (35) with both keyboard steps and a command, or *Windows key + R* then *Ctrl + V* (pasting into the Run box); otherwise High (22) | | Steps like *Windows key + R, Ctrl + V* together with Run/PowerShell/Terminal, or commands such as `powershell -enc`, `mshta https://…`, `iex(`, `curl … \| sh` |
 | HTML/SVG attachment that copies a command to your clipboard | Critical | 35 | `navigator.clipboard.writeText` or `execCommand('copy')` with PowerShell, mshta or cmd |
 | Password-protected archive with its password in the email | Critical | 30 | A locked ZIP (so scanners can't look inside) plus "Password: 4471" in the subject or body |
+| Fake job offer | Critical (32), High (22) or Medium (12) by how many signs | | Job wording (offer, hiring, recruiter, remote work, interview…) together with: paying a fee, buying "equipment" with a cheque they send, or depositing a cheque; asking for bank or ID details; paid online "tasks" (rate products, like videos, *30 tasks a day*); moving the interview to Telegram, WhatsApp or Signal; "no interview needed"; a "recruiter" on free webmail. From LinkedIn, Indeed, Workday, Greenhouse and other job sites (DMARC pass) only money and ID requests count |
+
+### Calendar invites
+
+Source: [`analyzers/calendar.ts`](../extension/src/analyzers/calendar.ts). Invites (`text/calendar` parts and `.ics` files) are read as text; nothing is added to any calendar. Gmail and Outlook can add invites on their own, so a phishing link in one can come back as a reminder after the email is deleted. Every link in an invite (description, location, URL, attachments, Teams/Meet/Zoom properties) goes through the usual link checks, labelled *calendar invite* on the Links tab.
+
+| Check | Severity | Points |
+|---|---|---|
+| Invite tells you to phone about a charge (callback scam in an invite) | High | 22 |
+| Invite about passwords, payment, payroll, a shared document, voicemail… that links to a website that isn't a meeting service | High | 22 |
+| "Join" link that isn't Zoom, Teams, Meet, Webex, GoTo, Whereby, BlueJeans, Chime, RingCentral or Jitsi | Medium | 10 |
+| The organiser is a different organisation from the sender (not sent through Google Calendar, Outlook or another calendar service) | Medium (12), Low (4) when the sender is verified | |
 
 ---
 
@@ -342,9 +354,10 @@ Source: [`analyzers/history.ts`](../extension/src/analyzers/history.ts). Unmask 
 | You've had 3+ emails from this sender | Good | −5 |
 | **Fingerprint changed:** a sender you've had 3+ emails from asks, for the first time, for replies to go to another domain | Medium | 15 |
 | Fingerprint changed: a sender who always signed their emails sent one without a signature, or two or more traits changed | Medium | 12 |
-| Fingerprint changed: one trait (delivering mail service, Message-ID domain, mail program) | Low | 4 |
+| Fingerprint changed: one trait (delivering mail service, Message-ID domain, mail program, or an email sent between midnight and 6 a.m. on the sender's own clock from someone who never does) | Low | 4 |
+| **First file-share or sign-in link from a contact** who has never sent one in 3+ earlier emails (Google Docs/Drive, SharePoint, OneDrive, Dropbox, WeTransfer, Box, free website hosts…, or a page whose address ends in `/login`, `/signin`, `/verify`…) | Medium (High with another fingerprint change, such as a 3 a.m. email) | 12 (22) |
 
-**Fingerprints.** For every sender, Unmask remembers how their emails are usually built: the DKIM signing domain, the mail service that handed them to your provider, the Message-ID domain, the mail program, and any Reply-To domain. Analysts compare a suspicious email with a known-good one from the same sender; this does it automatically, but only for traits that were consistent in at least 75% of earlier emails. Emails without real headers (Outlook's page view) are not used. Source: [`analyzers/fingerprint.ts`](../extension/src/analyzers/fingerprint.ts).
+**Fingerprints.** For every sender, Unmask remembers how their emails are usually built: the DKIM signing domain, the mail service that handed them to your provider, the Message-ID domain, the mail program, any Reply-To domain, whether they send file-share or sign-in links, and the time of day on their own clock. Most phishing in 2025-2026 came from real accounts that had been taken over, and a hacked account's first message is usually "I shared a document with you". Analysts compare a suspicious email with a known-good one from the same sender; this does it automatically, but only for traits that were consistent in at least 75% of earlier emails. Emails without real headers (Outlook's page view) are not used. Source: [`analyzers/fingerprint.ts`](../extension/src/analyzers/fingerprint.ts).
 
 First-contact warnings start once Unmask knows 10 senders, so a new install doesn't flag everyone.
 

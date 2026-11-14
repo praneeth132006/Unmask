@@ -6,7 +6,7 @@
  */
 import type { Report } from './types';
 
-export type AttackKind = 'spoofing' | 'impersonation' | 'credential-phishing' | 'malware' | 'payment-fraud' | 'callback' | 'replay' | 'account-takeover' | 'consent';
+export type AttackKind = 'spoofing' | 'impersonation' | 'credential-phishing' | 'malware' | 'payment-fraud' | 'callback' | 'replay' | 'account-takeover' | 'consent' | 'job-scam';
 
 export interface Hypothesis {
   kind: AttackKind;
@@ -21,19 +21,20 @@ export interface Hypothesis {
 const KINDS: { kind: AttackKind; label: string; meaning: string; match: (id: string) => boolean }[] = [
   { kind: 'replay', label: 'Replayed genuine email', meaning: 'A real, signed email re-sent by someone else so it passes authentication.', match: (id) => ['dkim-replay', 'replay-addressee', 'dkim-old-signature', 'arc-passed-earlier'].includes(id) },
   { kind: 'spoofing', label: 'Forged sender address', meaning: 'The From address is faked: the email did not come from where it says.', match: (id) => ['dmarc-fail', 'spf-fail', 'auth-results-forged', 'multiple-from', 'webmail-forged', 'trusted-spoof', 'dkim-body-altered'].includes(id) || id.startsWith('dkim-added-') || id.startsWith('dkim-verify-fail-') || id.startsWith('dkim-no-key-') },
-  { kind: 'impersonation', label: 'Impersonation', meaning: 'It pretends to be a company or person you trust, from an address that isn\'t theirs.', match: (id) => ['display-name-email', 'sender-lookalike', 'brand-impersonation', 'freemail-org', 'history-brand-mismatch', 'contact-impersonation', 'protected-contact', 'protected-brand', 'protected-lookalike', 'disguised-from'].includes(id) || id.startsWith('fake-logo-') },
-  { kind: 'credential-phishing', label: 'Password phishing', meaning: 'It wants you to sign in on a fake page or type your password.', match: (id) => ['html-form', 'credential-request', 'link-lookalike', 'link-text-mismatch', 'link-brand-in-domain', 'link-victim-email', 'link-userinfo', 'link-encoded-href', 'protected-link-lookalike', 'qr-code', 'image-only', 'attachment:phishing-page'].includes(id) },
+  { kind: 'impersonation', label: 'Impersonation', meaning: 'It pretends to be a company or person you trust, from an address that isn\'t theirs.', match: (id) => ['display-name-email', 'sender-lookalike', 'brand-impersonation', 'freemail-org', 'history-brand-mismatch', 'contact-impersonation', 'protected-contact', 'protected-brand', 'protected-lookalike', 'disguised-from', 'calendar-organizer-mismatch'].includes(id) || id.startsWith('fake-logo-') },
+  { kind: 'credential-phishing', label: 'Password phishing', meaning: 'It wants you to sign in on a fake page or type your password.', match: (id) => ['html-form', 'credential-request', 'link-lookalike', 'link-text-mismatch', 'link-brand-in-domain', 'link-victim-email', 'link-userinfo', 'link-encoded-href', 'protected-link-lookalike', 'qr-code', 'image-only', 'attachment:phishing-page', 'calendar-lure', 'calendar-odd-link'].includes(id) },
   { kind: 'consent', label: 'Account access trick', meaning: 'It tries to make you approve an app or device that then gets into your account, with no password needed.', match: (id) => ['device-code-lure', 'oauth-consent-link'].includes(id) },
   { kind: 'malware', label: 'Malware delivery', meaning: 'It tries to get a harmful program onto your computer.', match: (id) => ['clickfix', 'archive-password-in-body', 'link-download', 'link-dangerous-scheme', 'attachment:malware'].includes(id) || id.startsWith('clickfix-attachment-') || id.startsWith('vt-') },
-  { kind: 'callback', label: 'Callback scam', meaning: 'It wants you to phone "support", where the scam happens.', match: (id) => ['callback-phishing', 'platform-abuse'].includes(id) },
+  { kind: 'callback', label: 'Callback scam', meaning: 'It wants you to phone "support", where the scam happens.', match: (id) => ['callback-phishing', 'platform-abuse', 'calendar-callback'].includes(id) },
+  { kind: 'job-scam', label: 'Fake job offer', meaning: 'A made-up job used to get your money, your ID or bank details, or unpaid work.', match: (id) => id === 'job-scam' },
   { kind: 'payment-fraud', label: 'Payment fraud', meaning: 'It wants you to send money, change payment details or buy gift cards.', match: (id) => id.startsWith('bec-') || id === 'money-lure' },
-  { kind: 'account-takeover', label: 'Possibly a hacked account', meaning: 'A sender you know, but sending differently than usual: their account may be in someone else\'s hands.', match: (id) => ['fingerprint-changed'].includes(id) },
+  { kind: 'account-takeover', label: 'Possibly a hacked account', meaning: 'A sender you know, but sending differently than usual: their account may be in someone else\'s hands.', match: (id) => ['fingerprint-changed', 'contact-first-link'].includes(id) },
 ];
 
 const WEIGHT = { critical: 3, high: 2, medium: 1, low: 0.5, info: 0, good: 0 } as const;
 
 /** Attachment findings are named after the file's hash; what kind of file it is decides the attack. */
-const PHISHING_FILE_FLAGS = new Set(['html', 'html-credential', 'html-obfuscated', 'pdf-lure', 'pdf-submit', 'pdf-bad-link']);
+const PHISHING_FILE_FLAGS = new Set(['html', 'html-credential', 'html-obfuscated', 'pdf-lure', 'pdf-submit', 'pdf-bad-link', 'svg-script', 'svg-embedded-page', 'markup-redirect', 'markup-hidden-payload', 'markup-event-handler', 'markup-script-link', 'markup-captcha', 'markup-personalised']);
 
 function kindKey(report: Report, id: string): string {
   if (!id.startsWith('attachment-')) return id;
