@@ -1,3 +1,4 @@
+import { FeedbackCard } from './FeedbackCard';
 import type { Finding, Report, TabId } from '../../core/types';
 import { Card, SEVERITY_STYLE, SectionTitle } from './ui';
 import { Icon } from './Icon';
@@ -283,6 +284,7 @@ export function Overview({
           technical
         )}
       </div>
+      <FeedbackCard report={report} />
     </div>
   );
 }

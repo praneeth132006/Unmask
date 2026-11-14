@@ -5,12 +5,17 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **Public benchmark**: the detection rate on 400 real phishing emails and the false-alarm rate on 4,150 real legitimate emails, measured in CI on every change and attached to every release. See [Benchmark](docs/BENCHMARK.md).
+- **Was this right?** at the end of the summary: report a wrong verdict as a pre-filled GitHub issue, sharing only the verdict, the checks that fired and, if you choose, the sender's domain.
 - **Calendar-invite phishing.** Invites (`.ics` files and the invite inside an email) are read: links to sites that aren't meeting services, payroll, password or payment lures, callback numbers, and an organiser from a different organisation than the sender. Their links get the usual checks.
 - **Looks inside SVG images and HTML attachments:** scripts, redirects, login forms hidden in `<foreignObject>`, pages hidden in base64, file smuggling, CAPTCHA gates and built-in email addresses. SVG files padded with comments or a DOCTYPE are recognised too.
 - **Fake job offers:** task scams, fake-cheque "equipment" purchases, fees, requests for bank or ID details, and interviews moved to Telegram or WhatsApp.
 - **QR codes drawn without an image** (table cells or block characters) are decoded and their links checked.
 - **Trace redirects now says what the final page is:** a fake Microsoft, Google or Okta sign-in, the real sign-in relayed through another server (adversary-in-the-middle kits such as Tycoon2FA that get past MFA), and CAPTCHA gates in front of login pages. Works in the built-in tracer and the redirect-trace server.
 - **Hacked contacts:** a known sender's first-ever file-share or sign-in link, and emails sent in the middle of their night, are flagged.
+
+### Fixed
+- **Fewer false alarms on real mail (13.9% → 6.0% on the benchmark):** newsletter search and sign-up boxes, mailing lists that reply to the list, a newsletter's own click tracker, and email addresses spelt in character codes are no longer treated as phishing. JavaScript in an email is now a low-weight note.
 
 ## [0.5.1] - 2026-11-07
 

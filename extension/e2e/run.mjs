@@ -216,6 +216,13 @@ check(docsText, 'the Documents tab shows the SVG runs JavaScript');
 if (process.env.UNMASK_E2E_SHOTS) await panel.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'lures-documents.png'), fullPage: true });
 await panel.locator('[role="tab"]', { hasText: 'Summary' }).click().catch(() => {});
 if (process.env.UNMASK_E2E_SHOTS) await panel.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'lures-summary.png'), fullPage: true });
+// "Was this right?": nothing is sent; the user sees exactly what an issue would contain.
+await panel.getByRole('button', { name: 'No, it got this wrong' }).click().catch(() => {});
+const shared = (await panel.getByLabel('What will be shared').textContent({ timeout: 5000 }).catch(() => '')) ?? '';
+const issueHref = (await panel.getByRole('link', { name: 'Open a GitHub issue' }).getAttribute('href', { timeout: 5000 }).catch(() => '')) ?? '';
+check(/^False alarm: High risk/.test(shared) && !shared.includes('sarah.recruit2026') && !shared.includes('payroll-verify'), `"Was this right?" previews only the verdict and check ids ("${shared.split('\n')[0]}")`);
+check(issueHref.startsWith('https://github.com/praneeth132006/Unmask/issues/new?template=detection.yml'), 'the report opens the Wrong verdict issue form');
+if (process.env.UNMASK_E2E_SHOTS) await panel.getByLabel('Was this right?').screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'feedback.png') }).catch(() => {});
 
 // The tabs (including Headers) must be there in both normal and simple mode.
 for (const simpleMode of [false, true]) {

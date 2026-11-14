@@ -35,6 +35,7 @@ Unmask is a browser extension that analyses emails for signs of phishing. It is 
 | One link's URL, submitted for a fresh scan | VirusTotal. **Submitted links become visible to VirusTotal's customers.** | Only when VirusTotal has never seen the link, you click **Scan it now**, and confirm a warning |
 | An attachment's SHA-256 hash | VirusTotal, using your API key | Only when you click **Check on VirusTotal** |
 | An attachment's SHA-256 hash | Hybrid Analysis or MalwareBazaar (abuse.ch), using your own key | Only when you click that service's button on the **Documents** tab. |
+| The verdict, the score, the ids of the checks that fired and the Unmask version; the sender's domain only if you tick it | Nobody, until you post it: GitHub opens in a new tab with the "Wrong verdict" form filled in, under your own account, and you can edit or discard it | Only when you click **No, it got this wrong** and then **Open a GitHub issue** (or copy the text yourself) |
 | A link to a Google Doc, Sheet, Slides or Drive file | Google (docs.google.com, drive.google.com), anonymously: no cookies, not signed in as you | Only when you click **Look inside** and allow access. The shared copy is downloaded and read on your computer. |
 
 **Unmask never uploads a file anywhere.** Files are read on your computer; only their hashes are ever sent, and only when you click.
