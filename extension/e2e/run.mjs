@@ -84,8 +84,14 @@ let sw = ctx.serviceWorkers()[0] ?? (await ctx.waitForEvent('serviceworker'));
 const extId = new URL(sw.url()).host;
 
 // First run: a welcome tab shows a real warning on a made-up phishing email.
-const welcome = ctx.pages().find((p) => p.url().includes('/welcome.html')) ?? (await ctx.waitForEvent('page', { predicate: (p) => p.url().includes('/welcome.html'), timeout: 5000 }).catch(() => null));
-const welcomeText = welcome ? await welcome.getByLabel('Example warning').textContent({ timeout: 8000 }).catch(() => '') : '';
+// The tab can appear as about:blank before it navigates, so poll for its URL rather than matching the first event.
+let welcome = null;
+for (let t = 0; t < 15000 && !welcome; t += 100) {
+  welcome = ctx.pages().find((p) => p.url().includes('/welcome.html')) ?? null;
+  if (!welcome) await new Promise((r) => setTimeout(r, 100));
+}
+await welcome?.waitForLoadState('domcontentloaded').catch(() => {});
+const welcomeText = welcome ? await welcome.getByLabel('Example warning').textContent({ timeout: 15000 }).catch(() => '') : '';
 check(/High risk/.test(welcomeText ?? ''), `the welcome tab opens on install and shows a High risk example ("${(welcomeText ?? '').slice(0, 50)}")`);
 if (process.env.UNMASK_E2E_SHOTS && welcome) await welcome.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'welcome.png'), fullPage: true });
 await welcome?.close();
