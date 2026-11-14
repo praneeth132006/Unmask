@@ -1,0 +1,35 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Thu, 12 Nov 2026 09:30:00 +0000
+Received: from mail-sor-f69.google.com (mail-sor-f69.google.com [209.85.220.69])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Thu, 12 Nov 2026 09:30:00 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@example.org;
+       spf=pass smtp.mailfrom=example.org;
+       dmarc=pass (p=REJECT) header.from=example.org
+From: "Priya Shah" <priya.shah@example.org>
+To: alex.morgan@example.org
+Subject: Invitation: Weekly design sync @ Thu 19 Nov 2026 3pm
+Date: Thu, 12 Nov 2026 09:30:00 +0000
+Message-ID: <inv1@example.org>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="B"
+
+--B
+Content-Type: text/plain; charset=utf-8
+
+Priya Shah is inviting you to a scheduled Zoom meeting.
+--B
+Content-Type: text/calendar; method=REQUEST; charset=UTF-8
+
+BEGIN:VCALENDAR
+METHOD:REQUEST
+BEGIN:VEVENT
+ORGANIZER;CN=Priya Shah:mailto:priya.shah@example.org
+DTSTART:20261119T150000Z
+SUMMARY:Weekly design sync
+LOCATION:https://us02web.zoom.us/j/81234567890?pwd=abc
+DESCRIPTION:Join Zoom Meeting\nhttps://us02web.zoom.us/j/81234567890?pwd=abc\nMeeting ID: 812 3456 7890
+END:VEVENT
+END:VCALENDAR
+--B--

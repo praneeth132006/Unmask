@@ -1,0 +1,25 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Thu, 12 Nov 2026 09:30:00 +0000
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com [209.85.220.41])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Thu, 12 Nov 2026 09:30:00 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com;
+       spf=pass smtp.mailfrom=gmail.com;
+       dmarc=pass (p=NONE) header.from=gmail.com
+From: "Emma | Talent Acquisition" <emma.talent.recruit26@gmail.com>
+To: alex.morgan@example.org
+Subject: Remote part-time job opportunity ($300/day)
+Date: Thu, 12 Nov 2026 09:30:00 +0000
+Message-ID: <CAJ1@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+We reviewed your profile and you are selected for a remote part-time position with our marketing agency. The job is simple: you rate products on our platform, 30 tasks a day, and earn up to $300 per day in commission. No interview needed, you can start today.
+
+To begin, contact our HR manager on Telegram: https://t.me/hr_onboarding_desk
+
+Best regards,
+Emma

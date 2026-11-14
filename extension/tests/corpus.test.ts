@@ -26,6 +26,10 @@ const EXPECTED: Record<string, AttackKind> = {
   'html-attachment-login.eml': 'credential-phishing',
   'locked-zip-password.eml': 'malware',
   'paypal-invoice-callback.eml': 'callback',
+  'calendar-payroll-invite.eml': 'credential-phishing',
+  'job-task-telegram.eml': 'job-scam',
+  'qr-table-mailbox.eml': 'credential-phishing',
+  'svg-smuggling-remittance.eml': 'credential-phishing',
 };
 
 describe('labelled corpus', () => {

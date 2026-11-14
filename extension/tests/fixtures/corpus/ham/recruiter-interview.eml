@@ -1,0 +1,24 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Thu, 12 Nov 2026 09:30:00 +0000
+Received: from mail.northwind.example (mail.northwind.example [198.51.100.20])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Thu, 12 Nov 2026 09:30:00 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@northwind.example;
+       spf=pass smtp.mailfrom=northwind.example;
+       dmarc=pass (p=REJECT) header.from=northwind.example
+From: "Jordan Lee" <jordan.lee@northwind.example>
+To: alex.morgan@example.org
+Subject: Interview for the Senior Engineer position
+Date: Thu, 12 Nov 2026 09:30:00 +0000
+Message-ID: <r1@northwind.example>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hi Alex,
+
+Thanks for your application for the Senior Engineer position. Our hiring team would like to invite you to a first interview next Tuesday, either at our office or on Teams. Please reply with two or three times that work for you, and let me know if you have questions about the role or the salary range.
+
+Best,
+Jordan Lee
+Talent Acquisition, Northwind

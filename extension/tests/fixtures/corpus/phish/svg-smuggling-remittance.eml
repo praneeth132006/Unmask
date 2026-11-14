@@ -1,0 +1,32 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Thu, 12 Nov 2026 09:30:00 +0000
+Received: from mail.acct-payables.top (mail.acct-payables.top [192.0.2.72])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Thu, 12 Nov 2026 09:30:00 +0000
+Authentication-Results: mx.google.com;
+       dkim=none;
+       spf=softfail smtp.mailfrom=acct-payables.top;
+       dmarc=none header.from=acct-payables.top
+From: "Accounts Payable" <ap@acct-payables.top>
+To: alex.morgan@example.org
+Subject: Remittance advice #48213
+Date: Thu, 12 Nov 2026 09:30:00 +0000
+Message-ID: <s1@acct-payables.top>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="B"
+
+--B
+Content-Type: text/plain; charset=utf-8
+
+Please find the remittance advice for your invoice attached.
+--B
+Content-Type: image/svg+xml; name="Remittance_48213.svg"
+Content-Disposition: attachment; filename="Remittance_48213.svg"
+Content-Transfer-Encoding: base64
+
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBnZW5lcmF0ZWQgLS0+
+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMSIgaGVpZ2h0
+PSIxIj48c2NyaXB0PjwhW0NEQVRBW3ZhciBlPSJhbGV4Lm1vcmdhbkBleGFtcGxlLm9yZyI7d2lu
+ZG93LmxvY2F0aW9uLmhyZWY9YXRvYigiYUhSMGNITTZMeTl6YUdGeVpYQnZhVzUwTFdSdlkzWnBa
+WGN1ZEc5d0wzWnBaWGMvWlQwPSIpK2U7XV0+PC9zY3JpcHQ+PC9zdmc+
+--B--

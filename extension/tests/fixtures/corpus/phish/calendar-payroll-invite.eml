@@ -1,0 +1,40 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Thu, 12 Nov 2026 09:30:00 +0000
+Received: from mail.hr-benefits.top (mail.hr-benefits.top [192.0.2.73])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Thu, 12 Nov 2026 09:30:00 +0000
+Authentication-Results: mx.google.com;
+       dkim=none;
+       spf=softfail smtp.mailfrom=hr-benefits.top;
+       dmarc=none header.from=hr-benefits.top
+From: "HR Payroll" <payroll@hr-benefits.top>
+To: alex.morgan@example.org
+Subject: Invitation: Mandatory payroll update @ Fri 13 Nov 2026 10am
+Date: Thu, 12 Nov 2026 09:30:00 +0000
+Message-ID: <c1@hr-benefits.top>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="B"
+
+--B
+Content-Type: text/plain; charset=utf-8
+
+You have been invited to: Mandatory payroll update
+--B
+Content-Type: text/calendar; method=REQUEST; charset=UTF-8
+
+BEGIN:VCALENDAR
+PRODID:-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN
+VERSION:2.0
+METHOD:REQUEST
+BEGIN:VEVENT
+ORGANIZER;CN="Payroll Team":mailto:payroll@example-hr.top
+ATTENDEE;RSVP=TRUE:mailto:alex.morgan@example.org
+DTSTART:20261113T100000Z
+DTEND:20261113T103000Z
+SUMMARY:Mandatory payroll update
+DESCRIPTION:Your salary payment is on hold. Confirm your bank details before
+  the meeting: https://payroll-confirm.top/login\n\nHR
+LOCATION:https://payroll-confirm.top/login
+END:VEVENT
+END:VCALENDAR
+--B--

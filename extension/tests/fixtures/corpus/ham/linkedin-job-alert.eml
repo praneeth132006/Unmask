@@ -1,0 +1,18 @@
+Delivered-To: alex.morgan@example.org
+Received: by 2002:a05:7300:1234 with SMTP id q1csp1; Thu, 12 Nov 2026 09:30:00 +0000
+Received: from mailb-dc.linkedin.com (mailb-dc.linkedin.com [108.174.3.15])
+        by mx.google.com with ESMTPS id x1si2
+        for <alex.morgan@example.org>; Thu, 12 Nov 2026 09:30:00 +0000
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linkedin.com;
+       spf=pass smtp.mailfrom=linkedin.com;
+       dmarc=pass (p=REJECT) header.from=linkedin.com
+From: "LinkedIn Job Alerts" <jobalerts-noreply@linkedin.com>
+To: alex.morgan@example.org
+Subject: 30+ new jobs for "remote customer support"
+Date: Thu, 12 Nov 2026 09:30:00 +0000
+Message-ID: <ja1@linkedin.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<p>Your job alert for remote customer support</p><p><a href="https://www.linkedin.com/comm/jobs/view/4012345678">Customer Support Specialist (Remote, part-time)</a> - Contoso - Hiring now, start immediately</p><p><a href="https://www.linkedin.com/comm/jobs/view/4012345679">Support Agent (Full-time)</a> - Fabrikam - Apply via WhatsApp updates enabled</p><p>You are receiving job alert emails. <a href="https://www.linkedin.com/comm/jobs/alerts">Manage alerts</a></p>
