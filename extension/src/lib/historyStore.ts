@@ -22,7 +22,7 @@ export async function loadHistory(): Promise<SenderHistory> {
 export async function rememberSender(report: Report): Promise<void> {
   if (report.verdict === 'high' || !report.email.from) return;
   const history = await loadHistory();
-  const next = recordSender(history, report.email, Date.now(), senderTraits(report.email, report.auth, report.forensics?.hops ?? []));
+  const next = recordSender(history, report.email, Date.now(), senderTraits(report.email, report.auth, report.forensics?.hops ?? [], report.links));
   if (next !== history) await browser.storage.local.set({ [KEY]: next });
 }
 

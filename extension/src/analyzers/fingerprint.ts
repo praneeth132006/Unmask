@@ -4,7 +4,7 @@
  * known-good one from the same sender (relay, DKIM signer, Message-ID
  * format, mail program); this does that comparison automatically.
  */
-import type { AuthSummary, DeliveryHop, Finding, ParsedEmail } from '../core/types';
+import type { AuthSummary, DeliveryHop, Finding, LinkInfo, ParsedEmail } from '../core/types';
 import { getHeaders } from '../core/parse';
 import { registrableDomain, sameOrg } from '../lib/domain';
 import { entryHop } from './received';
@@ -20,17 +20,49 @@ export interface SenderTraits {
   mailer: string | null;
   /** Reply-To organisation when it differs from the From address. */
   replyTo: string | null;
+  /** The riskiest kind of body link: 'sign-in' page, 'file-share', or null for neither. */
+  link?: string | null;
+  /** Time of day on the sender's own clock (Date header): night, morning, afternoon or evening. */
+  hour?: string | null;
+}
+
+/** Where files are shared from; a hacked account's first message is very often "I shared a document with you". */
+const FILE_SHARE = /(?:^|\.)(?:docs\.google\.com|drive\.google\.com|sites\.google\.com|forms\.gle|sharepoint\.com|onedrive\.live\.com|1drv\.ms|dropbox\.com|db\.tt|wetransfer\.com|we\.tl|box\.com|docsend\.com|notion\.site|canva\.com|adobe\.com|acrobat\.adobe\.com|dochub\.com|pandadoc\.com|smash\.gg|mega\.nz|mediafire\.com|files\.fm|ipfs\.io|pages\.dev|workers\.dev|web\.app|firebaseapp\.com|netlify\.app|vercel\.app|github\.io|glitch\.me|wixsite\.com|weebly\.com|square\.site|webflow\.io)$/i;
+const SIGN_IN = /\/(?:log-?in|sign-?in|signon|auth(?:enticate|orize)?|verify|validation|account\/(?:update|confirm|recover)|wp-login|owa|adfs|sso|oauth2?)(?:[/?#.]|$)/i;
+
+export function linkKind(links: LinkInfo[]): string | null {
+  let kind: string | null = null;
+  for (const l of links) {
+    if (l.source !== 'html' && l.source !== 'text') continue;
+    let url: URL;
+    try {
+      url = new URL(l.resolved);
+    } catch {
+      continue;
+    }
+    if (SIGN_IN.test(url.pathname) || l.flags.some((f) => f.id === 'credential-path')) return 'sign-in';
+    if (FILE_SHARE.test(url.hostname)) kind = 'file-share';
+  }
+  return kind;
+}
+
+/** Hour on the sender's clock, from the Date header ("… 03:12:00 +0530"). */
+export function hourBand(date: string | null): string | null {
+  const m = date?.match(/\b(\d{1,2}):\d{2}(?::\d{2})?\s*(?:[+-]\d{4}|gmt|utc|z)\b/i);
+  if (!m) return null;
+  const h = Number(m[1]);
+  return h < 6 ? 'night' : h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
 }
 
 /** Up to this many distinct values per trait, with how often each was seen. */
-export type TraitCounts = Record<keyof SenderTraits, Record<string, number>>;
+export type TraitCounts = Record<'dkim' | 'route' | 'messageId' | 'mailer' | 'replyTo', Record<string, number>> & Partial<Record<'link' | 'hour', Record<string, number>>>;
 
 const MAX_VALUES = 6;
 /** "none" stands for "no value" so a missing signature is remembered too. */
 const NONE = 'none';
 
 /** Null when the email has no real headers (Outlook's page view, a pasted body): nothing to compare. */
-export function senderTraits(email: ParsedEmail, auth: AuthSummary, hops: DeliveryHop[]): SenderTraits | undefined {
+export function senderTraits(email: ParsedEmail, auth: AuthSummary, hops: DeliveryHop[], links?: LinkInfo[]): SenderTraits | undefined {
   if (!auth.raw) return undefined;
   const from = email.from?.domain ?? '';
   const entry = entryHop(hops);
@@ -44,6 +76,8 @@ export function senderTraits(email: ParsedEmail, auth: AuthSummary, hops: Delive
     messageId: idDomain ? registrableDomain(idDomain) : null,
     mailer: mailer || null,
     replyTo: reply ? registrableDomain(reply.domain) : null,
+    // Only learned when the links were looked at, so old callers don't record "no link".
+    ...(links ? { link: linkKind(links), hour: hourBand(getHeaders(email, 'date')[0] ?? null) } : {}),
   };
 }
 
@@ -54,7 +88,9 @@ function valueOf(traits: SenderTraits, k: keyof SenderTraits): string {
 
 export function addTraits(counts: TraitCounts | undefined, traits: SenderTraits): TraitCounts {
   const out = { dkim: {}, route: {}, messageId: {}, mailer: {}, replyTo: {}, ...structuredClone(counts ?? {}) } as TraitCounts;
-  for (const k of Object.keys(out) as (keyof SenderTraits)[]) {
+  for (const k of Object.keys(LABEL) as (keyof SenderTraits)[]) {
+    if (!(k in traits)) continue;
+    out[k] ??= {};
     const v = valueOf(traits, k);
     out[k][v] = (out[k][v] ?? 0) + 1;
     const entries = Object.entries(out[k]);
@@ -69,6 +105,8 @@ const LABEL: Record<keyof SenderTraits, (v: string) => string> = {
   messageId: (v) => (v === NONE ? 'no Message-ID' : `Message-ID from ${v}`),
   mailer: (v) => (v === NONE ? 'no mail program named' : `written with ${v}`),
   replyTo: (v) => (v === NONE ? 'replies to the sender' : `replies to ${v}`),
+  link: (v) => (v === NONE ? 'no file-share or sign-in links' : v === 'sign-in' ? 'a link to a sign-in page' : 'a file-share link'),
+  hour: (v) => (v === NONE ? 'no time given' : `sent in the ${v} (their time)`),
 };
 
 /**
@@ -82,21 +120,49 @@ export function fingerprintFindings(address: string, counts: TraitCounts | undef
   const changed: string[] = [];
   let lostSignature = false;
   let newReplyTo = false;
+  let firstLink: string | null = null;
+  let nightTime = false;
   for (const k of Object.keys(LABEL) as (keyof SenderTraits)[]) {
+    if (!(k in traits)) continue;
     const v = valueOf(traits, k);
     const history = counts[k] ?? {};
     if (history[v]) continue;
     const usual = Object.entries(history).sort((a, b) => b[1] - a[1])[0];
+    // New traits are learned later than the old ones, so they are measured against their own count.
+    const traitSeen = k === 'link' || k === 'hour' ? Object.values(history).reduce((n, c) => n + c, 0) : seen;
+    if (traitSeen < minSeen) continue;
     // Only traits that were consistent before: one usual value, seen in most emails.
-    if (!usual || usual[1] < Math.ceil(seen * 0.75)) continue;
+    if (!usual || usual[1] < Math.ceil(traitSeen * 0.75)) continue;
     if (k === 'mailer' && (v === NONE || usual[0] === NONE)) continue; // often dropped by forwarding and apps
+    if (k === 'hour' && (v !== 'night' || usual[0] === NONE)) continue; // only a 3 a.m. email stands out
+    if (k === 'link') {
+      if (usual[0] === NONE) firstLink = v;
+      continue; // reported on its own below
+    }
+    if (k === 'hour') nightTime = true;
     if (k === 'dkim' && v === NONE) lostSignature = true;
     if (k === 'replyTo' && usual[0] === NONE) newReplyTo = true;
     changed.push(`${LABEL[k](v)} (usually ${LABEL[k](usual[0])})`);
   }
-  if (!changed.length) return [];
-  const strong = lostSignature || newReplyTo || changed.length >= 2;
+  const out: Finding[] = [];
+  if (firstLink) {
+    const other = changed.length > 0;
+    const what = firstLink === 'sign-in' ? 'a link to a sign-in page' : 'a file-share link';
+    out.push({
+      id: 'contact-first-link',
+      category: 'sender',
+      severity: other ? 'high' : 'medium',
+      points: other ? 22 : 12,
+      title: `First time ${address} sends you ${what}`,
+      detail: `None of your ${seen} earlier emails from this address had one${other ? `, and this email is also ${changed.join('; ')}` : ''}. When an account is hacked, its first message to the owner’s contacts is usually “I shared a document with you” or “please sign in to view”. Ask the sender another way (a call, a new message you start) before opening it.`,
+      plain: `Someone you know has never sent you ${what} before. Their account may have been hacked.`,
+      target: { kind: 'tab', tab: 'links' },
+    });
+  }
+  if (!changed.length) return out;
+  const strong = lostSignature || newReplyTo || changed.length >= 2 || (nightTime && !!firstLink);
   return [
+    ...out,
     {
       id: 'fingerprint-changed',
       category: 'sender',
