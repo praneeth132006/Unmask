@@ -1,3 +1,4 @@
+import { getHeaders } from '../core/parse';
 import type { Finding, ParsedEmail } from '../core/types';
 import { brandsMentionedIn, FREE_MAIL_DOMAINS, isBrandDomain, senderClaim } from './brands';
 import { detectLookalike } from './lookalike';
@@ -73,7 +74,14 @@ export function analyzeSender(email: ParsedEmail): Finding[] {
 
   // 5. Replies go somewhere else.
   const reply = email.replyTo.find((r) => r.domain && !sameOrg(r.domain, from.domain));
-  if (reply) {
+  // Mailing lists send replies to the list: the Reply-To is the List-Post address.
+  const listPost = getHeaders(email, 'list-post')[0]?.match(/mailto:([^>\s]+)/i)?.[1]?.toLowerCase();
+  const listId = getHeaders(email, 'list-id')[0] ?? '';
+  // Anyone can add list headers, so a list never excuses replies to free webmail.
+  const toList = !!reply && !FREE_MAIL_DOMAINS.has(registrableDomain(reply.domain)) && ((listPost !== undefined && listPost === reply.address.toLowerCase()) || (listId !== '' && sameOrg(reply.domain, listId.match(/<([^>]+)>/)?.[1]?.split('.').slice(1).join('.') || listId)));
+  if (reply && toList) {
+    findings.push({ id: 'reply-to-mismatch', category: 'sender', severity: 'info', points: 0, title: 'Replies go to the mailing list', target: { kind: 'header', key: 'reply-to' }, detail: `This came through a mailing list, so Reply goes to ${reply.address}, the list itself.` });
+  } else if (reply) {
     const freemail = FREE_MAIL_DOMAINS.has(registrableDomain(reply.domain));
     findings.push({
       id: 'reply-to-mismatch',

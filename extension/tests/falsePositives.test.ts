@@ -223,3 +223,44 @@ describe('accuracy: newsletters and a company’s own links', () => {
     expect(other.findings.map((f) => f.id)).toContain('link-shortener');
   });
 });
+
+describe('false alarms found by the public benchmark', () => {
+  const html = (from: string, body: string, extra: string[] = []) => [`From: ${from}`, 'To: me@example.org', 'Subject: Weekly news', ...extra, 'Content-Type: text/html; charset=utf-8', '', body].join('\r\n');
+  const ids = async (raw: string) => (await analyzeRawEmail(raw)).findings.filter((f) => f.points >= 10).map((f) => f.id);
+
+  it('treats newsletter search boxes as harmless, one form at a time', async () => {
+    const search = (q: string) => `<form method="get" action="https://www.lockergnome.com/search"><input type="hidden" name="cfg" value="x"><input type="text" name="${q}"><input type="submit" value="go"></form>`;
+    expect(await ids(html('News <news@lockergnome.com>', search('words') + search('keyword') + search('q')))).not.toContain('html-form');
+  });
+
+  it('still flags forms that ask for account or card details, or collect emails for someone else', async () => {
+    expect(await ids(html('IT <it@example.com>', '<form action="https://x.top/p"><input name="username"><input type="submit"></form>'))).toContain('html-form');
+    expect(await ids(html('IT <it@example.com>', '<form action="https://x.top/p"><input type="email" name="email"></form>'))).toContain('html-form');
+    expect(await ids(html('News <news@shop.example>', '<form action="https://shop.example/subscribe"><input type="email" name="email"></form>'))).not.toContain('html-form');
+  });
+
+  it('does not call an entity-encoded mailto address a disguised link', async () => {
+    const coded = [...'mailto:feedback@lockergnome.com'].map((c) => `&#${c.charCodeAt(0)};`).join('');
+    const shown = [...'feedback@lockergnome.com'].map((c) => `&#${c.charCodeAt(0)};`).join('');
+    const found = await ids(html('News <news@lockergnome.com>', `<a href="${coded}">${shown}</a>`));
+    expect(found).not.toContain('link-encoded-href');
+    expect(found).not.toContain('entity-encoded-text');
+    // A web address in codes is still the trick it always was.
+    const web = [...'https://paypa1.top/x'].map((c) => `&#${c.charCodeAt(0)};`).join('');
+    expect(await ids(html('News <news@lockergnome.com>', `<a href="${web}">Open</a>`))).toContain('link-encoded-href');
+  });
+
+  it('lets a mailing list send replies to the list, but never to webmail', async () => {
+    const list = ['Reply-To: ilug@linux.ie', 'List-Id: Irish Linux Users Group <ilug.linux.ie>', 'List-Post: <mailto:ilug@linux.ie>'];
+    expect(await ids(html('Pat <pat@example.net>', '<p>Anyone tried the new kernel?</p>', list))).not.toContain('reply-to-mismatch');
+    const fake = ['Reply-To: payroll.dept@gmail.com', 'List-Post: <mailto:payroll.dept@gmail.com>'];
+    expect(await ids(html('CEO <ceo@example.net>', '<p>Are you free? I need a quick favour.</p>', fake))).toContain('reply-to-mismatch');
+  });
+
+  it('lets a newsletter name its own sites through its click tracker, but not a brand it isn’t', async () => {
+    const own = inspectLink({ href: 'http://ummail4.unitedmedia.com/Click?q=47-ADxx', text: 'Dilbert.com', source: 'html' }, 'ummail4.unitedmedia.com');
+    expect(own.flags.map((f) => f.id)).not.toContain('text-mismatch');
+    const fake = inspectLink({ href: 'https://paypa1-secure.top/click?q=1', text: 'paypal.com', source: 'html' }, 'paypa1-secure.top');
+    expect(fake.flags.map((f) => f.id)).toContain('text-mismatch');
+  });
+});

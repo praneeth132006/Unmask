@@ -182,6 +182,9 @@ function flag(id: keyof typeof FLAG_SPECS, label: string): LinkFlag {
   return { id, severity: FLAG_SPECS[id]!.severity, label };
 }
 
+/** Paths click-tracking servers use: /click, /track, /redirect, /ls/click, /c/…, /r/… */
+const CLICK_PATH = /\/(?:click|clicks|track|tracking|trk|redirect|redir|ls\/click|c|r|l|link|go|out)(?:[/?.]|$)|[?&](?:q|url|u|redirect|target)=/i;
+
 /** `senderDomain` lets the sender's own click-tracking redirects pass without a warning. */
 export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
   const flags: LinkFlag[] = [];
@@ -233,7 +236,10 @@ export function inspectLink(raw: RawLink, senderDomain = ''): LinkInfo {
   const shown = domainInText(raw.text);
   if (shown && host && !sameOrg(shown, host)) {
     const viaTracker = matchesHost(originalHost, TRACKERS) || matchesHost(host, TRACKERS);
-    if (viaTracker || SHORTENERS.has(domain)) flags.push(flag('tracker-mismatch', `shows ${shown}, goes via ${host}`));
+    // Newsletters name a site ("Dilbert.com") and link through the sender's own click tracker.
+    // Not when the text names a well-known brand the sender doesn't own: that is how look-alike senders phish.
+    const ownClickTracker = ownService && CLICK_PATH.test(u ? `${u.pathname}${u.search}` : '') && (!brandOwningDomain(registrableDomain(shown)) || senderBrand !== null);
+    if (viaTracker || ownClickTracker || SHORTENERS.has(domain)) flags.push(flag('tracker-mismatch', `shows ${shown}, goes via ${host}`));
     else flags.push(flag('text-mismatch', `shows ${shown}, really goes to ${host}`));
   }
 

@@ -135,7 +135,7 @@ Source: [`analyzers/sender.ts`](../extension/src/analyzers/sender.ts).
 | ↳ same, already explained by a look-alike finding | Medium | 10 | |
 | Organisation name from free webmail | Medium | 15 | "IT Helpdesk" or "PayPal" sending from gmail.com |
 | Replies go to a free webmail address | High | 20 | Reply-To `secure-team@protonmail.com` |
-| Replies go to another domain | Medium | 12 | Not counted for verified share and invite notifications (Google Docs, Dropbox, DocuSign…), which put the person who shared in Reply-To |
+| Replies go to another domain | Medium | 12 | Not counted for verified share and invite notifications (Google Docs, Dropbox, DocuSign…), which put the person who shared in Reply-To, or for mailing lists whose Reply-To is the list's own address (`List-Post`/`List-Id`), unless that address is free webmail |
 | Bounce address on another domain | Low | 3 | Normal for newsletters, so it barely counts |
 | No valid From address | Medium | 10 | |
 
@@ -210,7 +210,7 @@ Findings are grouped by type: the same problem on several links becomes one find
 | Non-standard port | Low | 5 |
 | Bounces through a redirect on an unrelated site | Low | 4 |
 | Not encrypted (`http://`) | Low | 3 |
-| Goes through a mail-tracking service, so the final site is unknown | Low | 3 |
+| Goes through a mail-tracking service, or the sender’s own click tracker (`/click`, `/track`, `?q=`…) while naming one of its own sites, so the final site is unknown | Low | 3 |
 
 To avoid false alarms on normal newsletters:
 - Links through known mailing services (SendGrid, Mailchimp, HubSpot, …) whose text shows another domain count as *tracking* (3), not *mismatch* (25).
@@ -286,11 +286,12 @@ Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts).
 | Check | Severity | Points |
 |---|---|---|
 | Password field inside the email | Critical | 35 |
-| Form inside the email | High | 20 |
+| Form that asks for details (account, card, identity, phone or address fields, more than two fields, or an email box that submits to someone other than the sender) | High | 20 |
+| Only small search or sign-up boxes (each form judged on its own) | Low | 4 |
 | Asks you to verify or re-enter account details | Medium | 15 |
 | Pressure and urgency, 2+ phrases | Medium | 12 |
 | Pressure and urgency, 1 phrase | Low | 5 |
-| JavaScript inside the email | Medium | 10 |
+| JavaScript inside the email (mail apps never run it) | Low | 5 |
 | The whole message is a clickable picture (under 40 characters of text) | Medium | 10 |
 | The message is only a picture | Low | 4 |
 | Mentions money, prizes or payments | Low | 8 |

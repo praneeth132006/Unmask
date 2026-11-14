@@ -56,6 +56,8 @@ export function disguisedHrefs(html: string): string[] {
   for (const m of html.matchAll(/\bhref\s*=\s*(["'])(.*?)\1/gis)) {
     const raw = m[2]!;
     const decoded = raw.replace(NUMERIC_REF, (r) => decodeRef(r));
+    // Encoding a mailto: address hides it from spam harvesters; it isn't a disguised website.
+    if (/^\s*mailto:/i.test(decoded)) continue;
     const codedLetters = [...raw.matchAll(NUMERIC_REF)].filter((r) => /^[a-z0-9.:/]$/i.test(decodeRef(r[0]))).length;
     const host = decoded.match(/^\s*[a-z][a-z0-9+.-]*:\/\/([^/?#\s]+)/i)?.[1] ?? '';
     const percentHost = /%[0-9a-f]{2}/i.test(host);
@@ -78,7 +80,8 @@ const SPLITTERS = /[\p{L}\p{N}][\u00ad\u200b\u200c\u200d\u2060\ufeff]+[\p{L}\p{N
 export function obfuscationFindings(html: string | null, visibleText: string): Finding[] {
   const findings: Finding[] = [];
   if (html) {
-    const words = encodedWords(html);
+    // An email address spelt in codes is the old anti-harvesting trick, unless it names a brand.
+    const words = encodedWords(html).filter((w) => !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(w) || brandsMentionedIn(w).length > 0);
     if (words.length) {
       const brands = brandsMentionedIn(words.join(' '));
       const strong = brands.length > 0 || words.some((w) => w.includes('@') || /\.[a-z]{2,}$/i.test(w));

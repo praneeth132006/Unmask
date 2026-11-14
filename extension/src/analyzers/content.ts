@@ -1,4 +1,5 @@
 import type { Finding, HiddenSnippet, LinkSource, ParsedEmail } from '../core/types';
+import { sameOrg } from '../lib/domain';
 
 export interface RawLink {
   href: string;
@@ -6,6 +7,9 @@ export interface RawLink {
   source: LinkSource;
   origin?: string;
 }
+
+/** Form fields that ask for an account, a card or an identity. */
+const SENSITIVE_FIELD = /pass|pwd|pin\b|otp|login|user|account|acct|card|cc-?num|cvv|cvc|expir|ssn|social|routing|iban|swift|sort.?code|dob|birth|mother|security.?(?:question|answer)|verification|2fa|mfa|phone|mobile|address|zip|postal/i;
 
 export interface ContentResult {
   findings: Finding[];
@@ -140,14 +144,28 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
     const forms = doc.querySelectorAll('form');
     if (forms.length) {
       const password = doc.querySelector('input[type="password" i]');
+      // Newsletters carry search and sign-up boxes; phishing forms ask for account, card or identity details.
+      // Each form is judged on its own: three search boxes are not one big form.
+      const formHarmless = (form: Element): boolean => {
+        const fields = [...form.querySelectorAll('input, select, textarea')].filter((el) => !/^(hidden|submit|button|image|reset|checkbox|radio)$/i.test(el.getAttribute('type') ?? ''));
+        const sensitive = fields.some((el) => SENSITIVE_FIELD.test(`${el.getAttribute('name') ?? ''} ${el.getAttribute('id') ?? ''} ${el.getAttribute('placeholder') ?? ''} ${el.getAttribute('autocomplete') ?? ''}`));
+        // An email box is a sign-up form only when it goes back to the sender; otherwise it collects addresses for phishing.
+        const actionHost = (() => { try { return new URL(form.getAttribute('action') ?? '').hostname; } catch { return ''; } })();
+        const emailBox = fields.some((el) => /email|e-mail/i.test(`${el.getAttribute('type') ?? ''} ${el.getAttribute('name') ?? ''}`));
+        const toSender = !!actionHost && !!email.from?.domain && sameOrg(actionHost, email.from.domain);
+        return !sensitive && fields.length <= 2 && (!emailBox || toSender);
+      };
+      const harmless = !password && [...forms].every(formHarmless);
       findings.push({
         id: 'html-form',
         category: 'content',
-        severity: password ? 'critical' : 'high',
-        points: password ? 35 : 20,
-        title: password ? 'The email contains a password field' : 'The email contains a form',
+        severity: password ? 'critical' : harmless ? 'low' : 'high',
+        points: password ? 35 : harmless ? 4 : 20,
+        title: password ? 'The email contains a password field' : harmless ? 'The email contains a search or sign-up box' : 'The email contains a form that asks for details',
         target: { kind: 'body' },
-        detail: `Form submits to ${forms[0]!.getAttribute('action') || 'an unknown address'}. Legitimate services never ask you to type credentials into an email.`,
+        detail: harmless
+          ? `A small form that submits to ${forms[0]!.getAttribute('action') || 'an unknown address'}. Newsletters use these for search and sign-up; never type a password or card number into an email.`
+          : `Form submits to ${forms[0]!.getAttribute('action') || 'an unknown address'}. Legitimate services never ask you to type credentials into an email.`,
       });
     }
 
@@ -169,7 +187,7 @@ export function analyzeContent(email: ParsedEmail): ContentResult {
     }
 
     if (doc.querySelector('script')) {
-      findings.push({ id: 'html-script', category: 'content', target: { kind: 'body' }, severity: 'medium', points: 10, title: 'The email contains JavaScript', detail: 'Email clients block it, but its presence suggests a hand-crafted malicious message.' });
+      findings.push({ id: 'html-script', category: 'content', target: { kind: 'body' }, severity: 'low', points: 5, title: 'The email contains JavaScript', detail: 'Email clients block it, but its presence suggests a hand-crafted malicious message.' });
     }
 
     if (hidden.length) {
