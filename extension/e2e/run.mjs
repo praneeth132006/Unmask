@@ -21,6 +21,7 @@ const site = createServer((req, res) => {
   if (route === 'track/click') return res.writeHead(302, { location: 'http://land.unmask-e2e.test/hop' }).end();
   if (route === 'land/hop') return res.writeHead(200, { 'content-type': 'text/html' }).end('<meta http-equiv="refresh" content="0;url=http://evil.unmask-e2e.test/login">');
   if (route === 'evil/login') return res.writeHead(200, { 'content-type': 'text/html' }).end('<h1>Sign in</h1>');
+  if (route === 'kit/s') return res.writeHead(200, { 'content-type': 'text/html' }).end('<title>Sign in to your account</title><script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script><div class="cf-turnstile"></div><img src="https://aadcdn.msauth.net/logo.svg"><form><input type="email" name="loginfmt"><input type="password"></form>');
   if (route === 'bad/router') return res.writeHead(302, { location: 'http://192.168.1.1/admin' }).end();
   if (route === 'cookie/check') return res.writeHead(200, { 'content-type': 'text/html' }).end(req.headers.cookie ? 'HAS-COOKIE' : 'no-cookie');
   res.writeHead(404).end();
@@ -162,7 +163,7 @@ if (process.env.VITE_UNMASK_FORCE_REMOTE === '1') {
 // Built-in redirect tracing, asked for by the panel like the "Trace redirects" button does.
 const trace = await panel.evaluate(async () => {
   const run = (url) => chrome.runtime.sendMessage({ type: 'unmask:trace', url });
-  return { chain: await run('http://short.unmask-e2e.test/go'), blocked: await run('http://bad.unmask-e2e.test/router'), local: await run('http://localhost/x') };
+  return { chain: await run('http://short.unmask-e2e.test/go'), kit: await run('http://kit.unmask-e2e.test/s'), blocked: await run('http://bad.unmask-e2e.test/router'), local: await run('http://localhost/x') };
 });
 const hops = trace.chain.ok ? trace.chain.result.hops.map((h) => `${h.status} ${new URL(h.url).host.split('.')[0]}${h.via ? ` (${h.via})` : ''}`) : [trace.chain.error];
 check(
@@ -170,6 +171,8 @@ check(
   `built-in tracer follows HTTP and meta-refresh redirects: ${hops.join(' → ')}`,
 );
 check(trace.chain.ok && trace.chain.result.finalUrl === 'http://evil.unmask-e2e.test/login', 'tracer reports the final page');
+const kitLanding = trace.kit.ok ? trace.kit.result.landing : null;
+check(kitLanding?.fakeLogin === 'Microsoft' && kitLanding?.captcha === 'Cloudflare Turnstile', `built-in tracer spots a fake Microsoft login behind Turnstile (${JSON.stringify(kitLanding)})`);
 check(!trace.blocked.ok || /local network/.test(trace.blocked.result.error ?? ''), `redirect to a local-network address is stopped (${trace.blocked.ok ? trace.blocked.result.error : trace.blocked.error})`);
 check(trace.local.ok && /local network/.test(trace.local.result.error ?? ''), 'tracing localhost is refused');
 check((await tab.locator('[data-unmask-hl]').count()) === 1, 'outline attribute present in the DOM');

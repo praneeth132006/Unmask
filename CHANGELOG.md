@@ -9,6 +9,7 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Looks inside SVG images and HTML attachments:** scripts, redirects, login forms hidden in `<foreignObject>`, pages hidden in base64, file smuggling, CAPTCHA gates and built-in email addresses. SVG files padded with comments or a DOCTYPE are recognised too.
 - **Fake job offers:** task scams, fake-cheque "equipment" purchases, fees, requests for bank or ID details, and interviews moved to Telegram or WhatsApp.
 - **QR codes drawn without an image** (table cells or block characters) are decoded and their links checked.
+- **Trace redirects now says what the final page is:** a fake Microsoft, Google or Okta sign-in, the real sign-in relayed through another server (adversary-in-the-middle kits such as Tycoon2FA that get past MFA), and CAPTCHA gates in front of login pages. Works in the built-in tracer and the redirect-trace server.
 - **Hacked contacts:** a known sender's first-ever file-share or sign-in link, and emails sent in the middle of their night, are flagged.
 
 ## [0.5.1] - 2026-11-07

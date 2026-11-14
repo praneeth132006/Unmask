@@ -463,7 +463,7 @@ These run only when you click them, except domain age and domain intelligence, w
 | **Google Doc, Sheet, Slides, Drive: look inside** | Nothing is uploaded. Google's public copy is downloaded anonymously and read here | Findings inside are added to the email's score |
 | **VirusTotal: link** | The link | 3+ engines: Critical 40 · 1–2: High 20 |
 | **urlscan.io sandbox scan** | The link | urlscan says malicious: Critical 40, plus the final page, a screenshot and any brand it impersonates |
-| **Redirect trace** (your server) | The link | The redirect chain (informational) |
+| **Redirect trace** (built in, or your server) | The link | The redirect chain, and what the final page is: Microsoft's, Google's or Okta's own sign-in code relayed through another host (an adversary-in-the-middle kit such as Tycoon2FA or Evilginx, which steals the session and gets past MFA): Critical 40 · a page imitating their sign-in on a host they don't own: Critical 35 · a password page behind Turnstile, hCaptcha or reCAPTCHA: High 22 · a CAPTCHA alone: Low 5. Combined with a domain registered days ago (domain age), the email is rated High risk |
 | **First TLS certificate** (crt.sh) | The sender's domain and up to 3 link domains | First certificate in the last 7 days: High 20 · last 30 days: Medium 10 · a link domain that never had one: Low 4 |
 | **Mail records** (dns.google) | The sender's domain | No mail server and no website: Medium 12 · no MX: Medium 8 · missing SPF/DMARC: Low 2 each |
 | **How hard the domain is to fake** (dns.google, same lookup) | The sender's domain | SPF `+all` (anyone may send): Medium 10 · SPF `?all`: Low 3 · DMARC `p=none` on an email that didn't pass: Low 4 · certified BIMI logo with enforced DMARC, and this email passed: Good −3 |

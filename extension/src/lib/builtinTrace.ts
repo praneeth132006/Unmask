@@ -10,6 +10,7 @@
  */
 import type { TraceHop, TraceResult } from '../integrations/trace';
 import { blockedReason, findClientRedirect } from './redirects';
+import { inspectLanding } from './landing';
 
 interface WebRequestDetails {
   requestId: string;
@@ -135,7 +136,7 @@ export async function traceBuiltin(env: TraceEnv, start: string): Promise<TraceR
       continue;
     }
     hops.push({ url: r.finalUrl, status: r.status });
-    return { hops, finalUrl: r.finalUrl, truncated: false };
+    return { hops, finalUrl: r.finalUrl, truncated: false, ...(r.html ? { landing: inspectLanding(r.html, r.finalUrl) } : {}) };
   }
   return { hops, finalUrl: current, truncated: true };
 }

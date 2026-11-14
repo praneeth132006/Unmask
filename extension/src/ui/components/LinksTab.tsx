@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Finding, LinkInfo, Report } from '../../core/types';
 import type { Settings } from '../../lib/settings';
+import { landingFindings } from '../../analyzers/landing';
 import { hasTracePermission, requestTracePermission, traceBuiltinFromPanel, traceRedirects, type TraceResult } from '../../integrations/trace';
 import { fetchScreenshot, scanUrl, urlscanFindings, UrlscanPending, type UrlscanResult } from '../../integrations/urlscan';
 import { lookupUrl, scanUrlNow, vtFindings, type VtResult } from '../../integrations/virustotal';
@@ -104,6 +105,7 @@ function LinkCard({
     try {
       const value = s.traceMode === 'server' ? await traceRedirects(s.backendUrl, target) : await traceBuiltinFromPanel(target);
       set({ trace: { status: 'done', value } });
+      report(landingFindings(index, value.landing));
     } catch (e) {
       set({ trace: { status: 'error', error: errMsg(e) } });
     }
@@ -296,6 +298,11 @@ function LinkCard({
           </ol>
           {state.trace.value.error && <ErrorText>{state.trace.value.error}</ErrorText>}
           {state.trace.value.truncated && <p className="mt-1 text-[11px] text-[var(--warn)]">Stopped after too many redirects.</p>}
+          {landingFindings(index, state.trace.value.landing).map((f) => (
+            <p key={f.id} className={`mt-1.5 text-[11px] font-semibold ${f.severity === 'low' ? 'text-[var(--text-2)]' : 'text-[var(--bad)]'}`}>
+              {f.title}
+            </p>
+          ))}
         </div>
       )}
 

@@ -16,6 +16,8 @@ beforeAll(async () => {
       case '/d': return void res.writeHead(200, { 'content-type': 'text/html' }).end('<script>window.location.href = "http://127.0.0.1:1/never"</script>');
       case '/loop': return void res.writeHead(302, { location: '/loop' }).end();
       case '/final': return void res.writeHead(200, { 'content-type': 'text/html' }).end('<h1>Login</h1>');
+      case '/kit': return void res.writeHead(302, { location: '/kit-page' }).end();
+      case '/kit-page': return void res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }).end('<html><head><title>Sign in to your account</title><script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script></head><body><img src="https://aadcdn.msauth.net/shared/1.0/content/images/microsoft_logo.svg"><div class="cf-turnstile"></div><form><input type="email" name="loginfmt"><input type="password" name="passwd"></form></body></html>');
       default: return void res.writeHead(404).end();
     }
   });
@@ -45,6 +47,11 @@ describe('traceUrl', () => {
   it('returns the final page', async () => {
     const r = await traceUrl(`${base}/final`, { allowPrivate: true });
     expect(r).toMatchObject({ finalUrl: `${base}/final`, truncated: false });
+  });
+
+  it('reports a fake Microsoft sign-in behind a CAPTCHA on the final page', async () => {
+    const r = await traceUrl(`${base}/kit`, { allowPrivate: true });
+    expect(r.landing).toEqual({ captcha: 'Cloudflare Turnstile', fakeLogin: 'Microsoft', relayedLogin: null, passwordField: true, host: '127.0.0.1' });
   });
 
   it('refuses private addresses by default', async () => {

@@ -1,4 +1,5 @@
 import { browser } from 'wxt/browser';
+import type { LandingReport } from '../lib/landing';
 export interface TraceHop {
   url: string;
   status: number;
@@ -11,6 +12,8 @@ export interface TraceResult {
   finalUrl: string;
   truncated: boolean;
   error?: string;
+  /** What the final page looks like: a CAPTCHA gate, a fake or relayed sign-in page. */
+  landing?: LandingReport;
 }
 
 /**

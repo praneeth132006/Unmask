@@ -56,6 +56,14 @@ Follows up to 10 hops: HTTP 3xx redirects, `<meta http-equiv="refresh">`, and si
 }
 ```
 
+When the final page is HTML, `landing` says what it looks like, read from the page without running it:
+
+```json
+"landing": { "captcha": "Cloudflare Turnstile", "fakeLogin": "Microsoft", "relayedLogin": null, "passwordField": true, "host": "secure-doc-view.top" }
+```
+
+`fakeLogin` names a brand whose sign-in page is imitated on a host it doesn't own. `relayedLogin` names a brand whose real sign-in code is passed through another host, the mark of adversary-in-the-middle kits (Tycoon2FA, Evilginx) that steal sessions and get past MFA. The same check runs in the extension's built-in tracer ([`src/landing.ts`](../backend/src/landing.ts) is kept identical to the extension's copy, and a test checks it).
+
 `error` is set when a hop is refused or fails, for example `"Refusing to connect to a private or reserved address"`. `truncated` is `true` when the 10-hop limit was hit.
 
 Responses carry `Access-Control-Allow-Origin: *` (no cookies are involved) and `Cache-Control: no-store`.

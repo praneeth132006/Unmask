@@ -1,5 +1,6 @@
 import { Agent, fetch } from 'undici';
 import { assertAllowedUrl, BlockedError, safeLookup } from './guard.js';
+import { inspectLanding, type LandingReport } from './landing.js';
 
 export interface TraceHop {
   url: string;
@@ -12,6 +13,8 @@ export interface TraceResult {
   finalUrl: string;
   truncated: boolean;
   error?: string;
+  /** What the final page looks like: a CAPTCHA gate, a fake or relayed sign-in page. */
+  landing?: LandingReport;
 }
 
 export interface TraceOptions {
@@ -132,8 +135,10 @@ export async function traceUrl(input: string, opts: TraceOptions = {}): Promise<
     }
 
     const type = res.headers.get('content-type') ?? '';
+    let landing: LandingReport | undefined;
     if (type.includes('html')) {
       const html = await readLimited(res.body as ReadableStream<Uint8Array> | null);
+      landing = inspectLanding(html, current.href);
       const client = findClientRedirect(html);
       if (client) {
         let next: URL | null = null;
@@ -152,7 +157,7 @@ export async function traceUrl(input: string, opts: TraceOptions = {}): Promise<
       await res.body?.cancel().catch(() => {});
     }
     hops.push({ url: current.href, status: res.status });
-    return { hops, finalUrl: current.href, truncated: false };
+    return { hops, finalUrl: current.href, truncated: false, ...(landing ? { landing } : {}) };
   }
   hops.push({ url: current.href, status: 0 });
   return { hops, finalUrl: current.href, truncated: true };
