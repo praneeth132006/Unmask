@@ -31,7 +31,7 @@ const GUIDE_PAGES = {
   10: 'Troubleshooting',
   11: 'FAQ',
 };
-const DOC_PAGES = { 'ANALYSIS.md': 'How-Unmask-analyses-an-email', 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs' };
+const DOC_PAGES = { 'ANALYSIS.md': 'How-Unmask-analyses-an-email', 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs', 'BENCHMARK.md': 'Benchmark' };
 
 /** Removes HTML tags, repeating until none are left (one pass can leave a new tag behind). */
 function stripTags(text) {

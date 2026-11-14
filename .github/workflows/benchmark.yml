@@ -1,0 +1,60 @@
+name: Benchmark
+
+# Measures Unmask on real phishing (phishing_pot) and real legitimate email
+# (SpamAssassin public corpus): the detection rate and the false-alarm rate.
+# The corpora are downloaded here and never committed.
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Cache the corpora
+        uses: actions/cache@v4
+        with:
+          path: .cache/benchmark
+          key: benchmark-corpora-v1
+      - name: Download the corpora
+        run: node scripts/benchmark/fetch.mjs --phish 400
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Measure
+        run: pnpm --filter unmask-extension exec vitest run tests/benchmark.test.ts
+        env:
+          UNMASK_BENCH_DIR: .cache/benchmark
+          UNMASK_BENCH_OUT: .cache/benchmark/result
+          # A release may not catch less or raise more false alarms than this.
+          UNMASK_BENCH_MIN_CAUGHT_PCT: 85
+          UNMASK_BENCH_MAX_FALSE_ALARM_PCT: 7
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Unmask benchmark" >> "$GITHUB_STEP_SUMMARY"
+          cat .cache/benchmark/result/benchmark.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo "No result." >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark
+          path: .cache/benchmark/result/
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        run: gh release upload "$GITHUB_REF_NAME" .cache/benchmark/result/benchmark.md .cache/benchmark/result/benchmark.json --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}

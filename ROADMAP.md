@@ -18,7 +18,9 @@ This page lists what is done and what comes next. The next pieces are split into
 
 Each milestone is a deliverable with an estimated effort for one developer.
 
-### 1. Accuracy you can check (6 weeks)
+### 1. Accuracy you can check (6 weeks) — benchmark and "Was this right?" shipped
+Done: the [public benchmark](docs/BENCHMARK.md) runs in CI on every change to `main` and is attached to every release (86.5% of phishing caught, false alarms cut from 13.9% to 6.0%), and the **Was this right?** button is in the panel. Still to do: a modern, anonymised set of legitimate emails with full headers, contributed by users.
+
 - A public benchmark: a labelled set of real phishing and real legitimate emails (newsletters, banks, platforms that send for others), with personal data removed.
 - Detection rate and false-alarm rate published for every release, measured by CI.
 - A **"Was this right?"** button. Nothing is sent unless the user presses it and chooses what to share (the sender's domain and the check that fired, never the email).

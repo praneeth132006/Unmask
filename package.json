@@ -16,7 +16,8 @@
     "site": "node site/build.mjs",
     "wiki": "node site/wiki.mjs",
     "ci:local": "sh scripts/ci-local.sh",
-    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
+    "benchmark": "node scripts/benchmark/fetch.mjs && UNMASK_BENCH_DIR=.cache/benchmark UNMASK_BENCH_OUT=.cache/benchmark/result pnpm --filter unmask-extension exec vitest run tests/benchmark.test.ts"
   },
   "license": "MIT",
   "repository": {

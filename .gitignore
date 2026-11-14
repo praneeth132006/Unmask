@@ -12,3 +12,4 @@ stats.html
 .claude/
 build/
 _site/
+.cache/

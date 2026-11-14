@@ -36,6 +36,7 @@
   <a href="docs/BACKEND.md">Redirect-trace server</a> ·
   <a href="docs/TEAMS.md">For teams</a> ·
   <a href="ROADMAP.md">Roadmap</a> ·
+  <a href="docs/BENCHMARK.md">Benchmark</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
   <a href="CHANGELOG.md">Changelog</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·
@@ -122,15 +123,15 @@ Click the Unmask icon for the full report. The side panel shows:
 
 Using another mail app? Save the email as an `.eml` file and drop it on the panel, or paste its raw source.
 
-## Proven on real phishing
+## Proven on real phishing, and on real mail
 
-> **Tested on 400 real phishing emails** from the public [phishing_pot](https://github.com/rf-peixoto/phishing_pot) research collection (bank, crypto-wallet, tax-refund, prize and invoice scams in many languages):
+> **Measured on every change, with public corpora** ([how](docs/BENCHMARK.md)):
 >
-> 🏆 **346 caught (86.5%)** as Suspicious or High risk, up from 343 before this release
-> 🏆 **285 rated High risk**, each with the reasons in plain language
-> 🏆 **0 errors**, none slower than 0.13 seconds, all on one computer
+> 🏆 **86.5% of 400 real phishing emails caught** from the [phishing_pot](https://github.com/rf-peixoto/phishing_pot) research collection (bank, crypto-wallet, tax-refund, prize and invoice scams in many languages), 285 rated High risk
+> 🏆 **6.0% false alarms on 4,150 real legitimate emails** from the [SpamAssassin public corpus](https://spamassassin.apache.org/old/publiccorpus/), including marketing built to look like spam. The first run found 13.9%; each cause was fixed with a test
+> 🏆 **0 errors**, median under 1 millisecond per email, all on one computer
 >
-> The misses were read and turned into new checks (invisible variation selectors, look-alike letters, crypto-wallet brands). **[See the report Unmask produces for a real phish](docs/REPORTS.md#real-examples)**: a fake Binance withdrawal, a fake COLDCARD advisory and a fake gift-card survey, each with the executive summary and the technical analysis.
+> Got a wrong verdict? Press **Was this right?** in the panel: it opens a pre-filled report with only what you choose to share, never the email. **[See the report Unmask produces for a real phish](docs/REPORTS.md#real-examples)**: a fake Binance withdrawal, a fake COLDCARD advisory and a fake gift-card survey, each with the executive summary and the technical analysis.
 
 <p align="center">
   <img src="docs/images/example-binance-withdrawal-executive.png" width="330" alt="Report for a real fake-Binance phishing email: executive summary">
