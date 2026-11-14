@@ -439,6 +439,12 @@ Family mode is a guard rail, not a cage: someone determined can still copy a lin
 
 ---
 
+## 8h. Practice: spot the scam
+
+Open the panel with no email selected and click **Practise spotting scams**, or use the link on the welcome tab. You get 10 realistic, made-up emails (about six scams and four real ones) built like the real thing: a boss asking for gift cards, a changed bank account, a callback "invoice", a fake job, a payroll calendar invite, a device-code login, a ClickFix "CAPTCHA", and genuine bank alerts, shares and security codes. Choose *It's a scam* or *It's real*, then see the lesson and Unmask's explanation in plain words. Nothing in the emails can be clicked, and nothing is sent anywhere. It works well for family members, classes and team awareness sessions.
+
+---
+
 ## 9. Settings
 
 <img src="images/settings-light.png" width="280" align="right" alt="Settings">

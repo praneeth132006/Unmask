@@ -56,6 +56,7 @@ export function Welcome() {
         <li><strong>Helping someone else?</strong> In Settings → Family mode, add yourself as their helper: risky emails then show “Ask you” instead of “Open anyway”.</li>
       </ol>
       <p className="mt-6 text-xs text-[var(--text-3)]">
+        <a className="text-[var(--accent)]" href="/practice.html">Practise spotting scams</a> ·{' '}
         <a className="text-[var(--accent)]" href="https://praneeth132006.github.io/Unmask/guide.html" target="_blank" rel="noopener noreferrer">Read the user guide</a> ·{' '}
         <a className="text-[var(--accent)]" href="https://praneeth132006.github.io/Unmask/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a>
       </p>

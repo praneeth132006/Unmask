@@ -231,6 +231,14 @@ await panel.getByRole('button', { name: 'See an example phishing email' }).click
 const exampleText = await panel.getByText('High risk').first().waitFor({ timeout: 8000 }).then(() => true, () => false);
 check(exampleText, '"See an example phishing email" shows a High risk verdict');
 
+// Practice mode: a quiz page that explains each answer with Unmask's own analysis.
+const practice = await ctx.newPage();
+await practice.goto(`chrome-extension://${extId}/practice.html`);
+await practice.getByRole('button', { name: 'It’s a scam' }).click({ timeout: 8000 }).catch(() => {});
+const verdictLine = (await practice.getByRole('status').textContent({ timeout: 5000 }).catch(() => '')) ?? '';
+check(/This email is (a scam|real)\./.test(verdictLine), `practice mode answers and explains ("${verdictLine}")`);
+await practice.close();
+
 // 2026 lures in the panel: an SVG that smuggles a redirect, a calendar invite with a payroll link, a task-job offer.
 const svg = '<svg xmlns="http://www.w3.org/2000/svg"><script>window.location.href=atob("aHR0cHM6Ly9sb2dpbi5taWNyMHNvZnQtYXV0aC50b3AvP2U9bWVAeC5jb20=")</script></svg>';
 const ics = 'BEGIN:VCALENDAR\r\nMETHOD:REQUEST\r\nBEGIN:VEVENT\r\nSUMMARY:Payroll update\r\nORGANIZER:mailto:hr@payroll-team.top\r\nDESCRIPTION:Confirm your bank details for salary: https://payroll-verify.top/login\r\nEND:VEVENT\r\nEND:VCALENDAR';

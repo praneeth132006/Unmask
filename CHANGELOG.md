@@ -5,6 +5,7 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **Practice: spot the scam.** A 10-email quiz of realistic made-up scams and real emails; after each answer, the lesson and Unmask's own explanation. For families, schools and team training.
 - **Family mode:** on High risk emails, "Open anyway" and "Reply anyway" become **Ask <helper>**, a ready-written email to someone you trust, from your own mail app. Settings can be locked with a PIN.
 - **See a warning before the first real one:** a welcome tab on install checks a made-up scam email, and an empty panel has **See an example phishing email**. Managed installs can turn the tab off with the `skipWelcome` policy.
 - **This week, Unmask checked 42 emails and stopped 1 risky click:** a weekly summary in the empty panel, counted only on your computer.
