@@ -180,3 +180,51 @@ export function archivePasswordFindings(visibleText: string, subject: string, at
     },
   ];
 }
+
+/**
+ * Job-offer scams: a "recruiter" offers easy remote work, then moves the
+ * conversation to Telegram or WhatsApp, pays for fake "tasks", or sends a
+ * cheque to buy "equipment" and asks for the change back. Hoxhunt and the
+ * FTC list recruitment scams among the fastest-growing lures of 2025-2026.
+ */
+const JOB_WORDS = /\b(job (?:offer|opportunit(?:y|ies)|position|opening)|vacanc(?:y|ies)|hiring|recruit(?:er|ment|ing)|hr (?:team|department|manager)|human resources|remote (?:job|work|position|role)|work(?:ing)? from home|part[- ]time|full[- ]time|interview|onboarding|candidate|your (?:resume|cv|application|profile)|salary|employment|we (?:reviewed|found) your (?:resume|cv|profile))\b/gi;
+const CHAT_APP = /\b(?:t\.me\/|wa\.me\/|telegram|whats\s?app|signal app|wechat|text (?:me|us) (?:on|at|via))/i;
+const TASK = /\b(?:(?:like|rate|review|optimi[sz]e|boost|rank)\s+(?:youtube |tiktok )?(?:videos?|products?|apps?|hotels?|orders?|posts?)|tasks? (?:a|per) day|daily (?:pay|earnings?|commission|tasks?)|commission (?:per|for each) (?:task|order)|earn (?:up to )?[$€£₹]?\s?\d[\d,]*\s?(?:usd|eur)? (?:a|per) day)\b/i;
+const UPFRONT = /\b(?:(?:purchase|buy|order) (?:the |your )?(?:equipment|laptop|software|starter kit|office supplies|work (?:station|kit))|send (?:you )?a (?:check|cheque)|deposit (?:the |a |this )?(?:check|cheque)|mobile deposit|registration fee|training fee|onboarding fee|(?:refundable )?security deposit|processing fee|pay (?:a |the )?(?:small )?(?:fee|deposit)|top[- ]?up|usdt|crypto(?:currency)? (?:deposit|wallet))\b/i;
+const NO_INTERVIEW = /\b(?:no (?:interview|experience) (?:needed|required)|without (?:an )?interview|hired (?:immediately|instantly|on the spot)|start (?:today|immediately|right away))\b/i;
+const PERSONAL = /\b(?:send|provide|submit|share|forward)\b[^.!?\n]{0,50}\b(?:bank (?:details|account|login)|account number|routing number|ssn|social security|passport|national id|aadhaar|pan card|driver'?s licen[cs]e|id card)\b/i;
+const JOB_PLATFORMS = new Set(['linkedin.com', 'indeed.com', 'glassdoor.com', 'ziprecruiter.com', 'myworkday.com', 'workday.com', 'greenhouse.io', 'lever.co', 'smartrecruiters.com', 'naukri.com', 'monster.com', 'icims.com', 'ashbyhq.com', 'wellfound.com', 'dice.com', 'seek.com.au', 'reed.co.uk', 'stepstone.de', 'jobvite.com', 'successfactors.com', 'taleo.net']);
+
+export function jobScamFindings(email: ParsedEmail, visibleText: string, auth: AuthSummary): Finding[] {
+  const text = `${email.subject}\n${visibleText}`;
+  const jobTerms = new Set([...text.matchAll(JOB_WORDS)].map((m) => m[0].toLowerCase()));
+  if (jobTerms.size < 2) return [];
+  const fromOrg = email.from ? registrableDomain(email.from.domain) : '';
+  const platform = JOB_PLATFORMS.has(fromOrg) && auth.dmarc === 'pass';
+  const signs: { why: string; weight: number; phrase?: string }[] = [];
+  const hit = (re: RegExp) => text.match(re)?.[0];
+  let m: string | undefined;
+  if ((m = hit(UPFRONT))) signs.push({ why: `asks you to pay or handle money first (“${m}”)`, weight: 3, phrase: m });
+  if ((m = hit(PERSONAL))) signs.push({ why: 'asks for bank or ID details before you are hired', weight: 3, phrase: m });
+  if ((m = hit(TASK))) signs.push({ why: `pays for online “tasks” (“${m}”), the classic task scam`, weight: 3, phrase: m });
+  if ((m = hit(CHAT_APP))) signs.push({ why: `moves the interview to a chat app (${m.replace(/\/$/, '')})`, weight: 2, phrase: m });
+  if ((m = hit(NO_INTERVIEW))) signs.push({ why: `promises a job without a proper interview (“${m}”)`, weight: 1, phrase: m });
+  if (FREE_MAIL_DOMAINS.has(fromOrg) && signs.length) signs.push({ why: `the “recruiter” writes from a personal ${fromOrg} address`, weight: 1 });
+  // Real job sites carry chat-app words and "start immediately" in genuine ads; only money and ID requests count there.
+  const counted = platform ? signs.filter((s) => s.weight === 3) : signs;
+  const total = counted.reduce((n, s) => n + s.weight, 0);
+  if (!counted.length || total < 2) return [];
+  const severity = total >= 5 ? 'critical' : total >= 3 ? 'high' : 'medium';
+  return [
+    {
+      id: 'job-scam',
+      category: 'content',
+      severity,
+      points: severity === 'critical' ? 32 : severity === 'high' ? 22 : 12,
+      title: 'Looks like a fake job offer',
+      detail: `It talks about a job, and it ${counted.map((s) => s.why).join('; ')}. Real employers interview you properly, never ask you to pay, buy equipment with a cheque they send, or do paid “tasks”, and don’t move hiring to Telegram or WhatsApp.`,
+      plain: 'This job offer has the signs of a scam: real employers never ask you to pay or move to a chat app.',
+      target: { kind: 'text', phrases: counted.map((s) => s.phrase).filter((p): p is string => !!p).slice(0, 4) },
+    },
+  ];
+}
