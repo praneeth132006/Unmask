@@ -99,6 +99,18 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 1. Move *Unreleased* in CHANGELOG.md to a new version and set the same version in `extension/package.json`.
 2. Commit, then tag and push: `git tag v0.2.1 && git push origin v0.2.1`.
 3. The release workflow tests, builds the Chrome, Edge and Firefox zips (with licence notices) and publishes the GitHub Release.
+4. The **Reproducible build** workflow then rebuilds the tag on a fresh runner and checks that every file in the published zips is identical to the source build.
+
+## Verify a release yourself
+
+Anyone can check that a published release was built from this code, with nothing added:
+
+```bash
+git checkout v0.5.1 && pnpm install --frozen-lockfile && pnpm zip:all
+node scripts/verify-release.mjs v0.5.1
+```
+
+It downloads the release's Chrome, Edge and Firefox zips and compares every file inside them with your own build. (The zip archives themselves differ only in their timestamps.) v0.5.1, built by GitHub Actions on Linux, matched a build on macOS file for file.
 
 ## Reporting security issues
 
