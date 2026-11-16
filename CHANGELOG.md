@@ -24,6 +24,7 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Hacked contacts:** a known sender's first-ever file-share or sign-in link, and emails sent in the middle of their night, are flagged.
 
 ### Fixed
+- **Development dependencies patched:** `yaml` 2.9.1 (GHSA-48c2-rrv3-qjmp) and `fast-xml-parser` 5.12.0 through an override (GHSA-474x-hrwr-fgx4). Neither is shipped in the extension; `pnpm audit` is clean.
 - **Fewer false alarms on real mail (13.9% → 6.0% on the benchmark):** newsletter search and sign-up boxes, mailing lists that reply to the list, a newsletter's own click tracker, and email addresses spelt in character codes are no longer treated as phishing. JavaScript in an email is now a low-weight note.
 
 ## [0.5.1] - 2026-11-07
