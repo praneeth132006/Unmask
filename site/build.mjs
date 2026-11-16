@@ -21,6 +21,7 @@ const PAGES = [
   { md: 'docs/TEAMS.md', out: 'teams.html', title: 'Unmask for teams, schools and families', nav: 'Teams' },
   { md: 'docs/BENCHMARK.md', out: 'benchmark.html', title: 'Benchmark: how often Unmask is right', nav: 'Benchmark' },
   { md: 'docs/LIMITS_AND_COSTS.md', out: 'limits.html', title: 'Free limits and costs', nav: 'Limits' },
+  { md: 'docs/PERMISSIONS.md', out: 'permissions.html', title: 'Why Unmask asks for each permission', nav: 'Permissions' },
   { md: 'PRIVACY.md', out: 'privacy.html', title: 'Privacy policy', nav: 'Privacy' },
   { md: 'CHANGELOG.md', out: 'changelog.html', title: 'Changelog', nav: 'Changelog' },
 ];
@@ -33,6 +34,7 @@ const LINK_MAP = {
   'TEAMS.md': 'teams.html',
   'BENCHMARK.md': 'benchmark.html',
   'LIMITS_AND_COSTS.md': 'limits.html',
+  'PERMISSIONS.md': 'permissions.html',
   'PRIVACY.md': 'privacy.html',
   'CHANGELOG.md': 'changelog.html',
 };

@@ -55,6 +55,9 @@ If you run or deploy the open-source backend in this repository, it receives one
 
 ## Permissions
 
+The [permissions page](docs/PERMISSIONS.md) explains each one in more detail: what it could technically allow, why nothing narrower works, and how to check what your copy has.
+
+
 - `https://mail.google.com/*`: to detect the open email, download its original source, show warnings inside Gmail, and outline the part of the email a finding refers to when you hover it.
 - Outlook on the web (`outlook.live.com`, `outlook.office.com`, `outlook.office365.com`, `outlook.cloud.microsoft`): to read the open email from the page and show warnings inside Outlook.
 - `https://crt.sh/*`, `https://dns.google/*`: for the certificate-history and mail-record checks above.
