@@ -19,6 +19,7 @@
   <a href="https://github.com/praneeth132006/Unmask/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/praneeth132006/Unmask?label=download&color=61892F"></a>
   <a href="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/praneeth132006/Unmask/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/praneeth132006/Unmask/actions/workflows/codeql.yml/badge.svg"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/praneeth132006/Unmask"><img alt="OpenSSF Scorecard" src="https://api.scorecard.dev/projects/github.com/praneeth132006/Unmask/badge"></a>
   <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/github/license/praneeth132006/Unmask?color=474B4F"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-86C232"></a>
 </p>
@@ -37,6 +38,7 @@
   <a href="docs/TEAMS.md">For teams</a> ·
   <a href="ROADMAP.md">Roadmap</a> ·
   <a href="docs/BENCHMARK.md">Benchmark</a> ·
+  <a href="docs/PERMISSIONS.md">Permissions</a> ·
   <a href="docs/LIMITS_AND_COSTS.md">Limits &amp; costs</a> ·
   <a href="CHANGELOG.md">Changelog</a> ·
   <a href="CONTRIBUTING.md">Contributing</a> ·

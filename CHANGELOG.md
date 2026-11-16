@@ -5,6 +5,9 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **OpenSSF Scorecard** runs weekly and on every change to `main`, with a badge in the README. Every GitHub Action is pinned to an exact commit, and workflows only get write access on the jobs that need it.
+- **Why each permission:** a [permissions page](docs/PERMISSIONS.md) explaining what every permission is for, what it could allow, and how to check your copy.
+- **Reproducible releases:** `scripts/verify-release.mjs` and a workflow check that every file in a published release is identical to a build from source. v0.5.1 verified for Chrome, Edge and Firefox.
 - **Detection rules as YAML** (`extension/rules/`): add a scam pattern without TypeScript. Seven to start: tax refunds, parcel fees, crypto giveaways, advance-fee, sextortion, mailbox quota and voicemail lures.
 - **Practice: spot the scam.** A 10-email quiz of realistic made-up scams and real emails; after each answer, the lesson and Unmask's own explanation. For families, schools and team training.
 - **Family mode:** on High risk emails, "Open anyway" and "Reply anyway" become **Ask <helper>**, a ready-written email to someone you trust, from your own mail app. Settings can be locked with a PIN.
