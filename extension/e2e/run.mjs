@@ -239,6 +239,12 @@ const verdictLine = (await practice.getByRole('status').textContent({ timeout: 5
 check(/This email is (a scam|real)\./.test(verdictLine), `practice mode answers and explains ("${verdictLine}")`);
 await practice.close();
 
+// A rule written in YAML (rules/sextortion.yml) shows up as a red flag in the panel.
+const ruleEmail = ['From: "Anon" <x@mailer.example>', 'To: me@example.org', 'Subject: I know your password', 'Content-Type: text/plain', '', 'I hacked your device and recorded you through your webcam. Pay $1500 in bitcoin within 48 hours.'].join('\r\n');
+await panel.setInputFiles('input[type=file]', { name: 'rule.eml', mimeType: 'message/rfc822', buffer: Buffer.from(ruleEmail) });
+const ruleShown = await panel.getByText('Claims to have hacked your camera and demands payment').first().waitFor({ timeout: 8000 }).then(() => true, () => false);
+check(ruleShown, 'a YAML rule (sextortion) appears as a red flag in the panel');
+
 // 2026 lures in the panel: an SVG that smuggles a redirect, a calendar invite with a payroll link, a task-job offer.
 const svg = '<svg xmlns="http://www.w3.org/2000/svg"><script>window.location.href=atob("aHR0cHM6Ly9sb2dpbi5taWNyMHNvZnQtYXV0aC50b3AvP2U9bWVAeC5jb20=")</script></svg>';
 const ics = 'BEGIN:VCALENDAR\r\nMETHOD:REQUEST\r\nBEGIN:VEVENT\r\nSUMMARY:Payroll update\r\nORGANIZER:mailto:hr@payroll-team.top\r\nDESCRIPTION:Confirm your bank details for salary: https://payroll-verify.top/login\r\nEND:VEVENT\r\nEND:VCALENDAR';
