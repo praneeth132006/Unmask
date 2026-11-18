@@ -17,21 +17,22 @@ const REPO = 'https://github.com/praneeth132006/Unmask';
 const RAW = 'https://raw.githubusercontent.com/praneeth132006/Unmask/main';
 const SITE = 'https://praneeth132006.github.io/Unmask';
 
-/** User-guide section number → wiki page name. */
-const GUIDE_PAGES = {
-  1: 'Install',
-  2: 'Your-first-check',
-  3: 'Reading-the-report',
-  4: 'Hover-to-see-it-in-the-email',
-  5: 'Setting-up-VirusTotal',
-  6: 'Setting-up-urlscan.io',
-  7: 'Tracing-redirects',
-  8: 'Emails-from-Outlook-and-other-apps',
-  9: 'Settings',
-  10: 'Troubleshooting',
-  11: 'FAQ',
-};
-const DOC_PAGES = { 'ANALYSIS.md': 'How-Unmask-analyses-an-email', 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs', 'BENCHMARK.md': 'Benchmark' };
+/**
+ * Each "## N. Title" section of the user guide becomes one wiki page, named
+ * from its title ("1. Install" -> Install, "6. Peek: check an email…" ->
+ * Peek-check-an-email…), so renumbering the guide never breaks the wiki.
+ */
+function pageName(title) {
+  return title.replace(/[()]/g, '').replace(/[:,?!]/g, '').trim().replace(/\s+/g, '-');
+}
+/** The guide's groups, by section number, for the sidebar. */
+const GROUPS = [
+  ['Get started', 1, 4],
+  ['Protection', 5, 10],
+  ['Going deeper', 11, 16],
+  ['Reporting and more', 17, 23],
+];
+const DOC_PAGES = { 'ANALYSIS.md': 'How-Unmask-analyses-an-email', 'CHECKS.md': 'What-Unmask-checks', 'LIMITS_AND_COSTS.md': 'Free-limits-and-costs', 'BENCHMARK.md': 'Benchmark', 'PERMISSIONS.md': 'Permissions' };
 
 /** Removes HTML tags, repeating until none are left (one pass can leave a new tag behind). */
 function stripTags(text) {
@@ -51,9 +52,9 @@ function slug(text) {
 const guide = readFileSync(join(root, 'docs', 'USER_GUIDE.md'), 'utf8');
 const sections = guide.split(/^(?=## \d+\. )/m);
 const anchorPage = new Map();
+const sectionPage = (sec) => pageName(sec.match(/^## \d+\. (.+)$/m)[1]);
 for (const sec of sections.slice(1)) {
-  const n = Number(sec.match(/^## (\d+)\./)[1]);
-  for (const h of sec.matchAll(/^#{2,4} (.+)$/gm)) anchorPage.set(slug(h[1]), GUIDE_PAGES[n]);
+  for (const h of sec.matchAll(/^#{2,4} (.+)$/gm)) anchorPage.set(slug(h[1]), sectionPage(sec));
 }
 
 function rewrite(md) {
@@ -79,9 +80,13 @@ mkdirSync(outDir, { recursive: true });
 for (const f of readdirSync(outDir)) if (f !== '.git') rmSync(join(outDir, f), { recursive: true, force: true });
 
 const pages = [];
+const numbers = [];
+const titles = {};
 for (const sec of sections.slice(1)) {
   const n = Number(sec.match(/^## (\d+)\./)[1]);
-  const name = GUIDE_PAGES[n];
+  const name = sectionPage(sec);
+  numbers.push(n);
+  titles[name] = sec.match(/^## \d+\. (.+)$/m)[1].replace(/\|/g, '-');
   // Drop the "N. " number and the trailing --- separator; promote ### to ## for the page.
   const body = sec
     .replace(/^## \d+\. (.+)\n/, '')
@@ -115,11 +120,14 @@ Full steps and common errors: **[[Install]]**.
 
 ## User guide
 
-${pages.map((p, i) => `${i + 1}. [[${p.replace(/-/g, ' ')}|${p}]]`).join('\n')}
+${pages.map((p, i) => `${i + 1}. [[${titles[p]}|${p}]]`).join('\n')}
 
 ## Reference
 
 - [[What Unmask checks|What-Unmask-checks]]: every check and its points
+- [[Benchmark]]: how often Unmask is right, measured on real phishing and real mail
+- [[How Unmask analyses an email|How-Unmask-analyses-an-email]]: every step, the way an analyst works
+- [[Permissions]]: why Unmask asks for each permission
 - [[Free limits and costs|Free-limits-and-costs]]: VirusTotal, urlscan.io and more; free keys are never charged
 - [Privacy policy](${REPO}/blob/main/PRIVACY.md) · [Security policy](${REPO}/blob/main/SECURITY.md) · [Contributing](${REPO}/blob/main/CONTRIBUTING.md)
 
@@ -131,17 +139,13 @@ writeFileSync(
   join(outDir, '_Sidebar.md'),
   `**[[Home]]**
 
-**Get started**
-${pages.slice(0, 4).map((p) => `- [[${p.replace(/-/g, ' ')}|${p}]]`).join('\n')}
-
-**Optional checks**
-${pages.slice(4, 7).map((p) => `- [[${p.replace(/-/g, ' ')}|${p}]]`).join('\n')}
-
-**More**
-${pages.slice(7).map((p) => `- [[${p.replace(/-/g, ' ')}|${p}]]`).join('\n')}
+${GROUPS.map(([label, from, to]) => `**${label}**\n${pages.filter((_, i) => numbers[i] >= from && numbers[i] <= to).map((p) => `- [[${titles[p]}|${p}]]`).join('\n')}`).join('\n\n')}
 
 **Reference**
 - [[What Unmask checks|What-Unmask-checks]]
+- [[Benchmark]]
+- [[How Unmask analyses an email|How-Unmask-analyses-an-email]]
+- [[Permissions]]
 - [[Free limits and costs|Free-limits-and-costs]]
 
 [⬇ Download](${REPO}/releases/latest) · [Website](${SITE}/)
