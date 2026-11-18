@@ -4,15 +4,16 @@ Unmask's goal: **anyone can tell a phishing email from a real one before they cl
 
 This page lists what is done and what comes next. The next pieces are split into milestones that each end in something users can install, so they can be funded and checked one at a time.
 
-## Where it stands (version 0.5.1, November 2026)
+## Where it stands (version 0.6.0, November 2026)
 
 - Browser extension for **Gmail and Outlook on the web**, in the Chrome Web Store and Firefox Add-ons, with Edge builds.
-- **Checks on the device:** sender authentication (SPF, DKIM, DMARC, with DKIM signatures verified locally), look-alike and homoglyph domains, brand impersonation, links whose text and target differ, redirect chains, QR codes in images and PDFs, fake logos, tracking pixels, hidden text, and attachments (PDF, Office macros, archives, RTF).
+- **Checks on the device:** sender authentication (SPF, DKIM, DMARC, with DKIM signatures verified locally), look-alike and homoglyph domains, brand impersonation, links whose text and target differ, redirect chains and the page they land on (fake or relayed sign-in pages, CAPTCHA gates), QR codes (including ones drawn without an image), fake logos, tracking pixels, hidden text, attachments (PDF, Office macros, archives, RTF, SVG smuggling), calendar-invite phishing, fake job offers, hacked-contact signals, and detection rules anyone can add as YAML. Optionally, Chrome's on-device AI explains what an email asks for.
 - **Warnings where people act:** a banner in the email, a stop before a risky link opens, a warning before replying to an impostor, and badges in the inbox list.
 - **A protection list** of your bank, your boss, your trusted senders, shareable as a file or pushed by IT policy ([For teams](docs/TEAMS.md)).
+- **For families:** family mode ("Ask Sam" instead of "Open anyway" on High risk emails, Settings locked by PIN), a first-run example, a weekly summary and a spot-the-scam practice quiz.
 - **Reports** for users and security teams (PDF, Word, HTML, STIX 2.1).
-- **Measured:** 346 of 400 real phishing emails from the public phishing_pot collection caught in the first corpus run. Every reported false alarm becomes a test (see `extension/tests/falsePositives.test.ts`).
-- **Engineering:** 480+ unit tests, end-to-end tests in a real Chromium, CodeQL, and CI on every change.
+- **Measured in public:** 86.5% of 400 real phishing emails caught and 6.0% false alarms on 4,150 real legitimate emails, on every change ([Benchmark](docs/BENCHMARK.md)). **Was this right?** turns reported mistakes into tests.
+- **Engineering:** 570+ unit tests, end-to-end tests in a real Chromium, CodeQL, OpenSSF Scorecard, actions pinned to commits, and [reproducible releases](CONTRIBUTING.md#verify-a-release-yourself).
 
 ## Next milestones
 

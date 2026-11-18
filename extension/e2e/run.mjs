@@ -237,6 +237,7 @@ await practice.goto(`chrome-extension://${extId}/practice.html`);
 await practice.getByRole('button', { name: 'It’s a scam' }).click({ timeout: 8000 }).catch(() => {});
 const verdictLine = (await practice.getByRole('status').textContent({ timeout: 5000 }).catch(() => '')) ?? '';
 check(/This email is (a scam|real)\./.test(verdictLine), `practice mode answers and explains ("${verdictLine}")`);
+if (process.env.UNMASK_E2E_SHOTS) await practice.screenshot({ path: join(process.env.UNMASK_E2E_SHOTS, 'practice.png'), fullPage: true });
 await practice.close();
 
 // A rule written in YAML (rules/sextortion.yml) shows up as a red flag in the panel.

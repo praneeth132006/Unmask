@@ -101,6 +101,24 @@
   <img src="docs/images/panel-report.png" width="250" alt="Report or export: APWG, Netcraft, Google Safe Browsing, PhishTank, PDF and JSON">
 </p>
 
+## New in 0.6: the scams of 2026, and help for families
+
+**It catches the lures that grew fastest this year:** phishing hidden in calendar invites, SVG "images" that run code, fake job offers, a friend's hacked account sending its first "I shared a document with you", QR codes drawn without an image, and links that end on a fake or relayed Microsoft, Google or Okta sign-in behind a CAPTCHA.
+
+<p align="center">
+  <img src="docs/images/panel-2026-lures.png" width="430" alt="One email with a fake job offer, a smuggling SVG and a payroll calendar invite, rated High risk with each reason in plain words">
+</p>
+
+**It helps the people who lose the most.** Family mode replaces *Open anyway* with **Ask Sam**, a ready-written email to someone you trust. A welcome tab shows a real warning on a made-up scam before the first real one, the panel shows what Unmask did this week, and **Practise spotting scams** is a 10-email quiz explained by Unmask.
+
+<p align="center">
+  <img src="docs/images/gmail-family-ask.png" width="430" alt="Family mode: the link warning offers only Ask Sam and Go back">
+  &nbsp;
+  <img src="docs/images/practice-quiz.png" width="430" alt="Practice: an email to judge, then the answer and Unmask's explanation">
+</p>
+
+**And it's open about how good it is:** a [public benchmark](docs/BENCHMARK.md) on every change, a **Was this right?** button, [reproducible releases](CONTRIBUTING.md#verify-a-release-yourself), and [why each permission](docs/PERMISSIONS.md).
+
 ## What it does
 
 Unmask works in **Gmail** and **Outlook on the web**, in **Chrome, Edge, Brave and Firefox**. As soon as you open an email it warns you inside your inbox: a red or amber banner above risky emails, a badge next to risky senders in the list, *"Wait, this goes to paypa1-secure.top"* before a dangerous link opens, and a warning when Reply would go to a different address.
@@ -129,7 +147,7 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 
 > **Measured on every change, with public corpora** ([how](docs/BENCHMARK.md)):
 >
-> 🏆 **86.5% of 400 real phishing emails caught** from the [phishing_pot](https://github.com/rf-peixoto/phishing_pot) research collection (bank, crypto-wallet, tax-refund, prize and invoice scams in many languages), 285 rated High risk
+> 🏆 **86.5% of 400 real phishing emails caught** from the [phishing_pot](https://github.com/rf-peixoto/phishing_pot) research collection (bank, crypto-wallet, tax-refund, prize and invoice scams in many languages), 286 rated High risk
 > 🏆 **6.0% false alarms on 4,150 real legitimate emails** from the [SpamAssassin public corpus](https://spamassassin.apache.org/old/publiccorpus/), including marketing built to look like spam. The first run found 13.9%; each cause was fixed with a test
 > 🏆 **0 errors**, median under 1 millisecond per email, all on one computer
 >

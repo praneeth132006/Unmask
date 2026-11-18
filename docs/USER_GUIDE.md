@@ -107,6 +107,8 @@ When you open a different email, the panel follows automatically. In a conversat
 
 You don't have to open the panel to be protected: risky emails also get a warning banner inside Gmail (see [Warnings inside your inbox](#8a-warnings-inside-your-inbox)).
 
+<img src="images/welcome-example.png" width="420" alt="The welcome tab: a made-up scam email with Unmask's High risk warning">
+
 **Want to see a warning first?** Right after install Unmask opens a welcome tab that checks a made-up scam email, so you know what a warning looks like. Any time later, open the panel with no email selected and click **See an example phishing email**. The empty panel also shows what Unmask did this week (emails checked, warnings, risky clicks stopped), counted only on your computer.
 
 ---
@@ -173,6 +175,11 @@ The row under the Unmask logo stays visible while you scroll. A **red dot** on a
 | *Risky attachment* | A file type that can run code or open a fake login page, or a file pretending to be a PDF. |
 | *Hidden text blocks* | Invisible text, often stuffed in to fool spam filters. |
 | *Sender domain was registered N days ago* | Real companies use domains that are years old. New ones are a strong warning sign. |
+| *Calendar invite about "payroll" links to …* | A meeting invite whose link isn't Zoom, Teams or Meet. Your calendar may keep it even after you delete the email. |
+| *SVG image contains JavaScript* | A "picture" that runs code when opened, usually to show a fake login page. Don't open it. |
+| *Looks like a fake job offer* | Paid "tasks", fees, a cheque to buy equipment, or an interview moved to Telegram or WhatsApp. |
+| *First time … sends you a file-share or sign-in link* | Someone you know has never sent you one before. Their account may have been hacked: ask them another way. |
+| *Lands on a fake Microsoft sign-in page* | After **Trace redirects**: the link ends on a copy of a real login page. |
 
 The full list, with points, is in [CHECKS.md](CHECKS.md). How each step works, from the delivery path to the analyst write-up, is in [How Unmask analyses an email](ANALYSIS.md).
 
@@ -273,6 +280,7 @@ Links in emails often bounce through several addresses (`bit.ly → tracker → 
 1. In the **Links** tab, click **Trace redirects** on any link.
 2. The first time, Unmask explains what will happen. Click **Allow and trace**, then **Allow** in Chrome's prompt. You only do this once.
 3. The redirect chain appears in the card: each address, its status code, and how it redirected (HTTP, a `<meta refresh>` or JavaScript).
+4. Unmask also reads the **final page** (without running it) and tells you if it is a **fake Microsoft, Google or Okta sign-in page**, the **real sign-in page passed through someone else's server** (the kind of kit that steals your login session and gets past MFA), or a page hidden behind a **"prove you're human" CAPTCHA**. These become red flags in the report.
 
 **What happens behind the scenes:** Unmask's background worker requests the link **without cookies or logins**, never opens it in a tab, and never runs its code. It reads only the first part of each page to spot meta or JavaScript redirects. Links pointing at your own network (your router, `localhost`, `192.168.x.x`) are refused.
 
@@ -425,7 +433,25 @@ Importing only adds to their list; it never deletes what they already have. The 
 
 ---
 
+## 8f2. On-device AI (Chrome, optional)
+
+In **Settings → Privacy**, Chrome users with a recent desktop Chrome can turn on **Let Chrome's on-device AI read emails**. Chrome's own built-in model (Gemini Nano) then reads each email **on your computer** and adds a card to the Summary: what the email asks you to do (pay, sign in, call a number…) and two plain sentences on why the verdict fits, in English, Spanish, German, French or Japanese. Nothing is sent anywhere.
+
+- It's **off by default**, and the setting only appears where Chrome has the model. Firefox and older computers don't show it.
+- The first time, click **Download the model** in the card: Chrome downloads it once (several GB, over an unmetered connection). Chrome needs about 22 GB of free disk and 16 GB of memory or a graphics card with more than 4 GB.
+- AI can be wrong, so it never decides a verdict on its own. It adds at most one red flag, at most *Medium*, and only for a request the other checks didn't already catch.
+
+## 8f3. Was this right?
+
+<img src="images/panel-was-this-right.png" width="420" alt="Was this right: what will be shared, with Open a GitHub issue and Copy instead">
+
+At the end of the Summary, **Was this right?** lets you report a wrong verdict. Choose *No, it got this wrong*, pick whether it was a false alarm or a missed scam, and you see exactly what would be shared: the verdict, the score, the names of the checks that fired and the Unmask version, plus the sender's domain only if you tick it. The email, your address and its links are never included. **Open a GitHub issue** opens a pre-filled form you can edit or discard; **Copy instead** copies the text.
+
+---
+
 ## 8g. Family mode: ask someone you trust
+
+<img src="images/gmail-family-ask.png" width="420" alt="Family mode: the warning before a risky link offers Ask Sam and Go back">
 
 For a parent, a grandparent, or anyone who'd rather have a second pair of eyes. In **Settings → Family mode**, tick **Ask someone I trust before risky emails** and enter the helper's name and email.
 
@@ -440,6 +466,8 @@ Family mode is a guard rail, not a cage: someone determined can still copy a lin
 ---
 
 ## 8h. Practice: spot the scam
+
+<img src="images/practice-quiz.png" width="420" alt="Practice: an email, the answer, the lesson and Unmask's explanation">
 
 Open the panel with no email selected and click **Practise spotting scams**, or use the link on the welcome tab. You get 10 realistic, made-up emails (about six scams and four real ones) built like the real thing: a boss asking for gift cards, a changed bank account, a callback "invoice", a fake job, a payroll calendar invite, a device-code login, a ClickFix "CAPTCHA", and genuine bank alerts, shares and security codes. Choose *It's a scam* or *It's real*, then see the lesson and Unmask's explanation in plain words. Nothing in the emails can be clicked, and nothing is sent anywhere. It works well for family members, classes and team awareness sessions.
 
@@ -458,6 +486,8 @@ Open Settings with the **gear icon**. The **?** icon next to it opens this guide
 - **Privacy → Check how old the sender's domain is:** on by default. It sends only the domain name (for example `example.com`) to rdap.org, the public registry lookup.
 - **Privacy → Check certificate history and mail records:** on by default. Sends only domain names to crt.sh and dns.google to spot brand-new certificates and domains without mail records, and fetches each DKIM signing key so Unmask can verify signatures itself.
 - **Privacy → Check who runs the sending server:** off by default. Sends the IP address of the server that delivered the email (never your own) to dns.google, to spot mail sent from home connections and rented servers.
+- **Privacy → Let Chrome's on-device AI read emails:** off by default, Chrome only. See [On-device AI](#8f2-on-device-ai-chrome-optional).
+- **Family mode:** the helper's name and email, and an optional PIN that locks Settings. See [Family mode](#8g-family-mode-ask-someone-you-trust).
 - **Appearance:** System (follows your computer), Light or Dark. The sun/moon button in the header switches it too.
 - **Advanced → Redirect tracing:** *Inside Unmask* (default) or *My own server*, with the server's address.
 

@@ -188,21 +188,23 @@ Every link in the HTML, the plain text, inside attachments and decoded from QR c
 3. **On request, followed safely**:
    - **Sandbox scan** (urlscan.io): urlscan's own browser opens the link, never yours. **Every scan is private**: only your API key can see the result, the screenshot and the page; it never appears in urlscan's public feed or search, or in urlscan Pro for its partners, and is deleted after your plan's retention period. Because private screenshots aren't public images, Unmask fetches the screenshot with your key and shows it in the Links tab, with **Save screenshot** to keep a copy. Where the link lands goes into the report.
    - **VirusTotal**: a lookup of what VirusTotal already knows publishes nothing. Submitting an unknown link for a fresh scan makes it visible to VirusTotal's customers, so Unmask asks first.
-   - **Trace redirects**: follows the redirect chain without rendering the page, from the extension or your own server.
+   - **Trace redirects**: follows the redirect chain without rendering the page, from the extension or your own server, then reads the final page's HTML: a sign-in page imitating Microsoft, Google or Okta on a host they don't own, their **real** sign-in code relayed through another host (adversary-in-the-middle kits such as Tycoon2FA and Evilginx, which steal the session and get past MFA), and CAPTCHA gates in front of login pages.
 
 <p><img src="images/panel-landing-page.png" width="360" alt="A private sandbox scan: the DocuSign link lands on a fake DocuSign sign-in page, shown in urlscan's screenshot with Save screenshot"></p>
 
 *(In this screenshot, urlscan.io and the landing page are local test doubles, so no real site was contacted.)*
 
-Source: [`analyzers/links.ts`](../extension/src/analyzers/links.ts), [`lib/redirects.ts`](../extension/src/lib/redirects.ts), [`integrations/urlscan.ts`](../extension/src/integrations/urlscan.ts), [`integrations/virustotal.ts`](../extension/src/integrations/virustotal.ts).
+Source: [`analyzers/links.ts`](../extension/src/analyzers/links.ts), [`lib/redirects.ts`](../extension/src/lib/redirects.ts), [`lib/landing.ts`](../extension/src/lib/landing.ts), [`integrations/urlscan.ts`](../extension/src/integrations/urlscan.ts), [`integrations/virustotal.ts`](../extension/src/integrations/virustotal.ts).
 
 ## 12. Attachments, QR codes and logos
 
 - **Attachments** are hashed (SHA-256) and read as bytes, never opened or run: executables and scripts, disk images, HTML/SVG login pages, macro documents, double extensions, right-to-left filename tricks, password-protected archives. Inside PDFs, Office files and ZIPs: links, JavaScript, launch actions, macros, remote templates, DDE and nested programs.
-- **QR codes** are decoded from image attachments, inline images and images inside PDFs; each decoded link goes through every link check.
+- **SVG images and HTML files** are read as text for scripts, code that runs on display, redirects, login forms hidden in `<foreignObject>`, pages hidden in base64, file smuggling and CAPTCHA gates ([details](FILE_FORENSICS.md#svg-images-and-html-pages)).
+- **Calendar invites** (`.ics` files and the invite inside an email) are parsed: every link in the event goes through the link checks, and an invite whose "join" link isn't a meeting service, whose organiser is another organisation, or that carries a payroll, password or callback lure is flagged.
+- **QR codes** are decoded from image attachments, inline images and images inside PDFs, and from codes drawn without any image (HTML table cells or block characters); each decoded link goes through every link check.
 - **Brand logos** are recognised by asset host, alt text, file name and a perceptual image fingerprint: a PayPal logo in an email PayPal didn't send.
 
-Source: [`analyzers/attachments.ts`](../extension/src/analyzers/attachments.ts), [`analyzers/documents.ts`](../extension/src/analyzers/documents.ts), [`analyzers/qr.ts`](../extension/src/analyzers/qr.ts), [`analyzers/logos.ts`](../extension/src/analyzers/logos.ts).
+Source: [`analyzers/attachments.ts`](../extension/src/analyzers/attachments.ts), [`forensics/markup.ts`](../extension/src/forensics/markup.ts), [`analyzers/calendar.ts`](../extension/src/analyzers/calendar.ts), [`analyzers/documents.ts`](../extension/src/analyzers/documents.ts), [`analyzers/qr.ts`](../extension/src/analyzers/qr.ts), [`analyzers/logos.ts`](../extension/src/analyzers/logos.ts).
 
 ## 13. Attack techniques
 
@@ -217,16 +219,21 @@ Some attacks are recognised by their shape rather than a bad link or a failed ch
 | **ClickFix** | "Press Windows + R, then Ctrl + V": pasting a command into the Run box, often as a fake CAPTCHA |
 | **Locked archive with its password** | A password-protected ZIP (so scanners can't see inside) and the password in the email |
 | **Payment fraud (BEC)** | Changed bank details, gift-card requests, "are you available? keep this confidential" |
+| **Fake job offers** | Paid "tasks", fees, a cheque to buy "equipment", requests for bank or ID details, an interview moved to Telegram or WhatsApp |
+| **Rules written as data** | Tax refunds, parcel fees, crypto giveaways, advance-fee, sextortion, mailbox-full and voicemail lures, one YAML file each ([`extension/rules`](../extension/rules)) |
 
-Source: [`analyzers/techniques.ts`](../extension/src/analyzers/techniques.ts), [`analyzers/bec.ts`](../extension/src/analyzers/bec.ts).
+Optionally, Chrome's on-device model (Gemini Nano) reads what the email asks you to do and explains the verdict; it adds at most one Medium finding and never decides a verdict alone ([details](CHECKS.md#on-device-ai-optional)).
+
+Source: [`analyzers/techniques.ts`](../extension/src/analyzers/techniques.ts), [`analyzers/bec.ts`](../extension/src/analyzers/bec.ts), [`analyzers/rules.ts`](../extension/src/analyzers/rules.ts), [`lib/onDeviceAi.ts`](../extension/src/lib/onDeviceAi.ts).
 
 ## 14. What Unmask remembers about senders
 
-On your device only, Unmask keeps who has emailed you, how often, and how each sender's emails are usually built: the DKIM signing domain, the mail service that delivered them, the Message-ID domain, the mail program and any Reply-To domain. This powers:
+On your device only, Unmask keeps who has emailed you, how often, and how each sender's emails are usually built: the DKIM signing domain, the mail service that delivered them, the Message-ID domain, the mail program, any Reply-To domain, whether they send file-share or sign-in links, and the time of day on their own clock. This powers:
 
 - **First contact** warnings, and "your PayPal emails usually come from paypal.com".
 - **A contact's name** used from another address.
 - **A changed fingerprint**: a sender you know who suddenly sends differently, especially one asking for replies to go elsewhere for the first time, the classic sign of a hacked supplier account.
+- **A contact's first file-share or sign-in link**, more strongly when it arrives in the middle of their night: a hacked account's first message is usually "I shared a document with you".
 
 High-risk emails and emails opened from files are never learned. Turn it off or forget everything in Settings → Privacy.
 
@@ -344,7 +351,9 @@ The email itself (headers, body, attachments) is never sent to Unmask's develope
 
 ## 19. How the analysis is tested
 
-- **Unit tests** for every analyzer (420+). DKIM and ARC are tested against real signatures and seals made by [mailauth](https://github.com/postalsys/mailauth), an independent implementation, for every canonicalization and for RSA and Ed25519.
+- **Unit tests** for every analyzer (570+). DKIM and ARC are tested against real signatures and seals made by [mailauth](https://github.com/postalsys/mailauth), an independent implementation, for every canonicalization and for RSA and Ed25519.
 - **A labelled corpus** in [`extension/tests/fixtures/corpus`](../extension/tests/fixtures/corpus): phishing emails modelled on published write-ups (CEO gift cards, a DocuSign look-alike with a pre-filled login, PayPal invoice and Geek Squad callback scams, device-code phishing, ClickFix, a locked ZIP with its password, a forged Google stamp, an HTML login attachment, a fake reply changing bank details, a replayed Google alert, entity-encoded Microsoft 365 phishing) and legitimate emails built like the real thing (a personal reply, an Amazon order and a Chase fraud alert with phone numbers, a Google Docs share, a Microsoft security code, a mailing-list post that broke DKIM, newsletters with encoded tracking links). **Every phish must be rated High risk as the right kind of attack, and every legitimate email must come out clear.**
+- **Newer corpus samples** cover 2026 lures (a QR code drawn in a table, SVG smuggling, a payroll calendar invite, a task-job scam) and their legitimate look-alikes (a Zoom invite, a real recruiter, a LinkedIn job alert).
+- **A public benchmark** measures the detection rate on 400 real phishing emails and the false-alarm rate on 4,150 real legitimate emails on every change to `main` ([Benchmark](BENCHMARK.md)).
 - **End-to-end tests** load the built extension in Chromium against a Gmail test double, in both the normal and the fallback parsing mode.
 - **CI** runs all of it, plus the Chrome, Firefox and Edge builds, on every push; `main` only moves when it's green.

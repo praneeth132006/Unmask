@@ -48,19 +48,31 @@ The full report runs in the **side panel**, an extension page with no Gmail code
 ```
 extension/
   entrypoints/
-    background.ts            opens the panel on icon click; fallback fetch for Gmail URLs
-    gmail.content.ts         message detection, raw fetch, highlight bridge
+    background.ts            opens the panel on icon click; redirect tracer; welcome tab on install
+    gmail.content.ts         message detection, raw fetch, highlight bridge, in-Gmail warnings
+    outlook.content.ts       the same for Outlook on the web
     gmail-ik.content.ts      MAIN-world script that exposes Gmail's session token
     sidepanel/               panel entry (index.html, main.tsx, style.css with design tokens)
+    offscreen/               HTML parsing when Gmail blocks it in the page (Chrome, Edge)
+    welcome/, practice/      first-run example and the spot-the-scam quiz
+  rules/                     detection rules as YAML (compiled by scripts/compile-rules.mjs)
   src/
-    core/                    types, MIME parsing, scoring, analyzeRawEmail()
-    analyzers/               auth, sender, lookalike, brands, content, links, attachments, trackers
-    integrations/            rdap, virustotal, urlscan, trace, keyTest
-    lib/                     domain helpers, settings, messages, gmailRaw, highlight
-    ui/                      App, hooks, targets (finding → highlight/focus), components
-  tests/                     Vitest suites + fixtures/*.eml
-  scripts/gen-icons.mjs      renders icons from docs/brand/*.svg
+    core/                    types, MIME parsing, scoring, assessment, analyzeRawEmail()
+    analyzers/               auth, sender, lookalike, brands, content, links, attachments, calendar,
+                             qr, logos, techniques, rules, history, fingerprint, landing, …
+    forensics/               PDF, Office, OLE, RTF, ZIP and SVG/HTML readers, IOC extraction
+    integrations/            rdap, virustotal, urlscan, trace, intel, Google Docs, dkimVerify
+    lib/                     settings, messages, gmailRaw, highlight, protect, family, stats,
+                             onDeviceAi, landing, feedback
+    report/                  investigation reports (PDF, Word, HTML, STIX)
+    rules/rules.json         compiled rules
+    demo/                    the made-up example email and the practice set
+    ui/                      App, Welcome, Practice, components
+  tests/                     Vitest suites, fixtures/*.eml, the labelled corpus, the benchmark
+  e2e/run.mjs                end-to-end test of the built extension in Chromium
 backend/                     Hono redirect tracer (see BACKEND.md)
+scripts/benchmark/           downloads the public corpora for the benchmark (never committed)
+scripts/verify-release.mjs   checks a published release against a build of its tag
 docs/                        guides, brand assets, screenshots
 build/unmask-chrome/         production build output (git-ignored)
 ```
@@ -99,9 +111,15 @@ The hex id is derived from the decimal id with `BigInt(dec).toString(16)` when t
 3. **sender**: display-name tricks, look-alikes, brand claims, free webmail, Reply-To, Return-Path.
 4. **content**: walk the HTML DOM to tag hidden elements (`data-unmask-hidden`), collect links, find forms and scripts, match phrase lists.
 5. **links**: unwrap redirectors, flag each link, group flags into findings that keep the link indexes.
-6. **attachments**: hash, classify by extension, MIME and magic bytes.
-7. **trackers**: pixels, CSS beacons, tracked links.
-8. **score**: see [CHECKS.md](CHECKS.md#how-the-score-works).
+6. **attachments**: hash, classify by extension, MIME and magic bytes; deep file forensics (PDF, Office, RTF, ZIP, and SVG/HTML active content in `forensics/markup.ts`).
+7. **calendar invites** (`analyzers/calendar.ts`): parse `text/calendar` parts and `.ics` files; their links join step 5.
+8. **QR codes**: images, PDFs, and codes drawn as table cells or block characters.
+9. **trackers**: pixels, CSS beacons, tracked links.
+10. **techniques and rules**: callback, consent, ClickFix, fake jobs (`analyzers/techniques.ts`), and the YAML rules compiled into `src/rules/rules.json` (`analyzers/rules.ts`).
+11. **history**: first contact, impersonated contacts and sender fingerprints (including link habits and send hour), when a history is passed in.
+12. **score**: see [CHECKS.md](CHECKS.md#how-the-score-works).
+
+Outside the pure pipeline, the panel adds optional findings: online lookups, **Trace redirects** with the landing-page check (`lib/landing.ts`, kept identical in `backend/src/landing.ts`), and Chrome's on-device model (`lib/onDeviceAi.ts`), which adds at most one Medium finding.
 
 Each `Finding` carries a **`target`** saying what it refers to:
 

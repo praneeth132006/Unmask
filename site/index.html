@@ -60,39 +60,47 @@
 </section>
 
 <section class="wrap" id="proof">
-  <h2>Proven on real phishing</h2>
-  <p class="sub">We ran Unmask over <strong>400 real phishing emails</strong> from the public <a href="https://github.com/rf-peixoto/phishing_pot">phishing_pot</a> research collection: scams impersonating banks, crypto wallets, tax offices, theme parks and more, in many languages.</p>
+  <h2>Proven on real phishing, and on real mail</h2>
+  <p class="sub">Measured on every change, with public corpora: <strong>400 real phishing emails</strong> from <a href="https://github.com/rf-peixoto/phishing_pot">phishing_pot</a> and <strong>4,150 real legitimate emails</strong> from the <a href="https://spamassassin.apache.org/old/publiccorpus/">SpamAssassin public corpus</a>. <a href="benchmark.html">How it's measured</a>.</p>
   <div class="grid">
-    <div class="card"><h3>346 of 400 caught</h3><p>86.5% flagged as Suspicious or High risk. Before this release it was 343.</p></div>
-    <div class="card"><h3>285 rated High risk</h3><p>Nearly three in four were stopped with the strongest warning, each with the reasons in plain language.</p></div>
-    <div class="card"><h3>0 errors, under 0.15 s each</h3><p>Every email analysed without a single failure, none taking longer than 0.13 seconds, entirely on one computer.</p></div>
+    <div class="card"><h3>86.5% of phishing caught</h3><p>346 of 400 flagged as Suspicious or High risk, 286 with the strongest warning, each with the reasons in plain language.</p></div>
+    <div class="card"><h3>6.0% false alarms</h3><p>On 4,150 real emails, including marketing built to look like spam. The first run found 13.9%; each cause was fixed with a test.</p></div>
+    <div class="card"><h3>Under 1 ms per email</h3><p>Median analysis time, with no errors, entirely on one computer. Nothing is sent anywhere to decide a verdict.</p></div>
   </div>
-  <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">The misses taught us something too: this release added invisible-character, look-alike-letter and crypto-wallet detection found by reading them. <a href="reports.html#real-examples">See what a report looks like for a real phish</a>.</p>
+  <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">Got a wrong verdict? <strong>Was this right?</strong> in the panel opens a pre-filled report with only what you choose to share. <a href="reports.html#real-examples">See what a report looks like for a real phish</a>.</p>
 </section>
 
 <section class="wrap" id="features">
   <h2>Everything a phishing email tries to hide</h2>
   <p class="sub">Every check runs inside your browser. The few online lookups send only a domain name or a file fingerprint, and each can be turned off.</p>
   <div class="grid">
+    <div class="card feature"><div class="tag">New</div><h3>Calendar-invite phishing</h3><p>Meeting invites whose "join" link isn't Zoom, Teams or Meet, payroll and password lures, and organisers who aren't the sender.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>SVG smuggling</h3><p>"Pictures" that run code: scripts, redirects, login forms hidden inside the image and pages hidden in base64, read without opening them.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Fake login pages behind a link</h3><p>Trace a link and Unmask says if it ends on a fake Microsoft, Google or Okta sign-in, a relayed one that steals your session, or a page hidden behind a CAPTCHA.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Fake jobs and hacked contacts</h3><p>Task scams and "buy equipment with our cheque" offers, and a friend's first-ever "I shared a document with you" link, sent at 3 a.m.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Family mode</h3><p>On High risk emails, "Open anyway" becomes "Ask Sam": a ready-written email to someone you trust. Settings can be locked with a PIN.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Practise spotting scams</h3><p>A 10-email quiz of realistic scams and real emails, each explained by Unmask. Good for families, classes and team training.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>On-device AI (Chrome)</h3><p>Optional: Chrome's built-in model says what an email asks you to do and why the verdict fits, on your computer. It never decides alone.</p></div>
+    <div class="card feature"><div class="tag">New</div><h3>Rules anyone can add</h3><p>Scam patterns as small YAML files: tax refunds, parcel fees, crypto giveaways, sextortion and more, each tested against real and fake examples.</p></div>
     <div class="card feature"><div class="tag">Sender</div><h3>Who really sent it</h3><p>SPF, DKIM and DMARC, display names hiding another address, and look-alike domains like <code>paypa1.com</code> for 50+ brands, using Unicode's confusables list.</p></div>
-    <div class="card feature"><div class="tag">0.4</div><h3>Header forensics</h3><p>DKIM signatures verified by Unmask itself, emails changed after signing, fake "passed" stamps, replayed genuine emails, and the delivery path read the way an analyst does.</p></div>
-    <div class="card feature"><div class="tag">0.4</div><h3>Attack techniques</h3><p>Callback scams, real PayPal and DocuSign emails carrying a scammer's text, device-code and consent lures, ClickFix, locked ZIPs sent with their password.</p></div>
-    <div class="card feature"><div class="tag">0.4</div><h3>Encoding tricks</h3><p>Words spelt in HTML character codes, disguised link addresses, invisible characters splitting brand names, and letters from other alphabets.</p></div>
-    <div class="card feature"><div class="tag">0.4</div><h3>Analyst write-up</h3><p>What kind of attack it is, what couldn't be checked, a SOC-style case report and defanged indicators, one click each.</p></div>
+    <div class="card feature"><div class="tag">Headers</div><h3>Header forensics</h3><p>DKIM signatures verified by Unmask itself, emails changed after signing, fake "passed" stamps, replayed genuine emails, and the delivery path read the way an analyst does.</p></div>
+    <div class="card feature"><div class="tag">Techniques</div><h3>Attack techniques</h3><p>Callback scams, real PayPal and DocuSign emails carrying a scammer's text, device-code and consent lures, ClickFix, locked ZIPs sent with their password.</p></div>
+    <div class="card feature"><div class="tag">Body</div><h3>Encoding tricks</h3><p>Words spelt in HTML character codes, disguised link addresses, invisible characters splitting brand names, and letters from other alphabets.</p></div>
+    <div class="card feature"><div class="tag">Reports</div><h3>Analyst write-up</h3><p>What kind of attack it is, what couldn't be checked, a SOC-style case report and defanged indicators, one click each.</p></div>
     <div class="card feature"><div class="tag">Links</div><h3>Where links really go</h3><p>Text that shows one site but links to another, redirect wrappers removed, and one-click redirect tracing.</p></div>
     <div class="card feature"><div class="tag">Hover</div><h3>Point at the problem</h3><p>Hover a red flag and Unmask outlines the exact link, sender, attachment or phrase in the Gmail email.</p></div>
     <div class="card feature"><div class="tag">Files</div><h3>Risky attachments</h3><p>Executables, fake PDFs (<code>Invoice.pdf.html</code>), macro documents, encrypted ZIPs, plus a VirusTotal check.</p></div>
     <div class="card feature"><div class="tag">Body</div><h3>Hidden text, safely shown</h3><p>Invisible text used to fool spam filters, forms asking for passwords, and pressure phrases, in a safe view with scripts off.</p></div>
     <div class="card feature"><div class="tag">Privacy</div><h3>Trackers</h3><p>Tracking pixels and click-tracked links from about 40 services, with images blocked so senders can't tell you opened it.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Peek before opening</h3><p>Check an inbox email without opening it, with a text-only preview, so trackers never learn you looked.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Plain words</h3><p>"This email looks like a scam. It pretends to be PayPal." Simple mode hides everything technical.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Your protection list</h3><p>Your bank, your boss, your family: impostors get the strongest warning. Share the list as a file.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>First-contact warnings</h3><p>"You've never received mail from paypa1-support.xyz. Your PayPal emails usually come from paypal.com." Remembered only on your device.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>QR-code phishing</h3><p>QR codes in images and PDFs are decoded and their real destination checked, before you point your phone at them.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Payment fraud</h3><p>Changed bank details, payment and gift-card requests, and a contact's name used from a different address.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Inside attachments</h3><p>Links hidden in PDFs, macros in Office files, the file list of ZIPs, and a safe preview of HTML attachments.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Fake logos and new domains</h3><p>An email showing PayPal's logo that PayPal didn't send, brand-new TLS certificates and domains without mail records.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Report in one click</h3><p>Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus a PDF or JSON report for your IT team.</p></div>
+    <div class="card feature"><div class="tag">Inbox</div><h3>Peek before opening</h3><p>Check an inbox email without opening it, with a text-only preview, so trackers never learn you looked.</p></div>
+    <div class="card feature"><div class="tag">Plain</div><h3>Plain words</h3><p>"This email looks like a scam. It pretends to be PayPal." Simple mode hides everything technical.</p></div>
+    <div class="card feature"><div class="tag">Protection</div><h3>Your protection list</h3><p>Your bank, your boss, your family: impostors get the strongest warning. Share the list as a file.</p></div>
+    <div class="card feature"><div class="tag">History</div><h3>First-contact warnings</h3><p>"You've never received mail from paypa1-support.xyz. Your PayPal emails usually come from paypal.com." Remembered only on your device.</p></div>
+    <div class="card feature"><div class="tag">QR</div><h3>QR-code phishing</h3><p>QR codes in images, PDFs and even ones drawn with table cells are decoded and their real destination checked, before you point your phone at them.</p></div>
+    <div class="card feature"><div class="tag">BEC</div><h3>Payment fraud</h3><p>Changed bank details, payment and gift-card requests, and a contact's name used from a different address.</p></div>
+    <div class="card feature"><div class="tag">Files</div><h3>Inside attachments</h3><p>Links hidden in PDFs, macros in Office files, the file list of ZIPs, and a safe preview of HTML attachments.</p></div>
+    <div class="card feature"><div class="tag">Brands</div><h3>Fake logos and new domains</h3><p>An email showing PayPal's logo that PayPal didn't send, brand-new TLS certificates and domains without mail records.</p></div>
+    <div class="card feature"><div class="tag">Report</div><h3>Report in one click</h3><p>Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus a PDF or JSON report for your IT team.</p></div>
   </div>
 </section>
 

@@ -81,6 +81,10 @@ Built into Unmask and free: it runs in your browser and costs nothing. The self-
 
 Official source: [Vercel pricing](https://vercel.com/pricing).
 
+## On-device AI (Chrome)
+
+Free. Chrome's built-in model runs on your computer, with no account, key or limit. Chrome downloads the model once (several GB) after you click, and needs desktop Chrome with about 22 GB of free disk and 16 GB of memory, or a graphics card with more than 4 GB. Off by default. [Chrome's requirements](https://developer.chrome.com/docs/ai/prompt-api#review_the_hardware_requirements).
+
 ## What Unmask does when a limit is hit
 
 - The button shows a plain message such as *"VirusTotal rate limit reached (free keys allow 4 lookups per minute). Try again shortly."*
