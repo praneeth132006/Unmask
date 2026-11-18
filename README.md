@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/gmail-link-warning.png" width="720" alt="Unmask stops a click: Wait, this link goes to paypa1-secure.top, with the reasons and Go back / Open anyway buttons">
+  <img src="docs/images/inbox/gmail-link-warning.png" width="720" alt="Unmask stops a click: Wait, this link goes to paypa1-secure.top, with the reasons and Go back / Open anyway buttons"><br>
+  <sub>Unmask stops a click</sub>
 </p>
 
 <p align="center">
@@ -57,13 +58,13 @@
 >
 > 📖 **[Read the user guide](https://praneeth132006.github.io/Unmask/guide.html)**: every screen explained, step-by-step key setup, troubleshooting. Also in the [wiki](https://github.com/praneeth132006/Unmask/wiki) and [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
 
-<p align="center">
-  <img src="docs/images/overview-light.png" width="260" alt="Unmask summary in light mode, showing a High risk verdict">
-  &nbsp;
-  <img src="docs/images/overview-dark.png" width="260" alt="Unmask summary in dark mode">
-  &nbsp;
-  <img src="docs/images/links-dark.png" width="260" alt="Links tab showing where each link really goes">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="33%"><img src="docs/images/panel/overview-light.png" width="260" alt="Unmask summary in light mode, showing a High risk verdict"><br><sub>Unmask summary in light mode, showing a High risk verdict</sub></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/panel/overview-dark.png" width="260" alt="Unmask summary in dark mode"><br><sub>Unmask summary in dark mode</sub></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/panel/links-dark.png" width="260" alt="Links tab showing where each link really goes"><br><sub>Links tab showing where each link really goes</sub></td>
+</tr>
+</table>
 
 ## See it in action
 
@@ -71,51 +72,56 @@
 
 **It warns you inside your inbox, without opening anything.** Risky emails get a banner with the main reasons; risky senders get a badge in the email list.
 
-<p align="center">
-  <img src="docs/images/gmail-banner.png" width="430" alt="A red High risk banner above a fake PayPal email listing the main reasons">
-  &nbsp;
-  <img src="docs/images/inbox-badges.png" width="430" alt="Risky and Check badges next to suspicious senders in the Gmail inbox list">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/gmail-banner.png" width="430" alt="A red High risk banner above a fake PayPal email listing the main reasons"><br><sub>A red High risk banner above a fake PayPal email listing the main reasons</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/inbox-badges.png" width="430" alt="Risky and Check badges next to suspicious senders in the Gmail inbox list"><br><sub>Risky and Check badges next to suspicious senders in the Gmail inbox list</sub></td>
+</tr>
+</table>
 
 **It checks emails before you open them.** Click **👁 Peek** on any inbox row: Unmask checks the email and shows a text-only preview, without opening it, so its trackers never learn you looked. Explanations come in plain words, and a shareable protection list puts your own bank and boss first.
 
-<p align="center">
-  <img src="docs/images/inbox-peek.png" width="560" alt="Peek: High risk verdict, plain reasons and a text-only preview, without opening the email">
-  &nbsp;
-  <img src="docs/images/panel-simple.png" width="250" alt="Simple mode: This email looks like a scam, with reasons in everyday words and what to do">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/inbox-peek.png" width="560" alt="Peek: High risk verdict, plain reasons and a text-only preview, without opening the email"><br><sub>Peek</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/panel/panel-simple.png" width="250" alt="Simple mode: This email looks like a scam, with reasons in everyday words and what to do"><br><sub>Simple mode</sub></td>
+</tr>
+</table>
 
 **It catches replies going to the scammer** and QR codes hidden in PDFs, and it looks inside attachments without opening them.
 
-<p align="center">
-  <img src="docs/images/gmail-reply-warning.png" width="430" alt="Your reply will go somewhere else: secure-team@protonmail.com">
-  &nbsp;
-  <img src="docs/images/panel-qr.png" width="370" alt="A link decoded from a QR code inside a PDF, flagged as imitating PayPal">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/gmail-reply-warning.png" width="430" alt="Your reply will go somewhere else: secure-team@protonmail.com"><br><sub>Your reply will go somewhere else: secure-team@protonmail.com</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/panel/panel-qr.png" width="370" alt="A link decoded from a QR code inside a PDF, flagged as imitating PayPal"><br><sub>A link decoded from a QR code inside a PDF, flagged as imitating PayPal</sub></td>
+</tr>
+</table>
 
-<p align="center">
-  <img src="docs/images/panel-summary.png" width="250" alt="Summary with a High risk verdict and the red flags">
-  &nbsp;
-  <img src="docs/images/panel-files.png" width="250" alt="Files tab showing links inside a PDF and a program hidden in a ZIP">
-  &nbsp;
-  <img src="docs/images/panel-report.png" width="250" alt="Report or export: APWG, Netcraft, Google Safe Browsing, PhishTank, PDF and JSON">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="33%"><img src="docs/images/panel/panel-summary.png" width="250" alt="Summary with a High risk verdict and the red flags"><br><sub>Summary with a High risk verdict and the red flags</sub></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/files/panel-files.png" width="250" alt="Files tab showing links inside a PDF and a program hidden in a ZIP"><br><sub>Files tab showing links inside a PDF and a program hidden in a ZIP</sub></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/reports/panel-report.png" width="250" alt="Report or export: APWG, Netcraft, Google Safe Browsing, PhishTank, PDF and JSON"><br><sub>Report or export</sub></td>
+</tr>
+</table>
 
 ## New in 0.6: the scams of 2026, and help for families
 
 **It catches the lures that grew fastest this year:** phishing hidden in calendar invites, SVG "images" that run code, fake job offers, a friend's hacked account sending its first "I shared a document with you", QR codes drawn without an image, and links that end on a fake or relayed Microsoft, Google or Okta sign-in behind a CAPTCHA.
 
 <p align="center">
-  <img src="docs/images/panel-2026-lures.png" width="430" alt="One email with a fake job offer, a smuggling SVG and a payroll calendar invite, rated High risk with each reason in plain words">
+  <img src="docs/images/panel/panel-2026-lures.png" width="430" alt="One email with a fake job offer, a smuggling SVG and a payroll calendar invite, rated High risk with each reason in plain words"><br>
+  <sub>One email with a fake job offer, a smuggling SVG and a payroll calendar invite, rated…</sub>
 </p>
 
 **It helps the people who lose the most.** Family mode replaces *Open anyway* with **Ask Sam**, a ready-written email to someone you trust. A welcome tab shows a real warning on a made-up scam before the first real one, the panel shows what Unmask did this week, and **Practise spotting scams** is a 10-email quiz explained by Unmask.
 
-<p align="center">
-  <img src="docs/images/gmail-family-ask.png" width="430" alt="Family mode: the link warning offers only Ask Sam and Go back">
-  &nbsp;
-  <img src="docs/images/practice-quiz.png" width="430" alt="Practice: an email to judge, then the answer and Unmask's explanation">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/gmail-family-ask.png" width="430" alt="Family mode: the link warning offers only Ask Sam and Go back"><br><sub>Family mode: the link warning offers only Ask Sam and Go back</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/start/practice-quiz.png" width="430" alt="Practice: an email to judge, then the answer and Unmask's explanation"><br><sub>Practice: an email to judge, then the answer and Unmask's explanation</sub></td>
+</tr>
+</table>
 
 **And it's open about how good it is:** a [public benchmark](docs/BENCHMARK.md) on every change, a **Was this right?** button, [reproducible releases](CONTRIBUTING.md#verify-a-release-yourself), and [why each permission](docs/PERMISSIONS.md).
 
@@ -135,11 +141,12 @@ Click the Unmask icon for the full report. The side panel shows:
 
 **Hover any red flag, link, or URL in the plain text and Unmask outlines that exact part of the email in Gmail.** Click a red flag to jump to the details, then use **Back to summary** to return. Switch between light, dark and system themes from the header.
 
-<p align="center">
-  <img src="docs/images/highlight-link.png" width="420" alt="Hovering a finding outlines the matching link in the Gmail message">
-  &nbsp;
-  <img src="docs/images/highlight-text.png" width="420" alt="Hovering a pressure-language finding marks the phrases in the email">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/highlight-link.png" width="420" alt="Hovering a finding outlines the matching link in the Gmail message"><br><sub>Hovering a finding outlines the matching link in the Gmail message</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/inbox/highlight-text.png" width="420" alt="Hovering a pressure-language finding marks the phrases in the email"><br><sub>Hovering a pressure-language finding marks the phrases in the email</sub></td>
+</tr>
+</table>
 
 Using another mail app? Save the email as an `.eml` file and drop it on the panel, or paste its raw source.
 
@@ -153,11 +160,12 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 >
 > Got a wrong verdict? Press **Was this right?** in the panel: it opens a pre-filled report with only what you choose to share, never the email. **[See the report Unmask produces for a real phish](docs/REPORTS.md#real-examples)**: a fake Binance withdrawal, a fake COLDCARD advisory and a fake gift-card survey, each with the executive summary and the technical analysis.
 
-<p align="center">
-  <img src="docs/images/example-binance-withdrawal-executive.png" width="330" alt="Report for a real fake-Binance phishing email: executive summary">
-  &nbsp;
-  <img src="docs/images/example-binance-withdrawal-technical.png" width="330" alt="Report for a real fake-Binance phishing email: technical analysis">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/reports/example-binance-withdrawal-executive.png" width="330" alt="Report for a real fake-Binance phishing email: executive summary"><br><sub>Report for a real fake-Binance phishing email: executive summary</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/reports/example-binance-withdrawal-technical.png" width="330" alt="Report for a real fake-Binance phishing email: technical analysis"><br><sub>Report for a real fake-Binance phishing email: technical analysis</sub></td>
+</tr>
+</table>
 
 ## Look inside files, and report it properly
 
@@ -169,7 +177,8 @@ Using another mail app? Save the email as an `.eml` file and drop it on the pane
 
 Unmask reads each attachment as raw bytes, **never opening or uploading it**. It counts the risky keywords in a PDF (the `pdfid` view), finds hidden JavaScript and the actions that run when a file opens, unpacks compressed object streams, reads Word macros and flags remote templates, reads spreadsheets' hidden sheets and Excel 4.0 macros, and extracts **every link**, with the text people click. Findings are explained in everyday words and tagged with MITRE ATT&CK techniques.
 
-<img src="docs/images/panel-documents.png" width="300" alt="Documents tab: a PDF that runs JavaScript on open, with a whole-page link">
+<img src="docs/images/files/panel-documents.png" width="300" alt="Documents tab: a PDF that runs JavaScript on open, with a whole-page link"><br>
+<sub>Documents tab</sub>
 
 </td>
 <td width="50%" valign="top">
@@ -178,7 +187,8 @@ Unmask reads each attachment as raw bytes, **never opening or uploading it**. It
 
 Word and Excel files are taken apart: the VBA macro source is decompressed, auto-run entry points and what the code can do are listed, and a template fetched from the internet (template injection) is flagged along with "Enable editing" lure text.
 
-<img src="docs/images/panel-documents-macros.png" width="300" alt="A macro-enabled Word file with an auto-run macro and a remote template">
+<img src="docs/images/files/panel-documents-macros.png" width="300" alt="A macro-enabled Word file with an auto-run macro and a remote template"><br>
+<sub>A macro-enabled Word file with an auto-run macro and a remote template</sub>
 
 </td>
 </tr>
@@ -189,7 +199,8 @@ Word and Excel files are taken apart: the VBA macro source is decompressed, auto
 
 Only a file's **fingerprint** (hash) is ever sent, and only when you click: to VirusTotal, Hybrid Analysis or MalwareBazaar. There is no upload button, so nobody else can find your documents. Every link inside a file can be tested, including against PhishTank and URLhaus.
 
-<img src="docs/images/panel-documents-lookups.png" width="300" alt="Hash-only lookups on three services">
+<img src="docs/images/files/panel-documents-lookups.png" width="300" alt="Hash-only lookups on three services"><br>
+<sub>Hash-only lookups on three services</sub>
 
 </td>
 <td width="50%" valign="top">
@@ -198,7 +209,8 @@ Only a file's **fingerprint** (hash) is ever sent, and only when you click: to V
 
 A link on `docs.google.com` looks safe, but attackers host phishing there. Unmask can read a publicly shared Doc, Sheet, Slides or Drive file **anonymously** (not signed in as you), then analyse it like any attachment.
 
-<img src="docs/images/panel-documents-google.png" width="300" alt="A shared Google Doc read without signing in, with its hidden link found">
+<img src="docs/images/files/panel-documents-google.png" width="300" alt="A shared Google Doc read without signing in, with its hidden link found"><br>
+<sub>A shared Google Doc read without signing in, with its hidden link found</sub>
 
 </td>
 </tr>
@@ -209,13 +221,13 @@ A link on `docs.google.com` looks safe, but attackers host phishing there. Unmas
 
 One report, two audiences: **Part A** is plain language (what happened, the business risk, what to do, who to tell); **Part B** is the full technical analysis (authentication, delivery path, file forensics, ATT&CK mapping, defanged indicators, hunting queries, a containment checklist). Export it as **PDF**, **Word**, **HTML** or **STIX 2.1**.
 
-<p align="center">
-  <img src="docs/images/report-pdf-cover.png" width="230" alt="PDF report cover">
-  &nbsp;
-  <img src="docs/images/report-pdf-summary.png" width="230" alt="PDF executive summary">
-  &nbsp;
-  <img src="docs/images/report-technical.png" width="330" alt="HTML report: file forensics">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="33%"><img src="docs/images/reports/report-pdf-cover.png" width="230" alt="PDF report cover"><br><sub>PDF report cover</sub></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/reports/report-pdf-summary.png" width="230" alt="PDF executive summary"><br><sub>PDF executive summary</sub></td>
+<td align="center" valign="top" width="33%"><img src="docs/images/reports/report-technical.png" width="330" alt="HTML report: file forensics"><br><sub>HTML report: file forensics</sub></td>
+</tr>
+</table>
 
 How it works: [File forensics](docs/FILE_FORENSICS.md) · [Reports](docs/REPORTS.md)
 
@@ -298,11 +310,12 @@ Unmask works with no setup at all. These free services add extra checks you run 
 
 **Free keys can never be charged.** Going over a limit just pauses that check until the quota resets. Paid plans exist only for heavy or commercial use: see **[Free limits and costs](docs/LIMITS_AND_COSTS.md)** for every number and price.
 
-<p align="center">
-  <img src="docs/images/setup-virustotal.png" width="260" alt="Step-by-step VirusTotal setup shown inside the panel">
-  &nbsp;
-  <img src="docs/images/trace-dark.png" width="260" alt="One-click redirect tracing inside Unmask">
-</p>
+<table>
+<tr>
+<td align="center" valign="top" width="50%"><img src="docs/images/settings/setup-virustotal.png" width="260" alt="Step-by-step VirusTotal setup shown inside the panel"><br><sub>Step-by-step VirusTotal setup shown inside the panel</sub></td>
+<td align="center" valign="top" width="50%"><img src="docs/images/panel/trace-dark.png" width="260" alt="One-click redirect tracing inside Unmask"><br><sub>One-click redirect tracing inside Unmask</sub></td>
+</tr>
+</table>
 
 ## Privacy
 

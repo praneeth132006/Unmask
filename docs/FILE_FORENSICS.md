@@ -5,7 +5,7 @@ Phishing does not always live in the email. It hides in the **PDF** that is one 
 > **Your files never leave your computer.** Everything below runs inside your browser. Unmask has no upload button for files: when a lookup is useful, only the file's **fingerprint** (a hash) is sent, and only when you click. Nobody else can ever see your invoices, contracts or ID documents.
 
 <p align="center">
-  <img src="images/panel-documents.png" width="340" alt="The Documents tab showing a PDF that runs JavaScript when opened">
+  <img src="images/files/panel-documents.png" width="340" alt="The Documents tab showing a PDF that runs JavaScript when opened">
 </p>
 
 ## What is analysed
@@ -31,7 +31,7 @@ A PDF is a container of objects, and malicious ones hide behind its structure. U
 2. **Walks the objects**, as `pdf-parser` does: decodes the stream filters (Flate, ASCIIHex, ASCII85, RunLength, LZW), unpacks object streams, follows actions, reads JavaScript and what it calls, and extracts embedded files, links and metadata.
 
 <p align="center">
-  <img src="images/panel-documents-pdf.png" width="340" alt="PDF findings and the pdfid-style keyword table">
+  <img src="images/files/panel-documents-pdf.png" width="340" alt="PDF findings and the pdfid-style keyword table">
 </p>
 
 | Finding | Why it matters |
@@ -52,7 +52,7 @@ Each finding says where it is (`obj 5 0`), explains it in everyday words, and, w
 ## Word, Excel and PowerPoint
 
 <p align="center">
-  <img src="images/panel-documents-macros.png" width="340" alt="A macro-enabled Word file: remote template, an auto-run macro and a lure to enable editing">
+  <img src="images/files/panel-documents-macros.png" width="340" alt="A macro-enabled Word file: remote template, an auto-run macro and a lure to enable editing">
 </p>
 
 - **Remote template or object** (template injection): the document fetches a file from another server when opened, a way to run macros without carrying them.
@@ -88,7 +88,7 @@ Mail filters treat an `.svg` file as a picture, but a browser runs it like a web
 Every file gets SHA-256, SHA-1 and MD5 fingerprints and an **entropy** reading (how random the bytes look: near 8 means encrypted or packed).
 
 <p align="center">
-  <img src="images/panel-documents-lookups.png" width="340" alt="Hash-only lookups on VirusTotal, Hybrid Analysis and MalwareBazaar">
+  <img src="images/files/panel-documents-lookups.png" width="340" alt="Hash-only lookups on VirusTotal, Hybrid Analysis and MalwareBazaar">
 </p>
 
 | Service | What is sent | Key |
@@ -104,7 +104,7 @@ Every file gets SHA-256, SHA-1 and MD5 fingerprints and an **entropy** reading (
 Every link in a file is listed with where it sits, how it is used (clickable, loaded automatically, remote template, form target, written in macro code) and the text people see. **Test these links** looks each one up on VirusTotal, and **Check phishing lists** asks PhishTank (no key) and URLhaus (free abuse.ch key). Only the links are sent. The same links also appear on the Links tab with the usual local checks.
 
 <p align="center">
-  <img src="images/panel-documents-links.png" width="340" alt="Links found inside a PDF, one confirmed by a phishing list">
+  <img src="images/files/panel-documents-links.png" width="340" alt="Links found inside a PDF, one confirmed by a phishing list">
 </p>
 
 ## Google Docs, Sheets, Slides and Drive files
@@ -112,7 +112,7 @@ Every link in a file is listed with where it sits, how it is used (clickable, lo
 A link on `docs.google.com` looks safe, so attackers host phishing pages and malware in shared Google files. For a file shared with "anyone with the link", **Look inside** downloads Google's Office-format copy **anonymously** (no cookies, not signed in as you, no referrer), then analyses it exactly like an attachment. A private file simply cannot be read, which tells you something too: the sender can change it at any time.
 
 <p align="center">
-  <img src="images/panel-documents-google.png" width="340" alt="A shared Google Doc read without signing in, with its hidden link found">
+  <img src="images/files/panel-documents-google.png" width="340" alt="A shared Google Doc read without signing in, with its hidden link found">
 </p>
 
 ## What it cannot do

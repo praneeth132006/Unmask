@@ -7,6 +7,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { imagePath } from './image-folders.mjs';
 import { chromium } from 'playwright';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -78,7 +79,7 @@ const open = async ({ theme = 'light', managed = null, own = OWN } = {}) => {
 };
 
 const shoot = async (locator, name) => {
-  await locator.screenshot({ path: join(out, name) });
+  await locator.screenshot({ path: imagePath(out, name) });
   console.log('wrote', name);
 };
 

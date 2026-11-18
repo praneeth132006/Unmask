@@ -3,7 +3,7 @@
 When an email is serious, someone has to act on it: a manager decides, a security team investigates, a bank or a regulator may need the details. Unmask builds **one report with two audiences**, in the format each of them expects.
 
 <p align="center">
-  <img src="images/panel-report-formats.png" width="340" alt="The Report or export card: choose Complete, Executive only or Technical only, then PDF, Word, HTML or STIX">
+  <img src="images/reports/panel-report-formats.png" width="340" alt="The Report or export card: choose Complete, Executive only or Technical only, then PDF, Word, HTML or STIX">
 </p>
 
 Open the **Summary** tab, scroll to **Report or export**, choose who the report is for and click a format. Everything is built on your computer; nothing is uploaded.
@@ -62,14 +62,14 @@ For the people who investigate.
 | **Original `.eml`** | The evidence itself. Its hash is recorded in the report |
 
 <p align="center">
-  <img src="images/report-pdf-cover.png" width="300" alt="PDF report cover with verdict, case ID and TLP marking">
+  <img src="images/reports/report-pdf-cover.png" width="300" alt="PDF report cover with verdict, case ID and TLP marking">
   &nbsp;
-  <img src="images/report-pdf-summary.png" width="300" alt="PDF executive summary page">
+  <img src="images/reports/report-pdf-summary.png" width="300" alt="PDF executive summary page">
 </p>
 <p align="center">
-  <img src="images/report-executive.png" width="420" alt="HTML report: executive summary">
+  <img src="images/reports/report-executive.png" width="420" alt="HTML report: executive summary">
   &nbsp;
-  <img src="images/report-technical.png" width="420" alt="HTML report: attachment and file forensics">
+  <img src="images/reports/report-technical.png" width="420" alt="HTML report: attachment and file forensics">
 </p>
 
 ## Safe to share
@@ -101,9 +101,9 @@ What Unmask found, in the report's own words:
 - A genuine **DKIM signature from the mailing service passes**, which is why a simple check would have trusted it. Unmask notices it is signed by a different domain than the From address.
 
 <p align="center">
-  <img src="images/example-binance-withdrawal-executive.png" width="470" alt="Executive part of the report for the fake Binance email">
+  <img src="images/reports/example-binance-withdrawal-executive.png" width="470" alt="Executive part of the report for the fake Binance email">
   &nbsp;
-  <img src="images/example-binance-withdrawal-technical.png" width="470" alt="Technical part: link table, ATT&CK mapping and timeline">
+  <img src="images/reports/example-binance-withdrawal-technical.png" width="470" alt="Technical part: link table, ATT&CK mapping and timeline">
 </p>
 
 **[Open the HTML report](https://praneeth132006.github.io/Unmask/examples/binance-withdrawal.html)** · **[Download the PDF](examples/binance-withdrawal.pdf)**
@@ -119,7 +119,7 @@ What Unmask found, in the report's own words:
 This email was missed before this release. Reading it showed that hardware-wallet makers were not on the brand list, so Coinkite/COLDCARD, Ledger, Trezor and Kraken were added.
 
 <p align="center">
-  <img src="images/example-coldcard-advisory-executive.png" width="470" alt="Executive part of the report for the fake COLDCARD advisory">
+  <img src="images/reports/example-coldcard-advisory-executive.png" width="470" alt="Executive part of the report for the fake COLDCARD advisory">
 </p>
 
 **[Open the HTML report](https://praneeth132006.github.io/Unmask/examples/coldcard-advisory.html)** · **[Download the PDF](examples/coldcard-advisory.pdf)**
@@ -134,7 +134,7 @@ This email was missed before this release. Reading it showed that hardware-walle
 - It carries **41 tracking pixels**, which tell the sender when and where it is opened.
 
 <p align="center">
-  <img src="images/example-efteling-giftcard-executive.png" width="470" alt="Executive part of the report for the fake Efteling email">
+  <img src="images/reports/example-efteling-giftcard-executive.png" width="470" alt="Executive part of the report for the fake Efteling email">
 </p>
 
 **[Open the HTML report](https://praneeth132006.github.io/Unmask/examples/efteling-giftcard.html)** · **[Download the PDF](examples/efteling-giftcard.pdf)**

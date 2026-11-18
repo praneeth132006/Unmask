@@ -2,7 +2,7 @@
 
 Unmask is free for organisations too. There is no paid tier, no account and no sign-up. Everything below uses tools you already have.
 
-<img src="images/teams-flow.svg" alt="How Unmask works in a team: 1. the IT admin installs Unmask and pastes the protection list once, in Google Admin, Intune, Group Policy or a Mac profile. 2. Every work browser gets Unmask and the list, shown as From your organisation. 3. When a fake arrives, for example the CEO's name from a Gmail address, Unmask shows a red warning. 4. The employee reports it, and it lands in the admin's own security dashboard. Nothing goes to Unmask's developer." width="960">
+<img src="images/teams/teams-flow.svg" alt="How Unmask works in a team: 1. the IT admin installs Unmask and pastes the protection list once, in Google Admin, Intune, Group Policy or a Mac profile. 2. Every work browser gets Unmask and the list, shown as From your organisation. 3. When a fake arrives, for example the CEO's name from a Gmail address, Unmask shows a red warning. 4. The employee reports it, and it lands in the admin's own security dashboard. Nothing goes to Unmask's developer." width="960">
 
 **Pick your path:**
 
@@ -35,13 +35,13 @@ Open Unmask, click the **gear** (Settings), and scroll to **Your protection list
 - **People who might be impersonated:** your boss, accountant or a parent, with every address they really use.
 - **Trusted senders:** addresses or whole domains you trust.
 
-<img src="images/teams-own-list.png" alt="The protection list with a company (Airtel, airtel.in), a person (Amma, lakshmi.r@gmail.com) and a trusted domain (school.edu.in)" width="376">
+<img src="images/teams/teams-own-list.png" alt="The protection list with a company (Airtel, airtel.in), a person (Amma, lakshmi.r@gmail.com) and a trusted domain (school.edu.in)" width="376">
 
 ### Step 2. Trust the people you hear from, in one click
 
 Under **Trusted senders**, Unmask suggests people who email you often and whose emails were signed by their own domain, so the address is really theirs. Click **Trust** on each, or **Trust all**.
 
-<img src="images/teams-suggestions.png" alt="Suggested from your inbox: HDFC Bank, GitHub and Ravi Kumar, each with a Trust button, and a Trust all 3 button" width="376">
+<img src="images/teams/teams-suggestions.png" alt="Suggested from your inbox: HDFC Bank, GitHub and Ravi Kumar, each with a Trust button, and a Trust all 3 button" width="376">
 
 Senders that weren't signed, or that you've only heard from once or twice, are never suggested.
 
@@ -49,7 +49,7 @@ Senders that weren't signed, or that you've only heard from once or twice, are n
 
 Click **Export list**. Unmask saves `unmask-protection.json` to your Downloads folder.
 
-<img src="images/teams-share.png" alt="Share with family or your team: Export list, Import list and Copy for IT admin buttons" width="376">
+<img src="images/teams/teams-share.png" alt="Share with family or your team: Export list, Import list and Copy for IT admin buttons" width="376">
 
 ### Step 4. Import it on every other computer
 
@@ -188,7 +188,7 @@ On any work computer:
 1. Open `chrome://policy` (or `edge://policy`) and click **Reload policies**. Unmask's ID appears with a `protectionList` policy.
 2. Open Unmask → **Settings**. The list starts with **From “Acme IT”** and your entries:
 
-<img src="images/teams-org-list.png" alt="From “Acme IT”: set by your IT administrator for everyone. Acme Payroll, HDFC Bank, Priya Menon (CEO) and trusted acme.com" width="376">
+<img src="images/teams/teams-org-list.png" alt="From “Acme IT”: set by your IT administrator for everyone. Acme Payroll, HDFC Bank, Priya Menon (CEO) and trusted acme.com" width="376">
 
 Employees can't change or remove these entries. They can still add their own below them.
 
@@ -196,11 +196,11 @@ Employees can't change or remove these entries. They can still add their own bel
 
 Nothing to learn. When an email imitates anyone on the list, a warning appears inside Gmail or Outlook:
 
-<img src="images/gmail-banner.png" alt="A red Unmask banner inside Gmail: High risk, this email looks like a scam" width="720">
+<img src="images/inbox/gmail-banner.png" alt="A red Unmask banner inside Gmail: High risk, this email looks like a scam" width="720">
 
 When they click a risky link, Unmask stops it first:
 
-<img src="images/gmail-link-warning.png" alt="Unmask stops a click: Wait, this link goes to paypa1-secure.top, with Go back and Open anyway" width="720">
+<img src="images/inbox/gmail-link-warning.png" alt="Unmask stops a click: Wait, this link goes to paypa1-secure.top, with Go back and Open anyway" width="720">
 
 **Tip for your announcement email:** "We've installed Unmask. If you see a red warning, don't click, don't reply. Use Report phishing."
 

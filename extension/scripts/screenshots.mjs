@@ -1,4 +1,4 @@
-// Takes the feature screenshots in docs/images from the real, built extension
+// Takes the feature screenshots in docs/images (sorted into folders by image-folders.mjs) from the real, built extension
 // running in Chromium. Gmail is a local test double; no account is used.
 //
 //   pnpm --filter unmask-extension build:e2e && node scripts/screenshots.mjs
@@ -6,6 +6,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { imagePath } from './image-folders.mjs';
 import { chromium } from 'playwright';
 import { execFileSync } from 'node:child_process';
 import QRCode from 'qrcode';
@@ -142,7 +143,7 @@ const extId = new URL(sw.url()).host;
 await sw.evaluate(() => chrome.storage.local.set({ 'unmask:settings': { autoDomainAge: false, domainIntel: false, theme: 'light' } }));
 
 const shot = async (page, name, clip) => {
-  await page.screenshot({ path: join(out, name), clip });
+  await page.screenshot({ path: imagePath(out, name), clip });
   console.log('wrote', name);
 };
 
@@ -209,7 +210,7 @@ await p.getByRole('tab', { name: /Links/ }).click();
 const qrCard = p.locator('[id^="unmask-link-"]', { hasText: 'QR code in' });
 await qrCard.scrollIntoViewIfNeeded();
 await p.waitForTimeout(300);
-await qrCard.screenshot({ path: join(out, 'panel-qr.png') });
+await qrCard.screenshot({ path: imagePath(out, 'panel-qr.png') });
 console.log('wrote panel-qr.png');
 // Where the tracking pixel is: Privacy tab entry, then its tag in the safe view.
 await p.evaluate(() => window.scrollTo(0, 0));
@@ -217,7 +218,7 @@ await p.getByRole('tab', { name: /Privacy/ }).click();
 const pixelCard = p.locator('#unmask-pixel-1');
 await pixelCard.scrollIntoViewIfNeeded();
 await p.waitForTimeout(300);
-await pixelCard.screenshot({ path: join(out, 'panel-pixel-where.png') });
+await pixelCard.screenshot({ path: imagePath(out, 'panel-pixel-where.png') });
 console.log('wrote panel-pixel-where.png');
 await pixelCard.locator('button', { hasText: 'Show it in the safe view' }).click();
 await p.waitForTimeout(600);
@@ -229,7 +230,7 @@ await shot(p, 'settings-protection.png');
 const listCard = p.locator('#unmask-protection-list');
 await listCard.scrollIntoViewIfNeeded();
 await p.waitForTimeout(200);
-await listCard.screenshot({ path: join(out, 'settings-protection-list.png') });
+await listCard.screenshot({ path: imagePath(out, 'settings-protection-list.png') });
 console.log('wrote settings-protection-list.png');
 
 // ---- Analyst views on corpus samples ---------------------------------------------
@@ -243,7 +244,7 @@ const openSample = async (name) => {
 const element = async (locator, name) => {
   await locator.scrollIntoViewIfNeeded();
   await p.waitForTimeout(200);
-  await locator.screenshot({ path: join(out, name) });
+  await locator.screenshot({ path: imagePath(out, name) });
   console.log('wrote', name);
 };
 // A replayed genuine Google alert: what it looks like, and the header forensics.
@@ -398,10 +399,11 @@ await shot(rp, 'report-technical.png');
 await rp.close();
 const pdfPath = await download(/^PDF/);
 try {
-  execFileSync('pdftoppm', ['-r', '80', '-png', '-f', '1', '-l', '1', pdfPath, join(out, 'report-pdf-cover')]);
-  execFileSync('pdftoppm', ['-r', '80', '-png', '-f', '4', '-l', '4', pdfPath, join(out, 'report-pdf-summary')]);
+  const reports = dirname(imagePath(out, 'report-pdf-cover.png'));
+  execFileSync('pdftoppm', ['-r', '80', '-png', '-f', '1', '-l', '1', pdfPath, join(reports, 'report-pdf-cover')]);
+  execFileSync('pdftoppm', ['-r', '80', '-png', '-f', '4', '-l', '4', pdfPath, join(reports, 'report-pdf-summary')]);
   const { renameSync, readdirSync } = await import('node:fs');
-  for (const f of readdirSync(out).filter((n) => /^report-pdf-(cover|summary)-\d+\.png$/.test(n))) renameSync(join(out, f), join(out, f.replace(/-\d+\.png$/, '.png')));
+  for (const f of readdirSync(reports).filter((n) => /^report-pdf-(cover|summary)-\d+\.png$/.test(n))) renameSync(join(reports, f), join(reports, f.replace(/-\d+\.png$/, '.png')));
   console.log('wrote report-pdf-cover.png, report-pdf-summary.png');
 } catch {
   console.log('pdftoppm not available: skipped the PDF page images');

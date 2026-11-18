@@ -64,7 +64,7 @@ It then looks for:
 - **A sending server with no DNS name.**
 - **The Date header** much older than the arrival (a re-sent email) or in the future.
 
-<p><img src="images/panel-forensics-headers.png" width="360" alt="Headers tab: a DKIM signature with its body-hash result, and the delivery path from a forwarding service to Gmail"></p>
+<p><img src="images/panel/panel-forensics-headers.png" width="360" alt="Headers tab: a DKIM signature with its body-hash result, and the delivery path from a forwarding service to Gmail"></p>
 
 Source: [`analyzers/received.ts`](../extension/src/analyzers/received.ts).
 
@@ -113,7 +113,7 @@ Source: [`lib/dkim.ts`](../extension/src/lib/dkim.ts), [`analyzers/dkim.ts`](../
 
 **ARC** ([RFC 8617](https://www.rfc-editor.org/rfc/rfc8617)) lets each forwarding server record the authentication results it saw, numbered and sealed. Unmask reads the chain's structure (every set present, the `cv=` statuses consistent) and what each server recorded. A DMARC failure on an email that passed at the first ARC hop means it was forwarded or re-sent in between. It doesn't verify the seals' signatures.
 
-<p><img src="images/panel-arc.png" width="360" alt="The ARC record of a mailing-list post: the list saw DKIM, SPF and DMARC pass"></p>
+<p><img src="images/panel/panel-arc.png" width="360" alt="The ARC record of a mailing-list post: the list saw DKIM, SPF and DMARC pass"></p>
 
 **DKIM replay** is the attack where a genuine signed email (often a notification the attacker triggered on their own account, with their lure in a field they control) is re-sent unchanged to many people. The signature still verifies and DMARC can pass. In 2025 attackers used this with genuine Google security alerts. Unmask combines the signs analysts look for, on an email signed by its From domain:
 
@@ -125,7 +125,7 @@ Source: [`lib/dkim.ts`](../extension/src/lib/dkim.ts), [`analyzers/dkim.ts`](../
 
 Two signs make it high risk, three critical, and the *DMARC passed* reassurance is removed.
 
-<p><img src="images/panel-replay-summary.png" width="360" alt="A replayed Google alert rated High risk: the signature is real, but it was signed a week earlier, addressed to someone else and passed on by a forwarding service"></p>
+<p><img src="images/panel/panel-replay-summary.png" width="360" alt="A replayed Google alert rated High risk: the signature is real, but it was signed a week earlier, addressed to someone else and passed on by a forwarding service"></p>
 
 Source: [`analyzers/arc.ts`](../extension/src/analyzers/arc.ts), [`analyzers/replay.ts`](../extension/src/analyzers/replay.ts).
 
@@ -175,7 +175,7 @@ The body is parsed into a document (scripts never run) and checked for forms and
 
 How Unmask detects them: it scans the raw HTML for numeric character references that decode to ordinary letters and digits (email tools only encode punctuation such as `&#39;` or `&#8217;`, so `&#39;` and `&nbsp;` are ignored), decodes `href` values and looks for codes or `%`-encoding in the host name, counts soft hyphens and zero-width characters *inside* words, and finds words mixing Latin with look-alike letters. Each is stronger when the decoded text spells a brand.
 
-<p><img src="images/panel-obfuscation.png" width="360" alt="Findings: Microsoft written in character codes, a link address disguised with codes, words broken up with invisible characters"></p>
+<p><img src="images/panel/panel-obfuscation.png" width="360" alt="Findings: Microsoft written in character codes, a link address disguised with codes, words broken up with invisible characters"></p>
 
 Source: [`analyzers/content.ts`](../extension/src/analyzers/content.ts), [`analyzers/obfuscation.ts`](../extension/src/analyzers/obfuscation.ts).
 
@@ -190,7 +190,7 @@ Every link in the HTML, the plain text, inside attachments and decoded from QR c
    - **VirusTotal**: a lookup of what VirusTotal already knows publishes nothing. Submitting an unknown link for a fresh scan makes it visible to VirusTotal's customers, so Unmask asks first.
    - **Trace redirects**: follows the redirect chain without rendering the page, from the extension or your own server, then reads the final page's HTML: a sign-in page imitating Microsoft, Google or Okta on a host they don't own, their **real** sign-in code relayed through another host (adversary-in-the-middle kits such as Tycoon2FA and Evilginx, which steal the session and get past MFA), and CAPTCHA gates in front of login pages.
 
-<p><img src="images/panel-landing-page.png" width="360" alt="A private sandbox scan: the DocuSign link lands on a fake DocuSign sign-in page, shown in urlscan's screenshot with Save screenshot"></p>
+<p><img src="images/panel/panel-landing-page.png" width="360" alt="A private sandbox scan: the DocuSign link lands on a fake DocuSign sign-in page, shown in urlscan's screenshot with Save screenshot"></p>
 
 *(In this screenshot, urlscan.io and the landing page are local test doubles, so no real site was contacted.)*
 
@@ -256,7 +256,7 @@ Like an analyst's case summary, the Summary names **the kind of attack** the red
 
 Below it, **What Unmask couldn't check** lists this email's blind spots, so a clean result isn't mistaken for a guarantee: missing headers, signatures not verified with the signer's key, delivery steps written before your provider got the email, links checked by address only, files read but not run, remote images not loaded.
 
-<p><img src="images/panel-assessment.png" width="360" alt="What this looks like: Replayed genuine email, high confidence"></p>
+<p><img src="images/panel/panel-assessment.png" width="360" alt="What this looks like: Replayed genuine email, high confidence"></p>
 
 Source: [`core/assessment.ts`](../extension/src/core/assessment.ts).
 
@@ -279,7 +279,7 @@ Source: [`core/assessment.ts`](../extension/src/core/assessment.ts).
 | **Copy analyst write-up** | A plain-text case report in SOC order (below), ready for a ticket |
 | **Copy indicators** | Sender, Reply-To, bounce address, origin IP, delivering server, signing domains, URLs, hosts, file hashes and callback numbers, one per line and **defanged** so none becomes a clickable link |
 
-<p><img src="images/panel-report-analyst.png" width="360" alt="Report or export: APWG, Netcraft, PDF, JSON, original .eml, Copy analyst write-up and Copy indicators"></p>
+<p><img src="images/reports/panel-report-analyst.png" width="360" alt="Report or export: APWG, Netcraft, PDF, JSON, original .eml, Copy analyst write-up and Copy indicators"></p>
 
 An analyst write-up for a DocuSign look-alike from the test corpus:
 
