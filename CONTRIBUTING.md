@@ -99,7 +99,8 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 1. Move *Unreleased* in CHANGELOG.md to a new version and set the same version in `extension/package.json`.
 2. Commit, then tag and push: `git tag v0.2.1 && git push origin v0.2.1`.
 3. The release workflow tests, builds the Chrome, Edge and Firefox zips (with licence notices) and publishes the GitHub Release.
-4. The **Reproducible build** workflow then rebuilds the tag on a fresh runner and checks that every file in the published zips is identical to the source build.
+4. The release workflow then starts **Reproducible build** (rebuilds the tag on a fresh runner and checks every file in the published zips is identical) and **Benchmark** (measures the release and attaches `benchmark.md` and `benchmark.json` to it).
+5. Run **Actions → Publish to stores** with *dry run* ticked to check the store credentials, then again without it to upload to the Chrome Web Store and Firefox Add-ons and submit for review.
 
 ## Verify a release yourself
 

@@ -11,6 +11,8 @@ jobs:
   release:
     permissions:
       contents: write
+      # To start the follow-up workflows below: a release made with this token doesn't trigger them by itself.
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -43,3 +45,9 @@ jobs:
           **Firefox 128+:** download **unmask-firefox-$v.zip**, open \`about:debugging#/runtime/this-firefox\`, click **Load Temporary Add-on** and pick the zip.
 
           See the [changelog](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for what changed."
+      - name: Verify the release and attach the benchmark
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run reproducible.yml --ref main -f tag="$GITHUB_REF_NAME"
+          gh workflow run benchmark.yml --ref main -f tag="$GITHUB_REF_NAME"
