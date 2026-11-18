@@ -4,6 +4,8 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-16
+
 ### Added
 - **OpenSSF Scorecard** runs weekly and on every change to `main`, with a badge in the README. Every GitHub Action is pinned to an exact commit, and workflows only get write access on the jobs that need it.
 - **Why each permission:** a [permissions page](docs/PERMISSIONS.md) explaining what every permission is for, what it could allow, and how to check your copy.
@@ -24,6 +26,7 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 - **Hacked contacts:** a known sender's first-ever file-share or sign-in link, and emails sent in the middle of their night, are flagged.
 
 ### Fixed
+- **Plain words for every new check:** the Summary's plain-language reasons now include the newer checks (ClickFix, fake jobs, calendar lures, SVG smuggling, rules) instead of "Several things about it are typical of scam emails".
 - **Development dependencies patched:** `yaml` 2.9.1 (GHSA-48c2-rrv3-qjmp) and `fast-xml-parser` 5.12.0 through an override (GHSA-474x-hrwr-fgx4). Neither is shipped in the extension; `pnpm audit` is clean.
 - **Fewer false alarms on real mail (13.9% → 6.0% on the benchmark):** newsletter search and sign-up boxes, mailing lists that reply to the list, a newsletter's own click tracker, and email addresses spelt in character codes are no longer treated as phishing. JavaScript in an email is now a low-weight note.
 
