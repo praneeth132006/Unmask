@@ -62,6 +62,8 @@ export function plainReason(f: Finding, report: Report): string | null {
   if (id.startsWith('cert-') || id.startsWith('age-')) return f.severity === 'high' || f.severity === 'medium' ? 'It comes from, or links to, a website that was set up only days ago.' : null;
   if (id === 'first-contact' && f.points > 0) return 'You have never received an email from this sender before.';
   if (id.startsWith('vt-') && f.points > 0) return 'Antivirus companies have flagged something in it as dangerous.';
+  // Newer checks (ClickFix, fake jobs, calendar lures, rules…) carry their own everyday sentence.
+  if (f.plain && (f.severity === 'medium' || f.severity === 'high' || f.severity === 'critical')) return f.plain;
   return null;
 }
 

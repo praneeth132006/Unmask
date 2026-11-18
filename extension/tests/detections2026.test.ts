@@ -184,3 +184,11 @@ describe('calendar files in the Documents tab', () => {
     expect(f.anomalies.find((a) => a.id === 'calendar-outside-link')?.detail).toBe('https://payroll-verify.top/login');
   });
 });
+
+describe('plain words for the newer checks', () => {
+  it('uses a finding’s own everyday sentence when there is no hand-written one', async () => {
+    const { plainSummary } = await import('../src/core/plain');
+    const r = await analyzeRawEmail(eml({ from: 'Sarah HR <sarah.recruit2026@gmail.com>', auth: 'Authentication-Results: mx.google.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass header.d=gmail.com; dmarc=pass header.from=gmail.com', subject: 'Remote job opportunity', body: 'We reviewed your profile for a part-time remote job. You will rate products online, 30 tasks a day, and earn $300 per day. No interview needed. Contact our HR manager on Telegram: t.me/hr_desk_jobs' }));
+    expect(plainSummary(r).reasons).toContain('This job offer has the signs of a scam: real employers never ask you to pay or move to a chat app.');
+  });
+});
