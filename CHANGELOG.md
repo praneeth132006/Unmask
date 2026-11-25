@@ -4,7 +4,11 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-25
+
 ### Added
+- **A new icon:** the disguise peels back to reveal what an email is really hiding.
+- **Command-line tool** (`unmask check`, `report`, `domain`), a **Gmail add-on** (preview) and Sigstore-signed release provenance.
 - **Warn on fake sign-in pages on any website** (opt-in): a page with a password box that pretends to be PayPal, Microsoft or another brand it isn't gets a warning before you type. Checked on your device.
 - **How this trick works:** every red flag links to a short lesson; 21 lessons on the new [How scams work](https://praneeth132006.github.io/Unmask/lessons.html) page.
 - **Is your domain spoofable?** A free website tool that reads a domain's SPF, DMARC, DKIM, MX, MTA-STS and BIMI and gives the exact fix.

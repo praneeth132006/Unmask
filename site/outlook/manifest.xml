@@ -2,7 +2,7 @@
 <!-- Unmask for Outlook: reads the open message and checks it in the task pane. Nothing is sent to any server. -->
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
   <Id>a4613c7d-30d9-4b44-af30-86438886502b</Id>
-  <Version>0.6.0.0</Version>
+  <Version>0.7.0.0</Version>
   <ProviderName>Unmask contributors</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Unmask"/>
