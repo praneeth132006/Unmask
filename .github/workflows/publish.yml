@@ -18,7 +18,8 @@ on:
       stores:
         description: Which stores
         type: choice
-        options: [all, chrome, firefox]
+        # none: skip uploading packages (e.g. only replace the screenshots)
+        options: [all, chrome, firefox, none]
         default: all
       dry_run:
         description: Only check the credentials, don't upload
@@ -79,7 +80,7 @@ jobs:
           [ "$DRY_RUN" = true ] && args+=(--dry-run)
           pnpm exec wxt submit "${args[@]}"
       - name: Replace Firefox listing screenshots
-        if: inputs.screenshots && env.FIREFOX_JWT_SECRET != ''
+        if: always() && inputs.screenshots && env.FIREFOX_JWT_SECRET != ''
         working-directory: extension
         env:
           DRY_RUN: ${{ inputs.dry_run }}
