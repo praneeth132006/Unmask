@@ -35,7 +35,7 @@ async function ensureOffscreen(): Promise<void> {
 
 async function analyzeElsewhere(req: AnalyzeRequest): Promise<AnalyzeResponse> {
   // Firefox's background is a page with a DOM; Chrome's is a worker without one.
-  if (import.meta.env.FIREFOX && typeof DOMParser !== 'undefined') {
+  if ((import.meta.env.FIREFOX || import.meta.env.SAFARI) && typeof DOMParser !== 'undefined') {
     const [{ analyzeRawEmail }, { slimReport }] = await Promise.all([import('../src/core/analyze'), import('../src/lib/slimReport')]);
     return { ok: true, report: slimReport(await analyzeRawEmail(req.raw, { history: req.history, protection: req.protection })) };
   }

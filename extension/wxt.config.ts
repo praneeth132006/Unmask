@@ -30,6 +30,15 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   hooks: {
     'build:done': (wxt) => assertNoNoncharacters(wxt.config.outDir),
+    // Safari has no side panel and no offscreen documents. Its background runs as a
+    // non-persistent page, which has the DOM parser the analysis needs.
+    'build:manifestGenerated': (wxt, manifest) => {
+      if (wxt.config.browser !== 'safari') return;
+      manifest.permissions = (manifest.permissions ?? []).filter((p) => p !== 'sidePanel' && p !== 'offscreen');
+      delete (manifest as { side_panel?: unknown }).side_panel;
+      const bg = manifest.background as { service_worker?: string } | undefined;
+      if (bg?.service_worker) manifest.background = { scripts: [bg.service_worker], persistent: false } as unknown as typeof manifest.background;
+    },
   },
   vite: () => ({
     plugins: [tailwindcss()],
@@ -42,7 +51,7 @@ export default defineConfig({
     description:
       'See what a suspicious email is really hiding: real sender, real links, hidden text and attachment checks.',
     // offscreen: HTML parsing for the in-Gmail checks if Gmail ever blocks it in the content script.
-    permissions: ['storage', 'tabs', 'webRequest', ...(browser === 'firefox' ? [] : ['offscreen'])],
+    permissions: ['storage', 'tabs', 'webRequest', ...(browser === 'firefox' || browser === 'safari' ? [] : ['offscreen'])],
     // Asked for only when the user first clicks "Trace redirects" (built-in tracer).
     optional_host_permissions: ['<all_urls>'],
     host_permissions: [
@@ -69,9 +78,11 @@ export default defineConfig({
     ],
     action: {
       default_title: 'Open Unmask',
+      // Safari has no side panel: the same page opens from the toolbar button instead.
+      ...(browser === 'safari' ? { default_popup: 'sidepanel.html' } : {}),
     },
     // Lets an IT admin push a shared protection list by policy (docs/TEAMS.md). Firefox reads managed storage from its own enterprise policies.
-    ...(browser === 'firefox' ? {} : { storage: { managed_schema: 'managed_schema.json' } }),
+    ...(browser === 'firefox' || browser === 'safari' ? {} : { storage: { managed_schema: 'managed_schema.json' } }),
     ...(browser === 'firefox'
       ? {
           browser_specific_settings: {
