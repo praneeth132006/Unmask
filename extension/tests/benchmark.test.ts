@@ -18,7 +18,7 @@ import { analyzeRawEmail } from '../src/core/analyze';
 const dir = process.env.UNMASK_BENCH_DIR ? resolve(__dirname, '..', '..', process.env.UNMASK_BENCH_DIR) : '';
 const enabled = !!dir && existsSync(join(dir, 'phish')) && existsSync(join(dir, 'ham'));
 
-interface Row { file: string; verdict: string; score: number; ms: number; top: string[]; subject: string }
+interface Row { file: string; verdict: string; score: number; ms: number; top: string[]; checks: string[]; subject: string }
 
 async function run(sub: 'phish' | 'ham'): Promise<Row[]> {
   const files = readdirSync(join(dir, sub)).filter((f) => f.endsWith('.eml')).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
@@ -27,12 +27,31 @@ async function run(sub: 'phish' | 'ham'): Promise<Row[]> {
     const t0 = performance.now();
     try {
       const r = await analyzeRawEmail(readFileSync(join(dir, sub, f)));
-      rows.push({ file: f, verdict: r.verdict, score: r.score, ms: performance.now() - t0, top: r.findings.filter((x) => x.points > 0).slice(0, 4).map((x) => x.id.replace(/[0-9a-f]{12}$/, '*')), subject: r.email.subject.slice(0, 90) });
+      rows.push({ file: f, verdict: r.verdict, score: r.score, ms: performance.now() - t0, top: r.findings.filter((x) => x.points > 0).slice(0, 4).map((x) => checkId(x.id)), checks: [...new Set(r.findings.filter((x) => x.points > 0).map((x) => checkId(x.id)))], subject: r.email.subject.slice(0, 90) });
     } catch (e) {
-      rows.push({ file: f, verdict: 'error', score: 0, ms: performance.now() - t0, top: [String(e).slice(0, 120)], subject: '' });
+      rows.push({ file: f, verdict: 'error', score: 0, ms: performance.now() - t0, top: [String(e).slice(0, 120)], checks: [], subject: '' });
     }
   }
   return rows;
+}
+
+/** Finding ids carry a per-item suffix (link-3, vt-<hash>); the check is the part before it. */
+const checkId = (id: string) => id.replace(/[0-9a-f]{12}$/, '*').replace(/[-:]\d+$/, '');
+
+export interface CheckPrecision { id: string; phish: number; ham: number; phishPct: number; hamPct: number; precision: number }
+
+/**
+ * How well each check separates phishing from real mail. Precision is
+ * weighted for the corpora's different sizes: the chance a firing is on
+ * phishing if the two kinds of mail were equally common.
+ */
+function perCheck(phish: Row[], ham: Row[]): CheckPrecision[] {
+  const count = (rows: Row[]) => { const n: Record<string, number> = {}; for (const r of rows) for (const c of r.checks) n[c] = (n[c] ?? 0) + 1; return n; };
+  const p = count(phish), h = count(ham);
+  return [...new Set([...Object.keys(p), ...Object.keys(h)])].map((id) => {
+    const phishRate = (p[id] ?? 0) / Math.max(1, phish.length), hamRate = (h[id] ?? 0) / Math.max(1, ham.length);
+    return { id, phish: p[id] ?? 0, ham: h[id] ?? 0, phishPct: pct(p[id] ?? 0, phish.length), hamPct: pct(h[id] ?? 0, ham.length), precision: phishRate + hamRate ? Math.round((phishRate / (phishRate + hamRate)) * 1000) / 10 : 0 };
+  }).filter((c) => c.phish + c.ham >= 3).sort((a, b) => b.ham - a.ham || b.phish - a.phish);
 }
 
 const pct = (n: number, d: number) => (d ? Math.round((n / d) * 1000) / 10 : 0);
@@ -57,7 +76,8 @@ describe.skipIf(!enabled)('public benchmark', () => {
       slowestMs: Math.round(all[all.length - 1]!),
       source: existsSync(join(dir, 'phish-source.txt')) ? readFileSync(join(dir, 'phish-source.txt'), 'utf8').trim() : '',
     };
-    const result = { summary, phishSignals: signals(phish.filter(flagged)), falseAlarmSignals: signals(falseAlarms), falseAlarms: falseAlarms.map(({ file, verdict, score, top, subject }) => ({ file, verdict, score, top, subject })), missed: phish.filter((r) => r.verdict === 'clear').map(({ file, score, subject }) => ({ file, score, subject })) };
+    const checks = perCheck(phish, ham);
+    const result = { summary, checks, phishSignals: signals(phish.filter(flagged)), falseAlarmSignals: signals(falseAlarms), falseAlarms: falseAlarms.map(({ file, verdict, score, top, subject }) => ({ file, verdict, score, top, subject })), missed: phish.filter((r) => r.verdict === 'clear').map(({ file, score, subject }) => ({ file, score, subject })) };
     const md = [
       '| | Emails | Result |',
       '|---|---|---|',
@@ -65,11 +85,13 @@ describe.skipIf(!enabled)('public benchmark', () => {
       `| Real legitimate email ([SpamAssassin public corpus](https://spamassassin.apache.org/old/publiccorpus/)) | ${summary.ham.total} | **${summary.ham.falseAlarmPct}% false alarms** (${summary.ham.falseAlarms} rated Suspicious or High risk, ${summary.ham.highRisk} High risk) |`,
       `| Speed | ${summary.phish.total + summary.ham.total} | median ${summary.medianMs} ms per email, slowest ${summary.slowestMs} ms, ${summary.errors} errors |`,
     ].join('\n');
+    const checksMd = ['| Check | Fires on phishing | Fires on real mail | Precision |', '|---|---|---|---|', ...checks.map((c) => `| \`${c.id}\` | ${c.phishPct}% (${c.phish}) | ${c.hamPct}% (${c.ham}) | ${c.precision}% |`)].join('\n');
     if (process.env.UNMASK_BENCH_OUT) {
       const out = resolve(__dirname, '..', '..', process.env.UNMASK_BENCH_OUT);
       mkdirSync(out, { recursive: true });
       writeFileSync(join(out, 'benchmark.json'), JSON.stringify(result, null, 2));
       writeFileSync(join(out, 'benchmark.md'), `${md}\n`);
+      writeFileSync(join(out, 'checks.md'), `${checksMd}\n`);
     }
     process.stdout.write(`\nBENCHMARK ${JSON.stringify(summary)}\n${md}\n`);
     expect(summary.errors).toBe(0);
