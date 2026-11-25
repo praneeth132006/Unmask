@@ -104,6 +104,13 @@ Add `[hostSuffix, 'Service name']` to `SERVICES` in `extension/src/analyzers/tra
 
 ## Verify a release yourself
 
+**Signed provenance (from v0.6.1):** every zip in a release has a Sigstore-signed SLSA build attestation, proving it was built by this repository's release workflow from a specific commit. Check a download with the GitHub CLI:
+
+```bash
+gh attestation verify unmask-chrome-<version>.zip --repo praneeth132006/Unmask
+```
+
+**Reproducible builds:**
 Anyone can check that a published release was built from this code, with nothing added:
 
 ```bash
