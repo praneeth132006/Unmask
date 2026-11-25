@@ -54,6 +54,8 @@ export default defineConfig({
     permissions: ['storage', 'tabs', 'webRequest', ...(browser === 'firefox' || browser === 'safari' ? [] : ['offscreen'])],
     // Asked for only when the user first clicks "Trace redirects" (built-in tracer).
     optional_host_permissions: ['<all_urls>'],
+    // Asked for only when the user turns on "Warn on fake sign-in pages on any website".
+    optional_permissions: ['scripting'],
     host_permissions: [
       'https://mail.google.com/*',
       // "Download original" can redirect to Google's content host.

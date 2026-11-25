@@ -1,4 +1,5 @@
 import { languageModel } from '../../lib/onDeviceAi';
+import { requestLoginGuard } from '../../lib/loginGuardSetup';
 import { FamilySettings, SettingsLock } from './FamilySettings';
 import { browser } from 'wxt/browser';
 import { useEffect, useState, type ReactNode } from 'react';
@@ -203,6 +204,20 @@ export function SettingsPanel({ settings, onClose, onSaved }: { settings: Settin
           Sandbox scans are always <strong className="text-[var(--text-2)]">private</strong>: only your key can see the result and screenshot. They never appear in urlscan.io’s public feed or search, or in urlscan Pro for its partners. Free plan: 50 a day.
         </p>
       )}
+
+      <SectionTitle>Beyond email</SectionTitle>
+      <Card>
+        <Toggle
+          checked={settings.loginGuard}
+          onChange={(v) => void (async () => {
+            if (v && !(await requestLoginGuard())) return;
+            await update({ loginGuard: v });
+          })()}
+          title="Warn on fake sign-in pages on any website"
+        >
+          When a page with a password box pretends to be PayPal, Microsoft, your bank or another brand it isn’t, Unmask warns you before you type. Needs access to the sites you visit; the page is checked on this device and nothing is sent.
+        </Toggle>
+      </Card>
 
       <SectionTitle>Privacy</SectionTitle>
       <Card className="divide-y divide-[var(--border)]">

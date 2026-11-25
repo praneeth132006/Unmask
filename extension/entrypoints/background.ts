@@ -2,7 +2,8 @@ import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
 import { PEEK_KEY, type PendingPeek } from '../src/lib/messages';
 import type { AnalyzeRequest, AnalyzeResponse, BackgroundFetchRequest, BackgroundFetchResponse, OpenPanelRequest, PreviewLinkRequest, PreviewLinkResponse, TraceRequest, TraceResponse } from '../src/lib/messages';
-import { loadSettings } from '../src/lib/settings';
+import { loadSettings, SETTINGS_KEY } from '../src/lib/settings';
+import { syncLoginGuard } from '../src/lib/loginGuardSetup';
 import { fetchScreenshot, scanUrl, UrlscanPending } from '../src/integrations/urlscan';
 import { isOutlookUrl } from '../src/lib/outlookDom';
 import { traceQueued, webRequestHub } from '../src/lib/builtinTrace';
@@ -91,6 +92,12 @@ export default defineBackground(() => {
     const opening = b.sidePanel ? b.sidePanel.open({ tabId: sender.tab.id }) : b.sidebarAction?.open();
     opening?.catch((err: unknown) => console.warn('[unmask] could not open the panel', err));
   });
+
+  // "Warn on fake sign-in pages anywhere": the content script is registered only while it's on.
+  const syncGuard = () => void loadSettings().then((st) => syncLoginGuard(st.loginGuard));
+  syncGuard();
+  browser.storage.onChanged.addListener((changes, area) => { if (area === 'local' && changes[SETTINGS_KEY]) syncGuard(); });
+  browser.permissions.onRemoved?.addListener(syncGuard);
 
   // "Preview safely" in the click warning: a private urlscan.io scan, run here so the key never reaches the mail page.
   browser.runtime.onMessage.addListener((req: PreviewLinkRequest, sender, sendResponse) => {

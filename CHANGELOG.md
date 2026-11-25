@@ -5,6 +5,13 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 ## [Unreleased]
 
 ### Added
+- **Warn on fake sign-in pages on any website** (opt-in): a page with a password box that pretends to be PayPal, Microsoft or another brand it isn't gets a warning before you type. Checked on your device.
+- **How this trick works:** every red flag links to a short lesson; 21 lessons on the new [How scams work](https://praneeth132006.github.io/Unmask/lessons.html) page.
+- **Is your domain spoofable?** A free website tool that reads a domain's SPF, DMARC, DKIM, MX, MTA-STS and BIMI and gives the exact fix.
+- **Check a message app:** an installable web page; on Android, share a text message to Unmask to check it.
+- **Outlook add-in (preview):** *Check with Unmask* in Outlook on the web, desktop and mobile.
+- **Community rules gallery** on the website, and a new rule for bank "update your KYC" lures.
+- Weekly counts are kept for two years, not eight weeks.
 - **Check a text message or link:** paste an SMS, a WhatsApp message, a bare link or a whole email and Unmask checks it on your device. Sender checks are skipped for messages, which have no real sender.
 - **Why the score is N:** every check's points as a bar, adding up to the score, with good signs crossed out when something serious was found.
 - **Warn someone:** copy or save a picture (or text) of the verdict for a family or team chat, with addresses defanged.

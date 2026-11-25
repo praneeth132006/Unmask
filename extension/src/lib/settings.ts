@@ -13,6 +13,8 @@ export interface Settings {
   backendUrl: string;
   /** Look up how old the sender's domain is (sends only the domain name to rdap.org). */
   autoDomainAge: boolean;
+  /** Warn on fake sign-in pages on any website (opt-in; needs access to all sites). */
+  loginGuard: boolean;
   /** Panel colour theme; "system" follows the operating system. */
   theme: Theme;
   /** How "Trace redirects" works: inside Unmask, or through a self-hosted server. */
@@ -58,6 +60,7 @@ export const DEFAULT_SETTINGS: Settings = {
   abuseChKey: '',
   backendUrl: '',
   autoDomainAge: true,
+  loginGuard: false,
   theme: 'system',
   traceMode: 'builtin',
   senderHistory: true,

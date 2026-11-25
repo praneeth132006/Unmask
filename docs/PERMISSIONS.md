@@ -24,6 +24,7 @@ Each of these is optional: the browser shows its own prompt the first time, you 
 | Asked for | When | Used for |
 |---|---|---|
 | Access to all sites (`<all_urls>`) | The first time you click **Trace redirects** with the built-in tracer | Contacting the link's own website and each site it redirects to, from the background, with no cookies and never in a tab. Not needed if you use your own trace server |
+| Access to all sites (`<all_urls>`) and `scripting` | When you turn on **Warn on fake sign-in pages on any website** in Settings (off by default) | Checking pages that have a password box: their address, title and headings are compared with the brands they claim, on your device. Nothing about the page is sent anywhere. Turning the setting off, or removing the permission in the browser, stops it |
 | `docs.google.com`, `drive.google.com` | **Look inside** a shared Google Doc, Sheet, Slides or Drive file | Downloading the public copy anonymously, to read it on your computer |
 | `checkurl.phishtank.com`, `urlhaus-api.abuse.ch` | **Check phishing lists** on a link | Asking PhishTank and URLhaus about that one link |
 | `www.hybrid-analysis.com`, `mb-api.abuse.ch` | A Hybrid Analysis or MalwareBazaar button on the Documents tab | Sending that file's SHA-256 hash (never the file) |
