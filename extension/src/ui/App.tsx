@@ -730,6 +730,9 @@ function EmptyState({
         <a className="mt-2 inline-block text-xs font-medium text-[var(--accent)]" href={browser.runtime.getURL('/practice.html')} target="_blank" rel="noopener noreferrer">
           Practise spotting scams (10 emails)
         </a>
+        <a className="mt-1 block text-xs font-medium text-[var(--accent)]" href={browser.runtime.getURL('/check.html')} target="_blank" rel="noopener noreferrer">
+          Check a text message or link
+        </a>
       </div>
       <div className="mx-auto mt-6 max-w-[290px] rounded-xl border border-dashed border-[var(--border-strong)] p-3 text-xs text-[var(--text-2)]">
         Using the Outlook desktop app or another client? Save the email as an <strong className="text-[var(--text)]">.eml</strong> file and drop it here, or paste its raw source with the clipboard button above.
