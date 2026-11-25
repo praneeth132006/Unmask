@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Inter;src:url(../../node_modules/@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2) format('woff2');font-weight:100 900}
+*{margin:0;box-sizing:border-box}
+body{background:#0c0e0f;font-family:Inter,sans-serif;color:#f1f3ee;overflow:hidden;position:relative}
+em{font-style:normal;color:#9bd14c}
+.glow{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(155,209,76,.26),transparent 72%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px)}
+
+/* Small promo tile, 440x280 */
+.small{width:440px;height:280px}
+.small .glow{width:420px;height:420px;left:-150px;top:-120px}
+.small .grid{background-size:28px 28px;mask-image:radial-gradient(circle at 20% 40%,#000,transparent 70%)}
+.small .in{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 36px}
+.small .row{display:flex;align-items:center;gap:18px}
+.small img{width:96px;height:96px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.55))}
+.small .name{font-size:42px;font-weight:750;letter-spacing:-.035em}
+.small .tag{margin-top:4px;font-size:15px;color:#b0b5b2;font-weight:500}
+.small h2{margin-top:26px;font-size:24px;line-height:1.15;letter-spacing:-.025em;font-weight:700}
+
+/* Marquee promo tile, 1400x560 */
+.marquee{width:1400px;height:560px}
+.marquee .glow{width:900px;height:900px;right:-160px;top:-260px}
+.marquee .grid{background-size:48px 48px;mask-image:linear-gradient(90deg,#000,transparent 65%)}
+.marquee .in{position:absolute;left:90px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;width:720px}
+.marquee .brand{display:flex;align-items:center;gap:16px;font-size:30px;font-weight:700;letter-spacing:-.02em}
+.marquee .brand img{width:60px;height:60px}
+.marquee h1{margin-top:38px;font-size:72px;line-height:1.02;letter-spacing:-.045em;font-weight:750}
+.marquee p{margin-top:24px;font-size:24px;color:#b0b5b2;line-height:1.4;max-width:600px}
+.marquee .chips{margin-top:30px;display:flex;gap:10px}
+.marquee .chips span{font-size:17px;color:#c9cec9;border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:6px 14px}
+.card{position:absolute;right:110px;top:50%;width:430px;background:#fff;color:#202124;border-radius:20px;border-top:8px solid #d93025;padding:30px 32px;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:translateY(-50%) rotate(-2.5deg)}
+.card .v{display:inline-block;font-size:14px;font-weight:700;color:#a50e0e;background:#fdecea;border-radius:99px;padding:4px 10px;margin-bottom:14px}
+.card b{display:block;font-size:24px}
+.card .t{margin:12px 0 16px;padding:10px 12px;background:#fdecea;border-radius:8px;font:700 24px ui-monospace,Menlo,monospace;color:#a50e0e}
+.card li{font-size:18px;color:#3c4043;margin-left:20px;line-height:1.55}
+.card .btns{margin-top:20px;display:flex;justify-content:flex-end;gap:10px}
+.card .btns span{font-size:16px;font-weight:600;border-radius:8px;padding:9px 16px;border:1px solid #dadce0;color:#3c4043}
+.card .btns span.go{background:#1a73e8;border-color:#1a73e8;color:#fff}
+</style></head><body>
+<script>document.body.className = new URLSearchParams(location.search).get('t') || 'small';</script>
+<div class="glow"></div><div class="grid"></div>
+<div class="in only-small">
+  <div class="row"><img src="../../docs/brand/logo-512.png" alt=""><div><div class="name">Unmask</div><div class="tag">Phishing email inspector</div></div></div>
+  <h2>See what a suspicious email is <em>really</em> hiding.</h2>
+</div>
+<div class="in only-marquee">
+  <div class="brand"><img src="../../docs/brand/logo-512.png" alt="">Unmask</div>
+  <h1>See what a suspicious email is <em>really</em> hiding.</h1>
+  <p>Stops phishing clicks in Gmail and Outlook, and explains why in plain words. Every check runs on your device.</p>
+  <div class="chips"><span>Free</span><span>Open source</span><span>No accounts, no tracking</span></div>
+</div>
+<div class="card only-marquee"><span class="v">Unmask · High risk</span><b>Wait, this link goes to</b><div class="t">paypa1-secure.top</div><ul><li>Uses "1" instead of "l" in PayPal</li><li>Shows paypal.com, goes elsewhere</li></ul><div class="btns"><span>Open anyway</span><span class="go">Go back</span></div></div>
+<style>body.small .only-marquee,body.marquee .only-small{display:none}</style>
+</body></html>
