@@ -3,9 +3,9 @@
   "items": [
     {
       "id": "coldcard-advisory",
-      "date": "2026-10",
+      "date": "Oct 2026",
       "title": "A fake COLDCARD \"security advisory\"",
-      "brand": "COLDCARD (hardware wallet)",
+      "brand": "COLDCARD",
       "verdict": "high",
       "score": 60,
       "lure": "Owners are told to book a \"10-minute call\" through a link to collect a refund.",
@@ -21,7 +21,7 @@
     },
     {
       "id": "binance-withdrawal",
-      "date": "2026-10",
+      "date": "Oct 2026",
       "title": "A fake Binance \"withdrawal successful\" email",
       "brand": "Binance",
       "verdict": "high",
@@ -39,9 +39,9 @@
     },
     {
       "id": "efteling-giftcard",
-      "date": "2026-10",
+      "date": "Oct 2026",
       "title": "A fake Efteling gift-card survey",
-      "brand": "Efteling (theme park)",
+      "brand": "Efteling",
       "verdict": "high",
       "score": 59,
       "lure": "A gift card for \"confirming your participation\" in a survey.",

@@ -23,7 +23,6 @@ const PAGES = [
   { md: 'docs/CHECKS.md', out: 'checks.html', title: 'What Unmask checks', nav: 'Checks', main: true },
   { md: 'docs/BENCHMARK.md', out: 'benchmark.html', title: 'Benchmark: how often Unmask is right', nav: 'Benchmark', main: true },
   { md: 'docs/TEAMS.md', out: 'teams.html', title: 'Unmask for teams, schools and families', nav: 'Teams', main: true },
-  { md: 'docs/SAFARI.md', out: 'safari.html', title: 'Unmask for Safari', nav: 'Safari' },
   { md: 'docs/FILE_FORENSICS.md', out: 'files.html', title: 'Looking inside attachments', nav: 'Inside attachments' },
   { md: 'docs/REPORTS.md', out: 'reports.html', title: 'Investigation reports', nav: 'Reports' },
   { md: 'docs/PERMISSIONS.md', out: 'permissions.html', title: 'Why Unmask asks for each permission', nav: 'Permissions' },
@@ -43,7 +42,6 @@ const LINK_MAP = {
   'PERMISSIONS.md': 'permissions.html',
   'PRIVACY.md': 'privacy.html',
   'CHANGELOG.md': 'changelog.html',
-  'SAFARI.md': 'safari.html',
 };
 
 /** Removes HTML tags, repeating until none are left (one pass can leave a new tag behind). */
@@ -165,7 +163,7 @@ function layout({ title, body, current, description }) {
   const group = (label, items) => `<p class="menu-label">${label}</p>${items.map(link).join('')}`;
   const burger = [
     group('Product', [['index.html', 'Home'], ['index.html#try', 'Try it live'], ['scams.html', 'Scam watch'], ['benchmark.html', 'Benchmark'], ['changelog.html', 'Changelog']]),
-    group('Learn', [['guide.html', 'User guide'], ['analysis.html', 'How it works'], ['checks.html', 'What it checks'], ['files.html', 'Inside attachments'], ['reports.html', 'Reports'], ['teams.html', 'Teams and families'], ['safari.html', 'Safari']]),
+    group('Learn', [['guide.html', 'User guide'], ['analysis.html', 'How it works'], ['checks.html', 'What it checks'], ['files.html', 'Inside attachments'], ['reports.html', 'Reports'], ['teams.html', 'Teams and families']]),
     group('Trust', [['privacy.html', 'Privacy'], ['permissions.html', 'Permissions'], ['limits.html', 'Limits and costs'], [REPO, 'GitHub']]),
   ].join('');
   const col = (h, items) => `<div><h4>${h}</h4><ul>${items.map(([href, label]) => `<li><a href="${href}">${label}</a></li>`).join('')}</ul></div>`;
@@ -204,7 +202,7 @@ function layout({ title, body, current, description }) {
 <footer><div class="wrap">
   <div class="foot">
     <div class="foot-brand"><a class="brand" href="index.html"><img src="icon-48.png" alt="" width="28" height="28">Unmask</a><p>A free, open-source browser extension that shows what a suspicious email is really hiding. Your email never leaves your device.</p></div>
-    ${col('Product', [[STORE.chrome, 'Chrome, Edge, Brave'], [STORE.firefox, 'Firefox'], ['safari.html', 'Safari (preview)'], ['index.html#try', 'Try it live'], ['scams.html', 'Scam watch'], ['changelog.html', 'Changelog']])}
+    ${col('Product', [[STORE.chrome, 'Chrome Web Store'], [STORE.firefox, 'Firefox Add-ons'], [`${REPO}/releases/latest`, 'Latest zip (other browsers)'], ['index.html#try', 'Try it live'], ['scams.html', 'Scam watch'], ['changelog.html', 'Changelog']])}
     ${col('Learn', [['guide.html', 'User guide'], ['analysis.html', 'How it works'], ['checks.html', 'What it checks'], ['files.html', 'Inside attachments'], ['reports.html', 'Reports'], ['teams.html', 'Teams and families']])}
     ${col('Trust', [['privacy.html', 'Privacy'], ['permissions.html', 'Permissions'], ['benchmark.html', 'Benchmark'], ['limits.html', 'Limits and costs'], [`${REPO}/blob/main/SECURITY.md`, 'Security']])}
     ${col('Project', [[REPO, 'GitHub'], [`${REPO}/wiki`, 'Wiki'], [`${REPO}/issues/new/choose`, 'Report a problem'], [`${REPO}/blob/main/CONTRIBUTING.md`, 'Contribute'], ['https://github.com/sponsors/praneeth132006', 'Support Unmask']])}
@@ -218,10 +216,17 @@ function layout({ title, body, current, description }) {
   var ua = navigator.userAgent, label = 'Add to Chrome', href = ${JSON.stringify(STORE.chrome)};
   var has = function (t) { return ua.indexOf(t) >= 0; };
   if (has('Firefox/')) { label = 'Add to Firefox'; href = ${JSON.stringify(STORE.firefox)}; }
-  else if (has('Edg/')) label = 'Add to Edge';
-  else if (navigator.brave) label = 'Add to Brave';
-  else if (has('Safari/') && !has('Chrome/')) { label = 'Get it for Safari'; href = 'safari.html'; }
-  doc.querySelectorAll('[data-install]').forEach(function (a) { a.href = href; var l = a.querySelector('[data-install-label]'); if (l) l.textContent = label; });
+  // Published only on the Chrome Web Store and Firefox Add-ons; any other browser gets the latest release zip.
+  else if (has('Edg/') || has('OPR/') || navigator.brave || (has('Safari/') && !has('Chrome/'))) { label = 'Download the latest zip'; href = ${JSON.stringify(REPO + '/releases/latest')}; }
+  doc.querySelectorAll('[data-install]').forEach(function (a) { a.href = href; a.target = '_blank'; a.rel = 'noopener'; var l = a.querySelector('[data-install-label]'); if (l) l.textContent = label; });
+
+  // Coming back to a page puts you where you left it, even if the browser forgot.
+  var key = 'unmask-scroll:' + location.pathname;
+  addEventListener('pagehide', function () { try { sessionStorage.setItem(key, String(scrollY)); } catch (e) {} });
+  var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (nav && (nav.type === 'back_forward' || nav.type === 'reload') && !location.hash) {
+    try { var y = Number(sessionStorage.getItem(key)); if (y) addEventListener('load', function () { if (scrollY < 10) scrollTo(0, y); }); } catch (e) {}
+  }
 
   // Sections fade in as they arrive.
   // Content is never left hidden: whatever is on screen shows at once, a scroll check backs up
@@ -360,8 +365,11 @@ function pictures(page) {
   });
 }
 
+/** Links that leave the site open in a new tab, so the visitor's place here is kept. */
+const newTab = (page) => page.replace(/<a\b(?![^>]*\btarget=)([^>]*\bhref="https?:\/\/[^"]*"[^>]*)>/g, '<a$1 target="_blank" rel="noopener">');
+
 function write(file, page) {
-  writeFileSync(join(out, file), pictures(page));
+  writeFileSync(join(out, file), newTab(pictures(page)));
 }
 
 rmSync(out, { recursive: true, force: true });
