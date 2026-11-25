@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Report } from '../../core/types';
 import { askHelperLink, validHelper } from '../../lib/family';
-import { thisAndLastWeek, weekSentence, type Stats } from '../../lib/stats';
+import { badges, thisAndLastWeek, weekSentence, type Stats } from '../../lib/stats';
 import { loadStats } from '../../lib/statsStore';
 import { Card } from './ui';
 
@@ -29,9 +29,17 @@ export function WeeklyCard() {
   }, []);
   if (!stats) return null;
   const { thisWeek, lastWeek } = thisAndLastWeek(stats);
-  if (!thisWeek.checked && !lastWeek?.checked) return null;
+  const earned = badges(stats);
+  if (!thisWeek.checked && !lastWeek?.checked && !earned.length) return null;
   return (
     <div className="mx-auto mt-5 max-w-[300px] rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left text-xs" aria-label="This week">
+      {earned.length > 0 && (
+        <ul className="mb-2 flex flex-wrap gap-1.5" aria-label="Badges">
+          {earned.map((b) => (
+            <li key={b} className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-semibold text-[var(--accent)]">{b}</li>
+          ))}
+        </ul>
+      )}
       <p className="font-semibold text-[var(--text)]">This week, Unmask {weekSentence(thisWeek)}.</p>
       {lastWeek && lastWeek.checked > 0 && <p className="mt-1 text-[var(--text-3)]">Last week it {weekSentence(lastWeek)}.</p>}
       <p className="mt-1.5 text-[10px] text-[var(--text-3)]">Counted on this device only.</p>

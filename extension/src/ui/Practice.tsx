@@ -4,6 +4,7 @@ import type { Report } from '../core/types';
 import { PRACTICE, type PracticeItem } from '../demo/practice';
 import { PlainCard } from './components/Overview';
 import { Button, Card } from './components/ui';
+import { recordStat } from '../lib/statsStore';
 
 const ROUND = 10;
 
@@ -36,15 +37,7 @@ export function Practice() {
   }, [report]);
 
   if (!item) {
-    return (
-      <main className="mx-auto max-w-[680px] px-4 py-10 text-center text-[var(--text)]">
-        <h1 className="text-xl font-semibold">You spotted {right} of {round.length}</h1>
-        <p className="mt-2 text-sm text-[var(--text-2)]">{right === round.length ? 'Perfect. Scammers will have a hard time with you.' : right >= round.length * 0.7 ? 'Well done. Look again at the ones you missed: those are the tricks that work.' : 'These are hard on purpose. The lessons are what count: who really sent it, and what it asks you to do.'}</p>
-        <Button variant="primary" className="mt-4" onClick={() => { setRound(pickRound(PRACTICE)); setAt(0); setRight(0); setAnswer(null); }}>
-          Practise again
-        </Button>
-      </main>
-    );
+    return <Finished right={right} of={round.length} onAgain={() => { setRound(pickRound(PRACTICE)); setAt(0); setRight(0); setAnswer(null); }} />;
   }
 
   const choose = (scam: boolean) => {
@@ -96,6 +89,42 @@ export function Practice() {
             </Button>
           </div>
         </div>
+      )}
+    </main>
+  );
+}
+
+/** The end of a round: the score, counted on this device, and a certificate to print for a perfect one. */
+function Finished({ right, of, onAgain }: { right: number; of: number; onAgain: () => void }) {
+  const [name, setName] = useState('');
+  useEffect(() => {
+    void recordStat({ type: 'practice', right, of });
+  }, [right, of]);
+  const perfect = right === of;
+  return (
+    <main className="mx-auto max-w-[680px] px-4 py-10 text-center text-[var(--text)]">
+      <div className="print:hidden">
+        <h1 className="text-xl font-semibold">You spotted {right} of {of}</h1>
+        <p className="mt-2 text-sm text-[var(--text-2)]">{perfect ? 'Perfect. Scammers will have a hard time with you.' : right >= of * 0.7 ? 'Well done. Look again at the ones you missed: those are the tricks that work.' : 'These are hard on purpose. The lessons are what count: who really sent it, and what it asks you to do.'}</p>
+        <Button variant="primary" className="mt-4" onClick={onAgain}>Practise again</Button>
+        {perfect && (
+          <div className="mx-auto mt-6 max-w-[360px] rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 text-left text-sm">
+            <p className="font-semibold">Print a Scam Spotter certificate</p>
+            <label className="mt-2 block text-xs text-[var(--text-2)]" htmlFor="cert-name">Name on the certificate</label>
+            <input id="cert-name" className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+            <Button className="mt-2" onClick={() => window.print()} disabled={!name.trim()}>Print certificate</Button>
+          </div>
+        )}
+      </div>
+      {perfect && (
+        <section className="hidden print:block print:pt-24" aria-label="Certificate">
+          <p className="text-sm uppercase tracking-[0.3em]">Unmask</p>
+          <h2 className="mt-6 text-4xl font-bold">Scam Spotter</h2>
+          <p className="mt-8 text-lg">This certifies that</p>
+          <p className="mt-2 text-3xl font-semibold">{name}</p>
+          <p className="mt-8 text-lg">spotted every scam and every real email in a round of {of},</p>
+          <p className="text-lg">on {new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}.</p>
+        </section>
       )}
     </main>
   );
