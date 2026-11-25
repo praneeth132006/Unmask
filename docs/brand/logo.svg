@@ -1,22 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Unmask">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#8FCB3A"/>
-      <stop offset="1" stop-color="#5A8029"/>
-    </linearGradient>
-    <!-- Cuts a gap around the magnifier so the background shows through -->
-    <mask id="gap">
-      <rect width="128" height="128" fill="#FFFFFF"/>
-      <circle cx="88" cy="84" r="27" fill="#000000"/>
-      <line x1="101" y1="97" x2="113" y2="109" stroke="#000000" stroke-width="20" stroke-linecap="round"/>
-    </mask>
-  </defs>
-  <rect width="128" height="128" rx="30" fill="url(#bg)"/>
-  <g mask="url(#gap)">
-    <rect x="16" y="30" width="78" height="58" rx="10" fill="#FFFFFF"/>
-    <path d="M24 39 L55 62 L86 39" fill="none" stroke="#5A8029" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#262c31"/><stop offset=".5" stop-color="#131618"/><stop offset="1" stop-color="#08090a"/></linearGradient>
+  <radialGradient id="hl" cx=".5" cy="-.05" r=".85"><stop offset="0" stop-color="#ffffff" stop-opacity=".13"/><stop offset=".65" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="glow" cx=".72" cy=".42" r=".5"><stop offset="0" stop-color="#a6e04a" stop-opacity=".15"/><stop offset="1" stop-color="#a6e04a" stop-opacity="0"/></radialGradient>
+  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e8df"/></linearGradient>
+  <linearGradient id="lime" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dcfa85"/><stop offset=".45" stop-color="#a9e24c"/><stop offset="1" stop-color="#5f9e1f"/></linearGradient>
+  <linearGradient id="fold" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef2ea"/><stop offset="1" stop-color="#b9c3b2"/></linearGradient>
+  <linearGradient id="crease" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+  <clipPath id="env"><path d="M140 160h232a38 38 0 0 1 38 38v124a38 38 0 0 1-38 38H140a38 38 0 0 1-38-38V198a38 38 0 0 1 38-38z"/></clipPath>
+  <filter id="drop" x="-25%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000" flood-opacity=".5"/></filter>
+  <filter id="lift" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="-8" dy="12" stdDeviation="10" flood-color="#000" flood-opacity=".38"/></filter>
+</defs>
+<rect width="512" height="512" rx="114" fill="url(#bg)"/>
+<rect width="512" height="512" rx="114" fill="url(#glow)"/>
+<rect width="512" height="512" rx="114" fill="url(#hl)"/>
+<rect x="1.5" y="1.5" width="509" height="509" rx="112.5" fill="none" stroke="#fff" stroke-opacity=".09" stroke-width="3"/>
+<g filter="url(#drop)">
+  <g clip-path="url(#env)">
+    <rect x="96" y="156" width="320" height="208" fill="url(#paper)"/>
+    <!-- what was hidden: revealed under the peel -->
+    <path d="M250 156h166v178C380 250 318 186 250 156z" fill="url(#lime)"/>
+    <path d="M250 156C318 186 380 250 416 334" fill="none" stroke="url(#crease)" stroke-width="22"/>
+    <path d="M106 172l150 108 70-50" fill="none" stroke="#0b0d0e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <circle cx="88" cy="84" r="17" fill="#222629" stroke="#FFFFFF" stroke-width="8"/>
-  <line x1="101" y1="97" x2="112" y2="108" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="88" cy="84" r="5.5" fill="#FF5A5A"/>
+  <!-- the lifted disguise, curling back -->
+  <path d="M250 156C318 186 380 250 416 334C372 300 330 292 292 288C300 250 290 200 250 156z" fill="url(#fold)" filter="url(#lift)"/>
+</g>
 </svg>

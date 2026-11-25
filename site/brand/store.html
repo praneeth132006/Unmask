@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:Inter;src:url(../../node_modules/@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2) format('woff2');font-weight:100 900}
+*{margin:0;box-sizing:border-box}body{width:1280px;height:800px;background:#0c0e0f;font-family:Inter,sans-serif;color:#f1f3ee;overflow:hidden;position:relative}
+.glow{position:absolute;right:-200px;top:-260px;width:900px;height:900px;background:radial-gradient(closest-side,rgba(155,209,76,.18),transparent 70%)}
+.copy{position:absolute;left:72px;top:0;bottom:0;width:400px;display:flex;flex-direction:column;justify-content:center}
+.brand{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:650;margin-bottom:36px}.brand img{width:40px;height:40px;border-radius:10px}
+.k{font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9bd14c;margin-bottom:16px}
+h1{font-size:48px;line-height:1.02;letter-spacing:-.04em;font-weight:750}h1 em{font-style:normal;color:#9bd14c}
+p{margin-top:22px;font-size:21px;line-height:1.5;color:#b0b5b2}
+.shot{position:absolute;right:56px;top:50%;transform:translateY(-50%);border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 100px rgba(0,0,0,.6);background:#1b1f22}
+.win .bar{height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;background:#1b1f22;border-bottom:1px solid rgba(255,255,255,.07)}.win .bar i{width:11px;height:11px;border-radius:50%;background:#3a4044}
+.shot img{display:block}
+.tall{top:56px;transform:none;right:120px}
+</style></head><body><div class="glow"></div>
+<div class="copy"><div class="brand"><img src="../../extension/public/icon/128.png">Unmask</div><div class="k" id="k"></div><h1 id="h"></h1><p id="p"></p></div>
+<div class="shot" id="s"></div>
+<script>
+const q = new URLSearchParams(location.search);
+document.getElementById('k').textContent = q.get('k');
+document.getElementById('h').innerHTML = q.get('h');
+document.getElementById('p').textContent = q.get('p');
+const s = document.getElementById('s'), w = Number(q.get('w'));
+if (q.get('frame') === 'win') { s.classList.add('win'); s.innerHTML = `<div class="bar"><i></i><i></i><i></i></div><img src="../../docs/images/${q.get('img')}" style="width:${w}px">`; }
+else { s.classList.add('tall'); s.innerHTML = `<img src="../../docs/images/${q.get('img')}" style="width:${w}px">`; }
+</script></body></html>
