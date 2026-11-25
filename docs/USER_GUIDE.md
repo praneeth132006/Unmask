@@ -189,6 +189,14 @@ The row under the Unmask logo stays visible while you scroll. A **red dot** on a
 
 The full list, with points, is in [CHECKS.md](CHECKS.md). How each step works, from the delivery path to the analyst write-up, is in [How Unmask analyses an email](ANALYSIS.md).
 
+### Why the score is what it is
+
+Under the findings, **Why the score is …** lists every check that added points (or took them off) as a bar, largest first. The bars add up to the number in the ring. Good signs such as a passing DMARC check are shown crossed out when something serious was also found: they prove who sent the email, not that it is safe.
+
+### Warn someone about it
+
+On Suspicious and High risk emails, **Warn someone about this email** makes a picture of the verdict (what it pretends to be, the main reasons and what to do) to paste into a family or team chat, or copies the same as text. Addresses are written as `paypa1[.]top` so nobody can click them by mistake.
+
 ---
 
 ## 4. Hover to see it in the email
@@ -293,6 +301,8 @@ Family mode is a guard rail, not a cage: someone determined can still copy a lin
 <img src="images/start/practice-quiz.png" width="420" alt="Practice: an email, the answer, the lesson and Unmask's explanation">
 
 Open the panel with no email selected and click **Practise spotting scams**, or use the link on the welcome tab. You get 10 realistic, made-up emails (about six scams and four real ones) built like the real thing: a boss asking for gift cards, a changed bank account, a callback "invoice", a fake job, a payroll calendar invite, a device-code login, a ClickFix "CAPTCHA", and genuine bank alerts, shares and security codes. Choose *It's a scam* or *It's real*, then see the lesson and Unmask's explanation in plain words. Nothing in the emails can be clicked, and nothing is sent anywhere. It works well for family members, classes and team awareness sessions.
+
+Finish a round without a mistake and you can print a **Scam Spotter certificate** with your name. Your best score, along with **streaks** (weeks in a row Unmask has been protecting you) and the number of **scams caught**, shows as badges on the weekly card in the empty panel. They are counted only on your computer.
 
 ---
 
@@ -435,6 +445,10 @@ Click **Sandbox scan** on any link and follow the steps in the panel:
 
 A scan takes 10 to 30 seconds. **Every scan is private**: only your urlscan.io key can see its result and screenshot; it never appears in urlscan's public feed or search, or in urlscan Pro for its security partners. The screenshot is fetched with your key and shown in the Links tab, with **Save screenshot** to keep a copy, and where the link lands is added to the report and exports.
 
+### Preview the page safely
+
+With a urlscan.io key set up, the **Wait, this link goes to** warning in Gmail and Outlook has a **Preview the page safely** button. urlscan.io opens the link in its own sandbox browser, privately, and Unmask shows its screenshot and where the link ended, so you can see the fake sign-in page without loading it yourself. A scan takes up to a minute and counts towards urlscan's free daily limit.
+
 ---
 
 ## 17. Reporting an email
@@ -482,6 +496,10 @@ Unmask can also analyze any saved email:
   - *Outlook:* … → **View** → **View message source**
 
 To open Unmask's panel outside Gmail, click its toolbar icon on any page. In **Firefox** the panel opens in the sidebar.
+
+### Check a text message or a link
+
+Scams arrive by text message and WhatsApp too. Open the panel with no email selected and click **Check a text message or link**, then paste the message, a bare link, or a whole email with its headers. A message has no sender to verify, so only its links and wording are checked. It runs on your computer; nothing is sent. The same check is on the [website](https://praneeth132006.github.io/Unmask/#try), with no install.
 
 ---
 

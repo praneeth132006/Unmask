@@ -4,6 +4,16 @@ All notable changes to Unmask. The format follows [Keep a Changelog](https://kee
 
 ## [Unreleased]
 
+### Added
+- **Check a text message or link:** paste an SMS, a WhatsApp message, a bare link or a whole email and Unmask checks it on your device. Sender checks are skipped for messages, which have no real sender.
+- **Why the score is N:** every check's points as a bar, adding up to the score, with good signs crossed out when something serious was found.
+- **Warn someone:** copy or save a picture (or text) of the verdict for a family or team chat, with addresses defanged.
+- **Preview the page safely:** with a urlscan.io key, the click warning can show a screenshot of where a link lands, taken privately in urlscan's sandbox.
+- **Streaks, badges and a Scam Spotter certificate** for families: weeks of protection, scams caught and the best quiz score, counted on your device; a printable certificate for a perfect quiz.
+- **Precision of every check** in the benchmark: how often each one fires on phishing and on real mail.
+- **Safari build (preview):** `build:safari` and an Xcode project for macOS and iOS. Not yet tested in Safari.
+- **Website redesign:** a live demo running the real engine in the browser, a hero animation of a stopped click, Scam watch (real cases taken apart), a searchable guide sidebar, WebP screenshots (60% smaller) and a self-hosted font.
+
 ## [0.6.0] - 2026-11-16
 
 ### Added
