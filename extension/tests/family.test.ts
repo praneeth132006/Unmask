@@ -60,11 +60,12 @@ describe('weekly summary', () => {
     expect(JSON.stringify(s)).not.toContain('msg-1');
   });
 
-  it('keeps eight weeks and reads last week', () => {
+  it('keeps two years of weeks and reads last week', () => {
     let s = EMPTY_STATS;
-    for (let i = 0; i < 12; i++) s = addEvent(s, { type: 'checked', key: `k${i}`, verdict: 'clear' }, new Date(2026, 8, 7 + i * 7, 12));
-    expect(Object.keys(s.weeks)).toHaveLength(8);
-    const now = new Date(2026, 10, 25, 12);
+    for (let i = 0; i < 110; i++) s = addEvent(s, { type: 'checked', key: `k${i}`, verdict: 'clear' }, new Date(2024, 9, 7 + i * 7, 12));
+    expect(Object.keys(s.weeks)).toHaveLength(104);
+    const last = new Date(2024, 9, 7 + 109 * 7, 12);
+    const now = new Date(last.getFullYear(), last.getMonth(), last.getDate() + 7, 12);
     expect(thisAndLastWeek(s, now).lastWeek?.checked).toBe(1);
   });
 });

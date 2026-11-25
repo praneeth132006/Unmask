@@ -32,7 +32,8 @@ export type StatEvent =
   | { type: 'practice'; right: number; of: number };
 
 export const EMPTY_STATS: Stats = { weeks: {} };
-const KEEP_WEEKS = 8;
+// Two years of weekly counts: enough for long streaks and a year-on-year view, still only numbers.
+const KEEP_WEEKS = 104;
 const MAX_SEEN = 2000;
 
 /** Monday of the week, as YYYY-MM-DD in local time. */
