@@ -91,6 +91,9 @@ importers:
       happy-dom:
         specifier: ^21.0.4
         version: 21.0.4
+      linkedom:
+        specifier: ~0.18.13
+        version: 0.18.13
       mailauth:
         specifier: 7.2.0
         version: 7.2.0

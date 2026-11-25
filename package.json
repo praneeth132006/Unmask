@@ -15,6 +15,7 @@
     "test:e2e": "pnpm --filter unmask-extension build:e2e && pnpm --filter unmask-extension test:e2e",
     "site": "node site/build.mjs",
     "wiki": "node site/wiki.mjs",
+    "gmail-addon": "node gmail-addon/build.mjs && node gmail-addon/test.mjs",
     "ci:local": "sh scripts/ci-local.sh",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "benchmark": "node scripts/benchmark/fetch.mjs && UNMASK_BENCH_DIR=.cache/benchmark UNMASK_BENCH_OUT=.cache/benchmark/result pnpm --filter unmask-extension exec vitest run tests/benchmark.test.ts"

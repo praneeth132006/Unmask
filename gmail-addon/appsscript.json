@@ -1,0 +1,21 @@
+{
+  "timeZone": "Etc/UTC",
+  "runtimeVersion": "V8",
+  "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.readonly"
+  ],
+  "addOns": {
+    "common": {
+      "name": "Unmask",
+      "logoUrl": "https://praneeth132006.github.io/Unmask/media/icon-128.png",
+      "layoutProperties": { "primaryColor": "#4f7425", "secondaryColor": "#9bd14c" },
+      "homepageTrigger": { "runFunction": "onHomepage", "enabled": true },
+      "openLinkUrlPrefixes": ["https://praneeth132006.github.io/"]
+    },
+    "gmail": {
+      "contextualTriggers": [{ "unconditional": {}, "onTriggerFunction": "onGmailMessageOpen" }]
+    }
+  }
+}
