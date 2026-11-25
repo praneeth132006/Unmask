@@ -5,6 +5,7 @@ import type { Finding, Report, TabId } from '../../core/types';
 import { Card, SEVERITY_STYLE, SectionTitle } from './ui';
 import { Icon } from './Icon';
 import { targetHint } from '../targets';
+import { lessonFor, LESSONS_URL } from '../../core/lessons';
 import { plainSummary } from '../../core/plain';
 import { concernsHeading, trackerChipLabel, verdictLabel } from '../../core/facts';
 import { hypotheses, limitations } from '../../core/assessment';
@@ -130,8 +131,9 @@ function SummaryChips({ report, onOpen }: { report: Report; onOpen: (tab: TabId)
 function FindingRow({ f, onHover, onOpen }: { f: Finding; onHover: (f: Finding | null) => void; onOpen: (f: Finding) => void }) {
   const s = SEVERITY_STYLE[f.severity];
   const actionable = Boolean(f.target);
+  const lesson = f.points > 0 ? lessonFor(f.id) : null;
   return (
-    <li id={`finding-${f.id}`}>
+    <li id={`finding-${f.id}`} className={lesson ? 'pb-2' : ''}>
       <button
         type="button"
         disabled={!actionable}
@@ -150,6 +152,17 @@ function FindingRow({ f, onHover, onOpen }: { f: Finding; onHover: (f: Finding |
         </span>
         {actionable && <Icon name="chevron" className="mt-1 h-3.5 w-3.5 shrink-0 text-[var(--text-3)] opacity-0 transition-opacity group-hover:opacity-100" />}
       </button>
+      {lesson && (
+        <a
+          className="ml-[30px] inline-flex items-center gap-1 rounded-md px-1 text-[11px] font-medium text-[var(--accent)] hover:underline"
+          href={`${LESSONS_URL}#${lesson.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={lesson.summary}
+        >
+          How this trick works →
+        </a>
+      )}
     </li>
   );
 }
