@@ -7,8 +7,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Unmask"/>
   <Description DefaultValue="See what a suspicious email is really hiding. Checks the sender, links and wording on your device."/>
-  <IconUrl DefaultValue="https://praneeth132006.github.io/Unmask/icon-48.png"/>
-  <HighResolutionIconUrl DefaultValue="https://praneeth132006.github.io/Unmask/media/icon-192.png"/>
+  <IconUrl DefaultValue="https://praneeth132006.github.io/Unmask/media/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://praneeth132006.github.io/Unmask/media/icon-128.png"/>
   <SupportUrl DefaultValue="https://praneeth132006.github.io/Unmask/outlook.html"/>
   <AppDomains><AppDomain>https://praneeth132006.github.io</AppDomain></AppDomains>
   <Hosts><Host Name="Mailbox"/></Hosts>
@@ -52,7 +52,7 @@
         <bt:Images>
           <bt:Image id="icon16" DefaultValue="https://praneeth132006.github.io/Unmask/icon-48.png"/>
           <bt:Image id="icon32" DefaultValue="https://praneeth132006.github.io/Unmask/icon-48.png"/>
-          <bt:Image id="icon80" DefaultValue="https://praneeth132006.github.io/Unmask/media/icon-192.png"/>
+          <bt:Image id="icon80" DefaultValue="https://praneeth132006.github.io/Unmask/media/icon-128.png"/>
         </bt:Images>
         <bt:Urls><bt:Url id="taskpaneUrl" DefaultValue="https://praneeth132006.github.io/Unmask/outlook/taskpane.html"/></bt:Urls>
         <bt:ShortStrings><bt:String id="groupLabel" DefaultValue="Unmask"/><bt:String id="buttonLabel" DefaultValue="Check with Unmask"/></bt:ShortStrings>
