@@ -3,7 +3,7 @@ name: Website
 on:
   push:
     branches: [main]
-    paths: ['site/**', 'docs/**', 'PRIVACY.md', 'CHANGELOG.md', 'extension/public/icon/**', 'extension/src/**', 'package.json', '.github/workflows/pages.yml']
+    paths: ['site/**', 'docs/**', 'PRIVACY.md', 'CHANGELOG.md', 'extension/public/icon/**', 'extension/src/**', 'package.json', 'extension/package.json', 'pnpm-lock.yaml', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
