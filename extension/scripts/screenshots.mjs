@@ -95,35 +95,79 @@ writeFileSync(join(here, '..', 'e2e', 'demo.eml'), eml);
 
 // ---- Fake Gmail pages -------------------------------------------------------------
 const GLOBALS = '<script>var GLOBALS = [null,null,1,"/mail/u/0","en","US",null,"x",0,"a1b2c3d4e5",1];</script>';
-const style = `<style>body{margin:0;font-family:"Google Sans",Roboto,Arial,sans-serif;color:#1f1f1f;background:#f6f8fc}
-.top{height:56px;display:flex;align-items:center;padding:0 20px;gap:12px;font-size:20px;color:#444}
-.card{background:#fff;border-radius:16px;margin:0 16px 16px;padding:20px 28px}
-h2{font-size:22px;font-weight:400;margin:4px 0 16px}.from{font-size:14px}.from b{font-weight:600}.from span{color:#5e5e5e}
-.a3s{font-size:14px;line-height:1.5}.btn{display:inline-block;border:1px solid #747775;border-radius:18px;padding:7px 18px;font-size:14px;margin-top:16px;cursor:pointer}
-table{border-collapse:collapse;width:100%;background:#fff}tr.zA td{padding:11px 14px;border-bottom:1px solid #eef0f3;font-size:14px;white-space:nowrap}
-table{table-layout:fixed}tr.zA td.s{width:200px;font-weight:600}.yW{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}tr.zA td.m{color:#5e5e5e}.xT{display:flex;align-items:center;overflow:hidden;white-space:nowrap}.y2{overflow:hidden;text-overflow:ellipsis;min-width:0}tr.zA td.m b{color:#1f1f1f;font-weight:600}</style>`;
+const style = `<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Google Sans","Product Sans",Roboto,"Segoe UI",Arial,sans-serif;color:#1f1f1f;background:#f6f8fc;font-size:14px}
+.gb{height:64px;display:flex;align-items:center;padding:0 16px 0 12px;gap:6px}
+.ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#444746}.ic svg{width:22px;height:22px;fill:currentColor}
+.logo{display:flex;align-items:center;gap:6px;width:200px;font-size:22px;color:#444746;letter-spacing:-.2px}.logo svg{width:36px;height:27px}
+.search{flex:1;max-width:720px;height:48px;border-radius:24px;background:#e9eef6;display:flex;align-items:center;gap:14px;padding:0 16px;color:#444746;font-size:16px}
+.search svg{width:22px;height:22px;fill:#444746}.right{margin-left:auto;display:flex;align-items:center;gap:4px}
+.av{width:32px;height:32px;border-radius:50%;background:#0b57d0;color:#fff;display:grid;place-items:center;font-weight:500;font-size:15px}
+.body{display:flex}.rail{width:256px;flex:none;padding:8px 16px 0 8px}
+.compose{display:inline-flex;align-items:center;gap:14px;height:56px;padding:0 24px 0 18px;border-radius:16px;background:#c2e7ff;font-weight:500;font-size:14px;color:#001d35;margin:0 0 16px 0}
+.compose svg{width:22px;height:22px;fill:#001d35}
+.nav{display:flex;align-items:center;gap:18px;height:32px;padding:0 12px 0 24px;border-radius:0 16px 16px 0;color:#202124;font-size:14px}
+.nav svg{width:20px;height:20px;fill:#444746}.nav.on{background:#d3e3fd;font-weight:700}.nav .n{margin-left:auto;font-size:12px;font-weight:700}
+.main{flex:1;min-width:0;background:#fff;border-radius:16px;margin:0 16px 16px 0;overflow:hidden}
+.tools{height:48px;display:flex;align-items:center;gap:6px;padding:0 12px;border-bottom:1px solid #f1f3f4}.tools .ic{width:36px;height:36px}.tools .ic svg{width:20px;height:20px}
+.read{padding:8px 24px 24px 72px;position:relative}
+h2{font-size:22px;font-weight:400;margin:12px 0 18px;color:#1f1f1f}.lab{font-size:12px;background:#e8eaed;border-radius:4px;padding:2px 6px;margin-left:10px;vertical-align:3px;color:#444}
+.from{display:flex;align-items:flex-start;gap:12px;margin:0 0 18px -56px}.sav{width:40px;height:40px;border-radius:50%;background:#7e57c2;color:#fff;display:grid;place-items:center;font-size:18px;flex:none}
+.who{flex:1;min-width:0;font-size:14px}.who b{font-weight:700}.who .addr{color:#5e5e5e;font-size:12px}.who .to{color:#5e5e5e;font-size:12px;margin-top:2px}.when{color:#5e5e5e;font-size:12px;white-space:nowrap}
+.a3s{font-size:14px;line-height:1.55}.btns{display:flex;gap:10px;margin-top:22px}.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid #747775;border-radius:18px;padding:8px 20px;font-size:14px;font-weight:500;color:#444746;cursor:pointer}
+table{border-collapse:collapse;width:100%;table-layout:fixed}tr.zA td{height:40px;padding:0 10px;border-bottom:1px solid #f1f3f4;font-size:14px;white-space:nowrap}
+tr.zA td.cb{width:64px;color:#c4c7c5}tr.zA td.s{width:200px;font-weight:700}.yW{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+tr.zA td.m{color:#5e5e5e}.xT{display:flex;align-items:center;overflow:hidden;white-space:nowrap}.y2{overflow:hidden;text-overflow:ellipsis;min-width:0}tr.zA td.m b{color:#1f1f1f;font-weight:700}
+tr.zA td.t{width:90px;text-align:right;font-weight:700;font-size:12px;color:#1f1f1f}
+</style>`;
+const svg = (d) => `<svg viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+const I = {
+  menu: 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
+  search: 'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
+  help: 'M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z',
+  gear: 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z',
+  apps: 'M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z',
+  pen: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
+  inbox: 'M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 12h-4a3 3 0 0 1-6 0H5V5h14v10z',
+  star: 'M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z',
+  clock: 'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z',
+  send: 'M2.01 21 23 12 2.01 3 2 10l15 2-15 2z',
+  draft: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z',
+  back: 'M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z',
+  archive: 'M20.54 5.23 19.15 3.55A1.45 1.45 0 0 0 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23A1.98 1.98 0 0 0 3 6.5V19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5 6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z',
+  spam: 'M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM12 17.3a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm1-4.3h-2V7h2v6z',
+  trash: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z',
+  reply: 'M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z',
+  fwd: 'M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z',
+};
+// The Gmail mark, drawn in its four colours.
+const gmailLogo = '<svg viewBox="0 0 48 36"><path fill="#4285f4" d="M3.3 36h7.6V17.6L0 9.4v23.3A3.3 3.3 0 0 0 3.3 36"/><path fill="#34a853" d="M37.1 36h7.6a3.3 3.3 0 0 0 3.3-3.3V9.4l-10.9 8.2"/><path fill="#fbbc04" d="M37.1 3.4v14.2L48 9.4V5a4.9 4.9 0 0 0-7.9-3.9"/><path fill="#ea4335" d="M10.9 17.6V3.4L24 13.2l13.1-9.8v14.2L24 27.4"/><path fill="#c5221f" d="M0 5v4.4l10.9 8.2V3.4L7.9 1.1A4.9 4.9 0 0 0 0 5"/></svg>';
+const shell = (main, active = 'inbox') => `<div class="gb"><div class="ic">${svg(I.menu)}</div><div class="logo">${gmailLogo}Gmail</div>
+<div class="search">${svg(I.search)}Search mail</div><div class="right"><div class="ic">${svg(I.help)}</div><div class="ic">${svg(I.gear)}</div><div class="ic">${svg(I.apps)}</div><div class="av">A</div></div></div>
+<div class="body"><div class="rail"><div class="compose">${svg(I.pen)}Compose</div>
+${[['inbox', 'Inbox', '6'], ['star', 'Starred', ''], ['clock', 'Snoozed', ''], ['send', 'Sent', ''], ['draft', 'Drafts', '2']].map(([i, l, n]) => `<div class="nav${i === active ? ' on' : ''}">${svg(I[i])}${l}<span class="n">${n}</span></div>`).join('')}</div>
+<div class="main">${main}</div></div>`;
 const message = `<!doctype html><html><head><meta charset="utf-8">${GLOBALS}${style}</head><body>
-<div class="top">☰ &nbsp;<b style="color:#d93025">M</b> Gmail</div>
-<div class="card">
-<h2 class="hP" data-thread-perm-id="thread-f:1">Your account has been limited - action required within 24 hours</h2>
+${shell(`<div class="tools"><div class="ic">${svg(I.back)}</div><div class="ic">${svg(I.archive)}</div><div class="ic">${svg(I.spam)}</div><div class="ic">${svg(I.trash)}</div></div>
+<div class="read">
+<h2 class="hP" data-thread-perm-id="thread-f:1">Your account has been limited - action required within 24 hours<span class="lab">Inbox</span></h2>
 <div class="adn ads" data-message-id="#msg-f:1780954093844218223" data-legacy-message-id="18b7c4a2e5f1d06f">
-  <div class="from"><b><span class="gD" email="billing@paypa1-support.xyz" name="PayPal Service" style="color:#1f1f1f">PayPal Service</span></b> <span>&lt;billing@paypa1-support.xyz&gt;</span></div>
+  <div class="from"><div class="sav">P</div><div class="who"><b><span class="gD" email="billing@paypa1-support.xyz" name="PayPal Service" style="color:#1f1f1f">PayPal Service</span></b> <span class="addr">&lt;billing@paypa1-support.xyz&gt;</span><div class="to">to me ▾</div></div><div class="when">9:14 AM (2 hours ago)</div></div>
   <div><div class="a3s ii">${html}</div></div>
-  <div class="btn" role="button" aria-label="Reply">↩ Reply</div>
-</div></div></body></html>`;
+  <div class="btns"><div class="btn" role="button" aria-label="Reply">${svg(I.reply)}Reply</div><div class="btn">${svg(I.fwd)}Forward</div></div>
+</div></div>`)}</body></html>`;
 const rows = [
-  ['GitHub', 'noreply@github.com', 'A new SSH key was added', 'thread-f:11'],
-  ['PayPal Service', 'billing@paypa1-support.xyz', 'Your account has been limited - action required', 'thread-f:12'],
-  ['Priya (Finance)', 'priya@acme-corp.com', 'Q3 budget review notes', 'thread-f:13'],
-  ['Microsoft account team', 'no-reply@micros0ft-security.com', 'Unusual sign-in activity', 'thread-f:14'],
-  ['Amazon Support', 'amazon.support.desk@gmail.com', 'Refund pending: confirm your card', 'thread-f:15'],
-  ['Google', 'no-reply@accounts.google.com', 'Security alert for your account', 'thread-f:16'],
+  ['GitHub', 'noreply@github.com', 'A new SSH key was added', 'thread-f:11', '11:02 AM'],
+  ['PayPal Service', 'billing@paypa1-support.xyz', 'Your account has been limited - action required', 'thread-f:12', '9:14 AM'],
+  ['Priya (Finance)', 'priya@acme-corp.com', 'Q3 budget review notes', 'thread-f:13', '8:40 AM'],
+  ['Microsoft account team', 'no-reply@micros0ft-security.com', 'Unusual sign-in activity', 'thread-f:14', 'Yesterday'],
+  ['Amazon Support', 'amazon.support.desk@gmail.com', 'Refund pending: confirm your card', 'thread-f:15', 'Nov 23'],
+  ['Google', 'no-reply@accounts.google.com', 'Security alert for your account', 'thread-f:16', 'Nov 22'],
 ];
 const inbox = `<!doctype html><html><head><meta charset="utf-8">${GLOBALS}${style}</head><body>
-<div class="top">☰ &nbsp;<b style="color:#d93025">M</b> Gmail &nbsp;·&nbsp; Inbox</div>
-<div class="card" style="padding:0;overflow:hidden"><table>${rows
-  .map(([n, e, s, t]) => `<tr class="zA"><td class="s"><div class="yW"><span email="${e}" name="${n}">${n}</span></div></td><td class="m"><div class="xT"><span class="bog"><b data-thread-id="#${t}">${s}</b></span><span class="y2">&nbsp;- Please review the details in this message</span></div></td></tr>`)
-  .join('')}</table></div></body></html>`;
+${shell(`<div class="tools"><div class="ic" style="color:#c4c7c5">☐</div><div class="ic">↻</div><div class="ic">⋮</div></div><table>${rows
+  .map(([n, e, s, t, d]) => `<tr class="zA"><td class="cb">☐ &nbsp;☆</td><td class="s"><div class="yW"><span email="${e}" name="${n}">${n}</span></div></td><td class="m"><div class="xT"><span class="bog"><b data-thread-id="#${t}">${s}</b></span><span class="y2">&nbsp;- Please review the details in this message</span></div></td><td class="t">${d}</td></tr>`)
+  .join('')}</table>`)}</body></html>`;
 
 // ---- Run --------------------------------------------------------------------------------
 const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'unmask-shots-')), {
@@ -149,7 +193,7 @@ const shot = async (page, name, clip) => {
 
 // In Gmail: banner, link warning, reply warning.
 const g = await ctx.newPage();
-await g.setViewportSize({ width: 900, height: 600 });
+await g.setViewportSize({ width: 1280, height: 760 });
 await g.goto('https://mail.google.com/mail/u/0/', { waitUntil: 'domcontentloaded' });
 await g.waitForSelector('[data-unmask-banner]', { timeout: 15000 });
 await shot(g, 'gmail-banner.png');
@@ -166,13 +210,13 @@ await g.locator('[data-unmask-dialog] button', { hasText: 'Go back' }).click();
 
 // Inbox badges.
 const i = await ctx.newPage();
-await i.setViewportSize({ width: 900, height: 420 });
+await i.setViewportSize({ width: 1280, height: 440 });
 await i.goto('https://mail.google.com/mail/u/0/inbox-demo', { waitUntil: 'domcontentloaded' });
 await i.waitForSelector('[data-unmask-badge]', { timeout: 15000 });
 await i.waitForTimeout(300);
 await shot(i, 'inbox-badges.png');
 // Peek at the PayPal row without opening it.
-await i.setViewportSize({ width: 900, height: 760 });
+await i.setViewportSize({ width: 1280, height: 800 });
 await i.locator('tr.zA', { hasText: 'PayPal Service' }).locator('[data-unmask-peek] button').click();
 await i.waitForSelector('[data-unmask-peek-card] .h', { timeout: 15000 });
 await i.waitForTimeout(300);
