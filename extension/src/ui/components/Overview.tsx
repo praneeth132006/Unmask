@@ -1,4 +1,6 @@
 import { FeedbackCard } from './FeedbackCard';
+import { ScoreBreakdownCard } from './ScoreBreakdownCard';
+import { ShareCard } from './ShareCard';
 import type { Finding, Report, TabId } from '../../core/types';
 import { Card, SEVERITY_STYLE, SectionTitle } from './ui';
 import { Icon } from './Icon';
@@ -254,6 +256,7 @@ export function Overview({
     <>
       <SummaryChips report={report} onOpen={onOpenTab} />
       <AssessmentCard report={report} />
+      <ScoreBreakdownCard report={report} />
       {red.length > 0 && canHighlight && (
         <p className="mt-3 flex items-center gap-1.5 text-[11px] text-[var(--text-3)]">
           <Icon name="eye" className="h-3.5 w-3.5" /> Hover a red flag to see it in the email. Click it for details.
@@ -284,6 +287,7 @@ export function Overview({
           technical
         )}
       </div>
+      <ShareCard report={report} />
       <FeedbackCard report={report} />
     </div>
   );
