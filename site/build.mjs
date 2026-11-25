@@ -432,10 +432,16 @@ cpSync(join(root, 'docs', 'brand', 'logo-512.png'), join(out, 'logo-512.png'));
 cpSync(join(root, 'extension', 'public', 'icon', '48.png'), join(out, 'icon-48.png'));
 cpSync(join(root, 'site', 'style.css'), join(out, 'style.css'));
 mkdirSync(join(out, 'fonts'));
+mkdirSync(join(out, 'outlook'));
 cpSync(join(root, 'node_modules', '@fontsource-variable', 'inter', 'files', 'inter-latin-opsz-normal.woff2'), join(out, 'fonts', 'inter-latin-opsz-normal.woff2'));
 WEBP = webpImages(join(out, 'images'));
-// "Try it live": the extension's own engine, bundled for the browser.
-execFileSync(join(root, 'extension', 'node_modules', '.bin', 'esbuild'), [join(root, 'site', 'demo.ts'), '--bundle', '--format=esm', '--minify', '--target=es2020', `--outfile=${join(out, 'demo.js')}`, '--log-level=warning']);
+// "Try it live", the domain checker and the Outlook add-in: the extension's own code, bundled for the browser.
+const bundle = (entry, file) => execFileSync(join(root, 'extension', 'node_modules', '.bin', 'esbuild'), [join(root, 'site', entry), '--bundle', '--format=esm', '--minify', '--target=es2020', `--outfile=${join(out, file)}`, '--log-level=warning']);
+bundle('demo.ts', 'demo.js');
+bundle('domain.ts', 'domain.js');
+bundle('outlook.ts', 'outlook/taskpane.js');
+const { LESSONS } = await import('../extension/src/core/lessons.ts');
+const RULES = JSON.parse(readFileSync(join(root, 'extension', 'src', 'rules', 'rules.json'), 'utf8'));
 cpSync(join(root, 'site', 'media'), join(out, 'media'), { recursive: true });
 const VIDEO = JSON.parse(readFileSync(join(root, 'site', 'video.json'), 'utf8'));
 const SCAMS = JSON.parse(readFileSync(join(root, 'docs', 'scams.json'), 'utf8')).items;
@@ -478,6 +484,108 @@ write(
     body: `<section class="page-head"><div class="wrap"><p class="kicker">Scam watch</p><h1>Real scams, taken apart.</h1><p>Real phishing emails Unmask analysed, newest first, with the tells that give each away. Only real cases from public research collections or reports whose senders agreed to publish them. Every address is defanged so nothing here can be clicked by mistake.</p></div></section><section class="page-body"><div class="wrap"><div class="watch-grid">${SCAMS.map(scamCard).join('')}</div><p class="callout">Got one Unmask missed, or got wrong? Press <strong>Was this right?</strong> in the panel. You choose exactly what is shared, and nothing is sent without you pressing Send. <a href="${REPO}/blob/main/CONTRIBUTING.md">How cases are added</a>.</p></div></section>`,
   }),
 );
+
+// ---- Tools and learning pages ----------------------------------------------------------
+const head = (kicker, title, lead) => `<section class="page-head"><div class="wrap"><p class="kicker">${kicker}</p><h1>${title}</h1><p>${lead}</p></div></section>`;
+
+write('lessons.html', layout({
+  title: 'How scams work · Unmask',
+  description: 'Short lessons on every trick Unmask looks for: how it works, how to spot it, what to do.',
+  current: 'lessons.html',
+  body: `${head('How scams work', 'Every trick, explained in a minute.', 'Each red flag in Unmask links here. How the trick works, how to spot it yourself, and what to do. No jargon.')}
+<section class="page-body"><div class="wrap lessons">
+<nav class="lesson-index" aria-label="Lessons">${LESSONS.map((l) => `<a href="#${l.id}">${html(l.title)}</a>`).join('')}</nav>
+${LESSONS.map((l) => `<article class="lesson reveal" id="${l.id}"><h2>${html(l.title)}</h2><p class="lesson-sum">${html(l.summary)}</p>
+<div class="lesson-grid"><div><h3>How it works</h3><p>${html(l.how)}</p></div><div><h3>How to spot it</h3><ul>${l.spot.map((x) => `<li>${html(x)}</li>`).join('')}</ul></div></div>
+<p class="lesson-do"><b>What to do:</b> ${html(l.todo)}</p></article>`).join('')}
+</div></section>`,
+}));
+
+write('rules.html', layout({
+  title: 'Community rules · Unmask',
+  description: 'Scam patterns anyone can add as a small YAML file, each tested on a real-looking scam and a real email.',
+  current: 'rules.html',
+  body: `${head('Community rules', 'Scam patterns anyone can add.', 'Each rule is a small YAML file. It must fire on its scam example and stay quiet on its real one, and on the 4,150 real emails of the benchmark, before it ships. <a href="${REPO}/blob/main/extension/rules/README.md">Write one</a>.')}
+<section class="page-body"><div class="wrap rules-grid">${RULES.map((r) => `<article class="rule reveal"><div class="case-top"><code>rule-${html(r.id)}</code><span class="sev sev-${r.severity}">${html(r.severity)} · ${r.points} pts</span></div>
+<h3>${html(r.title)}</h3><p>${html(r.plain)}</p>
+<details><summary>Its tests</summary><p class="ex-label">Must fire on</p><pre>${html(r.examples.phish)}</pre><p class="ex-label">Must stay quiet on</p><pre>${html(r.examples.legit)}</pre></details>
+<a href="${REPO}/blob/main/extension/rules/${r.id}.yml">View the rule →</a></article>`).join('')}</div>
+<div class="wrap"><p class="callout">Seen a scam pattern Unmask misses? Copy a rule, change its phrases and examples, and open a pull request. CI proves it on the benchmark for you.</p></div></section>`,
+}));
+
+write('domain.html', layout({
+  title: 'Is your domain spoofable? · Unmask',
+  description: 'Check whether scammers can send email that looks like it came from your domain, and how to fix it.',
+  current: 'domain.html',
+  body: `${head('Free tool for businesses and schools', 'Is your domain spoofable?', 'Check whether anyone can send email that looks like it comes from your company, and get the exact records to fix it. Only the domain name is looked up, through Google Public DNS.')}
+<section class="page-body"><div class="wrap dom">
+<form class="dom-form" data-domain-form><label class="sr-only" for="dom-in">Your domain</label><input id="dom-in" name="domain" placeholder="yourcompany.com" autocomplete="off" autocapitalize="off" spellcheck="false" required><button class="btn btn-primary" type="submit">Check it</button></form>
+<div class="dom-result" data-domain-result hidden aria-live="polite"></div>
+<p class="dom-note">Reads public DNS only: SPF, DMARC, MX, DKIM at ${'common'} selector names, MTA-STS and BIMI. Nothing is stored.</p>
+</div></section><script type="module" src="domain.js"></script>`,
+}));
+
+write('check.html', layout({
+  title: 'Check a message · Unmask',
+  description: 'Paste or share a text message, WhatsApp message or link and check it on your device.',
+  current: 'check.html',
+  body: `${head('Check a message', 'Got a strange text? Check it here.', 'Paste a text message, a WhatsApp message, a link or a whole email. It is checked on your device by the same engine as the extension. On Android, add this page to your home screen and you can <b>share</b> any message straight to Unmask.')}
+<section class="page-body"><div class="wrap"><div class="demo" data-demo data-demo-empty>
+<div class="demo-input"><div class="demo-samples" role="group" aria-label="Examples"><button type="button" data-sample="sms" aria-pressed="false">Parcel-fee text</button><button type="button" data-sample="link" aria-pressed="false">Look-alike link</button><button type="button" data-sample="email" aria-pressed="false">Fake PayPal email</button></div>
+<label class="sr-only" for="demo-text">Message to check</label><textarea id="demo-text" spellcheck="false" placeholder="Paste the message or link here"></textarea>
+<div class="demo-bar"><button type="button" class="btn btn-primary" data-demo-check>Check it</button><button type="button" class="btn btn-ghost" data-install-app hidden>Add to home screen</button></div></div>
+<div class="demo-result" data-demo-result hidden aria-live="polite"></div></div>
+<div class="steps-row"><div><b>1</b><p>Open this page on your phone and choose <b>Add to Home screen</b>.</p></div><div><b>2</b><p>In Messages or WhatsApp, long-press a message and tap <b>Share</b>.</p></div><div><b>3</b><p>Pick <b>Unmask</b>. The message is checked right away, on your phone.</p></div></div>
+</div></section>
+<link rel="manifest" href="manifest.webmanifest"><script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+var deferred; addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; var b = document.querySelector('[data-install-app]'); b.hidden = false; b.onclick = function () { deferred.prompt(); b.hidden = true; }; });
+</script><script type="module" src="demo.js"></script>`,
+}));
+
+write('outlook.html', layout({
+  title: 'Unmask for Outlook · Unmask',
+  description: 'An Outlook add-in that checks the open email, on Outlook on the web, Windows, Mac, iPhone and Android.',
+  current: 'outlook.html',
+  body: `${head('Outlook add-in · preview', 'Unmask inside Outlook, on every device.', 'A <b>Check with Unmask</b> button in Outlook on the web, Windows, Mac and the Outlook mobile apps. The email is read by Outlook’s add-in API and checked in the add-in pane; nothing is sent to any server.')}
+<section class="page-body"><div class="wrap prose-narrow">
+<h2>Install it</h2>
+<ol class="install-steps"><li>Open <a href="https://aka.ms/olksideload">Outlook’s add-in settings</a> (Outlook on the web: <b>Get add-ins → My add-ins → Add a custom add-in → Add from URL</b>).</li><li>Paste this address: <code>https://praneeth132006.github.io/Unmask/outlook/manifest.xml</code></li><li>Open any email and press <b>Check with Unmask</b>. On a phone, it is under the email’s <b>⋯</b> menu, once installed on the web.</li></ol>
+<h2>What it checks</h2><p>The sender and its authentication results, look-alike and impersonated brands, where every link really goes, wording and pressure tricks, and hidden text. Attachments are not checked in the add-in yet; the browser extension does that.</p>
+<p class="callout">Preview: the add-in hasn’t been through Microsoft’s store review yet. Work accounts may need an administrator to allow custom add-ins.</p>
+</div></section>`,
+}));
+
+const pane = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Unmask</title>
+<link rel="stylesheet" href="../style.css"><script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<style>body{padding:14px}.demo-result{display:block}</style></head><body>
+<div class="brand" style="margin-bottom:12px"><img src="../icon-48.png" alt="" width="24" height="24">Unmask</div>
+<div class="demo-result" data-outlook-result aria-live="polite"><p class="dom-wait">Loading…</p></div>
+<script type="module" src="taskpane.js"></script></body></html>`;
+writeFileSync(join(out, 'outlook', 'taskpane.html'), pane);
+cpSync(join(root, 'site', 'outlook', 'manifest.xml'), join(out, 'outlook', 'manifest.xml'));
+
+// The "Check a message" web app: installable, and a share target on Android.
+writeFileSync(join(out, 'manifest.webmanifest'), JSON.stringify({
+  name: 'Unmask: check a message', short_name: 'Unmask', start_url: 'check.html', scope: './', display: 'standalone',
+  background_color: '#0c0e0f', theme_color: '#0c0e0f', description: 'Check a text message, WhatsApp message or link for scams, on your device.',
+  icons: [{ src: 'media/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: 'logo-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }],
+  share_target: { action: 'check.html', method: 'GET', params: { title: 'title', text: 'text', url: 'url' } },
+}, null, 2));
+writeFileSync(join(out, 'sw.js'), `// Keeps the check page working offline. Only this site's own files are cached.
+const CACHE = 'unmask-check-v1';
+const FILES = ['check.html', 'demo.js', 'style.css', 'fonts/inter-latin-opsz-normal.woff2', 'icon-48.png', 'media/icon-192.png'];
+self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting())));
+self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
+self.addEventListener('fetch', (e) => {
+  const url = new URL(e.request.url);
+  if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+  const path = url.pathname.split('/').pop() || 'index.html';
+  if (!FILES.includes(path) && !url.pathname.endsWith('/fonts/inter-latin-opsz-normal.woff2')) return;
+  e.respondWith(fetch(e.request).then((r) => { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)); return r; }).catch(() => caches.match(e.request, { ignoreSearch: true })));
+});
+`);
+
 // GitHub Pages serves 404.html for any unknown path. <base> keeps its relative links working from nested paths.
 writeFileSync(
   join(out, '404.html'),
@@ -488,4 +596,4 @@ writeFileSync(
     body: '<article class="doc"><h1>Page not found</h1><p>That page does not exist. Try the <a href="index.html">home page</a> or the <a href="guide.html">user guide</a>.</p></article>',
   }).replace('<head>\n', '<head>\n<base href="/Unmask/">\n'),
 );
-console.log(`site built: ${['index.html', 'scams.html', ...PAGES.map((p) => p.out), '404.html'].join(', ')} (${WEBP.size} WebP images)`);
+console.log(`site built: ${['index.html', 'scams.html', 'lessons.html', 'rules.html', 'domain.html', 'check.html', 'outlook.html', ...PAGES.map((p) => p.out), '404.html'].join(', ')} (${WEBP.size} WebP images)`);

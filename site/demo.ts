@@ -29,7 +29,10 @@ async function run(root: HTMLElement, text: string) {
   out.hidden = false;
   out.setAttribute('aria-busy', 'true');
   const report = await analyzePasted(text);
-  const s = plainSummary(report);
+  const raw = plainSummary(report);
+  // A pasted text isn't an email: say "message" so the words match what the person pasted.
+  const word = (t: string) => (report.kind === 'email' ? t : t.replace(/\bemails?\b/g, (w) => (w.endsWith('s') ? 'messages' : 'message')));
+  const s = { headline: word(raw.headline), reasons: raw.reasons.map(word), action: word(raw.action) };
   const b = scoreBreakdown(report);
   const max = Math.max(1, ...[...b.raised, ...b.lowered].map((p) => Math.abs(p.points)));
   const label = verdictLabel(report);
@@ -61,7 +64,13 @@ export function mount(root: HTMLElement) {
   );
   root.querySelector('[data-demo-check]')!.addEventListener('click', go);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) go(); });
-  root.querySelector<HTMLButtonElement>('[data-sample="email"]')?.click();
+  // Shared from another app (Android share sheet) or linked with ?text=: check that instead of an example.
+  const q = new URLSearchParams(location.search);
+  const shared = [q.get('title'), q.get('text'), q.get('url')].filter(Boolean).join('\n').trim();
+  if (shared) {
+    input.value = shared;
+    go();
+  } else if (!root.hasAttribute('data-demo-empty')) root.querySelector<HTMLButtonElement>('[data-sample="email"]')?.click();
 }
 
 const el = document.querySelector<HTMLElement>('[data-demo]');
