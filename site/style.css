@@ -242,6 +242,14 @@ h2 { font-size: clamp(32px, 4.4vw, 52px); line-height: 1.06; letter-spacing: -0.
 .chapter p { color: var(--text-2); font-size: 17px; margin: 0 0 12px; text-wrap: pretty; }
 .chapter .more-link { font-size: 15px; color: var(--text-3); }
 .chapter .shot { width: 100%; }
+/* Screenshots sit in a browser window, so a bright Gmail page reads as a window on the dark site. */
+.chapter a.zoom { display: block; position: relative; padding-top: 36px; border-radius: 18px; background: var(--surface-2); border: 1px solid var(--border-strong); box-shadow: var(--shadow-lg); overflow: hidden; }
+.chapter a.zoom::before { content: ''; position: absolute; left: 16px; top: 13px; width: 52px; height: 10px; background: radial-gradient(circle 5px at 5px 5px, #ff5f57 98%, transparent) 0 0 / 21px 10px repeat-x; filter: saturate(.85); }
+.chapter a.zoom::after { content: 'mail.google.com'; position: absolute; left: 50%; top: 8px; transform: translateX(-50%); font-size: 11px; color: var(--text-3); background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 2px 14px; }
+.chapter a.zoom .shot { border: 0; border-radius: 0; box-shadow: none; }
+.chapter a.zoom:has(.shot-tall) { padding-top: 0; background: none; border: 0; box-shadow: none; overflow: visible; }
+.chapter a.zoom:has(.shot-tall)::before, .chapter a.zoom:has(.shot-tall)::after { content: none; }
+.chapter a.zoom .shot-tall { border: 1px solid var(--border-strong); border-radius: var(--radius); box-shadow: var(--shadow-lg); }
 .chapter .shot-tall { max-width: 340px; max-height: 560px; width: auto; object-fit: cover; object-position: top; margin: 0 auto; }
 
 /* Try it live */

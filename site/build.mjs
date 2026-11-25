@@ -177,11 +177,16 @@ function layout({ title, body, current, description }) {
 <meta name="description" content="${description}">
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${description}">
-<meta property="og:image" content="https://praneeth132006.github.io/Unmask/logo-512.png">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://praneeth132006.github.io/Unmask/media/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Unmask: see what a suspicious email is really hiding">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0c0e0f" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f6f7f4" media="(prefers-color-scheme: light)">
 <link rel="icon" href="icon-48.png">
+<link rel="apple-touch-icon" href="logo-512.png">
 <link rel="preload" href="fonts/inter-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 <script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('unmask-site-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
