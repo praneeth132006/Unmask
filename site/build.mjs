@@ -445,6 +445,17 @@ const RULES = JSON.parse(readFileSync(join(root, 'extension', 'src', 'rules', 'r
 cpSync(join(root, 'site', 'media'), join(out, 'media'), { recursive: true });
 const VIDEO = JSON.parse(readFileSync(join(root, 'site', 'video.json'), 'utf8'));
 const SCAMS = JSON.parse(readFileSync(join(root, 'docs', 'scams.json'), 'utf8')).items;
+// Scam watch as a STIX 2.1 feed for threat-intelligence tools (also served over TAXII by the backend).
+const loadTs = async (entry) => {
+  const tmp = join(out, `.${entry.split('/').pop()}.mjs`);
+  execFileSync(join(root, 'extension', 'node_modules', '.bin', 'esbuild'), [join(root, entry), '--bundle', '--format=esm', '--platform=node', `--outfile=${tmp}`, '--log-level=warning']);
+  const mod = await import(tmp);
+  rmSync(tmp);
+  return mod;
+};
+const { buildFeedBundle } = await loadTs('extension/src/report/feed.ts');
+mkdirSync(join(out, 'feeds'));
+writeFileSync(join(out, 'feeds', 'scam-watch.stix.json'), JSON.stringify(await buildFeedBundle(SCAMS), null, 2));
 // Example reports built from real phishing emails (HTML and PDF).
 cpSync(join(root, 'docs', 'examples'), join(out, 'examples'), { recursive: true });
 writeFileSync(join(out, '.nojekyll'), '');
@@ -481,7 +492,7 @@ write(
     title: 'Scam watch · Unmask',
     description: 'Real phishing emails taken apart by Unmask, with the tells to look for.',
     current: 'scams.html',
-    body: `<section class="page-head"><div class="wrap"><p class="kicker">Scam watch</p><h1>Real scams, taken apart.</h1><p>Real phishing emails Unmask analysed, newest first, with the tells that give each away. Only real cases from public research collections or reports whose senders agreed to publish them. Every address is defanged so nothing here can be clicked by mistake.</p></div></section><section class="page-body"><div class="wrap"><div class="watch-grid">${SCAMS.map(scamCard).join('')}</div><p class="callout">Got one Unmask missed, or got wrong? Press <strong>Was this right?</strong> in the panel. You choose exactly what is shared, and nothing is sent without you pressing Send. <a href="${REPO}/blob/main/CONTRIBUTING.md">How cases are added</a>.</p></div></section>`,
+    body: `<section class="page-head"><div class="wrap"><p class="kicker">Scam watch</p><h1>Real scams, taken apart.</h1><p>Real phishing emails Unmask analysed, newest first, with the tells that give each away. Only real cases from public research collections or reports whose senders agreed to publish them. Every address is defanged so nothing here can be clicked by mistake.</p></div></section><section class="page-body"><div class="wrap"><div class="watch-grid">${SCAMS.map(scamCard).join('')}</div><p class="note">For security teams: the same cases as a <a href="feeds/scam-watch.stix.json">STIX 2.1 feed</a>, also available over TAXII 2.1 from a self-hosted <a href="${REPO}/blob/main/docs/BACKEND.md#taxii-21-feed">Unmask backend</a>.</p><p class="callout">Got one Unmask missed, or got wrong? Press <strong>Was this right?</strong> in the panel. You choose exactly what is shared, and nothing is sent without you pressing Send. <a href="${REPO}/blob/main/CONTRIBUTING.md">How cases are added</a>.</p></div></section>`,
   }),
 );
 

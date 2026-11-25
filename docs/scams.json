@@ -17,7 +17,11 @@
       "lesson": "A brand name inside a domain doesn't make it the brand's domain. Go to the company's site yourself.",
       "source": "phishing_pot",
       "report": "examples/coldcard-advisory.html",
-      "image": "images/reports/example-coldcard-advisory-executive.png"
+      "image": "images/reports/example-coldcard-advisory-executive.png",
+      "indicators": [
+        "coldcardblog.org",
+        "coinkiteadvisory.com"
+      ]
     },
     {
       "id": "binance-withdrawal",
@@ -35,7 +39,10 @@
       "lesson": "Panic is the lure. Open the app or site yourself instead of clicking \"Cancel\" in an email.",
       "source": "phishing_pot",
       "report": "examples/binance-withdrawal.html",
-      "image": "images/reports/example-binance-withdrawal-executive.png"
+      "image": "images/reports/example-binance-withdrawal-executive.png",
+      "indicators": [
+        "auswestbc.com.au"
+      ]
     },
     {
       "id": "efteling-giftcard",
@@ -53,7 +60,11 @@
       "lesson": "Free gift cards for a quick survey are almost always bait. Check where the link really goes.",
       "source": "phishing_pot",
       "report": "examples/efteling-giftcard.html",
-      "image": "images/reports/example-efteling-giftcard-executive.png"
+      "image": "images/reports/example-efteling-giftcard-executive.png",
+      "indicators": [
+        "emailservicesnetau.com",
+        "team-efteling.nl"
+      ]
     }
   ]
 }
