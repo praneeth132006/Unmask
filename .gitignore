@@ -13,3 +13,4 @@ stats.html
 build/
 _site/
 .cache/
+.gstack/
