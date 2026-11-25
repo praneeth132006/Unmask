@@ -16,6 +16,7 @@
     "site": "node site/build.mjs",
     "wiki": "node site/wiki.mjs",
     "gmail-addon": "node gmail-addon/build.mjs && node gmail-addon/test.mjs",
+    "cli": "node cli/build.mjs && node cli/dist/unmask.mjs check extension/e2e/demo.eml --quiet && node cli/dist/unmask.mjs check extension/tests/fixtures/legit-newsletter.eml --quiet --fail-on suspicious",
     "ci:local": "sh scripts/ci-local.sh",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "benchmark": "node scripts/benchmark/fetch.mjs && UNMASK_BENCH_DIR=.cache/benchmark UNMASK_BENCH_OUT=.cache/benchmark/result pnpm --filter unmask-extension exec vitest run tests/benchmark.test.ts"

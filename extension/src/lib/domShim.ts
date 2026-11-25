@@ -1,4 +1,4 @@
-/** DOMParser from linkedom. Loaded after ./shims, because linkedom's dependencies need atob while loading. */
+/** DOMParser from linkedom, for runtimes without a DOM (the CLI, the Gmail add-on). Where atob may be missing, load a base64 shim first: linkedom's dependencies need it while loading. */
 import { DOMParser as LinkeDOMParser } from 'linkedom';
 
 const g = globalThis as Record<string, unknown>;

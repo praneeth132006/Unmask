@@ -1,6 +1,6 @@
 /** The engine for the Gmail add-on, exposed as a global (Apps Script has no modules). */
 import './shims';
-import './dom';
+import '../../extension/src/lib/domShim';
 import { analyzeRawEmail } from '../../extension/src/core/analyze';
 import { plainSummary } from '../../extension/src/core/plain';
 import { verdictLabel } from '../../extension/src/core/facts';

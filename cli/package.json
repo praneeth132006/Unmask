@@ -1,0 +1,12 @@
+{
+  "name": "unmask-cli",
+  "version": "0.6.0",
+  "description": "Unmask on the command line: check emails for phishing, export STIX, check if a domain is spoofable.",
+  "type": "module",
+  "bin": { "unmask": "dist/unmask.mjs" },
+  "files": ["dist"],
+  "engines": { "node": ">=20" },
+  "scripts": { "build": "node build.mjs" },
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/praneeth132006/Unmask.git", "directory": "cli" }
+}
