@@ -33,6 +33,8 @@ export interface Settings {
   clickProtection: boolean;
   /** Plain words only: hides the technical tabs and details until asked for. */
   simpleMode: boolean;
+  /** Larger text in the panel, for easier reading. */
+  largeText: boolean;
   /** A "Peek" button on inbox rows to check an email without opening it. */
   peekButtons: boolean;
   /** Check new (unread) inbox emails automatically, before they are opened. */
@@ -70,6 +72,7 @@ export const DEFAULT_SETTINGS: Settings = {
   inboxBadges: true,
   clickProtection: true,
   simpleMode: false,
+  largeText: false,
   peekButtons: true,
   scanInbox: true,
   onDeviceAi: false,
@@ -112,8 +115,22 @@ export function applyTheme(theme: Theme): void {
   }
 }
 
+const TEXT_CACHE = 'unmask:text-size';
+
+/** Larger text in the panel and Unmask's pages. Cached so the next page opens at the right size at once. */
+export function applyTextSize(large: boolean): void {
+  if (large) document.documentElement.setAttribute('data-text', 'large');
+  else document.documentElement.removeAttribute('data-text');
+  try {
+    localStorage.setItem(TEXT_CACHE, large ? 'large' : 'normal');
+  } catch {
+    // storage unavailable
+  }
+}
+
 export function applyCachedTheme(): void {
   try {
+    if (localStorage.getItem(TEXT_CACHE) === 'large') document.documentElement.setAttribute('data-text', 'large');
     const t = localStorage.getItem(THEME_CACHE);
     if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
   } catch {

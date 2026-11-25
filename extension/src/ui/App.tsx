@@ -19,7 +19,7 @@ import { registrableDomain, sameOrg } from '../lib/domain';
 import { loadHistory, rememberSender } from '../lib/historyStore';
 import { loadProtection } from '../lib/protectionStore';
 import { decodeImageInBrowser } from '../lib/imageDecode';
-import { applyTheme, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
+import { applyTheme, applyTextSize, DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type Theme } from '../lib/settings';
 import type { HighlightTarget } from '../lib/highlight';
 import { brandOwningDomain, FREE_MAIL_DOMAINS } from '../analyzers/brands';
 import { GmailFetchError, messageKey, useGmail } from './useGmail';
@@ -81,6 +81,7 @@ export function App() {
     void loadSettings().then(setSettings);
   }, []);
   useEffect(() => applyTheme(settings.theme), [settings.theme]);
+  useEffect(() => applyTextSize(settings.largeText), [settings.largeText]);
 
   const cycleTheme = () => {
     const order: Theme[] = ['system', 'light', 'dark'];
@@ -686,57 +687,87 @@ function EmptyState({
       clearInterval(t);
     };
   }, [status, app, inboxStatus]);
+  const tile = 'group flex flex-col items-start gap-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left shadow-[var(--shadow)] transition-[border-color,transform] hover:-translate-y-px hover:border-[var(--border-strong)]';
+  const tileIcon = 'mb-1 grid h-8 w-8 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]';
+  const ready = status === 'ready';
   return (
-    <div className="px-2 py-10 text-center">
-      <img src="/icon/128.png" alt="" className="mx-auto mb-4 h-16 w-16 drop-shadow-sm" />
-      {status === 'ready' && (
-        <>
-          <p className="text-[15px] font-semibold">Open an email to inspect it</p>
-          <p className="mt-1 text-xs text-[var(--text-2)]">Unmask checks the sender, links, attachments and hidden text of the email you open in {name}.</p>
-          {app === 'gmail' && (
-            <div className="mx-auto mt-4 max-w-[300px] rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3 text-left text-xs text-[var(--text-2)]">
-              <p className="font-semibold text-[var(--text)]">👁 Check emails without opening them</p>
-              <p className="mt-1">In your inbox, click <strong className="text-[var(--text)]">Peek</strong> next to any sender. Unmask checks the email and shows a text-only preview, so its trackers never fire.</p>
-              {inbox && inbox.peekButtons > 0 && <p className="mt-1.5 text-[var(--good)]">✓ Peek is on for {inbox.peekButtons} email{inbox.peekButtons === 1 ? '' : 's'} in this list.</p>}
-              {inbox && !inbox.peekEnabled && <p className="mt-1.5 text-[var(--warn)]">Peek is switched off in Settings → Protection inside Gmail.</p>}
-              {inbox && inbox.peekEnabled && inbox.rows > 0 && inbox.peekButtons === 0 && <p className="mt-1.5 text-[var(--warn)]">Adding Peek buttons to {inbox.rows} emails…</p>}
-              {inbox && inbox.peekEnabled && inbox.rows === 0 && <p className="mt-1.5 text-[var(--text-3)]">Open your inbox or a label to see the email list.</p>}
-            </div>
-          )}
-          {app === 'outlook' && (
-            <p className="mt-2 text-[11px] text-[var(--text-3)]">In Outlook on the web Unmask reads the email from the page, so header checks (SPF, DKIM, DMARC) need … → View → View message source pasted in with the clipboard button.</p>
-          )}
-        </>
+    <div className="unmask-rise px-1 pb-8 pt-6">
+      <div className="text-center">
+        <div className="relative mx-auto mb-4 h-16 w-16">
+          <div className="absolute -inset-4 rounded-full bg-[var(--accent-soft)] blur-xl" aria-hidden="true" />
+          <img src="/icon/128.png" alt="" className="relative h-16 w-16" />
+        </div>
+        <p className={`mx-auto mb-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${ready ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]' : 'border-[var(--border-strong)] text-[var(--text-2)]'}`} role="status">
+          <span className={`h-1.5 w-1.5 rounded-full ${ready ? 'bg-[var(--accent)]' : 'bg-[var(--text-3)]'}`} aria-hidden="true" />
+          {ready ? `Protecting ${name}` : status === 'no-script' ? `${name} needs a reload` : 'Waiting for Gmail or Outlook'}
+        </p>
+        {ready && (
+          <>
+            <h1 className="text-lg font-semibold tracking-tight">Open an email to inspect it</h1>
+            <p className="mx-auto mt-1 max-w-[300px] text-xs leading-relaxed text-[var(--text-2)]">Unmask checks who really sent it, where its links go, what its files hide and any hidden text, on this device.</p>
+          </>
+        )}
+        {status === 'no-script' && (
+          <>
+            <h1 className="text-lg font-semibold tracking-tight">Reload {name} to connect Unmask</h1>
+            <p className="mt-1 text-xs text-[var(--text-2)]">{name} was already open when Unmask was installed or updated.</p>
+            <Button variant="primary" className="mt-3" onClick={onReload}>
+              <Icon name="refresh" className="h-3.5 w-3.5" /> Reload {name}
+            </Button>
+          </>
+        )}
+        {status === 'not-gmail' && (
+          <>
+            <h1 className="text-lg font-semibold tracking-tight">Open Gmail or Outlook to start</h1>
+            <p className="mt-1 text-xs text-[var(--text-2)]">Then open any email. Unmask checks it automatically. You can still use the tools below.</p>
+          </>
+        )}
+      </div>
+
+      {ready && app === 'gmail' && (
+        <div className="mx-auto mt-5 max-w-[340px] rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3 text-xs text-[var(--text-2)]">
+          <p className="flex items-center gap-1.5 font-semibold text-[var(--text)]"><Icon name="eye" className="h-3.5 w-3.5 text-[var(--accent)]" /> Check emails without opening them</p>
+          <p className="mt-1">Click <strong className="text-[var(--text)]">Peek</strong> next to a sender in your inbox: a text-only preview, so trackers never fire.</p>
+          {inbox && inbox.peekButtons > 0 && <p className="mt-1.5 text-[var(--good)]">✓ Ready on {inbox.peekButtons} email{inbox.peekButtons === 1 ? '' : 's'} in this list.</p>}
+          {inbox && !inbox.peekEnabled && <p className="mt-1.5 text-[var(--warn)]">Peek is switched off in Settings → Protection inside Gmail.</p>}
+          {inbox && inbox.peekEnabled && inbox.rows > 0 && inbox.peekButtons === 0 && <p className="mt-1.5 text-[var(--warn)]">Adding Peek buttons to {inbox.rows} emails…</p>}
+          {inbox && inbox.peekEnabled && inbox.rows === 0 && <p className="mt-1.5 text-[var(--text-3)]">Open your inbox or a label to see the email list.</p>}
+        </div>
       )}
-      {status === 'no-script' && (
-        <>
-          <p className="text-[15px] font-semibold">Reload {name} to connect Unmask</p>
-          <p className="mt-1 text-xs text-[var(--text-2)]">{name} was already open when Unmask was installed or updated.</p>
-          <Button variant="primary" className="mt-3" onClick={onReload}>
-            <Icon name="refresh" className="h-3.5 w-3.5" /> Reload {name}
-          </Button>
-        </>
+      {ready && app === 'outlook' && (
+        <p className="mx-auto mt-3 max-w-[320px] text-center text-[11px] text-[var(--text-3)]">In Outlook on the web, header checks (SPF, DKIM, DMARC) need … → View → View message source, pasted in with the clipboard button.</p>
       )}
-      {status === 'not-gmail' && (
-        <>
-          <p className="text-[15px] font-semibold">Open Gmail or Outlook to get started</p>
-          <p className="mt-1 text-xs text-[var(--text-2)]">Then open any email. Unmask will analyze it automatically.</p>
-        </>
-      )}
+
       <WeeklyCard />
-      <div className="mt-4">
-        <Button onClick={onExample}>See an example phishing email</Button>
-        <p className="mt-1 text-[11px] text-[var(--text-3)]">A made-up scam, to see what Unmask shows. Nothing is sent.</p>
-        <a className="mt-2 inline-block text-xs font-medium text-[var(--accent)]" href={browser.runtime.getURL('/practice.html')} target="_blank" rel="noopener noreferrer">
-          Practise spotting scams (10 emails)
+
+      <h2 className="mb-2 mt-6 px-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-3)]">Tools</h2>
+      <div className="grid grid-cols-2 gap-2">
+        <a className={tile} href={browser.runtime.getURL('/check.html')} target="_blank" rel="noopener noreferrer">
+          <span className={tileIcon}><Icon name="paste" className="h-4 w-4" /></span>
+          <span className="text-[13px] font-semibold text-[var(--text)]">Check a text or link</span>
+          <span className="text-[11px] leading-snug text-[var(--text-3)]">SMS, WhatsApp, a link</span>
         </a>
-        <a className="mt-1 block text-xs font-medium text-[var(--accent)]" href={browser.runtime.getURL('/check.html')} target="_blank" rel="noopener noreferrer">
-          Check a text message or link
+        <a className={tile} href={browser.runtime.getURL('/practice.html')} target="_blank" rel="noopener noreferrer">
+          <span className={tileIcon}><Icon name="flag" className="h-4 w-4" /></span>
+          <span className="text-[13px] font-semibold text-[var(--text)]">Spot the scam</span>
+          <span className="text-[11px] leading-snug text-[var(--text-3)]">A 10-email quiz</span>
+        </a>
+        <button type="button" className={tile} onClick={onExample}>
+          <span className={tileIcon}><Icon name="mask" className="h-4 w-4" /></span>
+          <span className="text-[13px] font-semibold text-[var(--text)]">See an example</span>
+          <span className="text-[11px] leading-snug text-[var(--text-3)]">A made-up phishing email</span>
+        </button>
+        <a className={tile} href="https://praneeth132006.github.io/Unmask/domain.html" target="_blank" rel="noopener noreferrer">
+          <span className={tileIcon}><Icon name="shield" className="h-4 w-4" /></span>
+          <span className="text-[13px] font-semibold text-[var(--text)]">Is your domain safe?</span>
+          <span className="text-[11px] leading-snug text-[var(--text-3)]">Can scammers fake it</span>
         </a>
       </div>
-      <div className="mx-auto mt-6 max-w-[290px] rounded-xl border border-dashed border-[var(--border-strong)] p-3 text-xs text-[var(--text-2)]">
-        Using the Outlook desktop app or another client? Save the email as an <strong className="text-[var(--text)]">.eml</strong> file and drop it here, or paste its raw source with the clipboard button above.
-      </div>
+
+      <details className="mx-auto mt-5 rounded-2xl border border-dashed border-[var(--border-strong)] px-3 py-2 text-xs text-[var(--text-2)]">
+        <summary className="cursor-pointer select-none font-medium text-[var(--text)]">Using another mail app?</summary>
+        <p className="mt-1.5 pb-1">Save the email as an <strong className="text-[var(--text)]">.eml</strong> file and drop it here, or paste its raw source with the clipboard button above. Outlook users can also add the <a className="text-[var(--accent)]" href="https://praneeth132006.github.io/Unmask/outlook.html" target="_blank" rel="noopener noreferrer">Outlook add-in</a>.</p>
+      </details>
     </div>
   );
 }

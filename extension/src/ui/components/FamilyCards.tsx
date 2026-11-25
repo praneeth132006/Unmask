@@ -32,7 +32,7 @@ export function WeeklyCard() {
   const earned = badges(stats);
   if (!thisWeek.checked && !lastWeek?.checked && !earned.length) return null;
   return (
-    <div className="mx-auto mt-5 max-w-[300px] rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left text-xs" aria-label="This week">
+    <div className="mx-auto mt-3 max-w-[340px] rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 text-left text-xs shadow-[var(--shadow)]" aria-label="This week">
       {earned.length > 0 && (
         <ul className="mb-2 flex flex-wrap gap-1.5" aria-label="Badges">
           {earned.map((b) => (

@@ -38,16 +38,15 @@ export function ShareCard({ report }: { report: Report }) {
     setState('text');
   };
   return (
-    <div className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 text-xs" data-testid="share-card">
-      <p className="font-medium text-[var(--text)]">Warn someone about this email</p>
-      <p className="mt-0.5 text-[var(--text-2)]">A picture of this verdict for your family or team chat. Addresses are written so they can’t be clicked.</p>
-      <div className="mt-2 flex flex-wrap gap-2">
+    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-xs" data-testid="share-card">
+      <p className="mr-auto font-medium text-[var(--text)]" title="A picture of this verdict for your family or team chat. Addresses are written so they can’t be clicked.">Warn someone</p>
+      <div className="flex flex-wrap gap-1.5">
         <Button onClick={copyImage}><Icon name="copy" className="h-3.5 w-3.5" /> Copy picture</Button>
-        <Button onClick={async () => download(await image())}>Save picture</Button>
-        <Button onClick={copyText}>Copy as text</Button>
+        <Button onClick={async () => download(await image())}>Save</Button>
+        <Button onClick={copyText}>Text</Button>
       </div>
       {state !== 'idle' && (
-        <p className="mt-2 text-[var(--good)]" role="status">
+        <p className="w-full text-[var(--good)]" role="status">
           {state === 'copied' ? 'Picture copied. Paste it into a chat.' : state === 'saved' ? 'Saved as unmask-warning.png.' : 'Text copied.'}
         </p>
       )}

@@ -17,7 +17,7 @@ export function Pill({ severity, children }: { severity: Severity; children: Rea
 
 export function Card({ children, className = '', ...rest }: { children: ReactNode; className?: string } & HTMLAttributes<HTMLDivElement>) {
   return (
-    <div {...rest} className={`rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[var(--shadow)] ${className}`}>
+    <div {...rest} className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3.5 shadow-[var(--shadow)] ${className}`}>
       {children}
     </div>
   );
@@ -34,7 +34,7 @@ export function SectionTitle({ children, right }: { children: ReactNode; right?:
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-[var(--accent)] text-[var(--on-accent)] hover:bg-[var(--accent-hover)]',
+  primary: 'bg-[var(--accent)] text-[var(--on-accent)] font-semibold shadow-[0_6px_18px_var(--accent-soft)] hover:bg-[var(--accent-hover)]',
   secondary: 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)]',
   ghost: 'text-[var(--text-2)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]',
   danger: 'bg-[var(--bad)] text-white hover:opacity-90',
@@ -45,7 +45,7 @@ export function Button({ variant = 'secondary', className = '', ...props }: Butt
     <button
       type="button"
       {...props}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-[10px] px-3 py-1.5 text-xs font-medium transition-[background,border-color,transform] active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${className}`}
     />
   );
 }

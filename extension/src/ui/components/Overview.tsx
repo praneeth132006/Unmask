@@ -128,10 +128,15 @@ function SummaryChips({ report, onOpen }: { report: Report; onOpen: (tab: TabId)
   );
 }
 
-function FindingRow({ f, onHover, onOpen }: { f: Finding; onHover: (f: Finding | null) => void; onOpen: (f: Finding) => void }) {
+function FindingRow({ f, onHover, onOpen, lessons }: { f: Finding; onHover: (f: Finding | null) => void; onOpen: (f: Finding) => void; lessons?: Set<string> }) {
   const s = SEVERITY_STYLE[f.severity];
   const actionable = Boolean(f.target);
-  const lesson = f.points > 0 ? lessonFor(f.id) : null;
+  // Each lesson is offered once per report, on the first red flag it explains.
+  let lesson = f.points > 0 ? lessonFor(f.id) : null;
+  if (lesson && lessons) {
+    if (lessons.has(lesson.id)) lesson = null;
+    else lessons.add(lesson.id);
+  }
   return (
     <li id={`finding-${f.id}`} className={lesson ? 'pb-2' : ''}>
       <button
@@ -167,7 +172,7 @@ function FindingRow({ f, onHover, onOpen }: { f: Finding; onHover: (f: Finding |
   );
 }
 
-function Group({ title, findings, onHover, onOpen }: { title: string; findings: Finding[]; onHover: (f: Finding | null) => void; onOpen: (f: Finding) => void }) {
+function Group({ title, findings, onHover, onOpen, lessons }: { title: string; findings: Finding[]; onHover: (f: Finding | null) => void; onOpen: (f: Finding) => void; lessons?: Set<string> }) {
   if (!findings.length) return null;
   return (
     <>
@@ -175,7 +180,7 @@ function Group({ title, findings, onHover, onOpen }: { title: string; findings: 
       <Card className="!p-0 overflow-hidden">
         <ul className="divide-y divide-[var(--border)]">
           {findings.map((f) => (
-            <FindingRow key={f.id} f={f} onHover={onHover} onOpen={onOpen} />
+            <FindingRow key={f.id} f={f} onHover={onHover} onOpen={onOpen} lessons={lessons} />
           ))}
         </ul>
       </Card>
@@ -265,6 +270,7 @@ export function Overview({
   const red = report.findings.filter((f) => f.points > 0 && f.severity !== 'info' && f.severity !== 'good');
   const good = report.findings.filter((f) => f.severity === 'good');
   const notes = report.findings.filter((f) => !red.includes(f) && !good.includes(f));
+  const lessons = new Set<string>();
   const technical = (
     <>
       <SummaryChips report={report} onOpen={onOpenTab} />
@@ -274,7 +280,7 @@ export function Overview({
           <Icon name="eye" className="h-3.5 w-3.5" /> Hover a red flag to see it in the email. Click it for details.
         </p>
       )}
-      <Group title={concernsHeading(report, red.length)} findings={red} onHover={onHoverFinding} onOpen={onOpenFinding} />
+      <Group title={concernsHeading(report, red.length)} findings={red} onHover={onHoverFinding} onOpen={onOpenFinding} lessons={lessons} />
       {!red.length && (
         <Card className="mt-4 text-center">
           <Icon name="check" className="mx-auto h-5 w-5 text-[var(--good)]" />
@@ -290,6 +296,7 @@ export function Overview({
   return (
     <div>
       <PlainCard report={report} />
+      <ShareCard report={report} />
       <div className="mt-3">
         {simple ? (
           <details className="group">
@@ -300,7 +307,6 @@ export function Overview({
           technical
         )}
       </div>
-      <ShareCard report={report} />
       <FeedbackCard report={report} />
     </div>
   );
