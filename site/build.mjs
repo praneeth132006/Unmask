@@ -535,7 +535,7 @@ write('check.html', layout({
 <label class="sr-only" for="demo-text">Message to check</label><textarea id="demo-text" spellcheck="false" placeholder="Paste the message or link here"></textarea>
 <div class="demo-bar"><button type="button" class="btn btn-primary" data-demo-check>Check it</button><button type="button" class="btn btn-ghost" data-install-app hidden>Add to home screen</button></div></div>
 <div class="demo-result" data-demo-result hidden aria-live="polite"></div></div>
-<div class="steps-row"><div><b>1</b><p>Open this page on your phone and choose <b>Add to Home screen</b>.</p></div><div><b>2</b><p>In Messages or WhatsApp, long-press a message and tap <b>Share</b>.</p></div><div><b>3</b><p>Pick <b>Unmask</b>. The message is checked right away, on your phone.</p></div></div>
+<div class="steps-row"><div><span class="step-n">1</span><p>Open this page on your phone and choose <b>Add to Home screen</b>.</p></div><div><span class="step-n">2</span><p>In Messages or WhatsApp, long-press a message and tap <b>Share</b>.</p></div><div><span class="step-n">3</span><p>Pick <b>Unmask</b>. The message is checked right away, on your phone.</p></div></div>
 </div></section>
 <link rel="manifest" href="manifest.webmanifest"><script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
@@ -552,7 +552,7 @@ write('outlook.html', layout({
 <h2>Install it</h2>
 <ol class="install-steps"><li>Open <a href="https://aka.ms/olksideload">Outlook’s add-in settings</a> (Outlook on the web: <b>Get add-ins → My add-ins → Add a custom add-in → Add from URL</b>).</li><li>Paste this address: <code>https://praneeth132006.github.io/Unmask/outlook/manifest.xml</code></li><li>Open any email and press <b>Check with Unmask</b>. On a phone, it is under the email’s <b>⋯</b> menu, once installed on the web.</li></ol>
 <h2>What it checks</h2><p>The sender and its authentication results, look-alike and impersonated brands, where every link really goes, wording and pressure tricks, and hidden text. Attachments are not checked in the add-in yet; the browser extension does that.</p>
-<p class="callout">Preview: the add-in hasn’t been through Microsoft’s store review yet. Work accounts may need an administrator to allow custom add-ins.</p>
+<p class="note">Preview: the add-in is being prepared for Microsoft AppSource. Until it is listed there, install it from the address above. Work accounts may need an administrator to allow custom add-ins.</p>
 </div></section>`,
 }));
 
