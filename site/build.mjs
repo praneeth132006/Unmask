@@ -199,16 +199,23 @@ function layout({ title, body, current, description }) {
 </div></header>
 <main id="content">${body}</main>
 <dialog class="lightbox" id="lightbox" aria-label="Screenshot"><button type="button" class="close" aria-label="Close">×</button><img alt=""><p></p></dialog>
-<footer><div class="wrap">
-  <div class="foot">
-    <div class="foot-brand"><a class="brand" href="index.html"><img src="icon-48.png" alt="" width="28" height="28">Unmask</a><p>A free, open-source browser extension that shows what a suspicious email is really hiding. Your email never leaves your device.</p></div>
-    ${col('Product', [[STORE.chrome, 'Chrome Web Store'], [STORE.firefox, 'Firefox Add-ons'], [`${REPO}/releases/latest`, 'Latest zip (other browsers)'], ['index.html#try', 'Try it live'], ['scams.html', 'Scam watch'], ['changelog.html', 'Changelog']])}
-    ${col('Learn', [['guide.html', 'User guide'], ['analysis.html', 'How it works'], ['checks.html', 'What it checks'], ['files.html', 'Inside attachments'], ['reports.html', 'Reports'], ['teams.html', 'Teams and families']])}
-    ${col('Trust', [['privacy.html', 'Privacy'], ['permissions.html', 'Permissions'], ['benchmark.html', 'Benchmark'], ['limits.html', 'Limits and costs'], [`${REPO}/blob/main/SECURITY.md`, 'Security']])}
-    ${col('Project', [[REPO, 'GitHub'], [`${REPO}/wiki`, 'Wiki'], [`${REPO}/issues/new/choose`, 'Report a problem'], [`${REPO}/blob/main/CONTRIBUTING.md`, 'Contribute'], ['https://github.com/sponsors/praneeth132006', 'Support Unmask']])}
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-cta">
+      <p class="foot-status"><span class="pulse" aria-hidden="true"></span>Every check runs on your device. Nothing is sent to us, ever.</p>
+      <a class="btn btn-primary" data-install href="${STORE.chrome}"><span data-install-label>Add to Chrome</span></a>
+    </div>
+    <div class="foot">
+      <div class="foot-brand"><a class="brand" href="index.html"><img src="icon-48.png" alt="" width="28" height="28">Unmask</a><p>A free, open-source browser extension that shows what a suspicious email is really hiding.</p></div>
+      ${col('Get it', [[STORE.chrome, 'Chrome Web Store'], [STORE.firefox, 'Firefox Add-ons'], [`${REPO}/releases/latest`, 'Latest zip (other browsers)'], ['index.html#try', 'Try it live'], ['scams.html', 'Scam watch'], ['changelog.html', 'Changelog']])}
+      ${col('Learn', [['guide.html', 'User guide'], ['analysis.html', 'How it works'], ['checks.html', 'What it checks'], ['lessons.html', 'How scams work'], ['rules.html', 'Community rules'], ['teams.html', 'Teams and families']])}
+      ${col('Tools', [['domain.html', 'Is your domain spoofable?'], ['check.html', 'Check a text message'], ['outlook.html', 'Outlook add-in'], ['reports.html', 'Reports'], ['files.html', 'Inside attachments']])}
+      ${col('Trust', [['privacy.html', 'Privacy'], ['permissions.html', 'Permissions'], ['benchmark.html', 'Benchmark'], ['limits.html', 'Limits and costs'], [`${REPO}/blob/main/SECURITY.md`, 'Security'], [REPO, 'Source on GitHub']])}
+    </div>
   </div>
-  <div class="foot-legal"><span>© ${year} Unmask contributors · MIT licence</span><span>Not affiliated with Google, Microsoft or any brand named here.</span></div>
-</div></footer>
+  <div class="foot-mark" aria-hidden="true" data-text="UNMASK">UNMASK</div>
+  <div class="wrap foot-legal"><span>© ${year} Unmask contributors · MIT licence · <a href="${REPO}/issues/new/choose">Report a problem</a> · <a href="https://github.com/sponsors/praneeth132006">Support Unmask</a></span><span>Not affiliated with Google, Microsoft or any brand named here.</span></div>
+</footer>
 <script>
 (function () {
   var doc = document, root = doc.documentElement;
@@ -257,6 +264,28 @@ function layout({ title, body, current, description }) {
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { load(); o.disconnect(); } }, { rootMargin: '600px' }).observe(demo); else load();
     demo.addEventListener('focusin', load);
   }
+
+  // The footer wordmark: a spotlight that "unmasks" the letters under the pointer.
+  var mark = doc.querySelector('.foot-mark');
+  if (mark) mark.parentElement.addEventListener('pointermove', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    var r = mark.getBoundingClientRect();
+    mark.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    mark.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+    mark.classList.add('tracking');
+  });
+
+  // The video loads from YouTube only when asked.
+  doc.querySelectorAll('[data-youtube]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var f = doc.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + b.dataset.youtube + '?autoplay=1&rel=0&modestbranding=1';
+      f.title = b.getAttribute('aria-label');
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      b.replaceWith(f);
+    });
+  });
 
   // Menus close when you click elsewhere or press Escape.
   doc.addEventListener('click', function (e) { doc.querySelectorAll('details.burger[open]').forEach(function (d) { if (!d.contains(e.target)) d.removeAttribute('open'); }); });
@@ -326,6 +355,25 @@ function layout({ title, body, current, description }) {
 /** Defanged text stays defanged; everything else is escaped. */
 const html = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/**
+ * The promo video. Nothing loads from YouTube until the visitor presses play, and then
+ * only from youtube-nocookie.com. Until the video is published, the poster says "Coming soon".
+ */
+function videoSection(v) {
+  const id = /^[A-Za-z0-9_-]{6,20}$/.test(v.youtubeId ?? '') ? v.youtubeId : '';
+  const label = id ? `Play the video: ${html(v.title)} (${html(v.duration)})` : 'Video coming soon';
+  return `<section class="film" id="video"><div class="wrap">
+  <header class="section-head reveal"><p class="kicker">Watch</p><h2>What a phishing email is really hiding, in ${html(v.duration)}.</h2></header>
+  <div class="film-frame reveal">
+    <button type="button" class="film-play" ${id ? `data-youtube="${id}"` : 'disabled'} aria-label="${label}">
+      <img src="media/video-poster.webp" alt="" width="1600" height="900" loading="lazy" decoding="async">
+      <span class="film-badge">${id ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Play · ${html(v.duration)}` : 'Coming soon'}</span>
+    </button>
+  </div>
+  ${id ? '<p class="film-note reveal">Plays from youtube-nocookie.com, only once you press play.</p>' : ''}
+</div></section>`;
+}
+
 function scamCard(c) {
   return `<article class="case reveal"><div class="case-top"><span>${html(c.brand)} · ${html(c.date)}</span><span class="case-risk">High risk ${c.score}</span></div><h3>${html(c.title)}</h3><p class="lure">${html(c.lure)}</p><ul>${c.tells.map((t) => `<li>${html(t)}</li>`).join('')}</ul><p class="lesson">${html(c.lesson)}</p><a href="${c.report}">Read the full report →</a></article>`;
 }
@@ -383,6 +431,8 @@ cpSync(join(root, 'node_modules', '@fontsource-variable', 'inter', 'files', 'int
 WEBP = webpImages(join(out, 'images'));
 // "Try it live": the extension's own engine, bundled for the browser.
 execFileSync(join(root, 'extension', 'node_modules', '.bin', 'esbuild'), [join(root, 'site', 'demo.ts'), '--bundle', '--format=esm', '--minify', '--target=es2020', `--outfile=${join(out, 'demo.js')}`, '--log-level=warning']);
+cpSync(join(root, 'site', 'media'), join(out, 'media'), { recursive: true });
+const VIDEO = JSON.parse(readFileSync(join(root, 'site', 'video.json'), 'utf8'));
 const SCAMS = JSON.parse(readFileSync(join(root, 'docs', 'scams.json'), 'utf8')).items;
 // Example reports built from real phishing emails (HTML and PDF).
 cpSync(join(root, 'docs', 'examples'), join(out, 'examples'), { recursive: true });
@@ -397,6 +447,7 @@ write(
     // Screenshots on the home page open full size too.
     body: readFileSync(join(root, 'site', 'index.html'), 'utf8')
       .replace(/<img class="(shot[^"]*)" src="([^"]+)"([^>]*)>/g, '<a class="zoom" href="$2"><img class="$1" src="$2"$3></a>')
+      .replace('<div data-video></div>', videoSection(VIDEO))
       .replace('<div class="watch-grid" data-scam-watch></div>', `<div class="watch-grid">${SCAMS.slice(0, 3).map(scamCard).join('')}</div>`),
   }),
 );
