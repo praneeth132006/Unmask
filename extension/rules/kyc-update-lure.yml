@@ -1,0 +1,14 @@
+id: kyc-update-lure
+title: Says your bank account is blocked until you update KYC
+plain: It says your bank account or card will be blocked unless you "update KYC" through a link, a very common bank scam.
+severity: high
+points: 18
+category: content
+when:
+  any: ["/\\bkyc\\b[^.\n]{0,40}(update|verify|verification|pending|expired|incomplete)/", "/(update|complete|verify) (your )?(e-?)?kyc/", "/pan (card )?(update|link|verification)[^.\n]{0,40}(blocked|suspended|deactivated)/"]
+  also: ["blocked", "suspended", "deactivated", "closed", "today", "24 hours", "immediately", "click"]
+  needs_link: true
+  not_from: ["hdfcbank.com", "icicibank.com", "sbi.co.in", "onlinesbi.sbi", "axisbank.com", "kotak.com", "pnb.co.in", "bankofbaroda.in", "canarabank.com", "unionbankofindia.co.in", "yesbank.in", "idfcfirstbank.com", "paytm.com", "phonepe.com"]
+examples:
+  phish: "Subject: Account blocked\n\nDear customer, your HDFC account will be blocked today. Update your KYC now: http://hdfc-kyc.in-verify.example/update"
+  legit: "Subject: Your monthly statement\n\nYour account statement for October is ready. Log in to net banking to view it."
