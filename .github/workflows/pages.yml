@@ -3,7 +3,7 @@ name: Website
 on:
   push:
     branches: [main]
-    paths: ['site/**', 'docs/**', 'PRIVACY.md', 'extension/public/icon/**', '.github/workflows/pages.yml']
+    paths: ['site/**', 'docs/**', 'PRIVACY.md', 'CHANGELOG.md', 'extension/public/icon/**', 'extension/src/**', 'package.json', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -28,6 +28,8 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # cwebp makes the WebP screenshots; without it the site still builds with PNGs only.
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq webp
       - run: node site/build.mjs
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:

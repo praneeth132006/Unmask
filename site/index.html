@@ -1,150 +1,234 @@
-<section class="wrap hero">
-  <div>
-    <h1>See what a suspicious email is <em>really</em> hiding.</h1>
-    <p class="lead">Unmask is a free browser extension for Gmail and Outlook. It stops you before you click a phishing link, warns you right inside your inbox, and explains in plain language who really sent the email, where its links and QR codes go, and what its attachments hide.</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc">Add to Chrome</a>
-      <a class="btn btn-ghost" href="https://addons.mozilla.org/en-US/firefox/addon/unmask-phishing-inspector/">Add to Firefox</a>
-      <a class="btn btn-ghost" href="https://github.com/praneeth132006/Unmask/releases/latest">⬇ Download</a>
-      <a class="btn btn-ghost" href="guide.html">Read the guide</a>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy reveal">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Free and open source · Runs on your device</p>
+      <h1>See what a suspicious email is <em>really</em> hiding.</h1>
+      <p class="lead">Unmask stops you before you click a phishing link in Gmail or Outlook, and tells you why in plain words.</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" data-install href="https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc"><span data-install-label>Add to Chrome</span><span class="btn-sub">it's free</span></a>
+        <a class="btn btn-link" href="#try">Try it without installing <span aria-hidden="true">→</span></a>
+      </div>
+      <p class="also">Also for <a href="https://addons.mozilla.org/en-US/firefox/addon/unmask-phishing-inspector/">Firefox</a>, <a href="https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc">Edge and Brave</a> · <a href="https://github.com/praneeth132006/Unmask/blob/main/docs/SAFARI.md">Safari in preview</a></p>
     </div>
-    <p class="note">Free and open source (MIT) · Chrome, Edge, Brave and Firefox · Gmail and Outlook on the web · Your email never leaves your browser</p>
-  </div>
-  <img class="shot" src="images/panel/panel-summary.png" alt="Unmask showing a High risk verdict for a fake PayPal email" width="400" height="860">
-</section>
 
-<section class="wrap" id="stops-the-click">
-  <h2>It stops the click</h2>
-  <p class="sub">The email shows <code>https://www.paypal.com/signin</code>. The link really goes to <code>paypa1-secure.top</code>. Unmask catches it before the page opens and tells you why.</p>
-  <img class="shot showcase" src="images/inbox/gmail-link-warning.png" alt="Wait, this link goes to paypa1-secure.top, with the reasons and Go back or Open anyway" width="900" height="600">
-</section>
-
-<section class="wrap" id="peek">
-  <h2>Check an email before you open it</h2>
-  <p class="sub">Opening an email loads its hidden tracking pixels and tells the sender you read it. Click <strong>👁 Peek</strong> in the inbox instead: Unmask checks the email and shows a text-only preview, so nothing in it ever loads.</p>
-  <div class="wide">
-    <figure><img class="shot" src="images/inbox/inbox-peek.png" alt="Peek card: High risk, reasons in plain words, text-only preview" width="900" height="640" loading="lazy"><figcaption>Peek from the inbox list, without opening</figcaption></figure>
-    <figure><img class="shot" src="images/teams/settings-protection-list.png" alt="Protection list: companies, people and trusted senders, with export and import" width="376" height="760" loading="lazy" style="max-height:520px;width:auto;margin:0 auto"><figcaption>Protect your bank and your boss, then share the list with your family or team</figcaption></figure>
-  </div>
-</section>
-
-<section class="wrap" id="inbox">
-  <h2>Warnings right inside your inbox</h2>
-  <p class="sub">No need to open anything. Unmask checks each email as you open it and marks risky senders in the list.</p>
-  <div class="wide">
-    <figure><img class="shot" src="images/inbox/gmail-banner.png" alt="A red High risk banner above a fake PayPal email" width="900" height="600" loading="lazy"><figcaption>A banner with the main reasons, above the email</figcaption></figure>
-    <figure><img class="shot" src="images/inbox/inbox-badges.png" alt="Risky and Check badges in the inbox list" width="900" height="420" loading="lazy"><figcaption>Badges next to risky senders in the inbox</figcaption></figure>
-    <figure><img class="shot" src="images/inbox/gmail-reply-warning.png" alt="Your reply will go somewhere else" width="900" height="600" loading="lazy"><figcaption>A warning when Reply would go to the scammer</figcaption></figure>
-    <figure><img class="shot" src="images/panel/panel-qr.png" alt="A QR code inside a PDF that leads to a PayPal look-alike" width="376" height="216" loading="lazy"><figcaption>QR codes inside images and PDFs, decoded and checked</figcaption></figure>
-  </div>
-</section>
-
-<section class="wrap" id="install">
-  <h2>Install in two minutes</h2>
-  <p class="sub">Chrome, Edge and Brave: <a href="https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc">install from the Chrome Web Store</a> in one click, or <a href="https://addons.mozilla.org/en-US/firefox/addon/unmask-phishing-inspector/">get the Firefox add-on</a>. Chrome may say the extension is "not trusted by Enhanced Safe Browsing" while it is new; click <strong>Continue to install</strong>. Prefer to load it yourself? Follow the steps below. No programming needed.</p>
-  <div class="steps">
-    <div class="card">
-      <h3>Download</h3>
-      <p>From the <a href="https://github.com/praneeth132006/Unmask/releases/latest">latest release</a>, download the zip for your browser under <em>Assets</em> (<code>unmask-chrome</code>, <code>unmask-edge</code> or <code>unmask-firefox</code>) and unzip it. Keep the folder somewhere permanent.</p>
-    </div>
-    <div class="card">
-      <h3>Load it</h3>
-      <p>Open <code>chrome://extensions</code>, switch on <strong>Developer mode</strong>, click <strong>Load unpacked</strong> and choose the unzipped folder (the one containing <code>manifest.json</code>). Firefox: <code>about:debugging</code> → <strong>Load Temporary Add-on</strong>.</p>
-    </div>
-    <div class="card">
-      <h3>Check an email</h3>
-      <p>Reload Gmail or Outlook and open any email. Risky ones get a warning straight away; click the Unmask icon for the full report.</p>
+    <div class="hero-demo reveal" aria-label="Animation: Unmask stops a click on a fake PayPal link" role="img">
+      <div class="window">
+        <div class="window-bar"><i></i><i></i><i></i><span>mail.google.com</span></div>
+        <div class="mail">
+          <p class="mail-subject">Your account has been limited – action required within 24 hours</p>
+          <p class="mail-from"><b>PayPal Service</b> &lt;billing@paypa1-support.xyz&gt;</p>
+          <div class="mail-banner"><b>Unmask: High risk</b> · It pretends to be PayPal, but PayPal didn't send it.</div>
+          <p class="mail-line">Dear Customer,</p>
+          <p class="mail-line">We noticed unusual sign-in activity. You must verify your account within 24 hours or it will be permanently closed.</p>
+          <p class="mail-link">https://www.paypal.com/signin</p>
+          <span class="cursor" aria-hidden="true"></span>
+        </div>
+        <div class="stop">
+          <div class="stop-card">
+            <p class="stop-title">Wait, this link goes to</p>
+            <p class="stop-target">paypa1-secure.top</p>
+            <ul>
+              <li>Uses "1" instead of "l" in PayPal</li>
+              <li>Shows paypal.com, really goes elsewhere</li>
+              <li>Unmask rated this email High risk</li>
+            </ul>
+            <div class="stop-actions"><span>Open anyway</span><span class="go-back">Go back</span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">Stuck? <a href="guide.html#if-loading-fails">Common install errors and fixes</a>.</p>
-</section>
 
-<section class="wrap" id="proof">
-  <h2>Proven on real phishing, and on real mail</h2>
-  <p class="sub">Measured on every change, with public corpora: <strong>400 real phishing emails</strong> from <a href="https://github.com/rf-peixoto/phishing_pot">phishing_pot</a> and <strong>4,150 real legitimate emails</strong> from the <a href="https://spamassassin.apache.org/old/publiccorpus/">SpamAssassin public corpus</a>. <a href="benchmark.html">How it's measured</a>.</p>
-  <div class="grid">
-    <div class="card"><h3>86.5% of phishing caught</h3><p>346 of 400 flagged as Suspicious or High risk, 286 with the strongest warning, each with the reasons in plain language.</p></div>
-    <div class="card"><h3>6.0% false alarms</h3><p>On 4,150 real emails, including marketing built to look like spam. The first run found 13.9%; each cause was fixed with a test.</p></div>
-    <div class="card"><h3>Under 1 ms per email</h3><p>Median analysis time, with no errors, entirely on one computer. Nothing is sent anywhere to decide a verdict.</p></div>
-  </div>
-  <p class="note" style="color:var(--text-3);font-size:14px;margin-top:14px">Got a wrong verdict? <strong>Was this right?</strong> in the panel opens a pre-filled report with only what you choose to share. <a href="reports.html#real-examples">See what a report looks like for a real phish</a>.</p>
-</section>
-
-<section class="wrap" id="features">
-  <h2>Everything a phishing email tries to hide</h2>
-  <p class="sub">Every check runs inside your browser. The few online lookups send only a domain name or a file fingerprint, and each can be turned off.</p>
-  <div class="grid">
-    <div class="card feature"><div class="tag">New</div><h3>Calendar-invite phishing</h3><p>Meeting invites whose "join" link isn't Zoom, Teams or Meet, payroll and password lures, and organisers who aren't the sender.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>SVG smuggling</h3><p>"Pictures" that run code: scripts, redirects, login forms hidden inside the image and pages hidden in base64, read without opening them.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Fake login pages behind a link</h3><p>Trace a link and Unmask says if it ends on a fake Microsoft, Google or Okta sign-in, a relayed one that steals your session, or a page hidden behind a CAPTCHA.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Fake jobs and hacked contacts</h3><p>Task scams and "buy equipment with our cheque" offers, and a friend's first-ever "I shared a document with you" link, sent at 3 a.m.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Family mode</h3><p>On High risk emails, "Open anyway" becomes "Ask Sam": a ready-written email to someone you trust. Settings can be locked with a PIN.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Practise spotting scams</h3><p>A 10-email quiz of realistic scams and real emails, each explained by Unmask. Good for families, classes and team training.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>On-device AI (Chrome)</h3><p>Optional: Chrome's built-in model says what an email asks you to do and why the verdict fits, on your computer. It never decides alone.</p></div>
-    <div class="card feature"><div class="tag">New</div><h3>Rules anyone can add</h3><p>Scam patterns as small YAML files: tax refunds, parcel fees, crypto giveaways, sextortion and more, each tested against real and fake examples.</p></div>
-    <div class="card feature"><div class="tag">Sender</div><h3>Who really sent it</h3><p>SPF, DKIM and DMARC, display names hiding another address, and look-alike domains like <code>paypa1.com</code> for 50+ brands, using Unicode's confusables list.</p></div>
-    <div class="card feature"><div class="tag">Headers</div><h3>Header forensics</h3><p>DKIM signatures verified by Unmask itself, emails changed after signing, fake "passed" stamps, replayed genuine emails, and the delivery path read the way an analyst does.</p></div>
-    <div class="card feature"><div class="tag">Techniques</div><h3>Attack techniques</h3><p>Callback scams, real PayPal and DocuSign emails carrying a scammer's text, device-code and consent lures, ClickFix, locked ZIPs sent with their password.</p></div>
-    <div class="card feature"><div class="tag">Body</div><h3>Encoding tricks</h3><p>Words spelt in HTML character codes, disguised link addresses, invisible characters splitting brand names, and letters from other alphabets.</p></div>
-    <div class="card feature"><div class="tag">Reports</div><h3>Analyst write-up</h3><p>What kind of attack it is, what couldn't be checked, a SOC-style case report and defanged indicators, one click each.</p></div>
-    <div class="card feature"><div class="tag">Links</div><h3>Where links really go</h3><p>Text that shows one site but links to another, redirect wrappers removed, and one-click redirect tracing.</p></div>
-    <div class="card feature"><div class="tag">Hover</div><h3>Point at the problem</h3><p>Hover a red flag and Unmask outlines the exact link, sender, attachment or phrase in the Gmail email.</p></div>
-    <div class="card feature"><div class="tag">Files</div><h3>Risky attachments</h3><p>Executables, fake PDFs (<code>Invoice.pdf.html</code>), macro documents, encrypted ZIPs, plus a VirusTotal check.</p></div>
-    <div class="card feature"><div class="tag">Body</div><h3>Hidden text, safely shown</h3><p>Invisible text used to fool spam filters, forms asking for passwords, and pressure phrases, in a safe view with scripts off.</p></div>
-    <div class="card feature"><div class="tag">Privacy</div><h3>Trackers</h3><p>Tracking pixels and click-tracked links from about 40 services, with images blocked so senders can't tell you opened it.</p></div>
-    <div class="card feature"><div class="tag">Inbox</div><h3>Peek before opening</h3><p>Check an inbox email without opening it, with a text-only preview, so trackers never learn you looked.</p></div>
-    <div class="card feature"><div class="tag">Plain</div><h3>Plain words</h3><p>"This email looks like a scam. It pretends to be PayPal." Simple mode hides everything technical.</p></div>
-    <div class="card feature"><div class="tag">Protection</div><h3>Your protection list</h3><p>Your bank, your boss, your family: impostors get the strongest warning. Share the list as a file.</p></div>
-    <div class="card feature"><div class="tag">History</div><h3>First-contact warnings</h3><p>"You've never received mail from paypa1-support.xyz. Your PayPal emails usually come from paypal.com." Remembered only on your device.</p></div>
-    <div class="card feature"><div class="tag">QR</div><h3>QR-code phishing</h3><p>QR codes in images, PDFs and even ones drawn with table cells are decoded and their real destination checked, before you point your phone at them.</p></div>
-    <div class="card feature"><div class="tag">BEC</div><h3>Payment fraud</h3><p>Changed bank details, payment and gift-card requests, and a contact's name used from a different address.</p></div>
-    <div class="card feature"><div class="tag">Files</div><h3>Inside attachments</h3><p>Links hidden in PDFs, macros in Office files, the file list of ZIPs, and a safe preview of HTML attachments.</p></div>
-    <div class="card feature"><div class="tag">Brands</div><h3>Fake logos and new domains</h3><p>An email showing PayPal's logo that PayPal didn't send, brand-new TLS certificates and domains without mail records.</p></div>
-    <div class="card feature"><div class="tag">Report</div><h3>Report in one click</h3><p>Gmail's Report phishing, APWG, Netcraft, Google Safe Browsing and PhishTank, plus a PDF or JSON report for your IT team.</p></div>
+  <div class="wrap">
+    <dl class="stats reveal">
+      <div><dt>86.5%</dt><dd>of 400 real phishing emails caught</dd></div>
+      <div><dt>6.0%</dt><dd>false alarms on 4,150 real emails</dd></div>
+      <div><dt>&lt;1&nbsp;ms</dt><dd>to check an email, on your computer</dd></div>
+      <div><dt>0</dt><dd>emails sent to any server, ever</dd></div>
+    </dl>
   </div>
 </section>
 
-<section class="wrap" id="forensics">
-  <h2>Analysed the way a security analyst would</h2>
-  <p class="sub">Unmask reads the delivery path, verifies signatures, names the kind of attack and shows where a link really lands, in a private sandbox. <a href="analysis.html">How Unmask analyses an email</a>.</p>
-  <div class="gallery">
-    <figure><img class="shot" src="images/panel/panel-replay-summary.png" alt="A replayed genuine Google alert rated High risk" width="400" height="860" loading="lazy"><figcaption>A genuine signed email, re-sent by someone else</figcaption></figure>
-    <figure><img class="shot" src="images/panel/panel-forensics-headers.png" alt="Headers tab with DKIM signature results and the delivery path" width="400" height="860" loading="lazy"><figcaption>Signatures and the delivery path, checked</figcaption></figure>
-    <figure><img class="shot" src="images/panel/panel-landing-page.png" alt="A private sandbox scan showing the fake DocuSign page a link leads to" width="376" height="640" loading="lazy"><figcaption>Where a link lands, from a private urlscan.io scan</figcaption></figure>
-    <figure><img class="shot" src="images/panel/panel-obfuscation.png" alt="Findings for words hidden in HTML character codes and invisible characters" width="374" height="567" loading="lazy"><figcaption>HTML-entity and invisible-character tricks</figcaption></figure>
-    <figure><img class="shot" src="images/reports/panel-report-analyst.png" alt="Report or export with Copy analyst write-up and Copy indicators" width="376" height="259" loading="lazy"><figcaption>An analyst write-up and defanged indicators</figcaption></figure>
+<section class="story" id="how">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="kicker">How it protects you</p>
+      <h2>Four moments where a scam usually wins.</h2>
+    </header>
+
+    <article class="chapter reveal">
+      <div class="chapter-copy">
+        <span class="num">01</span>
+        <h3>It stops the click.</h3>
+        <p>The email shows <code>paypal.com</code>. The link really goes to <code>paypa1-secure.top</code>. Unmask catches it before the page opens, and says why.</p>
+        <p class="more-link">With a free urlscan.io key, you can even <strong>preview the page safely</strong>, in a sandbox, not in your browser.</p>
+      </div>
+      <img class="shot" src="images/inbox/gmail-link-warning.png" alt="Wait, this link goes to paypa1-secure.top, with the reasons and Go back or Open anyway" width="900" height="600" loading="lazy">
+    </article>
+
+    <article class="chapter flip reveal">
+      <div class="chapter-copy">
+        <span class="num">02</span>
+        <h3>It warns you inside your inbox.</h3>
+        <p>Risky emails get a banner with the main reasons. Risky senders get a badge in the list, before you open anything.</p>
+      </div>
+      <img class="shot" src="images/inbox/gmail-banner.png" alt="A red High risk banner above a fake PayPal email" width="900" height="600" loading="lazy">
+    </article>
+
+    <article class="chapter reveal">
+      <div class="chapter-copy">
+        <span class="num">03</span>
+        <h3>It lets you peek without opening.</h3>
+        <p>Opening an email loads its tracking pixels and tells the sender you read it. <strong>Peek</strong> checks it from the inbox and shows a text-only preview.</p>
+      </div>
+      <img class="shot" src="images/inbox/inbox-peek.png" alt="Peek card: High risk, reasons in plain words, text-only preview" width="900" height="640" loading="lazy">
+    </article>
+
+    <article class="chapter flip reveal">
+      <div class="chapter-copy">
+        <span class="num">04</span>
+        <h3>It explains, in plain words.</h3>
+        <p>"This email looks like a scam. It pretends to be PayPal." Every point of the score is listed, and you can send a picture of the warning to your family in one click.</p>
+      </div>
+      <img class="shot shot-tall" src="images/panel/panel-summary.png" alt="Unmask summary with a High risk verdict and the reasons in plain words" width="400" height="860" loading="lazy">
+    </article>
   </div>
 </section>
 
-<section class="wrap">
-  <h2>Hover a red flag, see it in the email</h2>
-  <p class="sub">No more guessing which link or sentence a warning is about.</p>
-  <div class="wide">
-    <img class="shot" src="images/inbox/highlight-link.png" alt="A suspicious link outlined in the email" width="688" height="288">
-    <img class="shot" src="images/inbox/highlight-text.png" alt="Pressure phrases marked in the email" width="688" height="288">
+<section class="try" id="try">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="kicker">Try it live</p>
+      <h2>Paste anything suspicious.</h2>
+      <p class="sub">An email with its headers, a text message, a WhatsApp message or a link. It is checked right here, by the same engine as the extension. Nothing leaves this tab.</p>
+    </header>
+    <div class="demo reveal" data-demo>
+      <div class="demo-input">
+        <div class="demo-samples" role="group" aria-label="Examples">
+          <button type="button" data-sample="email" aria-pressed="false">Fake PayPal email</button>
+          <button type="button" data-sample="sms" aria-pressed="false">Parcel-fee text</button>
+          <button type="button" data-sample="link" aria-pressed="false">Look-alike link</button>
+          <button type="button" data-sample="real" aria-pressed="false">A real email</button>
+        </div>
+        <label class="sr-only" for="demo-text">Message to check</label>
+        <textarea id="demo-text" spellcheck="false" placeholder="Paste a message, a link or a whole email (in Gmail: ⋮ → Show original → Copy to clipboard)"></textarea>
+        <div class="demo-bar"><button type="button" class="btn btn-primary" data-demo-check>Check it</button><span class="hint">⌘/Ctrl + Enter</span></div>
+      </div>
+      <div class="demo-result" data-demo-result hidden aria-live="polite"></div>
+      <noscript><p class="demo-note">The live demo needs JavaScript. It runs only in your browser.</p></noscript>
+    </div>
   </div>
 </section>
 
-<section class="wrap">
-  <h2>A closer look</h2>
-  <div class="gallery">
-    <figure><img class="shot" src="images/panel/links-dark.png" alt="Links tab" width="400" height="860" loading="lazy"><figcaption>Every link's real destination</figcaption></figure>
-    <figure><img class="shot" src="images/panel/body-light.png" alt="Body tab with hidden text revealed" width="400" height="860" loading="lazy"><figcaption>Hidden text revealed</figcaption></figure>
-    <figure><img class="shot" src="images/settings/setup-virustotal.png" alt="VirusTotal setup steps" width="400" height="860" loading="lazy"><figcaption>Optional checks, set up in place</figcaption></figure>
-    <figure><img class="shot" src="images/files/panel-files.png" alt="Files tab with links inside a PDF and a program hidden in a ZIP" width="400" height="860" loading="lazy"><figcaption>Looks inside PDFs, Office files and ZIPs</figcaption></figure>
-    <figure><img class="shot" src="images/reports/panel-report.png" alt="Report or export options" width="400" height="860" loading="lazy"><figcaption>Report it, or export a PDF or JSON report</figcaption></figure>
-    <figure><img class="shot" src="images/panel/panel-pixel-tag.png" alt="Safe view with a red tag where a tracking pixel sits" width="400" height="860" loading="lazy"><figcaption>See exactly where each tracking pixel is</figcaption></figure>
-    <figure><img class="shot" src="images/teams/settings-protection.png" alt="Settings for protection inside Gmail" width="400" height="860" loading="lazy"><figcaption>Every check has its own switch</figcaption></figure>
+<section class="proof" id="proof">
+  <div class="wrap proof-grid">
+    <header class="section-head reveal">
+      <p class="kicker">Measured in public</p>
+      <h2>Tested on real phishing, and on real mail, on every change.</h2>
+      <p class="sub">400 real phishing emails from <a href="https://github.com/rf-peixoto/phishing_pot">phishing_pot</a> and 4,150 legitimate ones from the <a href="https://spamassassin.apache.org/old/publiccorpus/">SpamAssassin corpus</a>. The precision of every single check is published too.</p>
+      <p><a class="btn btn-ghost" href="benchmark.html">See the full benchmark</a></p>
+    </header>
+    <div class="bars reveal" role="list">
+      <div class="bar" role="listitem"><div class="bar-label"><span>Phishing caught</span><b>86.5%</b></div><div class="bar-track"><i style="--w:86.5%"></i></div><p>346 of 400 flagged, 286 with the strongest warning.</p></div>
+      <div class="bar bar-bad" role="listitem"><div class="bar-label"><span>False alarms on real mail</span><b>6.0%</b></div><div class="bar-track"><i style="--w:6%"></i></div><p>Down from 13.9% at the first run. Each cause fixed with a test.</p></div>
+      <div class="bar" role="listitem"><div class="bar-label"><span>Emails checked with no error</span><b>100%</b></div><div class="bar-track"><i style="--w:100%"></i></div><p>Median 0.7 ms each, on one laptop.</p></div>
+    </div>
   </div>
-  <p style="margin-top:24px">What changed recently? See the <a href="changelog.html">changelog</a>.</p>
 </section>
 
-<section class="wrap" id="privacy">
-  <h2>Private by design</h2>
-  <div class="grid">
-    <div class="card"><h3>Stays on your device</h3><p>The email is analyzed in your browser and never sent to an Unmask server. There are no accounts and no analytics.</p></div>
-    <div class="card"><h3>Online checks are opt-in</h3><p>VirusTotal and urlscan.io run only when you click them, and get a link or a file's fingerprint, not the email. Sandbox scans are always <b>private</b>: only your key can see them.</p></div>
-    <div class="card"><h3>Free, and never billed</h3><p>Free keys can't be charged; going over a limit just pauses that check. <a href="limits.html">Limits and costs</a>.</p></div>
+<section class="features" id="features">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="kicker">What it checks</p>
+      <h2>Everything a phishing email tries to hide.</h2>
+    </header>
+    <div class="pillars">
+      <article class="pillar reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z M4 7l8 6 8-6"/></svg>
+        <h3>Who really sent it</h3>
+        <p>SPF, DKIM and DMARC, verified locally. Look-alike domains like <code>paypa1.com</code>, display names hiding another address, replayed genuine emails.</p>
+      </article>
+      <article class="pillar reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>
+        <h3>Where links really go</h3>
+        <p>Text that shows one site and links to another, redirect chains, QR codes in images and PDFs, and fake sign-in pages behind a link.</p>
+      </article>
+      <article class="pillar reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5"/></svg>
+        <h3>What attachments hide</h3>
+        <p>Fake PDFs like <code>Invoice.pdf.html</code>, Office macros, programs in ZIPs, links inside PDFs and SVG "pictures" that run code.</p>
+      </article>
+      <article class="pillar reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+        <h3>Who's watching you read</h3>
+        <p>Tracking pixels and click-tracked links from about 40 services, shown exactly where they sit, with images blocked.</p>
+      </article>
+    </div>
+    <div class="chips reveal" aria-label="More checks">
+      <span>Calendar-invite phishing</span><span>Fake jobs</span><span>Hacked contacts</span><span>Payment fraud</span><span>Callback scams</span><span>Device-code lures</span><span>ClickFix</span><span>Hidden text</span><span>Invisible characters</span><span>Fake logos</span><span>Brand-new domains</span><span>Locked ZIPs</span><span>HTML smuggling</span><span>Header forensics</span><span>First-contact warnings</span><span>Rules anyone can add</span>
+      <a href="checks.html">See all checks →</a>
+    </div>
   </div>
-  <p class="callout" style="margin-top:20px">Unmask never says an email is "safe". A clean result means the checks found nothing, not that nothing is there. Stay careful with links and attachments you didn't expect.</p>
+</section>
+
+<section class="people" id="people">
+  <div class="wrap two-up">
+    <article class="panel reveal">
+      <p class="kicker">For families</p>
+      <h3>Protection your parents will actually use.</h3>
+      <ul class="ticks">
+        <li><b>Family mode:</b> on High risk emails, "Open anyway" becomes "Ask Sam", with a ready-written email.</li>
+        <li><b>Practice quiz</b> of real-looking scams, with a printable <b>Scam Spotter certificate</b>.</li>
+        <li><b>Streaks and badges</b> that show the protection working, counted only on your device.</li>
+        <li><b>Check a text message</b> or WhatsApp link, not only emails.</li>
+      </ul>
+      <a href="guide.html#8-family-mode-ask-someone-you-trust">Set up family mode →</a>
+    </article>
+    <article class="panel reveal">
+      <p class="kicker">For teams and schools</p>
+      <h3>Shared protection, with no server in between.</h3>
+      <ul class="ticks">
+        <li><b>A protection list</b> of your bank, your boss and your suppliers, pushed by IT policy or shared as a file.</li>
+        <li><b>Reports</b> for users and security teams: PDF, Word, HTML and STIX 2.1.</li>
+        <li><b>Every check has a switch</b>, and online lookups can be turned off by policy.</li>
+      </ul>
+      <a href="teams.html">Roll it out →</a>
+    </article>
+  </div>
+</section>
+
+<section class="watch" id="scam-watch">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="kicker">Scam watch</p>
+      <h2>Real scams, taken apart.</h2>
+      <p class="sub">Real phishing emails Unmask analysed, with the tells to look for. Every address is defanged.</p>
+    </header>
+    <div class="watch-grid" data-scam-watch></div>
+    <p class="reveal"><a href="scams.html">All cases →</a></p>
+  </div>
+</section>
+
+<section class="trust" id="privacy">
+  <div class="wrap">
+    <header class="section-head reveal">
+      <p class="kicker">Trust you can check</p>
+      <h2>Private by design. Verifiable by anyone.</h2>
+    </header>
+    <div class="trust-grid">
+      <article class="reveal"><h3>Your email stays with you</h3><p>Analysed in your browser, never sent to an Unmask server. No accounts, no analytics, no ads, ever.</p></article>
+      <article class="reveal"><h3>Online checks are opt-in</h3><p>VirusTotal and urlscan.io run only when you ask, get a link or a file fingerprint, and scans are always private.</p></article>
+      <article class="reveal"><h3>Open source, MIT</h3><p>Every line is <a href="https://github.com/praneeth132006/Unmask">on GitHub</a>. Releases are reproducible, so you can check the store build matches the code.</p></article>
+      <article class="reveal"><h3>Security-checked</h3><p>CodeQL on every change, an OpenSSF Scorecard, pinned dependencies, and 590+ tests including end-to-end runs in a real browser.</p></article>
+    </div>
+    <p class="callout reveal">Unmask never says an email is "safe". A clean result means the checks found nothing, not that nothing is there.</p>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap final-inner reveal">
+    <h2>Your next click could be the one.<br>Make it a safe one.</h2>
+    <a class="btn btn-primary btn-lg" data-install href="https://chromewebstore.google.com/detail/unmask-%E2%80%94-phishing-email-i/bcogajaabcenbcbfbcgfjmccjdlfklcc"><span data-install-label>Add to Chrome</span><span class="btn-sub">it's free</span></a>
+    <p class="also">Two minutes to install. <a href="guide.html">Read the guide</a> · <a href="https://github.com/praneeth132006/Unmask/releases/latest">Download the zip</a></p>
+  </div>
 </section>
