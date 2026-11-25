@@ -59,6 +59,13 @@ export interface TraceRequest {
 }
 export type TraceResponse = { ok: true; result: import('../integrations/trace').TraceResult } | { ok: false; error: string };
 
+/** Content script → background: a private urlscan.io scan of a link, for "Preview safely" in the click warning. */
+export interface PreviewLinkRequest {
+  type: 'unmask:preview-link';
+  url: string;
+}
+export type PreviewLinkResponse = { ok: true; image: string; finalUrl: string | null; malicious: boolean; reportUrl: string } | { ok: false; error: string; reportUrl?: string };
+
 /** Content script → background: open the side panel for this tab (from a click in Gmail). */
 export interface OpenPanelRequest {
   type: 'unmask:open-panel';

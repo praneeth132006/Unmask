@@ -5,6 +5,7 @@ import type { BackgroundFetchRequest, BackgroundFetchResponse, FetchRawResponse,
 import { analyzeInPage } from '../src/lib/remoteAnalyze';
 import { loadHistory, rememberSender } from '../src/lib/historyStore';
 import { loadProtection } from '../src/lib/protectionStore';
+import { previewLink } from '../src/lib/previewClient';
 import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEY, type Settings } from '../src/lib/settings';
 import { startProtection, messageKey } from '../src/lib/gmailProtect';
 import type { StoredVerdict } from '../src/lib/protect';
@@ -57,6 +58,8 @@ export default defineContentScript({
       loadVerdicts: async () => ((await browser.storage.local.get(VERDICTS_KEY))[VERDICTS_KEY] as Record<string, StoredVerdict> | undefined) ?? {},
       saveVerdicts: (v) => browser.storage.local.set({ [VERDICTS_KEY]: v }),
       openPanel: () => void browser.runtime.sendMessage({ type: 'unmask:open-panel' } satisfies OpenPanelRequest).catch(() => {}),
+      previewLink,
+      canPreview: () => Boolean(settings.urlscanApiKey),
       onEvent: (e) => void recordStat(e),
       openPeekInPanel: (peek) => void browser.runtime.sendMessage({ type: 'unmask:open-panel', peek } satisfies OpenPanelRequest).catch(() => {}),
     });

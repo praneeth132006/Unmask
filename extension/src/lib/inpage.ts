@@ -117,6 +117,8 @@ export interface DialogOptions {
   ask?: { label: string; href: string };
   /** A line under the reasons, e.g. why there is no "Open anyway". */
   note?: string;
+  /** "Preview safely": loads a picture of the page, taken in a sandbox browser, not this one. */
+  preview?: () => Promise<{ image: string; caption: string } | { error: string; link?: string }>;
 }
 
 /** A modal over Gmail. Resolves true when the user chooses to continue. Escape and the backdrop cancel. */
@@ -135,7 +137,12 @@ export function confirmDialog(doc: Document, opts: DialogOptions): Promise<boole
      .a .safe { background: #1a73e8; border-color: #1a73e8; color: #fff; }
      .a .ask { border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600; border: 1px solid #1e8e3e; background: #e6f4ea; color: #137333; text-decoration: none; }
      .n { margin: 10px 0 0; font-size: 12px; color: #5f6368; }
-     .f { margin-top: 10px; font-size: 11px; color: #80868b; }`,
+     .f { margin-top: 10px; font-size: 11px; color: #80868b; }
+     .pv { margin-top: 12px; }
+     .pv button { border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 600; border: 1px solid #dadce0; background: #f8f9fa; color: #3c4043; cursor: pointer; }
+     .pv img { display: block; width: 100%; max-height: 260px; object-fit: cover; object-position: top; border: 1px solid #dadce0; border-radius: 8px; margin-top: 8px; }
+     .pv p { margin: 6px 0 0; font-size: 12px; color: #5f6368; }
+     .pv a { color: #1a73e8; }`,
   );
   h.id = DIALOG_ID;
   return new Promise((resolve) => {
@@ -166,6 +173,37 @@ export function confirmDialog(doc: Document, opts: DialogOptions): Promise<boole
       ask.addEventListener('click', () => done(false));
       buttons.push(ask);
     }
+    const previewBox: HTMLElement[] = [];
+    if (opts.preview) {
+      const load = opts.preview;
+      const box = el(doc, 'div', { className: 'pv' });
+      const btn = el(doc, 'button', { text: 'Preview the page safely' });
+      const info = el(doc, 'p', { text: 'Opens it in urlscan.io’s sandbox browser, privately, not in yours. Takes up to a minute.' });
+      btn.addEventListener('click', () => {
+        btn.remove();
+        info.textContent = 'Opening it in the sandbox…';
+        void load().then((r) => {
+          if ('image' in r) {
+            const img = el(doc, 'img') as HTMLImageElement;
+            img.alt = 'Screenshot of the page, taken in a sandbox';
+            img.src = r.image;
+            box.insertBefore(img, info);
+            info.textContent = r.caption;
+          } else {
+            info.textContent = r.error;
+            if (r.link) {
+              const a = el(doc, 'a', { text: ' Open the report' }) as HTMLAnchorElement;
+              a.href = r.link;
+              a.target = '_blank';
+              a.rel = 'noopener noreferrer';
+              info.append(a);
+            }
+          }
+        });
+      });
+      box.append(btn, info);
+      previewBox.push(box);
+    }
     const dialog = el(
       doc,
       'div',
@@ -174,6 +212,7 @@ export function confirmDialog(doc: Document, opts: DialogOptions): Promise<boole
       ...(opts.target ? [el(doc, 'div', { className: 'tg', text: opts.target })] : []),
       ...(opts.reasons.length ? [el(doc, 'ul', {}, ...opts.reasons.map((r) => el(doc, 'li', { text: r })))] : []),
       ...(opts.note ? [el(doc, 'p', { className: 'n', text: opts.note })] : []),
+      ...previewBox,
       el(doc, 'div', { className: 'a' }, ...buttons, cancel),
       el(doc, 'div', { className: 'f', text: 'Unmask · checked on your device' }),
     );

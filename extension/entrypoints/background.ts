@@ -1,7 +1,9 @@
 import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
 import { PEEK_KEY, type PendingPeek } from '../src/lib/messages';
-import type { AnalyzeRequest, AnalyzeResponse, BackgroundFetchRequest, BackgroundFetchResponse, OpenPanelRequest, TraceRequest, TraceResponse } from '../src/lib/messages';
+import type { AnalyzeRequest, AnalyzeResponse, BackgroundFetchRequest, BackgroundFetchResponse, OpenPanelRequest, PreviewLinkRequest, PreviewLinkResponse, TraceRequest, TraceResponse } from '../src/lib/messages';
+import { loadSettings } from '../src/lib/settings';
+import { fetchScreenshot, scanUrl, UrlscanPending } from '../src/integrations/urlscan';
 import { isOutlookUrl } from '../src/lib/outlookDom';
 import { traceQueued, webRequestHub } from '../src/lib/builtinTrace';
 
@@ -88,6 +90,30 @@ export default defineBackground(() => {
     const b = browser as unknown as { sidePanel?: { open(o: { tabId: number }): Promise<void> }; sidebarAction?: { open(): Promise<void> } };
     const opening = b.sidePanel ? b.sidePanel.open({ tabId: sender.tab.id }) : b.sidebarAction?.open();
     opening?.catch((err: unknown) => console.warn('[unmask] could not open the panel', err));
+  });
+
+  // "Preview safely" in the click warning: a private urlscan.io scan, run here so the key never reaches the mail page.
+  browser.runtime.onMessage.addListener((req: PreviewLinkRequest, sender, sendResponse) => {
+    if (req?.type !== 'unmask:preview-link') return;
+    if (sender.id !== browser.runtime.id || !sender.tab || !/^https?:/.test(req.url)) {
+      sendResponse({ ok: false, error: 'request not allowed' } satisfies PreviewLinkResponse);
+      return;
+    }
+    void (async (): Promise<PreviewLinkResponse> => {
+      const { urlscanApiKey } = await loadSettings();
+      if (!urlscanApiKey) return { ok: false, error: 'Add a free urlscan.io key in Unmask Settings to preview links.' };
+      try {
+        const r = await scanUrl(urlscanApiKey, req.url);
+        const blob = await fetchScreenshot(urlscanApiKey, r.uuid);
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        let bin = '';
+        for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        return { ok: true, image: `data:image/png;base64,${btoa(bin)}`, finalUrl: r.finalUrl, malicious: r.malicious, reportUrl: r.reportUrl };
+      } catch (e) {
+        return { ok: false, error: e instanceof Error ? e.message : String(e), reportUrl: e instanceof UrlscanPending ? e.reportUrl : undefined };
+      }
+    })().then(sendResponse);
+    return true;
   });
 
   // Built-in redirect tracing, requested by the side panel.

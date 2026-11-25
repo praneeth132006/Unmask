@@ -116,6 +116,10 @@ export interface ProtectDeps {
   openPanel?: () => void;
   /** Opens the side panel on a message that was peeked at, not opened. */
   openPeekInPanel?: (ref: GmailMessageRef) => void;
+  /** A private sandbox picture of a link's page, when urlscan.io is set up. */
+  previewLink?: (url: string) => Promise<{ image: string; caption: string } | { error: string; link?: string }>;
+  /** Whether "Preview safely" can be offered now (a urlscan.io key is set). */
+  canPreview?: () => boolean;
   /** Counts what Unmask did, for the weekly summary (kept on this device). */
   onEvent?: (e: StatEvent) => void;
   debounceMs?: number;
@@ -373,7 +377,7 @@ export function startProtection(deps: ProtectDeps): { stop: () => void; scan: ()
     if (!w) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    const go = await confirmDialog(doc, { title: 'Wait, this link goes to', target: w.host, reasons: w.reasons, ...familyChoice(s, report, 'Open anyway') });
+    const go = await confirmDialog(doc, { title: 'Wait, this link goes to', target: w.host, reasons: w.reasons, ...familyChoice(s, report, 'Open anyway'), ...(deps.previewLink && deps.canPreview?.() ? { preview: () => deps.previewLink!(href) } : {}) });
     if (go) win.open(href, '_blank', 'noopener,noreferrer');
     else deps.onEvent?.({ type: 'stopped', what: 'link' });
   }
