@@ -256,7 +256,6 @@ export function Overview({
     <>
       <SummaryChips report={report} onOpen={onOpenTab} />
       <AssessmentCard report={report} />
-      <ScoreBreakdownCard report={report} />
       {red.length > 0 && canHighlight && (
         <p className="mt-3 flex items-center gap-1.5 text-[11px] text-[var(--text-3)]">
           <Icon name="eye" className="h-3.5 w-3.5" /> Hover a red flag to see it in the email. Click it for details.
@@ -272,6 +271,7 @@ export function Overview({
       )}
       <Group title="Good signs" findings={good} onHover={onHoverFinding} onOpen={onOpenFinding} />
       <Group title="Notes" findings={notes} onHover={onHoverFinding} onOpen={onOpenFinding} />
+      <ScoreBreakdownCard report={report} />
     </>
   );
   return (
