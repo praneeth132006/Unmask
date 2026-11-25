@@ -21,3 +21,5 @@ examples:
 ```
 
 Text matching ignores case and runs on the subject and the visible text of the email. A phrase in slashes is a regular expression. Keep phrases specific: a rule must not fire on the real emails in the benchmark (see [docs/BENCHMARK.md](../../docs/BENCHMARK.md)).
+
+CI also fuzzes every rule (`tests/rulesFuzz.test.ts`): it must still fire when its scam example is upper-cased, re-spaced, wrapped in HTML, padded or sent from another address, and must stay quiet on 300 generated ordinary emails that use the same everyday words.
