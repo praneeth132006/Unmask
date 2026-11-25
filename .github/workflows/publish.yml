@@ -24,6 +24,10 @@ on:
         description: Only check the credentials, don't upload
         type: boolean
         default: true
+      screenshots:
+        description: Also replace the Firefox listing screenshots with docs/store/*.png
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -74,3 +78,9 @@ jobs:
           if [ ${#args[@]} -eq 0 ]; then echo "No store has credentials yet; nothing to do."; exit 0; fi
           [ "$DRY_RUN" = true ] && args+=(--dry-run)
           pnpm exec wxt submit "${args[@]}"
+      - name: Replace Firefox listing screenshots
+        if: inputs.screenshots && env.FIREFOX_JWT_SECRET != ''
+        working-directory: extension
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node scripts/amo-previews.mjs
